@@ -51,7 +51,17 @@ class Gallery {
 	 * @return string
 	 */
 	function getDesc($locale=NULL) {
-		return get_language_string($this->get('Gallery_description'),$locale);
+		$text = get_language_string($this->get('Gallery_description'),$locale);
+		$text = zpFunctions::unTagURLs($text);
+		return $text;
+	}
+	/**
+	 * Sets the gallery description
+	 * @param string $desc
+	 */
+	function setDesc($desc) {
+		$desc = zpFunctions::tagURLs($desc);
+		$this->set('Gallery_description', $desc);
 	}
 
 	/**

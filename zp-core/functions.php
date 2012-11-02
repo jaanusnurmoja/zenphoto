@@ -2258,6 +2258,17 @@ class zpFunctions {
 		return false;
 	}
 
+	static function tagURLs($text) {
+		$text = preg_replace('|'.FULLWEBPATH.'|is', '{*FULLWEBPATH*}', $text);
+		$text = preg_replace('|'.WEBPATH.'|is', '{*WEBPATH*}', $text);
+		return $text;
+	}
+	static function unTagURLs($text) {
+		$text = preg_replace('|\{\*FULLWEBPATH\*\}|', FULLWEBPATH, $text);
+		$text = preg_replace('|\{\*WEBPATH\*\}|', WEBPATH, $text);
+		return $text;
+	}
+
 }
 
 zpFunctions::setexifvars();

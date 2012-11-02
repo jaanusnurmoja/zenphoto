@@ -716,7 +716,9 @@ class MediaObject extends ThemeObject {
 	 * @return string
 	 */
 	function getDesc($locale=NULL) {
-		return get_language_string($this->get('desc'),$locale);
+		$text =  get_language_string($this->get('desc'),$locale);
+		$text = zpFunctions::unTagURLs($text);
+		return $text;
 	}
 
 	/**
@@ -724,7 +726,10 @@ class MediaObject extends ThemeObject {
 	 *
 	 * @param string $desc description text
 	 */
-	function setDesc($desc) { $this->set('desc', $desc); }
+	function setDesc($desc) {
+		$desc = zpFunctions::tagURLs($desc);
+		$this->set('desc', $desc);
+	}
 
 	/**
 	 * Returns the sort order

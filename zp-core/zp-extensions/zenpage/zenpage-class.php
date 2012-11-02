@@ -892,7 +892,9 @@ class ZenpageItems extends ZenpageRoot {
 	 * @return string
 	 */
 	function getContent($locale=NULL) {
-		return get_language_string($this->get("content"),$locale);
+		$content = get_language_string($this->get("content"),$locale);
+		$content = zpFunctions::unTagURLs($content);
+		return $content;
 	}
 
 	/**
@@ -901,6 +903,7 @@ class ZenpageItems extends ZenpageRoot {
 	 * @param $c full language string
 	 */
 	function setContent($c) {
+		$c = zpFunctions::tagURLs($c);
 		$this->set("content",$c);
 	}
 
