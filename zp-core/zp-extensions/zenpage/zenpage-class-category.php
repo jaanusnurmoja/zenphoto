@@ -23,7 +23,10 @@ class ZenpageCategory extends ZenpageRoot {
 	 * @return string
 	 */
 	function getDesc($locale=NULL) {
-		$text = get_language_string($this->get('desc'),$locale);
+		$text = $this->get('desc');
+		if ($locale !=='all') {
+			$text = get_language_string($text,$locale);
+		}
 		$text = zpFunctions::unTagURLs($text);
 		return $text;
 	}
@@ -36,6 +39,52 @@ class ZenpageCategory extends ZenpageRoot {
 	function setDesc($desc) {
 		$desc = zpFunctions::tagURLs($desc);
 		$this->set('desc', $desc);
+	}
+
+	/**
+	 * Returns the content
+	 *
+	 * @return string
+	 */
+	function getContent($locale=NULL) {
+		$content = $this->get("content");
+		if ($locale!=='all') {
+			$content = get_language_string($text,$locale);
+		}
+		$content = zpFunctions::unTagURLs($content);
+		return $content;
+	}
+
+	/**
+	 *
+	 * Set the content datum
+	 * @param $c full language string
+	 */
+	function setContent($c) {
+		$c = zpFunctions::tagURLs($c);
+		$this->set("content",$c);
+	}
+
+	/**
+	 * Returns the extra content
+	 *
+	 * @return string
+	 */
+	function getExtraContent($locale=NULL) {
+		$text =  $this->get("extracontent");
+		if ($locale!=='all') {
+			$text = get_language_string($text,$locale);
+		}
+		$text = zpFunctions::unTagURLs($text);
+		return $text;
+	}
+
+	/**
+	 * sets the extra content
+	 *
+	 */
+	function setExtraContent($ec) {
+		$this->set("extracontent",zpFunctions::tagURLs($ec));
 	}
 
 	/**
