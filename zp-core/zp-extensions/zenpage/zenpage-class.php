@@ -892,12 +892,12 @@ class ZenpageItems extends ZenpageRoot {
 	 * @return string
 	 */
 	function getContent($locale=NULL) {
-		$content = $this->get("content");
+		$text = $this->get("content");
 		if ($locale!=='all') {
-			$content = get_language_string($text,$locale);
+			$text = get_language_string($text,$locale);
 		}
-		$content = zpFunctions::unTagURLs($content);
-		return $content;
+		$text = zpFunctions::unTagURLs($text);
+		return $text;
 	}
 
 	/**
