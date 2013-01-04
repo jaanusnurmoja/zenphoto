@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: zenphoto 1.4.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-08 15:13+0200\n"
-"PO-Revision-Date: 2012-11-08 20:01+0200\n"
+"PO-Revision-Date: 2013-01-04 20:16+0200\n"
 "Last-Translator: Jaanus Nurmoja <jaanus.nurmoja@eesti.ee>\n"
 "Language-Team: Jaanus Nurmoja (based on the work by Samy Rabih (Fetard) & "
 "Michel Gagnon) <jaanus.nurmoja@eesti.ee>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Poedit-Bookmarks: 1740,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 "X-Generator: Poedit 1.5.4\n"
 "X-Poedit-SearchPath-0: C:\\Documents and Settings\\Jaanus Nurmoja\\My "
-"Documents\\!ZENPHOTO\\vana_zp\n"
+"Documents\\!ZENPHOTO\\zenphoto\n"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/index.php:125
@@ -50,13 +50,13 @@ msgstr "Philipp Hammer-Pohlau"
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/failed_access_blocker.php:108
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/failed_access_blocker.php:109
 msgid "Forbidden"
-msgstr "Interdit"
+msgstr "Keelatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/albumZipStream.php:70
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/downloadList.php:367
 msgid "Album not found"
-msgstr "Album non trouvé"
+msgstr "Albumit ei leitud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/albumZipStream.php:109
@@ -72,7 +72,7 @@ msgstr "Lae album alla zip failina"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/archive_calendar.php:17
 msgid "Prints a calendar with a picture in each day where pictures belong to."
-msgstr "Prints a calendar with a picture in each day where pictures belong to."
+msgstr "Näitab kalendrit piltidega nende päevade juures, mil pildid tehtud on."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/archive_calendar.php:73
@@ -131,19 +131,19 @@ msgstr ""
 #: Documents\!ZENPHOTO\vana_zp/plugins/filter-custom_data.php:158
 #: Documents\!ZENPHOTO\vana_zp/zp-core/admin-edit.php:1361
 msgid "City:"
-msgstr "Ville : "
+msgstr "Asula: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/filter-custom_data.php:162
 #: Documents\!ZENPHOTO\vana_zp/zp-core/admin-edit.php:1367
 msgid "State:"
-msgstr "État, province : "
+msgstr "Maakond / osariik: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/filter-custom_data.php:166
 #: Documents\!ZENPHOTO\vana_zp/zp-core/admin-edit.php:1373
 msgid "Country:"
-msgstr "Pays : "
+msgstr "Riik: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/filter-custom_data.php:170
@@ -179,7 +179,7 @@ msgstr "Micheal Luttrull (micheall)."
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBRecommend.php:17
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBSend.php:15
 msgid "This plugin requires the zenFBcommon plugin to be activated. "
-msgstr "This plugin requires the zenFBcommon plugin to be activated. "
+msgstr "See plugin töötab juhul, kui zenFBcommon plugin on sisse lülitatud."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBActivity.php:45
@@ -197,7 +197,7 @@ msgstr "Päis peita?"
 #: Documents\!ZENPHOTO\vana_zp/zp-core/exif/makers/panasonic.php:155
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/rating.php:106
 msgid "No"
-msgstr "Non"
+msgstr "Ei"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBActivity.php:50
@@ -208,7 +208,7 @@ msgstr "Non"
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:92
 #: Documents\!ZENPHOTO\vana_zp/zp-core/exif/makers/panasonic.php:154
 msgid "Yes"
-msgstr "Oui"
+msgstr "Jah"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBActivity.php:52
@@ -557,13 +557,13 @@ msgstr "Uudised"
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBComments.php:53
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/comment_form.php:77
 msgid "Allow comments on"
-msgstr "Autoriser les commentaires"
+msgstr "Luba kommentaarid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBComments.php:58
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/comment_form.php:80
 msgid "Comment forms will be presented on the checked pages."
-msgstr "Les formulaires de commentaires sont affichés sur les pages cochées."
+msgstr "Märgitud lehtedel näidatakse kommentaarivormi."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBComments.php:60
@@ -595,9 +595,9 @@ msgid ""
 "options as well as loads required OpenGraph metakeys for proper integration "
 "with Facebook."
 msgstr ""
-"This is the common option interface for the zenFBSuite. It enables common "
-"options as well as loads required OpenGraph metakeys for proper integration "
-"with Facebook."
+"See on zenFBSuite üldine seadistuskeskkond. Siin määratakse üldised seaded, "
+"samuti laeb see OpenGraph metavõtmed tagamaks normaalse ühilduvuse "
+"Facebookiga."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBcommon.php:34
@@ -612,10 +612,9 @@ msgid ""
 "\">this page</a>.<br />\n"
 "\t\t\t\t\t\t\t\t  You should be entering numbers only in this field."
 msgstr ""
-"Enter <em>YOUR</em> Application ID from facebook here. For more information "
-"please visit <a href=\"http://inthemdl.net/news/creating-your-facebook-app_id"
-"\">this page</a>.<br />\n"
-"\t\t\t\t\t\t\t\t  You should be entering numbers only in this field."
+"Sisesta <em>OMA</em> Facebooki rakenduse ID. Lisateavet saab <a href="
+"\"http://inthemdl.net/news/creating-your-facebook-app_id\">siit</a>.<br />\n"
+"\t\t\t\t\t\t\t\t  Siia tuleb sisestada ainult numbrid."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBcommon.php:41
@@ -635,15 +634,14 @@ msgid ""
 "\t\t\t\t\t\t\t\t  For multiple admins, enter a comma separated list (can be "
 "#s or name); i.e.  '1273267113, micheall, myfacebooknamerocks'"
 msgstr ""
-"Enter <em>YOUR</em> User ID from facebook here. For more information please "
-"visit <a href=\"http://inthemdl.net/news/finding-your-facebook-userid\">this "
-"page</a>.<br />\n"
-"\t\t\t\t\t\t\t\t  Enter your Facebook User ID # or vanity name here.<br />\n"
-"\t\t\t\t\t\t\t\t  <em><b>Please note:  If you do not add your admin ID, your "
-"page will not be parsed properly by Facebook and will likely result in "
-"errors for you.</b></em><br />\n"
-"\t\t\t\t\t\t\t\t  For multiple admins, enter a comma separated list (can be "
-"#s or name); i.e.  '1273267113, micheall, myfacebooknamerocks'"
+"Sisesta siia <em>OMA</em> Facebooki kasutaja ID. Lisainfot saab <a href="
+"\"http://inthemdl.net/news/finding-your-facebook-userid\">siit</a>.<br />\n"
+"\t\t\t\t\t\t\t\t  Sisesta siia FB kasutaja ID # või aadressinimi.<br />\n"
+"\t\t\t\t\t\t\t\t  <em><b>Tähelepanu! Kui admini ID-d mitte sisestada, siis "
+"ei käitle FB lehte korralikult ning võib tekkida vigu.</b></em><br />\n"
+"\t\t\t\t\t\t\t\t  Mitme administraatori korral eralda nad komaga (võib "
+"kasutada nii numbreid kui ka nimesid, nt  '1273267113, micheall, "
+"myfacebooknamerocks')"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBcommon.php:50
@@ -659,11 +657,10 @@ msgid ""
 "available, Facebook wall posts will not display an image. If an invalid URL "
 "is used it will display a broken link to an image."
 msgstr ""
-"If zenphoto does not have a current image/object thumbnail do you want to "
-"display a default logo? Enter a valid URL link to the image you would like "
-"to use.  If nothing entered, and no current object/image thumbnail "
-"available, Facebook wall posts will not display an image. If an invalid URL "
-"is used it will display a broken link to an image."
+"Kas näidata vaikimisi logo, kui pildil või objektil pole pisipilti? Sisesta "
+"siia töötav URL pildile, mida soovid vaikimisi kasutada. Kui vaikimisi pilti "
+"pole määratud ja puudub ka pisipilt, siis ei näidata FB seinapostituses "
+"pilti. Mittetöötava lingi korral kuvatakse vigast linki pildile. "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBcommon.php:56
@@ -674,8 +671,7 @@ msgstr "Saidi juurkausta asukoht"
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBcommon.php:60
 msgid ""
 "Enter the url (including http://) to the root fo your Zenphoto installation."
-msgstr ""
-"Enter the url (including http://) to the root fo your Zenphoto installation."
+msgstr "Sisesta URL (sealhulgas http://) oma Zenphoto juurkausta."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBcommon.php:140
@@ -754,12 +750,12 @@ msgstr "Kontakt"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:13
 msgid "Adds Facebook 'Like Button' to your theme via template calls."
-msgstr "Adds Facebook 'Like Button' to your theme via template calls."
+msgstr "Lisab sinu teemale Facebooki meeldimisnupu."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:42
 msgid "Layout Style"
-msgstr "Layout Style"
+msgstr "Paigutuse stiil"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:46
@@ -767,22 +763,22 @@ msgstr "Layout Style"
 #: Documents\!ZENPHOTO\vana_zp/zp-core/exif/makers/panasonic.php:179
 #: Documents\!ZENPHOTO\vana_zp/zp-core/exif/makers/panasonic.php:185
 msgid "Standard"
-msgstr "Standard"
+msgstr "Standardne"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:47
 msgid "Simple Button Count"
-msgstr "Simple Button Count"
+msgstr "Lihtne nupp"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:48
 msgid "Box Count"
-msgstr "Box Count"
+msgstr "Kast"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:50
 msgid "Determine the layout of social context next to the button."
-msgstr "Determine the layout of social context next to the button."
+msgstr "Määra sotsiaalvõrgustiku vidinale."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:52
@@ -794,9 +790,7 @@ msgstr "Näita nägusid?"
 msgid ""
 "Do you want to show profile pictures below the button of people who have "
 "clicked like?"
-msgstr ""
-"Do you want to show profile pictures below the button of people who have "
-"clicked like?"
+msgstr "Kas tahad näidata nende inimeste profiilipilte, kellele leht meeldib?"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:62
@@ -806,7 +800,7 @@ msgstr "Verbage"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:66
 msgid "Like"
-msgstr "Like"
+msgstr "Meeldib"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBLike.php:67
@@ -836,17 +830,17 @@ msgstr "Lisab FB soovitamislingi sinu teemale"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBRecommend.php:49
 msgid "Do you want to hide the \"Recommendations\" header in your box?"
-msgstr "Do you want to hide the \"Recommendations\" header in your box?"
+msgstr "Soovid peita \"Soovituste\" päise?"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenFBSend.php:11
 msgid "Adds Facebook 'Send' Button to your theme via template calls."
-msgstr "Adds Facebook 'Send' Button to your theme via template calls."
+msgstr "Lisab teemasse FB saatmisnupu."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:40
 msgid "Twitter & Twitpic updates for your theme."
-msgstr "Twitter & Twitpic updates for your theme."
+msgstr "Twitter & Twitpic säutsatused."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:41
@@ -854,8 +848,8 @@ msgid ""
 "Original code implementation by Bert Simons (BertSimons), adapted to plugin "
 "by Micheal Luttrull (micheall)."
 msgstr ""
-"Original code implementation by Bert Simons (BertSimons), adapted to plugin "
-"by Micheal Luttrull (micheall)."
+"Originaalkoodl töötas välja Bert Simons (BertSimons), plugina jaoks kohandas "
+"Micheal Luttrull (micheall)."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:77
@@ -865,19 +859,20 @@ msgstr "Twitteri kasutajanimi"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:80
 msgid "Your twitter username: i.e. iluv2twit or iluvetwitter123"
-msgstr "Your twitter username: i.e. iluv2twit or iluvetwitter123"
+msgstr "Sinu Twitteri kasutajanimi, nt iluv2twit or iluvetwitter123"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:82
 msgid "Twitter Feed"
-msgstr "Twitter Feed"
+msgstr "Twitteri voog"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:85
 msgid ""
 "Your twitter feed url: http://twitter.com/statuses/user_timeline/xxxxxxxx.rss"
 msgstr ""
-"Your twitter feed url: http://twitter.com/statuses/user_timeline/xxxxxxxx.rss"
+"Twitteri sõnumivoo url: http://twitter.com/statuses/user_timeline/xxxxxxxx."
+"rss"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:87
@@ -897,12 +892,12 @@ msgstr "Pildi URL"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:99
 msgid "Your image url: http://mysite.com/images/me.jpg - (JPG/PNG/GIF Only)"
-msgstr "Your image url: http://mysite.com/images/me.jpg - (JPG/PNG/GIF Only)"
+msgstr "Sinu pildi url: http://mysite.com/images/me.jpg - (JPG/PNG/GIF Only)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:101
 msgid "Tweets Header"
-msgstr "Tweets Header"
+msgstr "Säutsatuste päis"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenTwitter.php:104
@@ -910,13 +905,13 @@ msgid ""
 "Header for your twitter update section; i.e. Tweets!, Twitter Updates, "
 "Recent Tweets"
 msgstr ""
-"Header for your twitter update section; i.e. Tweets!, Twitter Updates, "
-"Recent Tweets"
+"Sinu Twitteri säutsatustesektsiooni päis, nt Säutsumised,viimased säutsud, "
+"Twitter vms"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:9
 msgid "Adds the ability to add images and video to an album via email."
-msgstr "Adds the ability to add images and video to an album via email."
+msgstr "Võimaldab lisada pilte või videoid e-posti teel.."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:47
@@ -939,7 +934,7 @@ msgstr "Album"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:48
 msgid "Album for image import."
-msgstr "Album for image import."
+msgstr "Pilte importiv album."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:49
@@ -949,7 +944,9 @@ msgstr "E-posti majutaja"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:50
 msgid "Mail host to use to retrieve images.  Some examples:<br>"
-msgstr "Mail host to use to retrieve images.  Some examples:<br>"
+msgstr ""
+"E-posti majutaja ja kaust, kuhu laekunud sõnumitest pilte albumisse "
+"laetakse. Mõned näited:<br>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:51
@@ -970,8 +967,7 @@ msgstr "General POP3: {hostname:110/pop3}INBOX<br>"
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:54
 msgid ""
 "For more info please see:  http://php.net/manual/en/function.imap-open.php"
-msgstr ""
-"For more info please see:  http://php.net/manual/en/function.imap-open.php"
+msgstr "Lisainfo:  http://php.net/manual/en/function.imap-open.php"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:55
@@ -996,40 +992,40 @@ msgstr "Meiliserveri <em>salasõna</em>."
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:59
 msgid "Mail Parser"
-msgstr "Mail Parser"
+msgstr "E-posti käitleja"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:62
 msgid "Require valid sender"
-msgstr "Require valid sender"
+msgstr "Nõua registreeritud saatjat"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:63
 msgid "Require sender to be in the list of valid admin user emails."
-msgstr "Require sender to be in the list of valid admin user emails."
+msgstr "Saatja peab olema administraatorite e-postiloendis."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:64
 #: Documents\!ZENPHOTO\vana_zp/zp-core/functions-image.php:60
 msgid "Debug"
-msgstr "Déboggage"
+msgstr "Vigade salvestamine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:65
 msgid "Output debug info to Zen Photo debug log."
-msgstr "Output debug info to Zen Photo debug log."
+msgstr "Kirjutab vead vigade logisse"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:132
 msgid "Import from Email"
-msgstr "Import from Email"
+msgstr "Impordi e-kirjast"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail.php:133
 msgid ""
 "Import images and video from email as configured in the zpImpMail plugin"
 msgstr ""
-"Import images and video from email as configured in the zpImpMail plugin"
+"Impordib pildid ja videod e-kirjast vastavalt zmImpMail plugina seadistustele"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/federated_logon/Direct access
@@ -1069,8 +1065,8 @@ msgid ""
 "<strong>WARNING:</strong> this demonstration is NOT secure. You should not "
 "leave this script on any public Zenphoto installation."
 msgstr ""
-"<strong>WARNING:</strong> this demonstration is NOT secure. You should not "
-"leave this script on any public Zenphoto installation."
+"<strong>ETTEVAATUST:</strong>see demoskript EI OLE turvaline! Ära kasuta "
+"seda ühelgi avalikul saidil."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/federated_logon/Direct access
@@ -1452,7 +1448,7 @@ msgstr "Vaata slaidiesitusena"
 #: Documents\!ZENPHOTO\vana_zp/themes/zenpage-default/image.php:83
 #: Documents\!ZENPHOTO\vana_zp/zp-core/template-functions.php:2280
 msgid "Image Info"
-msgstr "Détails sur l’image"
+msgstr "Pildi teave"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/exemple-image-based-on-default-theme.php:80
@@ -1567,37 +1563,37 @@ msgstr "Arhiiv"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:10
 msgid "Permet d'optimiser le chargement des images"
-msgstr "Permet d'optimiser le chargement des images"
+msgstr "Võimaldab pildi laadimist optimeerida"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:42
 msgid "Id of navigation container"
-msgstr "Id of navigation container"
+msgstr "Sirvimiskasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:43
 msgid "Put here the name of navigation container ID"
-msgstr "Put here the name of navigation container ID"
+msgstr "Kirjuta siia sirvimiskasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:44
 msgid "ID of image container"
-msgstr "ID of image container"
+msgstr "Pildikasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:45
 msgid "Put here the name of image ID container"
-msgstr "Put here the name of image ID container"
+msgstr "Kirjuta siia pildikasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:46
 msgid "ID of title container"
-msgstr "ID of title container"
+msgstr "Sisukasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:47
 msgid "Put here the name of title ID container"
-msgstr "Put here the name of title ID container"
+msgstr "Kirjuta siia sisukasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:48
@@ -1607,27 +1603,27 @@ msgstr "Kirjelduskasti ID"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:49
 msgid "Put here the name of description image ID container"
-msgstr "Put here the name of description image ID container"
+msgstr "Kirjuta siia kirjelduskasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:50
 msgid "ID of imageId container"
-msgstr "ID of imageId container"
+msgstr "PildiID kasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:51
 msgid "Put here the name of Image Id ID container"
-msgstr "Put here the name of Image Id ID container"
+msgstr "Kirjuta siia pildiID kasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:52
 msgid "ID of image Number container"
-msgstr "ID of image Number container"
+msgstr "Pildinumbri kasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:53
 msgid "Put here the name of ImageNumber container"
-msgstr "Put here the name of ImageNumber container"
+msgstr "Kirjuta siia pildinumbri kasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:54
@@ -1637,37 +1633,37 @@ msgstr "ID of idtag Number container"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:55
 msgid "Put here the name of Tag container"
-msgstr "Put here the name of Tag container"
+msgstr "Sildikasti nimi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:56
 msgid "ID of comments Number container"
-msgstr "ID of comments Number container"
+msgstr "Kommentaaride numbrite kasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:57
 msgid "Put here the name of comment container"
-msgstr "Put here the name of comment container"
+msgstr "Kommentaarikasti nimi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:58
 msgid "ID of comments Rating container"
-msgstr "ID of comments Rating container"
+msgstr "Kommentaarihinnete kasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:59
 msgid "Put here the name of rating container"
-msgstr "Put here the name of rating container"
+msgstr "Hinnetekasti nimi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:60
 msgid "ID of imagemap container"
-msgstr "ID of imagemap container"
+msgstr "Kaardikasti ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:61
 msgid "Put here the name of imagemap container"
-msgstr "Put here the name of imagemap container"
+msgstr "Kirjuta siia kaardikasti nimi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:127
@@ -1686,25 +1682,25 @@ msgstr "Kommentaarid"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:148
 msgid "(No tags...)"
-msgstr "(Aucun tag...)"
+msgstr "(Silte pole...)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:196
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/GoogleMap.php:270
 msgid "Google Map"
-msgstr "Google Map"
+msgstr "Google'i kaart"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:238
 msgid "Your browser is not compatible with Google maps"
-msgstr "Your browser is not compatible with Google maps"
+msgstr "Sinu veebilehitseja ei toeta Google'i kaarti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:447
 #: Documents\!ZENPHOTO\vana_zp/zp-core/admin-edit.php:1181
 #: Documents\!ZENPHOTO\vana_zp/zp-core/template-functions.php:268
 msgid "Delete image"
-msgstr "Supprimer l’image"
+msgstr "Kustuta pilt"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zenonfly/zenonfly.php:448
@@ -1714,7 +1710,7 @@ msgstr "Muuda pilti"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail/import_email.php:12
 msgid "Plugin currently disabled.  Please enable before attempting to use."
-msgstr "Plugin currently disabled.  Please enable before attempting to use."
+msgstr "Plugin on välja lülitatud. Lülita ta sisse enne, kui üritad kasutada."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail/import_email.php:28
@@ -1727,18 +1723,17 @@ msgid ""
 "Options not set properly.  Please configure zpImpMail plugin under plugin "
 "options."
 msgstr ""
-"Options not set properly.  Please configure zpImpMail plugin under plugin "
-"options."
+"Seadistus pole korras. Seadista zpImpMail plugina valikute alajaotuses."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail/utilities/zpimpmail_util.php:35
 msgid "Import Images & Video from Email"
-msgstr "Import Images & Video from Email"
+msgstr "Piltide ja video import e-kirjast"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail/utilities/zpimpmail_util.php:52
 msgid "Imports images and video from email."
-msgstr "Imports images and video from email."
+msgstr "Impordib e-kirjaga saadetud pildid ja videod."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/plugins/zpimpmail/utilities/zpimpmail_util.php:53
@@ -1753,9 +1748,9 @@ msgid ""
 "configured in the <em>zpImpMail</em> plugin and import any images or videos "
 "found as attachments."
 msgstr ""
-"Pressing the button above will attempt to login to the mail server "
-"configured in the <em>zpImpMail</em> plugin and import any images or videos "
-"found as attachments."
+"Sellele nupule vajutamise korral teeb sait katse logida sisse e-"
+"postiserverisse, mis on määratud <em>zpImpMail</em> plugina seadistustes "
+"ning importida kõik pildid ja videod kõigist leitud manustest."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default/404.php:10
@@ -2390,7 +2385,7 @@ msgstr "Muuda"
 #: Documents\!ZENPHOTO\vana_zp/themes/nurmoja_pildikogu/image.php:109
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/comment_form.php:130
 msgid "Add a comment:"
-msgstr "Ajouter un commentaire : "
+msgstr "Lisa kommentaar: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default125/image.php:109
@@ -2399,7 +2394,7 @@ msgstr "Ajouter un commentaire : "
 #: Documents\!ZENPHOTO\vana_zp/themes/nurmoja_pildikogu/image.php:119
 #: Documents\!ZENPHOTO\vana_zp/zp-core/admin-options.php:828
 msgid "Name:"
-msgstr "Nom :"
+msgstr "Nimi:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default125/image.php:110
@@ -2416,7 +2411,7 @@ msgstr "(mitte avaldada)"
 #: Documents\!ZENPHOTO\vana_zp/themes/nurmoja_pildikogu/image.php:126
 #: Documents\!ZENPHOTO\vana_zp/zp-core/admin-comments.php:157
 msgid "E-Mail:"
-msgstr "Email :"
+msgstr "E-post :"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default125/image.php:121
@@ -2451,7 +2446,7 @@ msgstr "Privaatne kommentaar (mitte avaldada)"
 #: Documents\!ZENPHOTO\vana_zp/themes/zpmobile/comment_form/comment_form.php:286
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/comment_form/comment_form.php:279
 msgid "Add Comment"
-msgstr "Ajouter un commentaire"
+msgstr "Lisa kommentaar"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default125/image.php:141
@@ -2471,7 +2466,7 @@ msgstr "Kommentaarid on lukus."
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/comment_form.php:321
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/comment_form.php:324
 msgid "Subscribe to comments"
-msgstr "S’abonner aux commentaires"
+msgstr "Telli kommentaare"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default125/search.php:65
@@ -2536,7 +2531,7 @@ msgstr "Pildi info"
 #: Documents\!ZENPHOTO\vana_zp/zp-core/lib-auth.php:967
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/user_login-out.php:109
 msgid "Login"
-msgstr "Connexion"
+msgstr "Ühendus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default_nurmoja_pildikogu_uus/password_form.php:17
@@ -2555,7 +2550,7 @@ msgstr "Salasõna"
 #: Documents\!ZENPHOTO\vana_zp/zp-core/lib-auth.php:925
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/register_user/register_user_form.php:68
 msgid "Submit"
-msgstr "Soumettre"
+msgstr "Sisesta"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/themes/default_nurmoja_pildikogu_uus/password_form.php:28
@@ -27757,27 +27752,27 @@ msgstr "Les tags des éléments sélectionnés ont été effacés"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1882
 msgid "Categories added to selected items"
-msgstr "Catégories ajoutées aux éléments sélectionnés"
+msgstr "Valitud objektidele lisati kategooriad."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1885
 msgid "Categories cleared from selected items"
-msgstr "Catégories enlevées des éléments sélectionnés"
+msgstr "Valitud objektidelt on kategooriad eemaldatud."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-class-page.php:194
 msgid "Use the Zenpage Page class->getPages() method."
-msgstr "Utilisez la méthode class->getPages() de la classe de page Zenphoto."
+msgstr "Kasutage meetodit class->getPages()."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:459
 msgid "<em>This entry belongs to a protected album.</em>"
-msgstr "<em>Cette entrée appartient à un album protégé.</em>"
+msgstr "<em>See sissekanne kuulub salasõnaga kaitstud albumi juurde.</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:1553
 msgid "Prev page"
-msgstr "Page préc."
+msgstr "Eelmine leht"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:2155
@@ -27785,49 +27780,49 @@ msgstr "Page préc."
 #, php-format
 msgid "%u article"
 msgid_plural "%u articles"
-msgstr[0] "%u article"
+msgstr[0] "%u artikkel"
 msgstr[1] "%u articles"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:2751
 msgid "This page is password protected"
-msgstr "Cette page est protégée par mot de passe"
+msgstr "See leht on salasõnaga kaitstud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:3052
 msgid "News RSS"
-msgstr "Flux RSS des actualités"
+msgstr "RSS uudisvoog"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:3109
 #, php-format
 msgid "View the %s album"
-msgstr "Voir l’album %s"
+msgstr "Vaata albumit %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:3111
 #, php-format
 msgid "View the album %s"
-msgstr "Voir l’album : %s"
+msgstr "Vaata albumit: %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:3115
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:3116
 #, php-format
 msgid "View %s"
-msgstr "Voir %s"
+msgstr "Vaata %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:3124
 #, php-format
 msgid "<code>zenpageAlbumImage()</code> did not find the image %1$s:%2$s"
-msgstr "<code>zenpageAlbumImage()</code> n’a pas trouvé l’image %1$s:%2$s"
+msgstr "<code>zenpageAlbumImage()</code> ei leidnud pilti %1$s:%2$s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\vana_zp/zp-core/zp-extensions/zenpage/zenpage-template-functions.php:3133
 #, php-format
 msgid "<code>zenpageAlbumImage()</code> did not find the album %1$s"
-msgstr "<code>zenpageAlbumImage()</code> n’a pas trouvé l’album %1$s"
+msgstr "<code>zenpageAlbumImage()</code> ei leidnud albumit %1$s"
 
 #~ msgid "<strong>Backtrace:</strong>"
 #~ msgstr "<strong>Trace : </strong> "
