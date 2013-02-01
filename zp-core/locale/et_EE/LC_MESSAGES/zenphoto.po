@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: zenphoto 1.4.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-04 20:58+0200\n"
-"PO-Revision-Date: 2013-01-05 02:47+0200\n"
+"PO-Revision-Date: 2013-01-13 00:02+0200\n"
 "Last-Translator: Jaanus Nurmoja <jaanus.nurmoja@eesti.ee>\n"
 "Language-Team: Jaanus Nurmoja (based on the work by Samy Rabih (Fetard) & "
 "Michel Gagnon) <jaanus.nurmoja@eesti.ee>\n"
@@ -4526,13 +4526,13 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:617
 #: Documents\!ZENPHOTO\zenphoto/zp-core/template-functions.php:81
 msgid "New album name?"
-msgstr "Nom du nouvel album ?"
+msgstr "Uue albumi nimi ?"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:617
 #: Documents\!ZENPHOTO\zenphoto/zp-core/template-functions.php:81
 msgid "new album"
-msgstr "nouvel album"
+msgstr "uus album"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:649
@@ -4542,7 +4542,7 @@ msgstr "Afficher l’image de substitution des vignettes"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:652
 msgid "Show album thumb"
-msgstr "Afficher la vignette de l’album"
+msgstr "Näita albumi pisipilti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:657
@@ -4550,7 +4550,7 @@ msgstr "Afficher la vignette de l’album"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-news-articles.php:250
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:144
 msgid "Set to published"
-msgstr "Publier"
+msgstr "Avalda"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:658
@@ -4558,7 +4558,7 @@ msgstr "Publier"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-news-articles.php:251
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:145
 msgid "Set to unpublished"
-msgstr "Dépublier"
+msgstr "Ära avalda"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:659
@@ -4567,14 +4567,14 @@ msgstr "Dépublier"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-news-articles.php:252
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:146
 msgid "Add tags"
-msgstr "Ajouter des tags"
+msgstr "Lisa sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:660
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-news-articles.php:253
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:147
 msgid "Clear tags"
-msgstr "Effacer les tags"
+msgstr "Eemalda sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:661
@@ -4584,7 +4584,7 @@ msgstr "Effacer les tags"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:148
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:275
 msgid "Disable comments"
-msgstr "Désactiver les commentaires"
+msgstr "Lülita kommentaarid välja"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:662
@@ -4594,7 +4594,7 @@ msgstr "Désactiver les commentaires"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:149
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:281
 msgid "Enable comments"
-msgstr "Activer les commentaires"
+msgstr "Lülita kommentaarid sisse"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:663
@@ -4609,14 +4609,14 @@ msgstr "Lisa piltidele sildid"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:670
 msgid "Clear tags of images"
-msgstr "Effacer les tags des images"
+msgstr "Kustuta piltide sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:673
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1168
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1755
 msgid "Move"
-msgstr "Déplacer"
+msgstr "Paiguta ümber"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:674
@@ -4624,12 +4624,12 @@ msgstr "Déplacer"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1761
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:527
 msgid "Copy"
-msgstr "Copier"
+msgstr "Kopeeri"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:745
 msgid "Hitcounters have been reset"
-msgstr "Les compteurs d’affichage ont été remis à zéro"
+msgstr "Klikiloendurid on nullitud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:750
@@ -4646,13 +4646,13 @@ msgstr "kahanevalt"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:806
 #, php-format
 msgid "Current sort: <em>%1$s%2$s</em>. "
-msgstr "Clé de tri utilisée : <em>%1$s%2$s</em>."
+msgstr "Praegune järjestus: <em>%1$s%2$s</em>."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:810
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1626
 msgid "Drag the albums into the order you wish them displayed."
-msgstr "Déplacez les albums dans l’ordre où vous souhaitez les afficher."
+msgstr "Lohista albumid soovitud järjekorda."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:813
@@ -4687,7 +4687,7 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1886
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1888
 msgid "New subalbum"
-msgstr "Nouveau sous-album"
+msgstr "Uus alamalbum"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:849
@@ -4702,29 +4702,29 @@ msgid ""
 "Thumbnail generation may be time consuming on slow servers on when there are "
 "a lot of images."
 msgstr ""
-"S’il y a beaucoup d’images, la création de vignettes peut prendre beaucoup "
-"de temps sur un serveur lent."
+"Kui pilte on palju ja server aeglane, siis võib pisipiltide loomine kaua "
+"aega võtta. "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:947
 msgid "Click on the image to change the thumbnail cropping."
-msgstr "Cliquer sur l’image pour changer le rognage de la vignette."
+msgstr "Klikka pildil, et muuta pisipildi kärbet."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:949
 msgid "expand all fields"
-msgstr "afficher tous les champs"
+msgstr "näita kõiki välju"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:950
 msgid "collapse all fields"
-msgstr "masquer tous les champs"
+msgstr "peida kõik väljad"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:956
 #, php-format
 msgid "%s (descending)"
-msgstr "%s (décroissant)"
+msgstr "%s (kahanevalt)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:958
@@ -4741,19 +4741,19 @@ msgstr "%s (décroissant)"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:113
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:139
 msgid "Manual"
-msgstr "Manuel"
+msgstr "Käsitsi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:961
 msgid "Display images by:"
-msgstr "Afficher les images par :"
+msgstr "Sorteeri pilte:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1031
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1262
 #, php-format
 msgid "crop %s"
-msgstr "rognage %s"
+msgstr "kärbe %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1040
@@ -4763,7 +4763,7 @@ msgstr "Zoom"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1042
 msgid "View image on website"
-msgstr "Voir l’image sur le site"
+msgstr "Vaata pilti avalikul poolel"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1042
@@ -4781,7 +4781,7 @@ msgstr "Voir l’image sur le site"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:799
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1473
 msgid "View"
-msgstr "Voir"
+msgstr "Vaata"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1043
@@ -5104,7 +5104,7 @@ msgstr "Muuda galeriid"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1623
 #, php-format
 msgid "Current sort: <em>%1$s%2$s</em>."
-msgstr "Clé de tri utilisée : <em>%1$s%2$s</em>."
+msgstr "Praegune järjestus: <em>%1$s%2$s</em>."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1636
@@ -5112,21 +5112,20 @@ msgid ""
 "Select an album to edit its description and data, or <a href=\"?"
 "page=edit&amp;massedit\">mass-edit</a> all gallery level albums."
 msgstr ""
-"Sélectionnez un album pour en modifier les détails et la description, ou <a "
-"href=\"?page=edit&amp;massedit\">modifiez en lot</a> tous les albums de la "
-"galerie."
+"Valige album, mille andmeid ja kirjeldust soovite muuta või <a href=\"?"
+"page=edit&amp;massedit\">muutke hulgitööna</a> kõiki albumeid."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1655
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1696
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1710
 msgid "New album"
-msgstr "Nouvel album"
+msgstr "Uus album"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-edit.php:1707
 msgid "There are no albums for you to edit."
-msgstr "Vous n’avez aucun album à éditer."
+msgstr "Pole ühtki albumit, mida muuta"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-filemanager.php:28
@@ -5146,46 +5145,46 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:31
 msgid "Zenphoto licence"
-msgstr "License Zenphoto"
+msgstr "Zenphoto litsents:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:31
 msgid "License"
-msgstr "Licence"
+msgstr "Litsents"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:32
 msgid "User guide"
-msgstr "Guide de l’utilisateur"
+msgstr "Kasutusjuhend"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:33
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/setup-primitive.php:84
 msgid "Forum"
-msgstr "Forum"
+msgstr "Foorum"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:34
 msgid "Bugtracker"
-msgstr "Bugtracker"
+msgstr "Veapäevik"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:35
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/setup-primitive.php:84
 msgid "View Change log"
-msgstr "Voir la liste des changements"
+msgstr "Vaata uuenduste logi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:35
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/setup-primitive.php:84
 msgid "Change log"
-msgstr "Liste des changements"
+msgstr "Uuenduste logi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:36
 #, php-format
 msgid "Server date: %s"
-msgstr "Date du serveur : %s"
+msgstr "Serveri kuupäev: %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:127
@@ -5206,24 +5205,24 @@ msgstr "haldus"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:234
 #, php-format
 msgid "%1$s administration:%2$s%3$s"
-msgstr "%1$s administration : %2$s%3$s"
+msgstr "%1$s haldus : %2$s%3$s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:235
 msgid "Zenphoto Administration"
-msgstr "Administration de Zenphoto"
+msgstr "Zenphoto haldamine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:244
 #, php-format
 msgid "Logged in as %1$s"
-msgstr "Connecté sous %1$s"
+msgstr "Sisse loginud kui %1$s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:246
 #, php-format
 msgid "Logged in as %1$s (last login %2$s)"
-msgstr "Connecté sous %1$s (dernière connexion : %2$s)"
+msgstr "Sisse loginud kui %1$s (viimane ühendus : %2$s)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:250
@@ -5234,12 +5233,12 @@ msgstr "Välju"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:256
 #, php-format
 msgid "View <em>%s</em>"
-msgstr "Voir <em>%s</em>"
+msgstr "Vaata <em>%s</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:258
 msgid "View gallery index"
-msgstr "Voir l’accueil de la galerie"
+msgstr "Vaata galerii avalehte"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:448
@@ -5249,7 +5248,7 @@ msgstr "Piltide järjestus"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:455
 msgid "Subalbums"
-msgstr "Sous-albums"
+msgstr "Alamalbumid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:789
@@ -5268,14 +5267,14 @@ msgstr "kõik"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1090
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1091
 msgid "add tag"
-msgstr "Ajouter des tags"
+msgstr "Lisa silt"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1206
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:30
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-search.php:73
 msgid "Owner"
-msgstr "Propriétaire"
+msgstr "Omanik"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1223
@@ -5285,7 +5284,7 @@ msgstr "Albumi nimi"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1232
 msgid "Album Description:"
-msgstr "Description de l’album : "
+msgstr "Albumi kirjeldus: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1245
@@ -5301,12 +5300,12 @@ msgstr "Albumi salasõna:"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/downloadList.php:109
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:483
 msgid "clear password"
-msgstr "effacer le mot de passe"
+msgstr "tühjenda salasõna"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1268
 msgid "Album guest user:"
-msgstr "Invité de l’album : "
+msgstr "Albumi külaliskasutaja: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1273
@@ -5318,12 +5317,12 @@ msgstr "Invité de l’album : "
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/downloadList.php:130
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:503
 msgid "Show password"
-msgstr "Afficher le mot de passe"
+msgstr "Kuva salasõna"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1288
 msgid "repeat password:"
-msgstr "Saisir le mot de passe de nouveau"
+msgstr "korda salasõna:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1292
@@ -5340,7 +5339,7 @@ msgstr "Salasõna vihje: "
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:275
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:93
 msgid "Custom"
-msgstr "Personnalisé"
+msgstr "Kohandatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1372
@@ -5350,12 +5349,12 @@ msgstr "Mille järgi allalabumeid järjestada: "
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1378
 msgid "*gallery album sort order"
-msgstr "*ordre de tri des albums de la galerie"
+msgstr "*galerii albumite järjestus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1380
 msgid "*parent album subalbum sort order"
-msgstr "*ordre de tri des images du sous-album comme celui de l’album parent"
+msgstr "*alamalbumis on pildid järjestatud nagu ülemalbumis"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1400
@@ -5363,7 +5362,7 @@ msgstr "*ordre de tri des images du sous-album comme celui de l’album parent"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:1136
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:1717
 msgid "Descending"
-msgstr "Décroissant"
+msgstr "Kahanev"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1414
@@ -5371,7 +5370,7 @@ msgstr "Décroissant"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:1144
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:1723
 msgid "custom fields:"
-msgstr "champs personnalisés :"
+msgstr "oma väljad:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1421
@@ -5382,106 +5381,106 @@ msgstr "Mille järgi pilte järjestada: "
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1427
 msgid "*gallery image sort order"
-msgstr "*ordre de tri des images par défaut de la galerie"
+msgstr "*galerii üldine piltide järjestus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1429
 msgid "*parent album image sort order"
-msgstr "*ordre de tri des images comme celui de l’album parent"
+msgstr "*ülemalbumi piltide järjestus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1476
 msgid "Album theme:"
-msgstr "Albumi teema: "
+msgstr "Albumi kujundusteema: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1488
 msgid "*gallery theme"
-msgstr "*thème de la galerie"
+msgstr "*galerii teema"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1509
 msgid "Album watermarks:"
-msgstr "Filigranes de l’album : "
+msgstr "Albumi vesimärgid: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1535
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:1847
 #: Documents\!ZENPHOTO\zenphoto/zp-core/utilities/reset_albumthumbs.php:35
 msgid "Thumbs"
-msgstr "Vignettes"
+msgstr "Pisipildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1664
 #, php-format
 msgid "Reset hit counter (%u hit)"
 msgid_plural "Reset hit counter (%u hits)"
-msgstr[0] "Remettre le compteur de vues à zéro (total : %u affichage)"
-msgstr[1] "Remettre le compteur de vues à zéro (total : %u affichages)"
+msgstr[0] "Nulli külastusloendur (kokku: %u külastus)"
+msgstr[1] "Nulli külastusloendur kokku: %u külastust)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1677
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:655
 #, php-format
 msgid "Reset rating (%u stars)"
-msgstr "Effacer les votes (%u étoiles)"
+msgstr "Nulli hääletustulemuse  (%u tärni)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1767
 msgid "Rename Folder"
-msgstr "Renommer le dossier"
+msgstr "Nimeta kaust ümber"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1773
 #: Documents\!ZENPHOTO\zenphoto/zp-core/template-functions.php:234
 msgid "Delete album"
-msgstr "Supprimer l’album"
+msgstr "Kustuta album"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1778
 msgid "Album will be deleted when changes are applied."
-msgstr "L’album sera effacé quand les modifications seront appliquées."
+msgstr "Album kustutatakse, kui muudatused on rakendatud."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1785
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1822
 msgid "to:"
-msgstr "vers :"
+msgstr "asukohta :"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1851
 msgid "Dynamic album search:"
-msgstr "Recherche dans l’album dynamique :"
+msgstr "Otsi dünaamilist albumit:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1914
 msgid "Clears the album's cached images."
-msgstr "Supprime les images en cache de l’album."
+msgstr "Kustutab albumi puhverdatud pildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1916
 msgid "Clear album image cache"
-msgstr "Vider le cache des images de l’album"
+msgstr "Tühjenda albumi puhver"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1919
 msgid "Resets album's hit counters."
-msgstr "Remettre à zéro les compteurs de l’album"
+msgstr "Viib albumi külastusloendurid algseisu."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1921
 msgid "Reset album hit counters"
-msgstr "Remettre à zéro les compteurs de l’album"
+msgstr "Nulli albumi külastusloendurid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1928
 msgid "Refreshes the metadata for the album."
-msgstr "Actualise les métadonnées de l’album."
+msgstr "Muudab albumi metaandmed ajakohaseks."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1930
 msgid "Refresh album metadata"
-msgstr "Actualiser les métadonnées de l’album"
+msgstr "Värskenda albumi metaandmeid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1942
@@ -5491,19 +5490,19 @@ msgstr "Dünaamilised albumid"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1943
 msgid "Images (dynamic)"
-msgstr "Images dynamiques"
+msgstr "Dünaamilised pildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1949
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:186
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1468
 msgid "Has Password"
-msgstr "A un mot de passe"
+msgstr "On salasõnaga"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1953
 msgid "Published/Un-published"
-msgstr "Publié / non publié"
+msgstr "Avaldatud / avaldamata"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1954
@@ -5514,17 +5513,17 @@ msgstr "Kommenteerimine sees / väljas"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1955
 msgid "View the album"
-msgstr "Voir l’album"
+msgstr "Vaata albumit"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1956
 msgid "Refresh metadata"
-msgstr "Actualiser les métadonnées"
+msgstr "Värskenda metaandmeid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1960
 msgid "Reset hit counters"
-msgstr "Remettre les compteurs à zéro"
+msgstr "Nulli loendurid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:1992
@@ -5554,7 +5553,7 @@ msgstr "albumid"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2031
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2036
 msgid "Subalbum List"
-msgstr "Liste des sous-albums"
+msgstr "Alamalbumite loetelu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2047
@@ -5562,25 +5561,25 @@ msgstr "Liste des sous-albums"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:262
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1060
 msgid "Password protected"
-msgstr "Protégé par mot de passe"
+msgstr "Salasõnaga kaitstud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2056
 #, php-format
 msgid "Un-publish the album %s"
-msgstr "Dépublier l’album %s"
+msgstr "Peida album %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2070
 #, php-format
 msgid "Publish the album %s"
-msgstr "Publier l’album %s"
+msgstr "Avalda album %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2074
 #, php-format
 msgid "Unpublished"
-msgstr "Non publié(e)"
+msgstr "Avaldamata"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2093
@@ -5600,51 +5599,51 @@ msgstr "Kommenteerimine väljas"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2118
 msgid "View album"
-msgstr "Voir l’album"
+msgstr "Vaata albumit"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2119
 #, php-format
 msgid "View album %s"
-msgstr "Voir l’album %s"
+msgstr "Vaata albumit %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2126
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2144
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2164
 msgid "unavailable"
-msgstr "pas disponible"
+msgstr "pole saadaval"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2130
 #, php-format
 msgid "Refresh metadata for the album %s"
-msgstr "Actualiser les métadonnées de l’album %s"
+msgstr "Värskenda albumi %s metaandmeid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2131
 #, php-format
 msgid "Refresh metadata in the album %s"
-msgstr "Actualiser les métadonnées dans l’album %s"
+msgstr "Värskenda metaandmeid albumis %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2148
 #, php-format
 msgid "Reset hit counters for album %s"
-msgstr "Remettre à zéro les compteurs de l’album %s"
+msgstr "Nulli albumi %s loendurid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2149
 #, php-format
 msgid "Reset hit counters for the album %s"
-msgstr "Remettre à zéro les compteurs de l’album %s"
+msgstr "Albumi %s loendurid viiakse algseisu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2168
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2169
 #, php-format
 msgid "Delete the album %s"
-msgstr "Supprimer l’album %s"
+msgstr "Kustuta album %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2358
@@ -5654,13 +5653,13 @@ msgstr "Supprimer l’album %s"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2376
 #, php-format
 msgid "page %u"
-msgstr "page %u"
+msgstr "lehekülg %u"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2358
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2360
 msgid "Previous page"
-msgstr "Page précédente"
+msgstr "Eelmine lehekülg"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2731
@@ -5668,29 +5667,29 @@ msgstr "Page précédente"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2741
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2746
 msgid "Cannot create new theme."
-msgstr "Impossible de créer le nouveau thème."
+msgstr "Ei saa luua uut kujundusteemat"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2731
 #, php-format
 msgid "Directory \"%s\" already exists!"
-msgstr "Le dossier « %s » existe déjà !"
+msgstr "Kaust %s on juba olemas!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2736
 #, php-format
 msgid "Cannot find theme directory \"%s\" to copy!"
-msgstr "Impossible de trouver le dossier « %s » à copier !"
+msgstr "Kausta %s, mida soovid kopeerida, pole võimalik leida!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2741
 msgid "The <tt>/themes</tt> directory is not writable!"
-msgstr "Le dossier <tt>/themes</tt> n’est pas accessible en écriture !"
+msgstr "Kaust <tt>/themes</tt> ei ole kirjutatav!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2746
 msgid "Could not create directory for the new theme"
-msgstr "Impossible de créer le dossier du nouveau thème"
+msgstr "Ei saa kuidagi luua uue kujundusteeema kausta"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2779
@@ -5699,47 +5698,46 @@ msgid ""
 "An error occurred while copying files. Please delete manually the new theme "
 "directory '%s' and retry or copy files manually."
 msgstr ""
-"Une erreur est survenue lors de la copie des fichiers. Veuillez supprimer "
-"manuellement le nouveau dossier « %s » et essayer de nouveau, ou copiez les "
-"fichiers manuellement."
+"Failide kopeerimisel tekkis viga. Kustuta uue kujunduse kaust %s käsitsi ja "
+"proovi uuesti - või kopeeri failid käsitsi."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2787
 #, php-format
 msgid "Your theme, based on theme %s"
-msgstr "Votre thème, basé sur le thème %s"
+msgstr "Teie kujundus, mis tugineb kujundusele %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2789
 msgid "Your theme"
-msgstr "Votre thème"
+msgstr "Teie kujundus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2813
 msgid "New custom theme created successfully!"
-msgstr "Le nouveau thème personnalisé a été créé avec succès !"
+msgstr "Uue kohandatud kujunduse loomine õnnestus!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2815
 msgid "New custom theme created, but its description could not be updated"
 msgstr ""
-"Le nouveau thème personnalisé a été créé, mais sa description ne peut être "
-"mise à jour"
+"Uus kohandatud kujundus loodi, kuid selle kirjeldust ei olnud võimalik "
+"uuendada"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:2961
 msgid "Rights:"
-msgstr "Droits :"
+msgstr "Õigused:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3021
 msgid "edit rights"
-msgstr "Droits d’édition"
+msgstr "Muutmisõigused"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3022
 msgid "view unpublished items"
-msgstr "Afficher les éléments non publiés"
+msgstr "Näita peidetud elemente"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3023
@@ -5820,8 +5818,8 @@ msgid ""
 "Users with \"Admin\" or \"Manage all %1$s\" rights can manage all %2$s. All "
 "others may manage only those that are selected."
 msgstr ""
-"Users with \"Admin\" or \"Manage all %1$s\" rights can manage all %2$s. All "
-"others may manage only those that are selected."
+"Kasutajad \"Admin\" või \"Manage all %1$s\" õigustega saavad hallata kõike "
+"%2$s. Ülejäänud saavad hallata ainult seda, mis siin on valitud. "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3107
@@ -5834,16 +5832,16 @@ msgstr "You may manage these %s subject to the above rights."
 #, php-format
 msgid "Show %u album level"
 msgid_plural "Show %u album levels"
-msgstr[0] "Afficher %u niveau d’albums"
-msgstr[1] "Afficher %u niveaux d’albums"
+msgstr[0] "Näita %u taseme albumit"
+msgstr[1] "Näita %u taseme albumeid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3520
 #, php-format
 msgid "%u image per page"
 msgid_plural "%u images per page"
-msgstr[0] "%u image par page"
-msgstr[1] "%u images par page"
+msgstr[0] "%u pilt leheküljel"
+msgstr[1] "%u pilti leheküljel"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3595
@@ -5856,20 +5854,20 @@ msgstr "Ok"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3702
 msgid "Destination"
-msgstr "Destination"
+msgstr "Sihtkoht"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3982
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4014
 #, php-format
 msgid "codeblock %u"
-msgstr "Bloc de code %u"
+msgstr " koodiblokk %u"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:3983
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4018
 msgid "add codeblock"
-msgstr "ajouter un bloc de code"
+msgstr "lisa koodiblokk"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4105
@@ -5880,19 +5878,19 @@ msgstr "« %s » tentative d’hameçonnage bloquée."
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4311
 msgid "setup"
-msgstr "installation"
+msgstr "paigaldamine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4311
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:128
 msgid "security"
-msgstr "sécurité"
+msgstr "turvalisus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4311
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/markRelease.php:42
 msgid "debug"
-msgstr "déboggage"
+msgstr "veatuvastus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4348
@@ -5951,98 +5949,96 @@ msgstr "kasutajad"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4358
 msgid "utilities"
-msgstr "utilitaires"
+msgstr "tarvikud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4475
 #, php-format
 msgid "%s failed to delete."
-msgstr "%s n’a pu être effacé(e)."
+msgstr "%s ei suudetud kustutada"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4477
 #, php-format
 msgid "%s deleted successfully."
-msgstr "%s a bien été supprimé(e)."
+msgstr "%s on edukalt kustutatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4482
 msgid "You must supply a  password."
-msgstr "Vous devez fournir un mot de passe."
+msgstr "Peate sisestama salasõna"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4484
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/register_user.php:419
 msgid "Your passwords did not match."
-msgstr "Vos mots de passe ne correspondent pas"
+msgstr "Salasõnad ei kattu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4491
 msgid ""
 "The image edit form submission has been truncated. Try displaying fewer "
 "images on a page."
-msgstr ""
-"Le formulaire d’édition des images a été tronqué. Veuillez afficher moins "
-"d’images par page."
+msgstr "Piltide muutmise vormi kärbiti. Palun kuvage vähem pilte ühel lehel"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4494
 msgid "Hit counters have been reset."
-msgstr "Les compteurs d’affichage ont été remis à zéro."
+msgstr "Külastusloendurid viidi algseisu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4497
 msgid "Cache has been purged."
-msgstr "Le cache a été vidé."
+msgstr "Puhver tühjendati."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4500
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-upload.php:139
 msgid "Your files have been uploaded."
-msgstr "Vos fichiers ont été chargés."
+msgstr "Failid on üles laetud."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4503
 #, php-format
 msgid "<em>%s</em> already exists."
-msgstr "<em>%s</em> existe déjà."
+msgstr "<em>%s</em> on juba olemas"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4518
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:911
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1780
 msgid "Selected items published"
-msgstr "Les éléments sélectionnés sont publiés"
+msgstr "Valitud elemendid on avaldatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4521
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:915
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1783
 msgid "Selected items unpublished"
-msgstr "Les éléments sélectionnés ne sont plus publiés"
+msgstr "Valitud elemente ei näidata enam avalikult"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4524
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1786
 msgid "Comments enabled for selected items"
-msgstr "Les commentaires pour les éléments sélectionnés sont activés"
+msgstr "Valitud elementide jaoks on kommentaarid sisse lülitatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4527
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1789
 msgid "Comments disabled for selected items"
-msgstr "Les commentaires pour les éléments sélectionnés sont désactivés"
+msgstr "Valitud elementide jaoks on kommentaarid välja lülitatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4530
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1792
 msgid "Hitcounter for selected items"
-msgstr "Compteur d’affichage pour les éléments sélectionnés"
+msgstr "Valitud elementide külastusloendur"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4533
 msgid "Tags added for selected items"
-msgstr "Les tags ont été ajoutés aux éléments sélectionnés"
+msgstr "Valitud elementidele lisati sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4536
@@ -6052,22 +6048,22 @@ msgstr "Les tags ont été effacés des éléments sélectionnés"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4539
 msgid "Tags added for images of selected items"
-msgstr "Les tags ont été ajoutés aux images des éléments sélectionnés"
+msgstr "Valitud elementide piltidele lisati sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4542
 msgid "Tags cleared for images of selected items"
-msgstr "Les tags ont été effacés des images des éléments sélectionnés"
+msgstr "Valitud elementide piltidelt eemaldati sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4552
 msgid "Image already exists."
-msgstr "L’image existe déjà."
+msgstr "Pilt on juba olemas"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4555
 msgid "Album already exists."
-msgstr "L’album existe déjà."
+msgstr "Album on juba olemas"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-functions.php:4558
@@ -6102,14 +6098,14 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:25
 msgid "Filename"
-msgstr "Nom de fichier"
+msgstr "Faili nimi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:26
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-search.php:66
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:557
 msgid "Date"
-msgstr "Date"
+msgstr "Kuupäev"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:27
@@ -6130,7 +6126,7 @@ msgstr "ID"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:29
 msgid "Filemtime"
-msgstr "Date de modification"
+msgstr "Muutmiskuupäev"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:58
@@ -6156,13 +6152,13 @@ msgstr "lehed"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:185
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1054
 msgid "articles"
-msgstr "articles"
+msgstr "artiklid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:94
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage-functions.php:480
 msgid "categories"
-msgstr "catégories"
+msgstr "kategooriad"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:100
@@ -6177,27 +6173,27 @@ msgstr "kommentaarid"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:122
 msgid "general"
-msgstr "général"
+msgstr "üldine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:126
 msgid "gallery"
-msgstr "galerie"
+msgstr "galerii"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:131
 msgid "comment"
-msgstr "commentaire"
+msgstr "kommentaar"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:135
 msgid "plugin"
-msgstr "extension"
+msgstr "plugin"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:141
 msgid "theme"
-msgstr "teema"
+msgstr "kujundus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:144
@@ -6208,7 +6204,7 @@ msgstr "valikud"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:151
 msgid "themes"
-msgstr "teemad"
+msgstr "kujundused"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:158
@@ -6224,7 +6220,7 @@ msgstr "logid"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-globals.php:174
 msgid "Restore"
-msgstr "Restaurer"
+msgstr "Taasta"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-logs.php:24
@@ -6265,13 +6261,13 @@ msgstr "Voir les journaux :"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-logs.php:115
 #, php-format
 msgid "Delete %s"
-msgstr "Supprimer %s"
+msgstr "Kustuta %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-logs.php:122
 #, php-format
 msgid "Reset %s"
-msgstr "Réinitialiser %s"
+msgstr "%s algseisu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-logs.php:126
@@ -6295,7 +6291,7 @@ msgstr "Logifaili mahupiirang"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-logs.php:138
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:1005
 msgid "Update"
-msgstr "Update"
+msgstr "Uuenda"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-logs.php:218
@@ -6326,7 +6322,7 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:476
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-plugins.php:109
 msgid "Applied"
-msgstr "Sauvegardé"
+msgstr "Rakendatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:486
@@ -6392,23 +6388,23 @@ msgstr "Lisez le guide de dépannage sur zenphoto.org pour plus de détails."
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-users.php:446
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:268
 msgid "reset"
-msgstr "reset"
+msgstr "algseisu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:536
 msgid "Time zone:"
-msgstr "Fuseau horaire :"
+msgstr "Ajavöönd:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:542
 msgid "*not specified"
-msgstr "*non spécifié"
+msgstr "*määramata"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:547
 #, php-format
 msgid "Your server reports its time zone as: <code>%s</code>."
-msgstr "Votre serveur renvoie ce fuseau horaire : <code>%s</code>."
+msgstr "Teie server saatis järgmise ajavööndi : <code>%s</code>."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:548
@@ -6420,16 +6416,16 @@ msgid_plural ""
 "Your time zone offset is: %d hours. If your time zone is different from the "
 "servers, select the correct time zone here."
 msgstr[0] ""
-"Votre décalage horaire est d’%d heure. Si votre fuseau horaire est différent "
-"de celui de votre serveur, veuillez sélectionner le bon fuseau."
+"Teie ajavööndi erinevus GMT-st on %d tund. Kui teie vööndiaeg erineb serveri "
+"omast, siis valige sobiv."
 msgstr[1] ""
-"Votre décalage horaire est de %d heures. Si votre fuseau horaire est "
-"différent de celui de votre serveur, veuillez sélectionner le bon fuseau."
+"Teie ajavööndi erinevus GMT-st on %d tundi. Kui teie vööndiaeg erineb "
+"serveri omast, siis valige sobiv."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:554
 msgid "Time offset (hours):"
-msgstr "Décalage horaire (en heures) : "
+msgstr "Ajavööndi erinevus GMTst : "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:559
@@ -6439,11 +6435,9 @@ msgid ""
 "the US East Coast (<em>GMT</em> - 5) and you are on the Pacific Coast "
 "(<em>GMT</em> - 8), set the offset to 3 (-5 - (-8))."
 msgstr ""
-"Si vous êtes dans un fuseau horaire différent de celui de votre serveur, "
-"spécifiez le décalage en heures à appliquer. Par exemple, si votre serveur "
-"est sur la côte Est des États-Unis, (<em>TU</em> - 5) et que vous vous "
-"situez sur la côte Ouest (<em>TU</em> - 8), appliquez un décalage de 3 (-5 -"
-"(-8))."
+"Kui teie server elab muus ajavööndis kui te ise, siis määrake siin tema "
+"erinevus. Näiteks kui elate Eestis, aga teie server elab Kesk-Euroopa aja "
+"järgi, siis on erinevus 1."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:566
@@ -6453,17 +6447,17 @@ msgstr "URLi valikud"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:581
 msgid "mod rewrite"
-msgstr "Utiliser mod_rewrite"
+msgstr "Kasuta mod_rewrite"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:587
 msgid "UTF8 image URIs"
-msgstr "URI des images au format UTF-8"
+msgstr "Piltide URI UTF-8 vormingus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:590
 msgid "mod_rewrite suffix:"
-msgstr "Suffixe des pages (avec mod_rewrite) : "
+msgstr "Lehekülgede järelliide (mod_rewrite abil): "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:595
@@ -6471,8 +6465,8 @@ msgid ""
 "If you have Apache <em>mod rewrite</em>, put a checkmark on the <em>mod "
 "rewrite</em> option and you'll get nice cruft-free URLs."
 msgstr ""
-"Si la fonction <em>mod_rewrite</em> d’Apache est activée, cochez cette case "
-"pour avoir des URL « propres » (avec un chemin direct)."
+"Kui <em>mod_rewrite</em> Apache serveris sisse lülitatud, siis tehke siia "
+"märge, et muuta URL-id 'puhtaks'"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:596
@@ -6480,9 +6474,9 @@ msgid ""
 "If the checkbox is disabled, setup did not detect a working Apache "
 "<em>mod_rewrite</em> facility and proper <em>.htaccess</em> file."
 msgstr ""
-"Si cette case est désactivée, le module d’Apache <em>mod_rewrite</em> n’est "
-"pas fonctionnel (ou n’est pas installé) et il n’y a pas de fichier <em>."
-"htaccess</em> adéquat."
+"Kui märget teha ei saa, siis pole <em>mod_rewrite</em> moodul serveris "
+"kasutusel (või üldse paigaldatud) ning puudub asjakohane <em>.htaccess</em> "
+"fail."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:599
@@ -6490,9 +6484,8 @@ msgid ""
 "If you are having problems with images whose names contain characters with "
 "diacritical marks try changing the <em>UTF8 image URIs</em> setting."
 msgstr ""
-"Si vous avez des problèmes avec les images dont le nom comporte des "
-"caractères accentués, essayez de changer la valeur du paramètre <em>URI des "
-"images au format UTF-8</em>."
+"Kui failinimes on rõhumärkidega tähti ja sellest tekib probleeme, siis "
+"püüdke muuta UTF-8 pildi URI seadeid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:600
@@ -6509,7 +6502,7 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:604
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-users.php:745
 msgid "Language:"
-msgstr "Langue :"
+msgstr "Keel:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:613
@@ -6532,7 +6525,7 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:708
 msgid "Multi-lingual"
-msgstr "Interface multilingue"
+msgstr "Mitmekeelne keskkond"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:712
@@ -6540,8 +6533,8 @@ msgid ""
 "You can disable languages by unchecking their checkboxes. Only checked "
 "languages will be available to the installation."
 msgstr ""
-"Vous pouvez désactiver certaines langues en décochant les cases "
-"correspondantes. Seules les langues cochées seront disponibles par la suite."
+"Võid soovi korral keeli sisse ja välja lülitada. Ainult märgitud keeled "
+"jäävad kasutusele. "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:713
@@ -6550,8 +6543,8 @@ msgid ""
 "<em>HTTP_Accept_Language</em> to use the language preference specified by "
 "the viewer's browser.)"
 msgstr ""
-"La langue à afficher de préférence. (Sélectionner <em>HTTP_Accept_Language</"
-"em> pour que la langue d’affichage soit celle du fureteur client.)"
+"Eelistatav keel. (Vali <em>HTTP_Accept_Language</em> , siis sõltub keel "
+"vaataja brauserist.)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:714
@@ -6574,12 +6567,12 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:719
 msgid "Date format:"
-msgstr "Format de la date : "
+msgstr "Kuupäevavorming : "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:724
 msgid "Preferred date representation"
-msgstr "Format préféré pour la représentation des dates"
+msgstr "Eelistatav vorming kuupäevade näitamiseks"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:725
@@ -6624,12 +6617,12 @@ msgstr "02-25-2008"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:733
 msgid "2008. February 25. 15:30"
-msgstr "2008. février 25. 15:30"
+msgstr "2008. veebruar 25. 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:734
 msgid "2008. February 25."
-msgstr "2008. février 25."
+msgstr "2008. veebruar 25."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:735
@@ -6644,52 +6637,52 @@ msgstr "2008-02-25"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:737
 msgid "25 Feb 2008 15:30"
-msgstr "25 fév 2008 15:30"
+msgstr "25 veebr 2008 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:738
 msgid "25 Feb 2008"
-msgstr "25 fév 2008"
+msgstr "25 veebr 2008"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:739
 msgid "25 February 2008 15:30"
-msgstr "25 février 2008 15:30"
+msgstr "25 veebruar 2008 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:740
 msgid "25 February 2008"
-msgstr "25 février 2008"
+msgstr "25 veebruar 2008"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:741
 msgid "25. Feb 2008 15:30"
-msgstr "25. fév 2008 15:30"
+msgstr "25. veebr 2008 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:742
 msgid "25. Feb 2008"
-msgstr "25. fév 2008"
+msgstr "25.veebr 2008"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:743
 msgid "25. Feb. 08 15:30"
-msgstr "25. fév. 08 15:30"
+msgstr "25. veebr. 08 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:744
 msgid "25. Feb. 08"
-msgstr "25. fév. 08"
+msgstr "25. veebr. 08"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:745
 msgid "25. February 2008 15:30"
-msgstr "25. février 2008 15:30"
+msgstr "25. veebruar 2008 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:746
 msgid "25. February 2008"
-msgstr "25. février 2008"
+msgstr "25. veebruar 2008"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:747
@@ -6734,42 +6727,42 @@ msgstr "25-02-2008"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:755
 msgid "25-Feb-08 15:30"
-msgstr "25-fév-08 15:30"
+msgstr "25-veebr-08 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:756
 msgid "25-Feb-08"
-msgstr "25-fév-08"
+msgstr "25-veebr-08"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:757
 msgid "25-Feb-2008 15:30"
-msgstr "25-fév-2008 15:30"
+msgstr "25-veebr-2008 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:758
 msgid "25-Feb-2008"
-msgstr "25-fév-2008"
+msgstr "25-veebr-2008"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:759
 msgid "Feb 25, 2008 15:30"
-msgstr "fév 25, 2008 15:30"
+msgstr "veebr 25, 2008 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:760
 msgid "Feb 25, 2008"
-msgstr "fév 25, 2008"
+msgstr "veebr 25, 2008"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:761
 msgid "February 25, 2008 15:30"
-msgstr "février 25, 2008 15:30"
+msgstr "veebruar 25, 2008 15:30"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:762
 msgid "February 25, 2008"
-msgstr "février 25, 2008"
+msgstr "veebruar 25, 2008"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:779
@@ -6779,14 +6772,14 @@ msgid ""
 "\"><span class=\"nowrap\"><code>strftime()</code></span></a> format string "
 "in the text box."
 msgstr ""
-"Format des dates. Sélectionner dans la liste ou choisir <code>personnalisé</"
-"code> puis saisir une chaîne de formatage <a href=\"http://fr.php.net/manual/"
-"fr/function.strftime.php\"><code>strftime()</code></a> dans le champ texte."
+"Valige loetelust kuupäevavorming või sea <code>oma vorming</code> kasutades "
+"<a href=\"http://fr.php.net/manual/fr/function.strftime.php\"><code>strftime"
+"()</code></a> vormingut."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:782
 msgid "Charset:"
-msgstr "Encodage : "
+msgstr "Märgistik: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:799
@@ -6794,29 +6787,26 @@ msgid ""
 "The character encoding to use internally. Leave at <em>Unicode (UTF-8)</em> "
 "if you are unsure."
 msgstr ""
-"L’encodage des caractères à utiliser en interne. Laissez <em>Unicode (UTF-8)"
-"</em> si vous n’êtes pas sûr."
+"Märgistik sisemiseks kasutamiseks. Kui täpselt ei tea, vali <em>Unicode "
+"(UTF-8)</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:801
 msgid ""
 "Character sets <span style=\"color:gray\">shown in gray</span> have no "
 "character translation support."
-msgstr ""
-"Les jeux de caractères <span style=\"color:gray\">marqués en gris</span> "
-"n’ont pas de table de correspondance de caractères."
+msgstr "Hallis kirjas märgistikel puudub vastav tähetabel. "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:807
 msgid "Allowed tags:"
-msgstr "Loubatud sildid: "
+msgstr "Lubatud sildid: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:836
 msgid ""
 "Tags and attributes allowed in comments, descriptions, and other fields."
-msgstr ""
-"Tags and attributes allowed in comments, descriptions, and other fields."
+msgstr "Kommentaarid, kirjeldused ja teised väljad võib varustada siltidega."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:837
@@ -6824,13 +6814,13 @@ msgid ""
 "Follow the form <em>tag</em> =&gt; (<em>attribute</em> =&gt; (<em>attribute</"
 "em>=&gt; (), <em>attribute</em> =&gt; ()...)))"
 msgstr ""
-"Suivez le schéma suivant <em>tag</em> =&gt; (<em>attribut</em> =&gt; "
+"Järgige seda skeemi <em>tag</em> =&gt; (<em>attribut</em> =&gt; "
 "(<em>attribut</em>=&gt; (), <em>attribut</em> =&gt; ()...)))"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:839
 msgid "reset to default"
-msgstr "réinitialiser"
+msgstr "algseisu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:845
@@ -6840,7 +6830,7 @@ msgstr "Nimi:"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:847
 msgid "Email:"
-msgstr "Email :"
+msgstr "E-post:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:853
@@ -6848,8 +6838,8 @@ msgid ""
 "This email name and address will be used as the <em>From</em> address for "
 "all mails sent by Zenphoto."
 msgstr ""
-"Cette adresse email est utilisée comme adresse d’<em>expéditeur</em> pour "
-"tous les emails envoyés par Zenphoto."
+"See märgitakse <em>saatja aadressiks</em> kõigis kirjades, mille see "
+"veebisait teele saadab. "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-options.php:857
@@ -9933,77 +9923,76 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-users.php:861
 msgid "Revert rights"
-msgstr "Rétablir les droits"
+msgstr "Taasta õigused"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-users.php:878
 msgid "User names may not contain \"?\", \"&\", or quotation marks."
 msgstr ""
-"Le nom d’utilisateur ne peut contenir « ? », « & », « \" » ni des caractères "
-"accentués."
+"Kasutajanimes ei tohi olla  ?,  &, \" ega ka täpitähti või rõhumärgiga tähti."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin-users.php:883
 #, php-format
 msgid "The user \"%s\" already exists."
-msgstr "L’utilisateur « %s » existe déjà."
+msgstr "Kasutaja %s on juba olemas"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:45
 msgid "Image cache cleared."
-msgstr "Cache d’images vidé."
+msgstr "Pildipuhver tühjendati"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:55
 msgid "RSS cache cleared."
-msgstr "Cache RSS vidé."
+msgstr "RSS puhver tühjendati"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:65
 msgid "HTML cache cleared."
-msgstr "Cache HTML vidé."
+msgstr "HTML puhver tühjendati"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:94
 msgid "purge Image cache"
-msgstr "purger le cache d’images"
+msgstr "tühjenda pildipuhver"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:95
 msgid "purge RSS cache"
-msgstr "purger le cache RSS"
+msgstr "tühenda RSS puhver"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:96
 msgid "reset all hitcounters"
-msgstr "remettre les compteurs à zéro"
+msgstr "loendurid nulli"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:102
 #, php-format
 msgid "You do not have proper rights to %s."
-msgstr "Vous n’avez pas les droits suffisants pour %s."
+msgstr "Teil pole %s jaoks piisavalt õigusi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:107
 #, php-format
 msgid "You do not have proper rights to access %s."
-msgstr "Vous n’avez pas les droits suffisants pour accéder à %s."
+msgstr "Teil pole piisavalt õigusi, et avada %s."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:192
 msgid "Installation information"
-msgstr "Information sur l’installation"
+msgstr "Paigaldamisteave"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:197
 msgid "<em>Debug build</em>"
-msgstr "<em>Version de développement</em>"
+msgstr "<em>Arendusversioon</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:199
 msgid "Official build"
-msgstr "Version officielle"
+msgstr "Ametlik versioon"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:202
@@ -10011,24 +10000,24 @@ msgstr "Version officielle"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:313
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/security-logger.php:124
 msgid "clone"
-msgstr "clone"
+msgstr "klooni"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:206
 #, php-format
 msgid "Zenphoto version <strong>%1$s [%2$s] (%3$s)</strong>"
-msgstr "Version de Zenphoto <strong>%1$s [%2$s] (%3$s)</strong>"
+msgstr "Zenphoto versioon <strong>%1$s [%2$s] (%3$s)</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:208
 #, php-format
 msgid "Current locale setting: <strong>%1$s</strong>"
-msgstr "Paramètre régional présentement utilisé : <strong>%1$s</strong>"
+msgstr "Hetkel kasutatav keel: <strong>%1$s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:210
 msgid "<strong>Locale setting has failed</strong>"
-msgstr "<strong>Le paramètre régional a échoué !</strong>"
+msgstr "<strong>Keele seadistamine ebaõnnestus!</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:215
@@ -10050,13 +10039,13 @@ msgstr "Kasutusesolev teema: <strong>%1$s</strong>"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:230
 #, php-format
 msgid "PHP version: <strong>%1$s</strong>"
-msgstr "Version de PHP : <strong>%1$s</strong>"
+msgstr "PHP versioon: <strong>%1$s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:271
 #, php-format
 msgid "PHP Error reporting: <strong>%s</strong>"
-msgstr "Erreur PHP rapportée : <strong>%s</strong>"
+msgstr "PHP veateated: <strong>%s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:277
@@ -10081,13 +10070,13 @@ msgstr "<em>display_errors</em> on <strong>väljas</strong>"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:287
 #, php-format
 msgid "Graphics support: <strong>%s</strong>"
-msgstr "Bibliothèque graphique : <strong>%s</strong>"
+msgstr "Graafikatugi: <strong>%s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:297
 #, php-format
 msgid "supporting: %s"
-msgstr "%s supporté"
+msgstr "%s on toetatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:300
@@ -10096,29 +10085,29 @@ msgid ""
 "PHP memory limit: <strong>%1$s</strong> (Note: Your server might allocate "
 "less!)"
 msgstr ""
-"Limite de mémoire de PHP : <strong>%1$s</strong> (Note : votre serveur peut "
-"en fournir moins !)"
+"PHP mälupiirang: <strong>%1$s</strong> (Märkus: tõenäoliselt suudab teie "
+"server vähem mahutada!)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:304
 #: Documents\!ZENPHOTO\zenphoto/zp-core/utilities/database_reference.php:102
 #, php-format
 msgid "%1$s version: <strong>%2$s</strong>"
-msgstr "%1$s version : <strong>%2$s</strong>"
+msgstr "%1$s versioon : <strong>%2$s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:308
 #: Documents\!ZENPHOTO\zenphoto/zp-core/utilities/database_reference.php:105
 #, php-format
 msgid "Database name: <strong>%1$s</strong>"
-msgstr "Nom de la base de données : <strong>%s</strong>"
+msgstr "Andmebaasi nimi: <strong>%s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:313
 #: Documents\!ZENPHOTO\zenphoto/zp-core/utilities/database_reference.php:111
 #, php-format
 msgid "Table prefix: <strong>%1$s</strong>"
-msgstr "Préfixe des tables : <strong>%1$s</strong>"
+msgstr "Tabelite eesliide: <strong>%1$s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:322
@@ -10129,40 +10118,40 @@ msgstr "Spämmifiltrit ole seadistatud."
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:324
 #, php-format
 msgid "Spam filter: <strong>%s</strong>"
-msgstr "Filtre anti-spam : <strong>%s</strong>"
+msgstr "Spämmifilter: <strong>%s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:328
 #, php-format
 msgid "CAPTCHA generator: <strong>%s</strong>"
-msgstr "Générateur de Captcha : <strong>%s</strong>"
+msgstr "CAPTCHA generaator: <strong>%s</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:334
 msgid "There is no mail handler configured!"
-msgstr "There is no mail handler configured!"
+msgstr "E-posti käitlejat pole seadistatud!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:345
 #, php-format
 msgid "%u active plugin:"
 msgid_plural "%u active plugins:"
-msgstr[0] "%u extension activée :"
-msgstr[1] "%u extensions activées :"
+msgstr[0] "%u sisselülitatud plugin (klikka avamiseks või sulgemiseks):"
+msgstr[1] "%u sisselülitatud pluginat (klikka avamiseks või sulgemiseks):"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:381
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:419
 msgid "<em>none</em>"
-msgstr "<em>aucune</em>"
+msgstr "<em>ei ühtki</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:392
 #, php-format
 msgid "%u active filter:"
 msgid_plural "%u active filters:"
-msgstr[0] "%u filtre activé :"
-msgstr[1] "%u filtres activés :"
+msgstr[0] "%u töötav filter:"
+msgstr[1] "%u töötavat filtrit:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:453
@@ -10172,36 +10161,36 @@ msgstr "Varia"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:462
 msgid "Utility functions"
-msgstr "Utilitaires"
+msgstr "Tarvikufunktsioonid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:507
 msgid "Gallery Stats"
-msgstr "Statistiques de la galerie"
+msgstr "Galerii statistika"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:514
 #, php-format
 msgid "<strong>%1$u</strong> Image (%2$u un-published)"
 msgid_plural "<strong>%1$u</strong> Images (%2$u un-published)"
-msgstr[0] "<strong>%1$u</strong> image (%2$u non publiée)"
-msgstr[1] "<strong>%1$u</strong> images (%2$u non publiée(s))"
+msgstr[0] "<strong>%1$u</strong> pilt (%2$u pole avaldatud)"
+msgstr[1] "<strong>%1$u</strong> pilti (%2$u pole avaldatud)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:516
 #, php-format
 msgid "<strong>%u</strong> Image"
 msgid_plural "<strong>%u</strong> Images"
-msgstr[0] "<strong>%u</strong> image"
-msgstr[1] "<strong>%u</strong> images"
+msgstr[0] "<strong>%u</strong>pilt"
+msgstr[1] "<strong>%u</strong> pilti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:525
 #, php-format
 msgid "<strong>%1$u</strong> Album (%2$u un-published)"
 msgid_plural "<strong>%1$u</strong> Albums (%2$u un-published)"
-msgstr[0] "<strong>%1$u</strong> album (%2$u non publié)"
-msgstr[1] "(<strong>%1$u</strong> albums (%2$u non publié(s))"
+msgstr[0] "<strong>%1$u</strong> album (%2$u pole avaldatud)"
+msgstr[1] "(<strong>%1$u</strong> albumit (%2$u pole avaldatud)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:527
@@ -10209,63 +10198,63 @@ msgstr[1] "(<strong>%1$u</strong> albums (%2$u non publié(s))"
 msgid "<strong>%u</strong> Album"
 msgid_plural "<strong>%u</strong> Albums"
 msgstr[0] "<strong>%u</strong> album"
-msgstr[1] "<strong>%u</strong> albums"
+msgstr[1] "<strong>%u</strong> albumit"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:536
 #, php-format
 msgid "<strong>%1$u</strong> Comment (%2$u in moderation)"
 msgid_plural "<strong>%1$u</strong> Comments (%2$u in moderation)"
-msgstr[0] "<strong>%1$u</strong> commentaires (%2$u en modération)"
-msgstr[1] "<strong>%1$u</strong> commentaires (%2$u en modération)"
+msgstr[0] "<strong>%1$u</strong> kommentaar (%2$u on modereerimisel)"
+msgstr[1] "<strong>%1$u</strong> kommentaari (%2$u on modereerimisel)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:538
 #, php-format
 msgid "<strong>%u</strong> Comment"
 msgid_plural "<strong>%u</strong> Comments"
-msgstr[0] "<strong>%u</strong> commentaire"
-msgstr[1] "<strong>%u</strong> commentaires"
+msgstr[0] "<strong>%u</strong> kommentaar"
+msgstr[1] "<strong>%u</strong> kommentaari"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:548
 #, php-format
 msgid "<strong>%1$u</strong> Page"
 msgid_plural "<strong>%1$u</strong> Pages"
-msgstr[0] "<strong>%1$u</strong> page"
-msgstr[1] "<strong>%1$u</strong> pages"
+msgstr[0] "<strong>%1$u</strong> leht"
+msgstr[1] "<strong>%1$u</strong> lehte"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:550
 #, php-format
 msgid "<strong>%1$u</strong> Page (%2$u un-published)"
 msgid_plural "<strong>%1$u</strong> Pages (%2$u un-published)"
-msgstr[0] "<strong>%1$u</strong> page (%2$u non publiée)"
-msgstr[1] "<strong>%1$u</strong> pages (%2$u non publiée(s))"
+msgstr[0] "<strong>%1$u</strong> leht (%2$u pole avaldatud)"
+msgstr[1] "<strong>%1$u</strong> lehte (%2$u pole avaldatud)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:558
 #, php-format
 msgid "<strong>%1$u</strong> News"
 msgid_plural "<strong>%1$u</strong> News"
-msgstr[0] "<strong>%1$u</strong> actualité"
-msgstr[1] "<strong>%1$u</strong> actualités"
+msgstr[0] "<strong>%1$u</strong> uudis"
+msgstr[1] "<strong>%1$u</strong> uudist "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:560
 #, php-format
 msgid "<strong>%1$u</strong> News (%2$u un-published)"
 msgid_plural "<strong>%1$u</strong> News (%2$u un-published)"
-msgstr[0] "<strong>%1$u</strong> actualité (%2$u non publiée)"
-msgstr[1] "<strong>%1$u</strong> actualités (%2$u non publiée(s))"
+msgstr[0] "<strong>%1$u</strong> uudis (%2$u avaldamata)"
+msgstr[1] "<strong>%1$u</strong> uudist (%2$u avaldamata)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/admin.php:567
 #, php-format
 msgid "<strong>%1$u</strong> Category"
 msgid_plural "<strong>%1$u</strong> Categories"
-msgstr[0] "<strong>%1$u</strong> catégorie"
-msgstr[1] "<strong>%1$u</strong> catégories"
+msgstr[0] "<strong>%1$u</strong> kategooria"
+msgstr[1] "<strong>%1$u</strong> kategooriat"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-album.php:641
@@ -10288,25 +10277,25 @@ msgstr "Albumi kuvamise viga: %s pole olemas."
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-album.php:1579
 #, php-format
 msgid "Error: The album named %s cannot be found."
-msgstr "Erreur : l’album %s est introuvable."
+msgstr "Viga: albumit %s on võimatu leida"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-album.php:1581
 #, php-format
 msgid "Error: The album %s is not readable."
-msgstr "Erreur : l’album %s n’est pas lisible."
+msgstr "Viga: album %s on loetamatu."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-gallery.php:206
 #, php-format
 msgid "Error: The 'albums' directory (%s) cannot be found."
-msgstr "Erreur : le dossier « albums » (%s) est introuvable."
+msgstr "Viga: kausta 'albums'  (%s) on võimatu leida."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-gallery.php:208
 #, php-format
 msgid "Error: The 'albums' directory (%s) is not readable."
-msgstr "Erreur : le dossier « albums » (%s) est illisible."
+msgstr "Viga: kaust 'albums' (%s) on loetamatu. "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-gallery.php:283
@@ -10369,24 +10358,24 @@ msgstr "Erreur : le dossier « albums » (%s) est illisible."
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/sanyo.php:72
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/setup-functions.php:350
 msgid "Unknown"
-msgstr "Inconnu"
+msgstr "Tundmatu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-gallery.php:283
 msgid "<strong>Missing theme info file!</strong>"
-msgstr "<strong>Fichier d’informations du thème absent !</strong>"
+msgstr "<strong>Teemateabe faili pole!</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-image.php:33
 #, php-format
 msgid "Bad album object parameter to newImage(%s)"
-msgstr "Mauvais paramètre de l’objet album pour newImage(%s)"
+msgstr "Kehv parameeter newImage(%s) jaoks"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-image.php:57
 #, php-format
 msgid "Bad filename suffix in newImage(%s)"
-msgstr "Mauvais suffixe de nom de fichier dans newImage(%s)"
+msgstr "newImage(%s): sobimatu järelliide faili nimele"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-image.php:119
@@ -10401,42 +10390,42 @@ msgstr "Pildi kuvamise viga: faili pole."
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:275
 msgid " (Latest news)"
-msgstr " (Latest news)"
+msgstr " (Viimased uudised)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:279
 msgid " (Latest news and images)"
-msgstr " (Latest news and images)"
+msgstr " (Viimased uudised ja pildid)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:282
 msgid " (Latest news and albums)"
-msgstr " (Latest news and albums)"
+msgstr " (Viimased uudised ja albumid)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:287
 msgid " (Most popular news)"
-msgstr "(Actualités les plus populaires)"
+msgstr "(Populaarseimad uudised)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:290
 msgid " (Most rated news)"
-msgstr " (Most rated news)"
+msgstr " (Enim kordi hinnatud uudised)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:293
 msgid " (Top rated news)"
-msgstr " (Top rated news)"
+msgstr " (Hinnatuimad uudised)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:296
 msgid " (Random news)"
-msgstr "(Actualités choisies aléatoirement)"
+msgstr "(Juhuslikult valitud uudised)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:344
 msgid " (latest comments)"
-msgstr " (latest comments)"
+msgstr " (viimased kommentaarid)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/class-rss.php:371
@@ -12605,13 +12594,13 @@ msgstr "Demande de réinitialisation par email"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:943
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_login-out.php:102
 msgid "Login"
-msgstr "Ühendus"
+msgstr "Sisene kasutajana"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:964
 #, php-format
 msgid "Logon using:%s"
-msgstr "Se connecter en utilisant :%s"
+msgstr "Logi sisse kasutades:%s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:990
@@ -12623,24 +12612,23 @@ msgstr "Salasõna"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:996
 msgid "Log in"
-msgstr "Se connecter"
+msgstr "Sisene"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:1010
 msgid "I forgot my <strong>User ID</strong>/<strong>Password</strong>"
 msgstr ""
-"J’ai oublié mon <strong>identifiant d’utilisateur</strong> et/ou mon "
-"<strong>mot de passe</strong>"
+"Unustasin <strong>kasutajanime</strong> ja/või <strong>salasõna</strong>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:1042
 msgid "Request"
-msgstr "Demande"
+msgstr "Taotle"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:1042
 msgid "Request password reset"
-msgstr "Demande de réinitialisation du mot de passe"
+msgstr "Taotle salasõna ümberlülitamist"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:1109
@@ -12661,33 +12649,33 @@ msgstr "salasõna tase: tugev"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:1138
 msgid "passwords match"
-msgstr "Vos mots de passe correspondent"
+msgstr "Salasõnad kattuvad"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:1142
 msgid "passwords do not match"
-msgstr "Vos mots de passe ne correspondent pas"
+msgstr "Salasõnad ei kattu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-auth.php:1201
 msgid "Repeat password"
-msgstr "Inscrivez de nouveau le mot de passe"
+msgstr "Korrake salasõna"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-GD.php:28
 msgid "The <strong><em>GD</em></strong> extension is not available."
-msgstr "L’extension <strong><em>GD</em></strong> n’est pas disponible."
+msgstr "PHP laiendit<strong><em>GD</em></strong> pole serveris."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-GD.php:43
 #, php-format
 msgid "PHP GD library <em>%s</em>"
-msgstr "Version <em>%s</em> de la bibliothèque GD pour PHP"
+msgstr "PHP GD teegi versioon <em>%s</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:65
 msgid "Enable Imagick"
-msgstr "Activer Imagick"
+msgstr "Lülita Imagick sisse"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:71
@@ -12695,12 +12683,12 @@ msgid ""
 "Your PHP has support for Imagick. Check this option if you wish to use the "
 "Imagick graphics library."
 msgstr ""
-"Votre installation de PHP gère Imagick. Cochez cette case pour l’utiliser."
+"Teie PHP toetab Imagickut. Tehke siia märge, kui soovite seda kasutada."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:77
 msgid "Imagick filter"
-msgstr "Filtre Imagick"
+msgstr "Imagick filter"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:82
@@ -12708,14 +12696,12 @@ msgstr "Filtre Imagick"
 msgid ""
 "The type of filter used when resampling an image. The default is <strong>%s</"
 "strong>."
-msgstr ""
-"Le type de filtre à utiliser pour rééchantilloner une image. Le filtre par "
-"défaut est <strong>%s</strong>."
+msgstr "Pildi muutmisel kasutatava filtri tüüp. Vaikimisi <strong>%s</strong>."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:84
 msgid "Magick memory limit"
-msgstr "Limite de mémoire pour Imagick"
+msgstr "Imagick/Gmagick mälupiirang"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:88
@@ -12723,8 +12709,7 @@ msgid ""
 "Amount of memory allocated to Gmagick/Imagick in megabytes. Set to "
 "<strong>0</strong> for unlimited memory."
 msgstr ""
-"Quantité de mémoire allouée à Gmagick/Imagick en Mo (une valeur de 0 permet "
-"une quantité illimitée)."
+"Mälumaht, mida Gmagick/Imagick võib kasutada (megabaitides). 0 = piiramatu."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:88
@@ -12733,9 +12718,9 @@ msgid ""
 "limit. However, if your server experiences problems with image processing, "
 "try setting this lower."
 msgstr ""
-"<strong>Note:</strong> Le traitement des images sera plus rapide si la "
-"limite de mémoire est plus élevée. Cependant, si votre serveur connaît des "
-"problèmes avec le traitement des images, essayez de baisser cette limite."
+"<strong>Märkus:</strong> mida suurem on lubatud mälu maht, seda kiirem on "
+"pilditöötlus. Vähenda mälumahtu juhul, kui serveril tekib pilditöötlusel "
+"probleeme."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:90
@@ -12763,38 +12748,38 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:111
 msgid "The <strong><em>Imagick</em></strong> extension is not available."
-msgstr "L’extension <strong><em>Imagick</em></strong> n’est pas disponible."
+msgstr "<strong><em>Imagick</em></strong> puudub serverist."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-Imagick.php:171
 #, php-format
 msgid "PHP Imagick library <em>%s</em>"
-msgstr "Version <em>%s</em> de la bibliothèque Imagick pour PHP"
+msgstr "PHP Imagick teek, versioon <em>%s</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-utf8.php:50
 msgid "Arabic"
-msgstr "Arabe"
+msgstr "Araabia"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-utf8.php:51
 msgid "Chinese Traditional"
-msgstr "Chinois traditionel"
+msgstr "Hiina (traditsiooniline)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-utf8.php:52
 msgid "IBM EBCDIC (Turkish Latin-5)"
-msgstr "IBM EBCDIC (latin-5 turc)"
+msgstr "IBM EBCDIC (Türgi latin-5)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-utf8.php:53
 msgid "Cyrillic (DOS)"
-msgstr "Cyrillique (DOS)"
+msgstr "Kirillitsa (DOS)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-utf8.php:54
 msgid "IBM EBCDIC (Multilingual Latin-2)"
-msgstr "IBM EBCDIC (latin-2 multilingue)"
+msgstr "IBM EBCDIC (Multilingual latin-2)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/lib-utf8.php:55
@@ -13471,110 +13456,110 @@ msgid ""
 "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album"
 "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 msgstr ""
-"Galerie gérée par <a href=\"http://www.zenphoto.org\" title=\"Un album photo "
-"plus simple\"><span id=\"zen-part\">Zen</span><span id=\"photo-part\">PHOTO</"
-"span></a>"
+"Galerii töötab sisuhaldussüsteemil <a href=\"http://www.zenphoto.org\" title="
+"\"Lihtsaim fotoalbum\"><span id=\"zen-part\">Zen</span><span id=\"photo-part"
+"\">PHOTO</span></a>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:463
 msgid "1: Normal (0 deg)"
-msgstr "1: Normal (0 degré)"
+msgstr "1: Normaalne (0 degré)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:464
 msgid "2: Mirrored"
-msgstr "2: Miroir"
+msgstr "2: Peegelpilt"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:465
 msgid "3: Upside-down"
-msgstr "3 : Symétrie sur l’axe horizontal"
+msgstr "3: Upside-down"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:466
 msgid "4: Upside-down Mirrored"
-msgstr "4 : Symétrie sur l’axe horizontal + miroir"
+msgstr "4: Upside-down Mirrored"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:467
 msgid "5: 90 deg CW Mirrored"
-msgstr "5: 90 degrés + miroir"
+msgstr "5: 90 deg CW Mirrored"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:468
 msgid "6: 90 deg CCW"
-msgstr "6: -90 degrés"
+msgstr "6: 90 deg CCW"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:469
 msgid "7: 90 deg CCW Mirrored"
-msgstr "7: -90 degrés + miroir"
+msgstr "7: 90 deg CCW Mirrored"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:470
 msgid "8: 90 deg CW"
-msgstr "8: 90 degrés"
+msgstr "8: 90 deg CW"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:471
 #, php-format
 msgid "%d: Unknown"
-msgstr "%d : inconnu"
+msgstr "%d: tundmatu"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:478
 msgid "No Unit"
-msgstr "Pas d’unité"
+msgstr "Ühikut pole"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:479
 msgid "Inch"
-msgstr "Pouce"
+msgstr "Toll"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:480
 msgid "Centimeter"
-msgstr "Centimètre"
+msgstr "Sentimeeter"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:485
 msgid "Center of Pixel Array"
-msgstr "Centre du tableau de pixels"
+msgstr "Pikselite massiivi keskkoht"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:486
 msgid "Datum Point"
-msgstr "Point de référence"
+msgstr "Datum Point"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:492
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:216
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:135
 msgid "Program"
-msgstr "Programmée"
+msgstr "Programm"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:493
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:136
 msgid "Aperture Priority"
-msgstr "Priorité à l’ouverture"
+msgstr "Aperture Priority"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:494
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:138
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:137
 msgid "Shutter Priority"
-msgstr "Priorité à la vitesse"
+msgstr "Shutter Priority"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:495
 msgid "Program Creative"
-msgstr "Programme de priorité à la création"
+msgstr "Program Creative"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:496
 msgid "Program Action"
-msgstr "Programme de priorité à l’action"
+msgstr "Program Action"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:497
@@ -13582,19 +13567,19 @@ msgstr "Programme de priorité à l’action"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:132
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:131
 msgid "Portrait"
-msgstr "Portrait"
+msgstr "Pikuti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:498
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:136
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:133
 msgid "Landscape"
-msgstr "Paysage"
+msgstr "Laiuti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:504
 msgid "Average"
-msgstr "Average"
+msgstr "Keskmine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:505
@@ -13604,7 +13589,7 @@ msgstr "Center Weighted Average"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:506
 msgid "Spot"
-msgstr "Point"
+msgstr "Spot"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:507
@@ -13620,13 +13605,13 @@ msgstr "Pattern"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:509
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:192
 msgid "Partial"
-msgstr "Partiel"
+msgstr "Partial"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:510
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:536
 msgid "Other"
-msgstr "Autre"
+msgstr "Other"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:516
@@ -13634,19 +13619,19 @@ msgstr "Autre"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:209
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:102
 msgid "Daylight"
-msgstr "Lumière du jour"
+msgstr "Päevavalgus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:517
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:273
 msgid "Fluorescent"
-msgstr "Fluorescent"
+msgstr "Fluorestsents"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:518
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:272
 msgid "Tungsten"
-msgstr "Éclairage au tungstène"
+msgstr "Tungsten"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:521
@@ -13654,22 +13639,22 @@ msgstr "Éclairage au tungstène"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:274
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:106
 msgid "Flash"
-msgstr "Flash"
+msgstr "Välk"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:528
 msgid "Standard Light A"
-msgstr "Lumière standard A"
+msgstr "Standardvalgus A"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:529
 msgid "Standard Light B"
-msgstr "Lumière standard B"
+msgstr "Standardvalgus B"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:530
 msgid "Standard Light C"
-msgstr "Lumière standard C"
+msgstr "Standardvalgus C"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:531
@@ -13699,96 +13684,92 @@ msgstr "ISO Studio Tungstène"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:549
 msgid "No Flash"
-msgstr "Sans flash"
+msgstr "Ilma välguta"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:551
 msgid "Flash, strobe return light not detected"
-msgstr "Flash, lumière de retour du flash non détectée"
+msgstr "Flash, strobe return light not detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:552
 msgid "Flash, strobe return light detected"
-msgstr "Flash, lumière de retour du flash détectée"
+msgstr "Flash, strobe return light detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:553
 msgid "Compulsory Flash"
-msgstr "Flash obligatoire"
+msgstr "Sundvälk"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:554
 msgid "Compulsory Flash, Return light not detected"
-msgstr "Flash obligatoire, lumière de retour du flash non détectée"
+msgstr "Compulsory Flash, Return light not detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:555
 msgid "Compulsory Flash, Return light detected"
-msgstr "Flash obligatoire, lumière de retour"
+msgstr "Compulsory Flash, Return light detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:556
 msgid "Flash, Auto-Mode"
-msgstr "Flash, mode automatique"
+msgstr "Flash, Auto-Mode"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:557
 msgid "Flash, Auto-Mode, Return light not detected"
-msgstr "Flash, mode automatique, lumière de retour du flash non détectée"
+msgstr "Flash, Auto-Mode, Return light not detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:558
 msgid "Flash, Auto-Mode, Return light detected"
-msgstr "Flash, mode automatique, lumière de retour du flash détectée"
+msgstr "Flash, Auto-Mode, Return light detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:559
 msgid "Red Eye"
-msgstr "Anti yeux-rouges"
+msgstr "Red Eye"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:560
 msgid "Red Eye, Return light not detected"
-msgstr "Anti-yeux rouges, lumière de retour du flash non détectée"
+msgstr "Red Eye, Return light not detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:561
 msgid "Red Eye, Return light detected"
-msgstr "Anti-yeux rouges, lumière de retour du flash détectée"
+msgstr "Red Eye, Return light detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:562
 msgid "Red Eye, Compulsory Flash"
-msgstr "Anti-yeux rouges, flash obligatoire"
+msgstr "Red Eye, Compulsory Flash"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:563
 msgid "Red Eye, Compulsory Flash, Return light not detected"
-msgstr ""
-"Anti-yeux rouges, flash obligatoire, lumière de retour du flash non détectée"
+msgstr "Red Eye, Compulsory Flash, Return light not detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:564
 msgid "Red Eye, Compulsory Flash, Return light detected"
-msgstr ""
-"Anti-yeux rouges, flash obligatoire, lumière de retour du flash détectée"
+msgstr "Red Eye, Compulsory Flash, Return light detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:565
 msgid "Red Eye, Auto-Mode"
-msgstr "Anti-yeux rouges, mode automatique"
+msgstr "Red Eye, Auto-Mode"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:566
 msgid "Red Eye, Auto-Mode, Return light not detected"
-msgstr ""
-"Anti-yeux rouges, mode automatique, lumière de retour du flash non détectée"
+msgstr "Red Eye, Auto-Mode, Return light not detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:567
 msgid "Red Eye, Auto-Mode, Return light detected"
-msgstr ""
-"Anti-yeux rouges, mode automatique, lumière de retour du flash détectée"
+msgstr "Red Eye, Auto-Mode, Return light detected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:572
@@ -13808,47 +13789,47 @@ msgstr "pixels"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:581
 msgid "No Compression"
-msgstr "Aucune compression"
+msgstr "No Compression"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:582
 msgid "Jpeg Compression"
-msgstr "Compression jpeg"
+msgstr "Jpeg Compression"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:588
 msgid "Not defined"
-msgstr "Non définie"
+msgstr "Not defined"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:589
 msgid "One Chip Color Area Sensor"
-msgstr "Capteur de couleur à une puce"
+msgstr "One Chip Color Area Sensor"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:590
 msgid "Two Chip Color Area Sensor"
-msgstr "Capteur de couleur à deux puces"
+msgstr "Two Chip Color Area Sensor"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:591
 msgid "Three Chip Color Area Sensor"
-msgstr "Capteur de couleur à trois puces"
+msgstr "Three Chip Color Area Sensor"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:592
 msgid "Color Sequential Area Sensor"
-msgstr "Capteur de couleur de surface séquentiel"
+msgstr "Color Sequential Area Sensor"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:593
 msgid "Trilinear Sensor"
-msgstr "Capteur trilinéaire"
+msgstr "Trilinear Sensor"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:594
 msgid "Color Sequential Linear Sensor"
-msgstr "Capteur de couleur linéaire séquentiel"
+msgstr "Color Sequential Linear Sensor"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:600
@@ -13875,12 +13856,12 @@ msgstr "version"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:643
 msgid "Digital Still Camera"
-msgstr "Caméra en mode photo"
+msgstr "Digital Still Camera"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:648
 msgid "Directly Photographed"
-msgstr "Photographié directement"
+msgstr "Directly Photographed"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:677
@@ -13896,12 +13877,12 @@ msgstr "Bulb"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:820
 msgid "The file could not be found."
-msgstr "Le fichier ne peut être trouvé."
+msgstr "The file could not be found."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:999
 msgid "Could not Find SubIFD"
-msgstr "Impossible de trouver la valeur SubIFD"
+msgstr "Could not Find SubIFD"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:1015
@@ -13911,17 +13892,17 @@ msgstr "Illegal size for SubIFD"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:1036
 msgid "Could not Find IFD1"
-msgstr "Impossible de trouver IFD1"
+msgstr "Could not Find IFD1"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:1052
 msgid "Illegal size for IFD1"
-msgstr "Dimension illégale pour IFD1"
+msgstr "Illegal size for IFD1"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:1076
 msgid "Could not Find InteroperabilityIFD"
-msgstr "Impossible de trouver InteroperabilityIFD"
+msgstr "Could not Find InteroperabilityIFD"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/exif.php:1092
@@ -13962,7 +13943,7 @@ msgstr "Normal"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:173
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:191
 msgid "Off"
-msgstr "Non"
+msgstr "Off"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:84
@@ -13972,12 +13953,12 @@ msgstr "/10s"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:89
 msgid "Fine"
-msgstr "Fin"
+msgstr "Fine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:90
 msgid "Superfine"
-msgstr "Superfin"
+msgstr "Superfine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:96
@@ -14002,54 +13983,54 @@ msgstr "Auto"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:144
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:125
 msgid "On"
-msgstr "Activé"
+msgstr "Sees"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:98
 msgid "Red Eye Reduction"
-msgstr "Réduction des yeux rouges"
+msgstr "Red Eye Reduction"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:99
 msgid "Slow Synchro"
-msgstr "Synchro lente"
+msgstr "Slow Synchro"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:100
 msgid "Auto + Red Eye Reduction"
-msgstr "Automatique + réduction des yeux rouges"
+msgstr "Auto + Red Eye Reduction"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:101
 msgid "On + Red Eye Reduction"
-msgstr "Activé + réduction des yeux rouges"
+msgstr "Sees + punasilmsuse eemaldamine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:102
 msgid "External Flash"
-msgstr "Flash externe"
+msgstr "External Flash"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:107
 msgid "Single/Timer"
-msgstr "Ponctuel/retardateur"
+msgstr "Single/Timer"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:108
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:119
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:253
 msgid "Continuous"
-msgstr "Continu"
+msgstr "Continuous"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:114
 msgid "One-Shot"
-msgstr "Unique"
+msgstr "One-Shot"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:115
 msgid "AI Servo"
-msgstr "Servo AI"
+msgstr "AI Servo"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:116
@@ -14067,13 +14048,13 @@ msgstr "Käsitsi teravdamine"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:118
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:252
 msgid "Single"
-msgstr "Ponctuel"
+msgstr "Single"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:127
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/GoogleMap.php:80
 msgid "Large"
-msgstr "Grande"
+msgstr "Large"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:128
@@ -14084,7 +14065,7 @@ msgstr "Medium"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:129
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/GoogleMap.php:80
 msgid "Small"
-msgstr "Petite"
+msgstr "Small"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:134
@@ -14094,29 +14075,29 @@ msgstr "Täisautomaatne"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:137
 msgid "Fast Shutter"
-msgstr "Obturateur rapide"
+msgstr "Fast Shutter"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:138
 msgid "Slow Shutter"
-msgstr "Obturateur lent"
+msgstr "Slow Shutter"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:139
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:135
 msgid "Night"
-msgstr "Nuit"
+msgstr "Night"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:140
 msgid "Black & White"
-msgstr "Noir et blanc"
+msgstr "Black & White"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:141
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:169
 msgid "Sepia"
-msgstr "Sépia"
+msgstr "Sepia"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:143
@@ -14126,7 +14107,7 @@ msgstr "Sport"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:144
 msgid "Macro/Close-Up"
-msgstr "Macro/de près"
+msgstr "Makro/lähivõte"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:145
@@ -14152,7 +14133,7 @@ msgstr "4x"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:187
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/sanyo.php:67
 msgid "High"
-msgstr "Élevé"
+msgstr "Tugev"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:160
@@ -14186,7 +14167,7 @@ msgstr "400"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:191
 msgid "Evaluative"
-msgstr "Évaluatif"
+msgstr "Evaluative"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:193
@@ -14196,38 +14177,38 @@ msgstr "Center-weighted"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:200
 msgid "Close-up (Macro)"
-msgstr "Photo de près (macro)"
+msgstr "Lähivõte (makro)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:201
 msgid "Locked (Pan Mode)"
-msgstr "Verrouillé (mode panorama)"
+msgstr "Locked (Pan Mode)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:207
 msgid "Auto Selected"
-msgstr "Auto-sélectionné"
+msgstr "Auto Selected"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:208
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:286
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage.php:158
 msgid "Right"
-msgstr "Droite"
+msgstr "Right"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:209
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:287
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:236
 msgid "Center"
-msgstr "Centré"
+msgstr "Center"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:210
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:288
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage.php:159
 msgid "Left"
-msgstr "Gauche"
+msgstr "Left"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:215
@@ -14252,7 +14233,7 @@ msgstr "Auto-DEP"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:235
 msgid "Flash Did Not Fire"
-msgstr "Le flash ne s’est pas déclenché"
+msgstr "Flash Did Not Fire"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:241
@@ -14262,27 +14243,27 @@ msgstr "E-TTL externe"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:242
 msgid "Internal Flash"
-msgstr "Flash interne"
+msgstr "Internal Flash"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:243
 msgid "FP sync used"
-msgstr "Synchronisation sur plan focal"
+msgstr "FP sync used"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:244
 msgid "2nd(rear)-curtain sync used"
-msgstr "Synchro sur la fermeture de l’obturateur (2e rideau)"
+msgstr "2nd(rear)-curtain sync used"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:245
 msgid "1st curtain sync"
-msgstr "Synchro sur l’ouverture de l’obturateur (1er rideau)"
+msgstr "1st curtain sync"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:270
 msgid "Sunny"
-msgstr "Ensoleillé"
+msgstr "Päikesepaisteline"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:271
@@ -14290,7 +14271,7 @@ msgstr "Ensoleillé"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:212
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:103
 msgid "Cloudy"
-msgstr "Nuageux"
+msgstr "Pilves"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/canon.php:289
@@ -14316,28 +14297,28 @@ msgstr "15"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:78
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:79
 msgid "Soft"
-msgstr "Doux"
+msgstr "Soft"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:81
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:82
 msgid "Hard"
-msgstr "Dure"
+msgstr "Hard"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:89
 msgid "DaylightColor-fluorescence"
-msgstr "Fluorescent lumière du jour"
+msgstr "Päevavalguslamp (fluorestsents)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:90
 msgid "DaywhiteColor-fluorescence"
-msgstr "Fluorescent blanc jour"
+msgstr "Valge päevavalguslamp (flurestsents)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:91
 msgid "White-fluorescence"
-msgstr "Fluorescent blanc"
+msgstr "Valge fluorestsentslamp"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:92
@@ -14348,17 +14329,17 @@ msgstr "Incandescent"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:97
 msgid "Chroma Saturation Normal(STD)"
-msgstr "Saturation chromatique normale (STD)"
+msgstr "Chroma Saturation Normal(STD)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:98
 msgid "Chroma Saturation High"
-msgstr "Saturation chromatique élevée"
+msgstr "Chroma Saturation High"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:99
 msgid "Chroma Saturation Low(ORG)"
-msgstr "Saturation chromatique faible (ORG)"
+msgstr "Chroma Saturation Low(ORG)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:100
@@ -14373,27 +14354,27 @@ msgstr "Saturation chromatique faible (ORG)"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:155
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:160
 msgid "Unknown: "
-msgstr "Inconnu : "
+msgstr "Tundmatu: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:103
 msgid "Contrast Normal(STD)"
-msgstr "Contraste normal (STD)"
+msgstr "Contrast Normal(STD)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:104
 msgid "Contrast High(HARD)"
-msgstr "Contraste élevé"
+msgstr "Contrast High(HARD)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:105
 msgid "Contrast Low(ORG)"
-msgstr "Contraste faible (ORG)"
+msgstr "Contrast Low(ORG)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:112
 msgid "Red-Eye Reduction"
-msgstr "Anti-yeux rouges"
+msgstr "Punasilmsuse eemaldaja"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:134
@@ -14404,22 +14385,22 @@ msgstr "Sports"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:136
 msgid "Program AE"
-msgstr "Auto-exposition programmée"
+msgstr "Program AE"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:137
 msgid "Aperture Priority AE"
-msgstr "Priorité à l’ouverture AE"
+msgstr "Aperture Priority AE"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:139
 msgid "Manual Exposure"
-msgstr "Exposition manuelle"
+msgstr "Manual Exposure"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:148
 msgid "No Warning"
-msgstr "Pas d’alerte"
+msgstr "Hoiatust pole"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:149
@@ -14434,92 +14415,92 @@ msgstr "Auto Focus Good"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:154
 msgid "Out of Focus"
-msgstr "Hors foyer"
+msgstr "Out of Focus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:158
 msgid "AE Good"
-msgstr "Auto-exposition correcte"
+msgstr "AE Good"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/fujifilm.php:159
 msgid "Over Exposure"
-msgstr "Sur-exposition"
+msgstr "Over Exposure"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:45
 msgid "Converter"
-msgstr "Lentille additionnelle"
+msgstr "Converter"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:162
 msgid "VGA Basic"
-msgstr "VGA de base"
+msgstr "VGA Basic"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:163
 msgid "VGA Normal"
-msgstr "VGA normal"
+msgstr "VGA Normal"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:164
 msgid "VGA Fine"
-msgstr "VGA fin"
+msgstr "VGA Fine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:165
 msgid "SXGA Basic"
-msgstr "SXGA de base"
+msgstr "SXGA Basic"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:166
 msgid "SXGA Normal"
-msgstr "SXGA normal"
+msgstr "SXGA Normal"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:167
 msgid "SXGA Fine"
-msgstr "SWGA fin"
+msgstr "SXGA Fine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:175
 msgid "Color"
-msgstr "Couleur"
+msgstr "Color"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:185
 msgid "Bright+"
-msgstr "Luminosité+"
+msgstr "Bright+"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:186
 msgid "Bright-"
-msgstr "Luminosité-"
+msgstr "Bright-"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:187
 msgid "Contrast+"
-msgstr "Constraste+"
+msgstr "Contrast+"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:188
 msgid "Contrast-"
-msgstr "Constraste-"
+msgstr "Contrast-"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:208
 msgid "Preset"
-msgstr "Pré-réglage"
+msgstr "Preset"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:211
 msgid "Fluorescence"
-msgstr "Fluorescent"
+msgstr "Fluorescence"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:213
 msgid "SpeedLight"
-msgstr "Réglage SpeedLight"
+msgstr "SpeedLight"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:222
@@ -14529,7 +14510,7 @@ msgstr "Fisheye"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:256
 msgid "AF non D"
-msgstr "Auto-focus sans mesure de distance"
+msgstr "AF non D"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:269
@@ -14544,7 +14525,7 @@ msgstr "Väline"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/nikon.php:272
 msgid "On Camera"
-msgstr "Sur l’appareil"
+msgstr "On Camera"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:80
@@ -14579,13 +14560,13 @@ msgstr "RAW"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:104
 msgid "Halogen"
-msgstr "halogène"
+msgstr "Halogen"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:107
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:168
 msgid "Black and White"
-msgstr "Noir et blanc"
+msgstr "Black and White"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:114
@@ -14595,7 +14576,7 @@ msgstr "Auto, Focus button"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:115
 msgid "Auto, Continuous"
-msgstr "Automatique, continu"
+msgstr "Auto, Continuous"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:119
@@ -14615,12 +14596,12 @@ msgstr "Scenery"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:134
 msgid "Night Portrait"
-msgstr "Portrait de nuit"
+msgstr "Night Portrait"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:140
 msgid "Panning"
-msgstr "Balayage de panorama"
+msgstr "Panning"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:141
@@ -14630,12 +14611,12 @@ msgstr "Simple"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:142
 msgid "Fireworks"
-msgstr "Feu d’artifice"
+msgstr "Fireworks"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:143
 msgid "Party"
-msgstr "Soirée"
+msgstr "Party"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:144
@@ -14645,32 +14626,32 @@ msgstr "Lumi"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:145
 msgid "Night Scenery"
-msgstr "Scène de nuit"
+msgstr "Night Scenery"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:146
 msgid "Food"
-msgstr "Nourriture"
+msgstr "Food"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:147
 msgid "Baby"
-msgstr "Bébé"
+msgstr "Baby"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:148
 msgid "High Sensitivity"
-msgstr "Haute sensibilité"
+msgstr "High Sensitivity"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:149
 msgid "Underwater"
-msgstr "Sous l’eau"
+msgstr "Underwater"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:150
 msgid "Pet"
-msgstr "Animal"
+msgstr "Pet"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:166
@@ -14680,17 +14661,17 @@ msgstr "Soe"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:167
 msgid "Cool"
-msgstr "Froid"
+msgstr "Külm"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:174
 msgid "Low/High Quality"
-msgstr "Basse/Haute Qualité"
+msgstr "Low/High Quality"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:175
 msgid "Infinite"
-msgstr "Infini"
+msgstr "Infinite"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:192
@@ -14710,27 +14691,27 @@ msgstr "Horizontal (normal)"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:198
 msgid "Rotate 90 CW"
-msgstr "Rotation à 90°"
+msgstr "Rotate 90 CW"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:199
 msgid "Rotate 270 CW"
-msgstr "Rotation à 270°"
+msgstr "Rotate 270 CW"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/exif/makers/panasonic.php:204
 msgid "Natural"
-msgstr "Naturel"
+msgstr "Natural"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:114
 msgid "db POST handling"
-msgstr "Gestion de la méthode POST de la base de données"
+msgstr "db POST handling"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:146
 msgid "readonly"
-msgstr "lecture seule"
+msgstr "readonly"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:147
@@ -14740,17 +14721,17 @@ msgstr "strict"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:148
 msgid "relaxed"
-msgstr "relaché"
+msgstr "relaxed"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:149
 msgid "loose"
-msgstr "permissif"
+msgstr "loose"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:192
 msgid "Updated configuration file"
-msgstr "Fichier de configuration mis à jour"
+msgstr "Seadistusfail on uuendatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:221
@@ -14760,72 +14741,72 @@ msgstr "Uuendus"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:287
 msgid "Completed system check"
-msgstr "Vérification du système complétée"
+msgstr "Completed system check"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:294
 msgid "Setup cookie test successful"
-msgstr "Le test de cookie par le script d’installation a réussi"
+msgstr "Setup cookie test successful"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:297
 msgid "Setup cookie test unsuccessful"
-msgstr "Le test de cookie par le script d’installation a échoué"
+msgstr "Setup cookie test unsuccessful"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:302
 msgid "Post of Database credentials"
-msgstr "Envoi des informations de connexion à la base de données"
+msgstr "Post of Database credentials"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:315
 #, php-format
 msgid "Zenphoto Setup v%1$s[%2$s]%3$s: %4$s"
-msgstr "Script d’installation de Zenphoto v%1$s[%2$s]%3$s : %4$s"
+msgstr "Zenphoto Setup v%1$s[%2$s]%3$s: %4$s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:318
 msgid "Full environment"
-msgstr "Environnement complet"
+msgstr "Full environment"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:320
 msgid "Primitive environment"
-msgstr "Environnement de base"
+msgstr "Primitive environment"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:322
 #, php-format
 msgid "Query error: %s"
-msgstr "Erreur de requête : %s"
+msgstr "Query error: %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:334
 msgid "create"
-msgstr "créer"
+msgstr "create"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:334
 msgid "update"
-msgstr "mettre à jour"
+msgstr "update"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:345
 msgid "Upgrade from before Zenphoto v1.2"
-msgstr "Mise à jour depuis une version de Zenphoto antérieure à la 1.2"
+msgstr "Upgrade from before Zenphoto v1.2"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:356
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:373
 #, php-format
 msgid "Upgrade from Zenphoto v%s"
-msgstr "Mise à jour depuis Zenphoto v%s"
+msgstr "Upgrade from Zenphoto v%s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:361
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:389
 msgid "Reinstalling current Zenphoto release"
-msgstr "Zenphoto praegust versiooni paigaldatakse uuewsti"
+msgstr "Zenphoto praegust versiooni paigaldatakse uuesti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:362
@@ -15532,7 +15513,7 @@ msgstr "Pane tähele!"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/hitcounter.php:212
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/rating.php:172
 msgid "Database"
-msgstr "Base de données"
+msgstr "Andmebaas"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/setup/index.php:887
@@ -18677,7 +18658,7 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/deprecated-functions.php:57
 msgid "Functions"
-msgstr "Fonctions obsolètes"
+msgstr "Kõrvalejäetud funktsioonid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/deprecated-functions.php:59
@@ -18718,22 +18699,22 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/deprecated-functions.php:83
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/markRelease.php:53
 msgid "Development"
-msgstr "Développement"
+msgstr "Arendus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/deprecated-functions.php:85
 msgid "Check deprecated use"
-msgstr "Vérification de l’usage de fonctions obsolètes"
+msgstr "Kontrolli kõrvalejäetud funktsioonide kasutamist"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/deprecated-functions.php:89
 msgid "Searches PHP scripts for use of deprecated functions."
-msgstr "Inspecte les scripts PHP à la recherche de fonctions obsolètes."
+msgstr "Otsib PHP skripidest funktsioone, millest on loobutud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/deprecated-functions.php:90
 msgid "Check for update"
-msgstr "Vérifier s’il existe une mise à jour de Zenphoto"
+msgstr "Kontrolli uuendusi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/deprecated-functions.php:106
@@ -23038,7 +23019,7 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/seo_cleanup.php:24
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/sitemap-extended.php:198
 msgid "Seo"
-msgstr "Optimisation pour les moteurs de recherche"
+msgstr "Optimiseerimine otsimootorite jaoks"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/seo_cleanup.php:26
@@ -23796,12 +23777,12 @@ msgstr "Flowplayeri kõrgus slaidiesituse jaoks."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/slideshow.php:206
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "Slideshow not available because colorbox is not enabled on %1$s <em>%2$s</"
 "em> pages."
 msgstr ""
-"Slaidiesitust ei saa kasutada, sest colorbox pole <em>%2$s</em> de %1$s "
+"Slaidiesitust ei saa kasutada, sest värvikast pole <em>%2$s</em> de %1$s "
 "lehtedel sisse lülitatud."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
@@ -25685,7 +25666,7 @@ msgstr "La longueur de l’extrait d’article à afficher."
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenphoto_news.php:35
 msgid "News from Zenphoto.org"
-msgstr "Actualités de Zenphoto.org"
+msgstr "Zenphoto.org uudised"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenphoto_news.php:100
@@ -25718,7 +25699,7 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:47
 msgid "Hash key"
-msgstr "Clé de hachage"
+msgstr "Räsivõti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:49
@@ -25726,23 +25707,23 @@ msgid ""
 "The key used in hashing the CAPTCHA string. Note: this key will change with "
 "each successful CAPTCHA verification."
 msgstr ""
-"La clé de hachage utilisée par le Captcha. Note : cette clé change à chaque "
-"réussite du Captcha."
+"CAPTCHA räsimiseks kasutatav võti. Märkus: see muutub iga õnnestunud CAPTCHA "
+"kontrolli järel"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:50
 msgid "Allowed characters"
-msgstr "Caractères autorisés :"
+msgstr "Lubatud tähemärgid:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:52
 msgid "The characters which may appear in the CAPTCHA string."
-msgstr "Les caractères susceptibles d’apparaître dans le Captcha."
+msgstr "Tähed ja numbrid, mida on lubatud CAPTCHA pildis kasutada"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:53
 msgid "CAPTCHA length"
-msgstr "Longueur du Captcha"
+msgstr "CAPTCHA pikkus"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:55
@@ -25767,48 +25748,48 @@ msgstr "6"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:56
 msgid "The number of characters in the CAPTCHA."
-msgstr "Le nombre de caractères dans le Captcha."
+msgstr "CAPTCHA tähemärkide arv"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:57
 msgid "CAPTCHA font"
-msgstr "Police du Captcha"
+msgstr "CAPTCHA font"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:59
 msgid "random"
-msgstr "aléatoire"
+msgstr "juhuslik"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:60
 msgid "The font to use for CAPTCHA characters."
-msgstr "La police à utiliser pour les caractères du Captcha."
+msgstr "CAPTCHA kontrollpildis kasutatava kirja font"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zpCaptcha.php:63
 msgid "Sample CAPTCHA image"
-msgstr "Exemple d’image Captcha"
+msgstr "CAPTCHA näidispilt"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:91
 #, php-format
 msgid "[%u image]"
 msgid_plural "[%u images]"
-msgstr[0] "[%u image]"
-msgstr[1] "[%u images]"
+msgstr[0] "[%u pilt]"
+msgstr[1] "[%u pilti]"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:149
 #, php-format
 msgid "Refreshing cache for %s"
-msgstr "Actualisation du cache pour %s"
+msgstr "%s puhvri värskendamine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:181
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:185
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_tab.php:180
 msgid "Hide"
-msgstr "Masquer"
+msgstr "Peida"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:226
@@ -25826,16 +25807,16 @@ msgstr "kõik suurused: <em>%1$s</em>"
 #, php-format
 msgid "%u cache size to apply."
 msgid_plural "%u cache sizes to apply."
-msgstr[0] "%u taille du cache à appliquer."
-msgstr[1] "%u tailles de cache à appliquer."
+msgstr[0] "%u rakendatav pildi suurus puhverdamiseks"
+msgstr[1] "%u rakendatavat pildi suurust puhverdamiseks"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:311
 #, php-format
 msgid "%u cache size requested"
 msgid_plural "%u cache sizes requested"
-msgstr[0] "%u taille demandée du cache."
-msgstr[1] "%u tailles demandées du cache."
+msgstr[0] "%u nõutav suurus pildi puhverdamiseks"
+msgstr[1] "%u  nõutavat suurust pildi puhverdamiseks"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:312
@@ -25851,13 +25832,12 @@ msgid ""
 "Refresh the caching of the selected image sizes if some images did not "
 "render."
 msgstr ""
-"Actualise la mise en cache des tailles sélectionnées des images si le rendu "
-"des images n’était pas complet."
+"Värskenda selles suuruses piltide puhvrit, kui mõni pilt ei ilmu ekraanile."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:321
 msgid "No cache sizes enabled."
-msgstr "Aucune taille définie pour la mise en cache."
+msgstr "Puhverdamiseks pole määratud piltide suurust."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:325
@@ -25867,7 +25847,7 @@ msgstr "Puhverda pildid"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cacheManager/cacheImages.php:325
 msgid "Executes the caching of the selected image sizes."
-msgstr "Effectue la mise en cache des tailles sélectionnées des images."
+msgstr "Puhverdab pildid valitud suuruses."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/class-textobject/class-textobject_core.php:94
@@ -26009,7 +25989,7 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cloneZenphoto/cloneTab.php:129
 msgid "No subfolders in: "
-msgstr "Aucun sous-dossier dans :"
+msgstr "Alamkaustadeta kaust:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cloneZenphoto/cloneTab.php:131
@@ -26019,7 +25999,7 @@ msgstr "Choisir le fichier de destination :"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/cloneZenphoto/cloneTab.php:163
 msgid "Clone Zenphoto"
-msgstr "Cloner Zenphoto"
+msgstr "Klooni Zenphoto"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/comment_form/functions.php:90
@@ -26411,62 +26391,62 @@ msgstr "Erreur de connexion (authentification unique fédérée) :<br />%s"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_logon.php:33
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_logon.php:36
 msgid "OpenID Authentication"
-msgstr "Authentification OpenID"
+msgstr "OpenID autentimine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_logon.php:44
 msgid "Identity URL:"
-msgstr "URL de votre identité :"
+msgstr "Teie OpenID:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_logon.php:49
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/Verisign_logon.php:55
 msgid "Verify"
-msgstr "Valider"
+msgstr "Kontrolli kehtivust"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_logon.php:55
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/Verisign_logon.php:61
 msgid "Return to Zenphoto"
-msgstr "Retour à Zenphoto"
+msgstr "Tagasi Zenphotosse"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_try_auth.php:21
 msgid "Not a valid OpenID URL"
-msgstr "Ce n’est pas une URL OpenID valide"
+msgstr "See pole kehtiv OpenID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_try_auth.php:31
 msgid "Authentication error; not a valid OpenID."
-msgstr "Erreur d’authentification : ce n’est pas une OpenID valide"
+msgstr "Viga autentimisel: See pole kehtiv OpenID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_try_auth.php:73
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/OpenID_try_auth.php:87
 #, php-format
 msgid "Could not redirect to server: %s"
-msgstr "Could not redirect to server: %s"
+msgstr "Ei saa ümber suujnata serverisse %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/Verisign_logon.php:36
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/Verisign_logon.php:47
 msgid "Verisign Authentication"
-msgstr "Authentification Verisign"
+msgstr "Verisign autentimine"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/Verisign_logon.php:52
 msgid "Verisign user id:"
-msgstr "Identifiant Verisign :"
+msgstr "Verisign ID:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/federated_logon/Auth/OpenID_detect.php:537
 msgid "back to Zenphoto"
-msgstr "Retour à Zenphoto"
+msgstr "Tagasi Zenphotosse"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/GoogleMap/m.php:99
 msgid "Map display error"
-msgstr "Erreur d’affichage de la carte"
+msgstr "Viga kaardi kuvamisel"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/GoogleMap/m.php:101
@@ -26550,20 +26530,20 @@ msgstr "L’objet de ce menu est protégé par un mot de passe."
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:81
 msgid "under password protection"
-msgstr "protégé par mot de passe"
+msgstr "kaitstud salasõnaga"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:110
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/publishContent/publishContent.php:283
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:299
 msgid "view"
-msgstr "Voir"
+msgstr "Vaata"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:126
 #, php-format
 msgid "Ok to delete %s? This cannot be undone."
-msgstr "Ok pour effacer %s ? Cela ne peut pas être annulé."
+msgstr "Kustutada %s? Seda ei saa tagasi võtta."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:127
@@ -26571,22 +26551,22 @@ msgstr "Ok pour effacer %s ? Cela ne peut pas être annulé."
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:532
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:315
 msgid "delete"
-msgstr "Supprimer"
+msgstr "Kustuta"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:236
 msgid "Hidden and visible items"
-msgstr "Éléments visibles et masqués"
+msgstr "Nähtavad ja peidetud elemendid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:237
 msgid "Visible items"
-msgstr "Éléments visibles"
+msgstr "Nähtavad"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:238
 msgid "hidden items"
-msgstr "Éléments masqués"
+msgstr "Peidetud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_manager-admin-functions.php:457
@@ -26777,7 +26757,7 @@ msgstr "Nom du nouveau menu :"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_tab.php:109
 #, php-format
 msgid "Copy_of_%s"
-msgstr "Copie_de_%s"
+msgstr "koopia_%s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/menu_manager/menu_tab.php:115
@@ -27477,83 +27457,81 @@ msgstr "Kasutajanimi* (sellest saab teie kasutajanimi)"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/register_user/register_user_form.php:18
 msgid "Email* (this will be your user id)"
-msgstr "Email* (ce sera votre identifiant)"
+msgstr "E-post* (sellest saab teie ID)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/register_user/register_user_form.php:18
 msgid "User ID"
-msgstr "Identifiant"
+msgstr "Kasutaja ID"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/register_user/register_user_form.php:56
 msgid "Enter"
-msgstr "Saisir"
+msgstr "Sisesta"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/register_user/register_user_form.php:76
 msgid "You may also register using federated credentials"
-msgstr ""
-"Vous pouvez aussi vous inscrire en utilisant votre identifiant et votre mot "
-"de passe d’un site reconnu (authentification unique fédérée)"
+msgstr "Võite registreeruda ka mõne muu lehe kasutajatunnustega"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:21
 msgid "Analysis"
-msgstr "Analyse"
+msgstr "Analüüs"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:127
 msgid "Search analysis"
-msgstr "Analyse de la recherche"
+msgstr "Otsingu analüüs"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:130
 msgid "No search criteria collected."
-msgstr "No search criteria collected."
+msgstr "Otsingukriteeriume pole"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:138
 #, php-format
 msgid "Top %u successful search criteria"
-msgstr "Top %u successful search criteria"
+msgstr "%u kõige tulemuslikumat otsingukriteeriumi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:140
 msgid "Successful search criteria"
-msgstr "Critères de recherches effectuées avec succès : "
+msgstr "Tulemuslikud otsingukriteeriumid: "
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:172
 #, php-format
 msgid "Top %u failed search criteria"
-msgstr "Top %u failed search criteria"
+msgstr "%u kõige vähem tulemusi andvat otsingukriteeriumi"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:174
 msgid "Failed search criteria"
-msgstr "Critère de recherche échouée"
+msgstr "Ebaõnnestunud otsingukriteerium"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:205
 #, php-format
 msgid "Top %u search terms used"
-msgstr "Top %u des termes de recherches utilisés"
+msgstr "%u enimkasutatud otsisõna"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:207
 msgid "Search terms used"
-msgstr "Termes de recherches utilisés"
+msgstr "Kasutatud otsisõnad"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:238
 #, php-format
 msgid "Top %u Search IPs"
-msgstr "Top %u Search IPs"
+msgstr "%u sagedasimat otsingu IP-d"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:240
 msgid "Search IPs"
-msgstr "IPs de recherche"
+msgstr "Otsingute IP-d"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/search_statistics/search_analysis.php:272
@@ -27595,12 +27573,12 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/sitemap-extended/sitemap-extended-admin.php:119
 msgid "Zenphoto items"
-msgstr "Éléments de Zenphoto"
+msgstr "Zenphoto üksused"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/sitemap-extended/sitemap-extended-admin.php:121
 msgid "Index pages"
-msgstr "Pages d’accueil"
+msgstr "Avalehed"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/sitemap-extended/sitemap-extended-admin.php:122
@@ -27615,7 +27593,7 @@ msgstr "<em>Images</em> : Elles sont réparties en plusieurs sitemaps."
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/sitemap-extended/sitemap-extended-admin.php:126
 msgid "Zenpage CMS items (if the plugin is enabled)"
-msgstr "Éléments du CMS Zenpage (si l’extension est activée)."
+msgstr "Zenpage CMS-i üksused (kui see plugin on sisse lülitatud)."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/sitemap-extended/sitemap-extended-admin.php:135
@@ -27678,22 +27656,22 @@ msgstr ""
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage-functions.php:104
 msgid "Album folder:"
-msgstr "Dossier de l’album :"
+msgstr "Albumi kaust:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage-functions.php:104
 msgid "(Click on image to include)"
-msgstr "(Cliquer sur une image pour l’insérer)"
+msgstr "(Lisamiseks klikka pildil)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage-functions.php:152
 msgid "<em>Albumthumb</em>"
-msgstr "<em>VignetteDeLalbum</em>"
+msgstr "<em>Albumi_pisipilt</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage-functions.php:242
 msgid "<strong>Note:</strong> This album does not contain any images."
-msgstr "<strong>Note:</strong> Cet album ne contient aucune image."
+msgstr "<strong>Märkus:</strong> selles albumis pole ühtki pilti"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage-functions.php:306
@@ -28429,27 +28407,27 @@ msgstr "%1$s <strong>%2$s</strong> (%3$slast logon:%4$s)"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user-expiry/user-expiry-tab.php:200
 msgid "Disable"
-msgstr "Désactiver"
+msgstr "Lülita välja"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user-expiry/user-expiry-tab.php:201
 msgid "Enable"
-msgstr "Activer"
+msgstr "Lülita sisse"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user-expiry/user-expiry-tab.php:210
 msgid "Renew"
-msgstr "Renouveler"
+msgstr "Uuenda"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user-expiry/user-expiry-tab.php:211
 msgid "Email renewal link"
-msgstr "Envoyer par courriel un lien de renouvellement"
+msgstr "Saada uuenduslik e-kirjaga"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:140
 msgid "Deleted"
-msgstr "Supprimé"
+msgstr "Kustutatud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:182
@@ -28468,7 +28446,7 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:221
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:237
 msgid "group"
-msgstr "groupe"
+msgstr "grupp"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:223
@@ -28479,12 +28457,12 @@ msgstr "mall"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:276
 msgid "clone:"
-msgstr "clone :"
+msgstr "klooni:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:298
 msgid "description:"
-msgstr "description :"
+msgstr "kirjeldus:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:304
@@ -28494,31 +28472,29 @@ msgstr "Kaasa kasutajad"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:345
 msgid "Are you sure you want to delete this group?"
-msgstr "Êtes-vous certain(e) de vous vouloir supprimer ce groupe ?"
+msgstr "Oled ikka kindel, et tahad seda gruppi kustutada?"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:348
 msgid "Delete this group."
-msgstr "Supprimer ce groupe."
+msgstr "Kustuta grupp."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:394
 #, php-format
 msgid "User %s is assigned to more than one group."
-msgstr "L’utilisateur %s est assigné à plus d’un groupe."
+msgstr "Kasutaja %s on seotud rohkem kui ühe grupiga."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:403
 msgid "Group names may not contain \"?\", \"&\", or quotation marks."
-msgstr ""
-"Les noms de groupes ne peuvent contenir « ? », « & », ni des guillemets "
-"droits."
+msgstr "Grupi nimes ei tohi olla « ? », « & » ega ka jutumärke."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:408
 #, php-format
 msgid "The group \"%s\" already exists."
-msgstr "Le groupe « %s » existe déjà."
+msgstr "Grupp %s on juba olemas."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/user_groups/user_groups-tab.php:429
@@ -28536,36 +28512,36 @@ msgstr "Miski ei muutunud."
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:130
 msgid "Are you sure you want to delete this category? THIS CANNOT BE UNDONE!"
 msgstr ""
-"Êtes-vous certain(e) de vouloir supprimer cette catégorie ? Ce qui est fait "
-"ne peut être défait !"
+"Oled ikka kindel, et tahad seda kategooriat kustutada? TAASTADA SEDA ENAM EI "
+"SAA!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:89
 msgid ""
 "Are you sure you want to delete all selected items? THIS CANNOT BE UNDONE!"
 msgstr ""
-"Êtes-vous certain(e) de vouloir supprimer tous les éléments sélectionnés ? "
-"Ce qui est fait ne peut être défait !"
+"Oled ikka kindel, et tahad kõik valitud üksused kustutada? TAASTADA NEID "
+"ENAM EI SAA!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:135
 msgid "New category"
-msgstr "Nouvelle catégorie"
+msgstr "Uus kategooria"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:143
 msgid "Edit this Category"
-msgstr "Modifier cette catégorie"
+msgstr "Muuda seda kategooriat"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:150
 msgid "Add tags to articles"
-msgstr "Ajouter des tags aux articles"
+msgstr "Lisa artiklitele sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:151
 msgid "Clear tags of articles"
-msgstr "Effacer les tags des articles"
+msgstr "Kustuta artiklitelt sildid"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:171
@@ -28587,38 +28563,38 @@ msgstr ""
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1099
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/zenpage-admin-functions.php:1477
 msgid "Reset hitcounter"
-msgstr "Remettre le compteur d’affichages à zéro"
+msgstr "Reset hitcounter"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-categories.php:198
 msgid "Delete category"
-msgstr "Supprimer la catégorie"
+msgstr "Delete category"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:33
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:74
 #, php-format
 msgid "copy of %s"
-msgstr "copie de %s"
+msgstr "copy of %s"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:140
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:611
 msgid "This is not a future date!"
-msgstr "Cette date n’est pas dans le futur !"
+msgstr "This is not a future date!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:147
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:581
 msgid "Future publishing date:"
-msgstr "Date future de publication :"
+msgstr "Future publishing date:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:192
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:223
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-news-articles.php:218
 msgid "New Article"
-msgstr "Nouvel article"
+msgstr "Uus artikkel"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:193
@@ -28629,7 +28605,7 @@ msgstr "Artikkel"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:204
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:228
 msgid "New Category"
-msgstr "Nouvelle catégorie"
+msgstr "Uus kategooria"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:215
@@ -28637,7 +28613,7 @@ msgstr "Nouvelle catégorie"
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:128
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-pages.php:129
 msgid "New Page"
-msgstr "Nouvelle page"
+msgstr "Uus leht"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:242
@@ -28649,13 +28625,13 @@ msgstr "Artiklit <em>%s</em> ei leitud."
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:247
 #, php-format
 msgid "Category <em>%s</em> not found"
-msgstr "Catégorie <em>%s</em> non trouvée"
+msgstr "Kategooriat <em>%s</em> ei leitud"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:252
 #, php-format
 msgid "Page <em>%s</em> not found"
-msgstr "Page <em>%s</em> non trouvée"
+msgstr "Lehte <em>%s</em> ei leitud."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:261
@@ -28665,7 +28641,7 @@ msgstr "Muuda artiklit:"
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:264
 msgid "(Article scheduled for publishing)"
-msgstr "(Article planifié pour publication)"
+msgstr "(Artiklit on plaanis avaldada)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:266
@@ -28673,31 +28649,30 @@ msgid ""
 "<strong>Note:</strong> Scheduled publishing is not active unless the article "
 "is also set to <em>published</em>"
 msgstr ""
-"<strong>Note :</strong>La publication planifiée n’est pas effective tant que "
-"l’article est également mis en mode <em>publié</em>"
+"<strong>Note:</strong> Scheduled publishing is not active unless the article "
+"is also set to <em>published</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:270
 msgid ""
 "<strong>Note:</strong> This article belongs to a password protected category."
 msgstr ""
-"<strong>Note :</strong> Cet article est protégé car il est assigné a une "
-"catégorie avec mot de passe."
+"<strong>Note:</strong> This article belongs to a password protected category."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:275
 msgid "Edit Category:"
-msgstr "Modifier la catégorie :"
+msgstr "Muuda kategooriat:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:280
 msgid "Edit Page:"
-msgstr "Modifier la page :"
+msgstr "Muuda lehte:"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:283
 msgid "(Page scheduled for publishing)"
-msgstr "(Page planifiée pour publication)"
+msgstr "(Seda lehte on plaanis avaldada)"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:285
@@ -28705,13 +28680,13 @@ msgid ""
 "Note: Scheduled publishing is not active unless the page is also set to "
 "<em>published</em>"
 msgstr ""
-"Note : La publication planifiée n’est pas effective tant que la page est "
-"également mise en mode <em>publié</em>"
+"Note: Scheduled publishing is not active unless the page is also set to "
+"<em>published</em>"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:289
 msgid "<strong>Note:</strong> This page is password protected."
-msgstr "<strong>Note.</strong> Cette page est protégée par mot de passe."
+msgstr "<strong>Note:</strong> This page is password protected."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:361
@@ -28728,19 +28703,16 @@ msgid ""
 "and the titlelink stays always the same (recommended if you use Zenphoto's "
 "multilingual mode)."
 msgstr ""
-"Cocher <em>Modifier le titre-lien</em> si vous avez besoin de modifier la "
-"manière dont le titre apparaît dans les URL. Sinon il sera automatiquement "
-"modifié si le titre est changé. Si vous voulez éviter cela, cochez "
-"<em>Autoriser le titre-lien permanent</em> et le titre-lien restera toujours "
-"le même (particulièrement recommandé si vous utilisez le mode multilingue de "
-"Zenphoto)."
+"Check <em>Edit Titlelink</em> if you need to customize how the title appears "
+"in URLs. Otherwise it will be automatically updated to any changes made to "
+"the title. If you want to prevent this check <em>Enable permaTitlelink</em> "
+"and the titlelink stays always the same (recommended if you use Zenphoto's "
+"multilingual mode)."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:379
 msgid "<strong>Note:</strong> Edit titlelink overrides the permalink setting."
-msgstr ""
-"<strong>Note :</strong> Modifier le titre-lien supplante le paramètre de "
-"lien permanent."
+msgstr "<strong>Note:</strong> Edit titlelink overrides the permalink setting."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:380
@@ -28748,8 +28720,8 @@ msgid ""
 "<strong>Important:</strong> If you are using Zenphoto's multi-lingual mode "
 "the Titlelink is generated from the Title of the currently selected language."
 msgstr ""
-"<strong>Important:</strong> Si vous utilisez le mode multilingue de "
-"Zenphoto, le titre-lien est généré depuis le titre dans la langue courante."
+"<strong>Important:</strong> If you are using Zenphoto's multi-lingual mode "
+"the Titlelink is generated from the Title of the currently selected language."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:381
@@ -28757,8 +28729,8 @@ msgid ""
 "If you lock an article only the current active author/user or any user with "
 "full admin rights will be able to edit it later again!"
 msgstr ""
-"Si vous verrouillez un article, seul l’auteur, l’utilisateur courant ou un "
-"administrateur pourra ensuite le modifier !"
+"If you lock an article only the current active author/user or any user with "
+"full admin rights will be able to edit it later again!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:385
@@ -28768,10 +28740,10 @@ msgid ""
 "break</em> plugin button. This will override the general shorten length set "
 "on the plugin option then."
 msgstr ""
-"<em>Raccourci personnalisé d’article</em> : Vous pouvez spécifier une "
-"longueur personnalisée d’extrait pour les boucles d’actualité en utilisant "
-"le bouton de l’extension TinyMCE <em>page break</em>. Cela supplante le "
-"paramètre spécifié dans les options de l’extension."
+"<em>Custom article shortening:</em> You can set a custom article shorten "
+"length for the news loop excerpts by using the standard TinyMCE <em>page "
+"break</em> plugin button. This will override the general shorten length set "
+"on the plugin option then."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:389
@@ -28780,9 +28752,9 @@ msgid ""
 "in the future set it to 'published' and enter a future date in the date "
 "field manually. Note this works on server time!"
 msgstr ""
-"<em>Publication planifiée :</em> Pour publier automatiquement une page ou un "
-"article d’actualité, passez-le en mode « publié » et saisissez une date de "
-"publication. À noter que la date et l’heure sont celles du serveur."
+"<em>Scheduled publishing:</em> To automatically publish a page/news article "
+"in the future set it to 'published' and enter a future date in the date "
+"field manually. Note this works on server time!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:390
@@ -28792,11 +28764,10 @@ msgid ""
 "the page/article has been expired it can only be published again if the "
 "expiration date is deleted. Note this works on server time!"
 msgstr ""
-"<em>Date d’expiration :</em> Saisissez une date future dans le champ de date "
-"pour indiquer quand la page ou l’article sera automatiquement non publié. "
-"Après cette date, l’article ou la page ne peut être publié de nouveau que si "
-"la date d’expiration est effacée. À noter que la date et l’heure sont celles "
-"du serveur."
+"<em>Expiration date:</em> Enter a future date in the date field manually to "
+"set a date the page or article will be set un-published automatically. After "
+"the page/article has been expired it can only be published again if the "
+"expiration date is deleted. Note this works on server time!"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:391
@@ -28804,8 +28775,8 @@ msgid ""
 "<em>ExtraContent:</em> Here you can enter extra content for example to be "
 "printed on the sidebar"
 msgstr ""
-"<em>Contenu boni :</em>  Vous pouvez entrer ici du contenu qui peut, par "
-"exemple, s’afficher dans la barre latérale"
+"<em>ExtraContent:</em> Here you can enter extra content for example to be "
+"printed on the sidebar"
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:394
@@ -28813,15 +28784,13 @@ msgid ""
 "<em>Codeblocks:</em> Use these fields if you need to enter php code (for "
 "example Zenphoto functions) or JavaScript code."
 msgstr ""
-"<em>Blocs de code :</em> Utilisez ces champs si vous voulez saisir du code "
-"PHP (comme des fonctions Zenphoto) ou du Javascript."
+"<em>Codeblocks:</em> Use these fields if you need to enter php code (for "
+"example Zenphoto functions) or JavaScript code."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:395
 msgid "You also can use the codeblock fields as custom fields."
-msgstr ""
-"Vous pouvez également utiliser les champs de bloc de code comme champs "
-"personnalisés."
+msgstr "You also can use the codeblock fields as custom fields."
 
 #: C:\Documents and Settings\Jaanus Nurmoja\My
 #: Documents\!ZENPHOTO\zenphoto/zp-core/zp-extensions/zenpage/admin-edit.php:396
