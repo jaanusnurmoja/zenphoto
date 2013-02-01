@@ -56,7 +56,6 @@ if (!file_exists($en_US)) {
 	@mkdir($en_US, $chmod | 0311);
 }
 
-$selected_database = 'MySQLi';
 if (file_exists(CONFIGFILE)) {
 	$newconfig = false;
 	$zptime = filemtime(CONFIGFILE);
@@ -184,6 +183,54 @@ if (isset($_REQUEST['FILESYSTEM_CHARSET'])) {
 	$updatezp_config = true;
 }
 
+$curdir = getcwd();
+chdir(dirname(dirname(__FILE__)));
+// Important. when adding new database support this switch may need to be extended,
+$engines = array();
+$preferences = array('mysqli'=>1,'pdo_mysql'=>2,'mysql'=>3);
+$cur = 999999;
+$preferred = NULL;
+foreach (setup_glob('functions-db-*.php') as $key=>$engineMC) {
+	$engineMC = substr($engineMC,13,-4);
+	$engine = strtolower($engineMC);
+	$order = $preferences[$engine];
+	$enabled = extension_loaded($engine);
+	if ($enabled && $order < $cur) {
+		$preferred = $engine;
+		$cur = $order;
+	}
+	$engines[$order] = array('user'=>true,'pass'=>true,'host'=>true,'database'=>true,'prefix'=>true,'engine'=>$engineMC,'enabled'=>$enabled);
+}
+ksort($engines);
+chdir($curdir);
+
+if (file_exists(CONFIGFILE)) {
+	eval(file_get_contents(CONFIGFILE));
+	if (isset($_zp_conf_vars['db_software'])) {
+		$confDB = $_zp_conf_vars['db_software'];
+		if (extension_loaded($_zp_conf_vars['db_software'])) {
+			$selected_database = $_zp_conf_vars['db_software'];
+		} else {
+			$selected_database = $preferred;
+			if ($preferred) {
+				$_zp_conf_vars['db_software'] = $preferred;
+				updateConfigItem('db_software', $preferred);
+				$updatezp_config = true;
+			}
+		}
+	} else {
+		$_zp_conf_vars['db_software'] = $selected_database = $preferred;
+		updateConfigItem('db_software', $preferred);
+		$updatezp_config = true;
+		$confDB = NULL;
+	}
+	if ($selected_database) {
+		require_once(dirname(dirname(__FILE__)).'/functions-db-'.$selected_database.'.php');
+	} else {
+		require_once(dirname(dirname(__FILE__)).'/functions-db_NULL.php');
+	}
+}
+
 if ($updatezp_config) {
 	@chmod(CONFIGFILE, 0666);
 	if (is_writeable(CONFIGFILE)) {
@@ -205,14 +252,8 @@ $DBcreated = false;
 $oktocreate = false;
 $connection = false;
 $connectDBErr = '';
-if (file_exists(CONFIGFILE)) {
-	eval(file_get_contents(CONFIGFILE));
-	if (isset($_zp_conf_vars['db_software'])) {
-		$selected_database = $_zp_conf_vars['db_software'];
-	} else {
-		$selected_database = $_zp_conf_vars['db_software'] = 'MySQL';
-	}
-	require_once(dirname(dirname(__FILE__)).'/functions-db-'.($_zp_conf_vars['db_software']).'.php');
+
+if ($selected_database) {
 	$connectDBErr = '';
 	if($connection = db_connect($_zp_conf_vars,false)) {	// got the database handler and the database itself connected
 		$result = query("SELECT `id` FROM " . $_zp_conf_vars['mysql_prefix'].'options' . " LIMIT 1", false);
@@ -253,8 +294,8 @@ if (file_exists(CONFIGFILE)) {
 			$connectDBErr = db_error();
 		}
 	}
-
 }
+
 if (defined('CHMOD_VALUE')) {
 	$chmod = CHMOD_VALUE & 0666;
 }
@@ -865,49 +906,35 @@ if (!$setup_checked && (($upgrade && $autorun) || zp_loggedin(ADMIN_RIGHTS))) {
 		}
 
 	}
-	$curdir = getcwd();
-	chdir(dirname(dirname(__FILE__)));
-
-	// Important. when adding new database support this switch may need to be extended,
-	$engines = array();
-	$preferences = array('mysqli','pdo_mysql','mysql');
-	foreach (setup_glob('functions-db-*.php') as $key=>$engineMC) {
-		$engineMC = substr($engineMC,13,-4);
-		$engine = strtolower($engineMC);
-		$order = array_search($engine, $preferences, true);
-		$engines[$order] = array('user'=>true,'pass'=>true,'host'=>true,'database'=>true,'prefix'=>true,'engine'=>$engineMC,'enabled'=>extension_loaded($engine));
-	}
-	ksort($engines);
-	chdir($curdir);
 	primeMark(gettext('Database'));
-	foreach ($engines as $enabled) {
-		$engine = $enabled['engine'];
-		if ($engine == $selected_database) {
-			if ($enabled && isset($enabled['experimental'])) {
-				$good = checkMark(-1, $engine, sprintf(gettext('PHP <code>%s support</code> for configured Database [is experimental]'),$engine), $enabled['experimental'],false) && $good;
+	foreach ($engines as $engine) {
+		$handler = $engine['engine'];
+		if ($handler == $confDB) {
+			if ($engine['enabled'] && isset($engine['experimental'])) {
+				$good = checkMark(-1, $handler, sprintf(gettext('PHP <code>%s support</code> for configured Database [is experimental]'),$handler), $enabled['experimental'],false) && $good;
 			} else {
-				$good = checkMark($enabled, sprintf(gettext('PHP <code>%s</code> support for configured Database'),$engine), sprintf(gettext('PHP <code>%s support</code> for configured Database [is not installed]'),$engine), sprintf(gettext('Choose a different database engine or install %s support in your PHP to clear this condition.'),$engine)) && $good;
+				$good = checkMark($engine, sprintf(gettext('PHP <code>%s</code> support for configured Database'),$handler), sprintf(gettext('PHP <code>%s support</code> for configured Database [is not installed]'),$handler), sprintf(gettext('Choose a different database engine or install %s support in your PHP to clear this condition.'),$handler)) && $good;
 			}
 		} else {
-			if ($enabled) {
+			if ($engine['enabled']) {
 				if (isset($enabled['experimental'])){
 					?>
-					<li class="note_warn"><?php echo sprintf(gettext(' <code>%1$s</code> support (<a onclick="$(\'#%1$s\').toggle(\'show\')" >experimental</a>)'),$engine); ?>
+					<li class="note_warn"><?php echo sprintf(gettext(' <code>%1$s</code> support (<a onclick="$(\'#%1$s\').toggle(\'show\')" >experimental</a>)'),$handler); ?>
 					</li>
-					<p class="warning" id="<?php echo $engine; ?>"
+					<p class="warning" id="<?php echo $handler; ?>"
 					style="display: none;">
 					<?php echo $enabled['experimental']?>
 					</p>
 					<?php
 				} else {
 					?>
-					<li class="note_ok"><?php echo sprintf(gettext('PHP <code>%s</code> support'),$engine); ?>
+					<li class="note_ok"><?php echo sprintf(gettext('PHP <code>%s</code> support'),$handler); ?>
 					</li>
 					<?php
 				}
 			} else {
 				?>
-				<li class="note_exception"><?php echo sprintf(gettext('PHP <code>%s</code> support [is not installed]'),$engine); ?>
+				<li class="note_exception"><?php echo sprintf(gettext('PHP <code>%s</code> support [is not installed]'),$handler); ?>
 				</li>
 				<?php
 			}
@@ -937,7 +964,7 @@ if (!$setup_checked && (($upgrade && $autorun) || zp_loggedin(ADMIN_RIGHTS))) {
 		if ($adminstuff = !extension_loaded(strtolower($selected_database))|| !$connection) {
 			if (is_writable(CONFIGFILE)) {
 				$good = false;
-				checkMark(false, '', gettext("Database credentials in configuration file"), sprintf(gettext('<em>%1$s</em> reported: %2$s'),$selected_database,$connectDBErr));
+				checkMark(false, '', gettext("Database credentials in configuration file"), sprintf(gettext('<em>%1$s</em> reported: %2$s'),DATABASE_SOFTWARE,$connectDBErr));
 				// input form for the information
 				include(dirname(__FILE__).'/setup-sqlform.php');
 			} else {
@@ -949,7 +976,7 @@ if (!$setup_checked && (($upgrade && $autorun) || zp_loggedin(ADMIN_RIGHTS))) {
 				$good = checkMark(!$adminstuff, gettext("Database setup in configuration file"), '',$msg) && $good;
 			}
 		} else {
-			$good = checkMark((bool) $connection, sprintf(gettext('Connect to %s'),$selected_database), gettext("Connect to Database [<code>CONNECT</code> query failed]"), $connectDBErr) && $good;
+			$good = checkMark((bool) $connection, sprintf(gettext('Connect to %s'),DATABASE_SOFTWARE), gettext("Connect to Database [<code>CONNECT</code> query failed]"), $connectDBErr) && $good;
 		}
 	}
 
@@ -1251,7 +1278,7 @@ if (!$setup_checked && (($upgrade && $autorun) || zp_loggedin(ADMIN_RIGHTS))) {
 		$filelist .= filesystemToInternal(str_replace($base,'',$extra).'<br />');
 	}
 	if (count($installed_files) > 0) {
-		if (!defined("RELEASE")) {
+		if (defined('TEST_RELEASE') && TEST_RELEASE) {
 			$msg1 = gettext("Zenphoto core files [This is a <em>debug</em> build. Some files are missing or seem wrong]");
 		} else {
 			$msg1 = gettext("Zenphoto core files [Some files are missing or seem wrong]");
@@ -1259,7 +1286,7 @@ if (!$setup_checked && (($upgrade && $autorun) || zp_loggedin(ADMIN_RIGHTS))) {
 		$msg2 = gettext('Perhaps there was a problem with the upload. You should check the following files: ').'<br /><code>'.substr($filelist,0,-6).'</code>';
 		$mark = -1;
 	} else {
-		if (!defined("RELEASE")) {
+		if (defined('TEST_RELEASE') && TEST_RELEASE) {
 			$mark = -1;
 			$msg1 = gettext("Zenphoto core files [This is a <em>debug</em> build]");
 		} else {
@@ -1276,7 +1303,7 @@ if (!$setup_checked && (($upgrade && $autorun) || zp_loggedin(ADMIN_RIGHTS))) {
 		foreach ($_zp_resident_files as $extra) {
 			if (strpos($extra, 'php.ini')!==false) {
 				$phi_ini_count ++;
-			} else if (defined("RELEASE") || (strpos($extra, '/.svn')===false)) {
+			} else if (defined('TEST_RELEASE') && TEST_RELEASE || (strpos($extra, '/.svn')===false)) {
 				$systemlist[] = $extra;
 				$filelist[] = $_zp_UTF8->convert(str_replace($base,'',$extra), FILESYSTEM_CHARSET, 'UTF-8');
 			} else {
@@ -2319,6 +2346,22 @@ if (file_exists(CONFIGFILE)) {
 				}
 			}
 
+			echo "<h3>";
+			if ($taskDisplay[substr($task,0,8)] == 'create') {
+				if ($createTables) {
+					echo gettext('Done with table create!');
+				} else {
+					echo gettext('Done with table create with errors!');
+				}
+			} else {
+				if ($createTables) {
+					echo gettext('Done with table update');
+				} else {
+					echo gettext('Done with table update with errors');
+				}
+			}
+			echo "</h3>";
+
 			// set defaults on any options that need it
 			setupLog(gettext("Done with database creation and update"));
 			if ($prevRel = getOption('zenphoto_release')) {
@@ -2348,22 +2391,6 @@ if (file_exists(CONFIGFILE)) {
 				}
 			}
 
-			echo "<h3>";
-			if ($taskDisplay[substr($task,0,8)] == 'create') {
-				if ($createTables) {
-					echo gettext('Done with table create!');
-				} else {
-					echo gettext('Done with table create with errors!');
-				}
-			} else {
-				if ($createTables) {
-					echo gettext('Done with table update');
-				} else {
-					echo gettext('Done with table update with errors');
-				}
-			}
-			echo "</h3>";
-
 			if ($debug=='albumids') {
 				// fixes 1.2 move/copy albums with wrong ids
 				$albums = $_zp_gallery->getAlbums();
@@ -2374,7 +2401,7 @@ if (file_exists(CONFIGFILE)) {
 		}
 
 		if ($createTables) {
-			if (isset($_GET['delete_files']) || ($autorun && defined("RELEASE") && zpFunctions::hasPrimaryScripts())) {
+			if (isset($_GET['delete_files'])) {
 				require_once(dirname(dirname(__FILE__)).'/'.PLUGIN_FOLDER.'/security-logger.php');
 				$curdir = getcwd();
 				chdir(dirname(__FILE__));
@@ -2411,13 +2438,13 @@ if (file_exists(CONFIGFILE)) {
 				}
 			} else {
 				?>
-				<div class="notebox">
+				<div class="notebox delayshow" style="display:none;">
 					<p><?php echo gettext('<strong>NOTE:</strong> We strongly recommend you remove the <em>setup</em> scripts from your zp-core folder at this time. You can always re-upload them should you find you need them again in the future.')?></p>
 						<br />
 					<?php
 					if (zpFunctions::hasPrimaryScripts()) {
 						?>
-						<span class="buttons"><a href="?checked&amp;delete_files&xsrfToken=<?php echo $xsrftoken; ?>"><?php echo gettext('Delete setup files'); ?></a></span>
+						<span class="buttons"><a href="?checked&amp;delete_files&amp;xsrfToken=<?php echo $xsrftoken; ?>"><?php echo gettext('Delete setup files'); ?></a></span>
 						<br clear="all" />
 						<br clear="all" />
 						<?php
@@ -2429,6 +2456,7 @@ if (file_exists(CONFIGFILE)) {
 				<br clear="all" />
 				<?php
 			}
+
 			if ($_zp_loggedin == ADMIN_RIGHTS) {
 				$filelist = safe_glob(SERVERPATH . "/" . BACKUPFOLDER . '/*.zdb');
 				if (count($filelist) > 0) {
@@ -2449,28 +2477,39 @@ if (file_exists(CONFIGFILE)) {
 						WEBPATH.'/'.ZENFOLDER.'/admin.php');
 		}
 			?>
-			<p id="golink"><?php echo $link; ?></p>
+			<p id="golink" class="delayshow" style="display:none;"><?php echo $link; ?></p>
 			<?php
-			switch ($autorun) {
-				case false:
-					break;
-				case 'admin':
-					$autorun = WEBPATH.'/'.ZENFOLDER.'/admin.php';
-					break;
-				case 'gallery':
-					$autorun = WEBPATH.'/';
-					break;
-				default:
-					break;
+			if (!isset($_GET['delete_files']) && $autorun && !(defined('TEST_RELEASE') && TEST_RELEASE) && zpFunctions::hasPrimaryScripts()) {
+				$autorun = WEBPATH.'/'.ZENFOLDER.'/setup/index.php?checked&autorun='.$autorun.'&delete_files&xsrfToken='.$xsrftoken;
+			} else {
+				switch ($autorun) {
+					case false:
+						break;
+					case 'admin':
+						$autorun = WEBPATH.'/'.ZENFOLDER.'/admin.php';
+						break;
+					case 'gallery':
+						$autorun = WEBPATH.'/';
+						break;
+					default:
+						break;
+				}
 			}
-			if ($autorun) {
-				?>
-				<script type="text/javascript">
-					$('#golink').hide();
-					window.location = '<?php echo $autorun; ?>';
-				</script>
-				<?php
-			}
+			?>
+			<script type="text/javascript">
+				window.onload = function() {
+					$('.delayshow').show();
+					<?php
+					if ($autorun) {
+						?>
+						$('#golink').hide();
+						window.location = '<?php echo $autorun; ?>';
+						<?php
+					}
+					?>
+				}
+			</script>
+			<?php
 		}
 	} else if (db_connect($_zp_conf_vars)) {
 		$task = '';

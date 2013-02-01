@@ -3245,18 +3245,18 @@ function getLatestComments($number,$type="all",$id=NULL) {
 			// add the other stuff people want
 			foreach ($comments as $key=>$comment) {
 				$comment['pubdate'] = $comment['date'];
-				$alb = getItemByID('albums', $cpomment['ownerid']);
+				$alb = getItemByID('albums', $comment['ownerid']);
 				$comment['folder'] = $alb->name;
 				$comments[$key] = $comment;
 			}
 			break;
 		case 'image':
-			$item = getItemByID('albums', $id);
+			$item = getItemByID('images', $id);
 			$comments = array_slice($item->getComments(),0,$number);
 			// add the other stuff people want
 			foreach ($comments as $key=>$comment) {
 				$comment['pubdate'] = $comment['date'];
-				$img = getItemByID('images', $cpomment['ownerid']);
+				$img = getItemByID('images', $comment['ownerid']);
 				$comment['folder'] = $img->$album->name;
 				$comment['filename'] = $img->filename;
 				$comments[$key] = $comment;
@@ -4263,7 +4263,7 @@ function printSearchForm($prevtext=NULL, $id='search', $buttonSource=NULL, $butt
 				}
 
 				?>
-				<span style="display:none;" id="searchextrashow">
+				<div style="display:none;" id="searchextrashow">
 					<?php
 					if ($searchwords) {
 						?>
@@ -4293,7 +4293,7 @@ function printSearchForm($prevtext=NULL, $id='search', $buttonSource=NULL, $butt
 						<?php
 					}
 					?>
-				</span>
+				</div>
 				<?php
 			}
 			?>
@@ -4613,40 +4613,6 @@ function printCaptcha($preText='', $midText='', $postText='', $size=4) {
 function printZenphotoLink() {
 	echo gettext("Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>");
 }
-
-/**
- *
- * fixes unbalanced HTML tags. Used by shortenContent when PHP tidy is not present
- * @param string $html
- * @return string
- */
-function cleanHTML($html) {
-
-	preg_match_all('#<(?!meta|img|br|hr|input\b)\b([a-z]+)(?: .*)?(?<![/|/ ])>#iU', $html, $result);
-	$openedtags = $result[1];
-
-	preg_match_all('#</([a-z]+)>#iU', $html, $result);
-	$closedtags = $result[1];
-
-	$len_opened = count($openedtags);
-
-	if (count($closedtags) == $len_opened) 	{
-		return $html;
-	}
-
-	$openedtags = array_reverse($openedtags);
-	for ($i=0; $i < $len_opened; $i++) 	{
-		if (!in_array($openedtags[$i], $closedtags)) 		{
-			$html .= '</'.$openedtags[$i].'>';
-		} else {
-			unset($closedtags[array_search($openedtags[$i], $closedtags)]);
-		}
-	}
-
-	return $html;
-}
-
-/**
 
 /**
  * Expose some informations in a HTML comment

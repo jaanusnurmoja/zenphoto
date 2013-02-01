@@ -17,13 +17,17 @@ Define('DATABASE_DESIRED_VERSION','5.5.0');
 /**
  * Connect to the database server and select the database.
  * @param array $config the db configuration parameters
- * @param bool $noerrmsg set to false to omit error messages
+ * @param bool $errorstop set to false to omit error messages
  * @return true if successful connection
  */
 function db_connect($config, $errorstop=true) {
 	global $_zp_DB_connection, $_zp_DB_details;
 	$_zp_DB_details = unserialize(DB_NOT_CONNECTED);
-	$_zp_DB_connection = @mysql_connect($config['mysql_host'], $config['mysql_user'], $config['mysql_pass']);
+	if (function_exists('mysql_connect')) {
+		$_zp_DB_connection = @mysql_connect($config['mysql_host'], $config['mysql_user'], $config['mysql_pass']);
+	} else {
+		$_zp_DB_connection = NULL;
+	}
 	if (!$_zp_DB_connection) {
 		if ($errorstop) {
 			zp_error(sprintf(gettext('MySQL Error: Zenphoto received the error %s when connecting to the database server.'),mysql_error()));
@@ -50,13 +54,13 @@ function db_connect($config, $errorstop=true) {
 /**
  * The main query function. Runs the SQL on the connection and handles errors.
  * @param string $sql sql code
- * @param bool $noerrmsg set to false to supress the error message
+ * @param bool $errorstop set to false to supress the error message
  * @return results of the sql statements
  * @since 0.6
  */
 function query($sql, $errorstop=true) {
 	global $_zp_DB_connection, $_zp_DB_details;
-	if ($result = mysql_query($sql, $_zp_DB_connection)) {
+	if ($result = @mysql_query($sql, $_zp_DB_connection)) {
 		return $result;
 	}
 	if($errorstop) {
@@ -146,7 +150,11 @@ function db_fetch_assoc($resource) {
  * Returns the text of the error message from previous operation
  */
 function db_error() {
-	return mysql_error();
+	global $_zp_DB_connection;
+	if (is_object($_zp_DB_connection)) {
+		return mysql_error();
+	}
+	return sprintf(gettext('%s not connected'),DATABASE_SOFTWARE);
 }
 
 /*

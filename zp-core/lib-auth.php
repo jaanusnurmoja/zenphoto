@@ -939,6 +939,7 @@ class Zenphoto_Authority {
 				<?php
 				break;
 			default:
+				Zenphoto_Authority::printPasswordFormJS();
 				if (empty($alt_handlers)) {
 					$legend = gettext('Login');
 				} else {
@@ -989,7 +990,7 @@ class Zenphoto_Authority {
 						?>
 						<fieldset><legend><?php echo gettext("Password"); ?></legend>
 							<input class="textfield" name="pass" id="pass" type="password" size="35" /><br />
-							<label><input type="checkbox" name="disclose_password" onclick="togglePassword();" ><?php echo gettext('Show password')?></label>
+							<label><input type="checkbox" name="disclose_password" onclick="togglePassword('');" /><?php echo gettext('Show password')?></label>
 						</fieldset>
 						<br />
 						<div class="buttons">
@@ -1270,27 +1271,41 @@ class Zenphoto_Administrator extends PersistentObject {
 			$this->set('id', -1);
 		}
 		if ($valid) {
+			$rights = $this->getRights();
+			$new_rights = 0;
 			if ($user == $_zp_authority->master_user) {
-				$this->setRights($this->getRights() | ADMIN_RIGHTS);
+				$new_rights = ALL_RIGHTS;
 				$this->master = true;
 			} else {
 				// make sure that the "hidden" gateway rights are set for managing objects
+				if ($rights & MANAGE_ALL_ALBUM_RIGHTS) {
+					$new_rights = $new_rights | ALBUM_RIGHTS;
+				}
+				if ($rights & MANAGE_ALL_NEWS_RIGHTS) {
+					$new_rights = $new_rights | ZENPAGE_PAGES_RIGHTS;
+				}
+				if ($rights & MANAGE_ALL_PAGES_RIGHTS) {
+					$new_rights = $new_rights | ZENPAGE_NEWS_RIGHTS;
+				}
 				$this->getObjects();
 				foreach ($this->objects as $object) {
 					switch ($object['type']) {
 						case 'album':
 							if ($object['edit'] && MANAGED_OBJECT_RIGHTS_EDIT) {
-								$this->setRights($this->getRights() | ALBUM_RIGHTS);
+								$new_rights = $new_rights | ALBUM_RIGHTS;
 							}
 							break;
 						case 'pages':
-							$this->setRights($this->getRights() | ZENPAGE_PAGES_RIGHTS);
+							$new_rights = $new_rights | ZENPAGE_PAGES_RIGHTS;
 							break;
 						case 'news':
-							$this->setRights($this->getRights() | ZENPAGE_NEWS_RIGHTS);
+							$new_rights = $new_rights | ZENPAGE_NEWS_RIGHTS;
 							break;
 					}
 				}
+			}
+			if ($new_rights) {
+				$this->setRights($rights | $new_rights);
 			}
 		}
 	}

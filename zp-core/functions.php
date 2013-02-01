@@ -109,6 +109,38 @@ function truncate_string($string, $length, $elipsis='...') {
 }
 
 /**
+ *
+ * fixes unbalanced HTML tags. Used by shortenContent when PHP tidy is not present
+ * @param string $html
+ * @return string
+ */
+function cleanHTML($html) {
+
+	preg_match_all('#<(?!meta|img|br|hr|input\b)\b([a-z]+)(?: .*)?(?<![/|/ ])>#iU', $html, $result);
+	$openedtags = $result[1];
+
+	preg_match_all('#</([a-z]+)>#iU', $html, $result);
+	$closedtags = $result[1];
+
+	$len_opened = count($openedtags);
+
+	if (count($closedtags) == $len_opened) 	{
+		return $html;
+	}
+
+	$openedtags = array_reverse($openedtags);
+	for ($i=0; $i < $len_opened; $i++) 	{
+		if (!in_array($openedtags[$i], $closedtags)) 		{
+			$html .= '</'.$openedtags[$i].'>';
+		} else {
+			unset($closedtags[array_search($openedtags[$i], $closedtags)]);
+		}
+	}
+
+	return $html;
+}
+
+/**
  * Returns truncated html formatted content
  *
  * @param string $articlecontent the source string
@@ -370,31 +402,6 @@ function zp_mail($subject, $message, $email_list=NULL, $cc_addresses=NULL, $bcc_
 	}
 	if (count($email_list) + count($bcc_addresses) > 0) {
 		if (zp_has_filter('sendmail')) {
-			// Make sure no one is trying to use our forms to send Spam
-			// Stolen from Hosting Place:
-			//   http://support.hostingplace.co.uk/knowledgebase.php?action=displayarticle&cat=0000000039&id=0000000040
-			$badStrings = array("Content-Type:", "MIME-Version:",	"Content-Transfer-Encoding:",	"bcc:",	"cc:");
-			foreach($_POST as $k => $v) {
-				foreach($badStrings as $v2) {
-					if (strpos($v, $v2) !== false) {
-						header("HTTP/1.0 403 Forbidden");
-						header("Status: 403 Forbidden");
-						zp_error("Forbidden");
-						exitZP();
-					}
-				}
-			}
-
-			foreach($_GET as $k => $v){
-				foreach($badStrings as $v2){
-					if (strpos($v, $v2) !== false){
-						header("HTTP/1.0 403 Forbidden");
-						header("Status: 403 Forbidden");
-						zp_error("Forbidden");
-						exitZP();
-					}
-				}
-			}
 
 			$from_mail = getOption('site_email');
 			$from_name =  get_language_string(getOption('site_email_name'));
@@ -2361,6 +2368,9 @@ class zpFunctions {
 	 * @return string
 	 */
 	static function updateImageProcessorLink($text) {
+		//TODO: needs support to re-cache the image if cache is purged. Disable until then
+		return $text;
+		//
 		preg_match_all('|\<\s*img.*?\ssrc\s*=\s*"(.*i\.php\?([^"]*)).*/\>|', $text, $matches);
 		foreach ($matches[2] as $key=>$match) {
 			$match = explode('&amp;',$match);
