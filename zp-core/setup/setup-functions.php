@@ -209,18 +209,18 @@ function folderCheck($which, $path, $class, $subfolders, $recurse, $chmod, $upda
 				$perms = fileperms($path)&0777;
 				$check = $chmod;
 			}
-			if (zp_loggedin(ADMIN_RIGHTS) && $updatechmod) {
+			if (setupUserAuthorized() && $updatechmod) {
 				@chmod($path,$chmod);
 				clearstatcache();
 				$perms = fileperms($path)&0777;
 				if (!checkPermissions($perms, $chmod)) {
-					if (array_key_exists($perms, $permission_names)) {
-						$perms_class = $permission_names[$perms];
+					if (array_key_exists($perms&0666|4, $permission_names)) {
+						$perms_class = $permission_names[$perms&0666|4];
 					} else {
 						$perms_class = gettext('unknown');
 					}
-					if (array_key_exists($chmod, $permission_names)) {
-						$chmod_class = $permission_names[$chmod];
+					if (array_key_exists($chmod&0666|4, $permission_names)) {
+						$chmod_class = $permission_names[$chmod&0666|4];
 					} else {
 						$chmod_class = gettext('unknown');
 					}
@@ -382,7 +382,7 @@ function setupLog($message, $anyway=false, $reset=false) {
 	if ($debug || $anyway) {
 		if (is_object($_zp_mutex)) $_zp_mutex->lock();
 		if (!file_exists(dirname(SETUPLOG))) {
-			mkdir_recursive(SETUPLOG, $chmod & 0311);
+			mkdir_recursive(dirname(SETUPLOG), $chmod | 0311);
 		}
 		if ($reset) { $mode = 'w'; } else { $mode = 'a'; }
 		$f = fopen(SETUPLOG, $mode);
@@ -567,7 +567,7 @@ function checkPermissions($actual, $expected) {
 	if (isWin()) {
 		return ($actual & 0700) == ($expected & 0700);	//	with windows owner==group==public
 	} else {
-		return ($actual & 0777) == $expected;
+		return ($actual & 0770) == ($expected & 0770);	//	We do not care about the public permissions
 	}
 }
 
@@ -612,6 +612,37 @@ function configMod() {
 		$mod = $mod | $mod>>3;
 	}
 	return $str;
+}
+
+function printSetupFooter() {
+	echo "<div id=\"footer\">";
+	echo "\n  <a href=\"http://www.zenphoto.org\" title=\"".gettext('A simpler web album')."\">zen<strong>photo</strong></a>";
+	echo " | <a href=\"http://www.zenphoto.org/support/\" title=\"".gettext('Forum').'">'.gettext('Forum')."</a> | <a href=\"http://www.zenphoto.org/trac/\" title=\"Trac\">Trac</a> | <a href=\"changelog.html\" title=\"".gettext('View Change log')."\">".gettext('Change log')."</a>\n</div>";
+}
+
+function setupUserAuthorized() {
+	if (function_exists('zp_loggedin')) {
+		return zp_loggedin(ADMIN_RIGHTS);
+	} else {
+		return true;	//	in a primitive environment
+	}
+}
+
+function updateConfigFile($zp_cfg) {
+	global $xsrftoken;
+	@chmod(CONFIGFILE, 0666);
+	if (is_writeable(CONFIGFILE)) {
+		if ($handle = fopen(CONFIGFILE, 'w')) {
+			if (fwrite($handle, $zp_cfg)) {
+				setupLog(gettext("Updated configuration file"));
+				$base = true;
+			}
+		}
+		fclose($handle);
+		clearstatcache();
+	}
+	$str = configMod();
+	$xsrftoken = sha1(CONFIGFILE.$str.session_id());
 }
 
 ?>

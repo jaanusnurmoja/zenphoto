@@ -146,20 +146,26 @@ define('FOLDER_MOD',CHMOD_VALUE | 0311);
 define('FILE_MOD', CHMOD_VALUE & 0666);
 
 // If the server protocol is not set, set it to the default.
-if (!isset($_zp_conf_vars['server_protocol'])) $_zp_conf_vars['server_protocol'] = 'http';
+if (!isset($_zp_conf_vars['server_protocol'])) {
+	$_zp_conf_vars['server_protocol'] = 'http';
+}
 
-require_once(dirname(__FILE__).'/functions-db-'.(isset($_zp_conf_vars['db_software'])?$_zp_conf_vars['db_software']:'MySQL').'.php');
-if (!db_connect($_zp_conf_vars,false) && OFFSET_PATH != 2) {
+if (!defined('DATABASE_SOFTWARE') && extension_loaded(strtolower(@$_zp_conf_vars['db_software']))) {
+	require_once(dirname(__FILE__).'/functions-db-'.$_zp_conf_vars['db_software'].'.php');
+	$data = db_connect($_zp_conf_vars,false);
+} else {
+	$data = false;
+}
+if (!$data && OFFSET_PATH != 2) {
 	require_once(dirname(__FILE__).'/reconfigure.php');
 	reconfigureAction(true);
 }
 
-$_charset = getOption('charset');
-if (!$_charset) {
-	$_charset = 'UTF-8';
+$data = getOption('charset');
+if (!$data) {
+	$data = 'UTF-8';
 }
-define('LOCAL_CHARSET',$_charset);
-unset($_charset);
+define('LOCAL_CHARSET',$data);
 
 $data = getOption('gallery_data');
 if ($data) {
@@ -202,18 +208,19 @@ if (!function_exists('zp_graphicsLibInfo')) {
 	require_once(dirname(__FILE__).'/lib-GD.php');
 }
 if (function_exists('zp_graphicsLibInfo')) {
-	$_zp_supported_images = zp_graphicsLibInfo();
+	$_zp_cachefileSuffix = zp_graphicsLibInfo();
 } else {
-	$_zp_supported_images = array('Library'=>gettext('none'), 'Library_desc'=>NULL);
+	$_zp_cachefileSuffix = array('Library'=>gettext('none'), 'Library_desc'=>NULL);
 }
-define('GRAPHICS_LIBRARY',$_zp_supported_images['Library']);
-unset($_zp_supported_images['Library']);
-unset($_zp_supported_images['Library_desc']);
-foreach ($_zp_supported_images as $key=>$type) {
-	unset($_zp_supported_images[$key]);
-	if ($type) $_zp_supported_images[strtolower($key)] = true;
+define('GRAPHICS_LIBRARY',$_zp_cachefileSuffix['Library']);
+unset($_zp_cachefileSuffix['Library']);
+unset($_zp_cachefileSuffix['Library_desc']);
+$_zp_supported_images = array();
+foreach ($_zp_cachefileSuffix as $key=>$type) {
+	if ($type) {
+		$_zp_supported_images[] = strtolower($key);
+	}
 }
-$_zp_supported_images = array_keys($_zp_supported_images);
 
 require_once(dirname(__FILE__).'/lib-encryption.php');
 
@@ -252,6 +259,7 @@ define('IMAGE_WATERMARK',getOption('fullimage_watermark'));
 define('FULLIMAGE_WATERMARK',getOption('fullsizeimage_watermark'));
 define('THUMB_WATERMARK',getOption('Image_watermark'));
 define('OPEN_IMAGE_CACHE', !getOption('protected_image_cache'));
+define('IMAGE_CACHE_SUFFIX',getOption('image_cache_suffix'));
 
 define('DATE_FORMAT',getOption('date_format'));
 
@@ -516,15 +524,16 @@ function rewrite_get_album_image($albumvar, $imagevar) {
  * @return string
  */
 function getImageCacheFilename($album8, $image8, $args) {
-	global $_zp_supported_images;
+	global $_zp_supported_images, $_zp_cachefileSuffix;
 	// this function works in FILESYSTEM_CHARSET, so convert the file names
 	$album = internalToFilesystem($album8);
-	$suffix = getOption('image_cache_suffix');
-	if (empty($suffix)) {
-		$suffix = getSuffix($image8);
-	}
-	if (!in_array($suffix, $_zp_supported_images) || $suffix=='jpeg') {
-		$suffix = 'jpg';
+	if (IMAGE_CACHE_SUFFIX) {
+		$suffix = IMAGE_CACHE_SUFFIX;
+	} else {
+		$suffix = @$_zp_cachefileSuffix[strtoupper(getSuffix($image8))];
+		if (empty($suffix)) {
+			$suffix = 'jpg';
+		}
 	}
 	$image = stripSuffix(internalToFilesystem($image8));
 	// Set default variable values.
@@ -1040,7 +1049,7 @@ function debugLog($message, $reset=false) {
 	$max = getOption('debug_log_size');
 	if (is_object($_zp_mutex)) $_zp_mutex->lock();
 	if ($reset || ($size = @filesize($path)) == 0 || ($max && $size > $max)) {
-		if ($size > 0 && !$reset) {
+		if (!$reset && $size > 0) {
 			switchLog('debug');
 		}
 		$f = fopen($path, 'w');

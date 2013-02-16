@@ -82,7 +82,6 @@ if (isset($_GET['mod_rewrite'])) {
 if (isset($_POST['setUTF8URI']) && $_POST['setUTF8URI'] != 'dont') {
 	setOption('UTF8_image_URI', (int) ($_POST['setUTF8URI'] == 'true'));
 }
-setOptionDefault('mod_rewrite_image_suffix', ".php");
 setOptionDefault('server_protocol', "http");
 setOptionDefault('charset', "UTF-8");
 setOptionDefault('image_quality', 85);
@@ -593,6 +592,7 @@ purgeOption('zp_plugin_releaseUpdater');
 
 query('UPDATE '.prefix('administrators').' SET `passhash`='.((int) getOption('strong_hash')).' WHERE `valid`>=1 AND `passhash` IS NULL');
 query('UPDATE '.prefix('administrators').' SET `passupdate`='.db_quote(date('Y-m-d H:i:s')).' WHERE `valid`>=1 AND `passupdate` IS NULL');
+setOptionDefault('image_processor_flooding_protection', 1);
 
 //The following should be done LAST so it catches anything done above
 //set plugin default options by instantiating the options interface

@@ -363,6 +363,7 @@ class RSS {
 
 	protected function getRSSChannelTitleExtra() {
 		switch($this->sortorder) {
+			default:
 			case 'latest':
 			case 'latest-date':
 			case 'latest-mtime':
@@ -930,7 +931,7 @@ protected function getRSSCombinewsAlbums() {
 		}
 		if(!empty($categories)) {
 			$feeditem['category'] = html_encode($categories);
-			$feeditem['title'] = html_encode($title).' ('.html_encode($categories).')';
+			$feeditem['title'] = $title.' ('.$categories.')';
 		}
 		$feeditem['link'] = PROTOCOL.'://'.$this->host.$link;
 		$feeditem['media_content'] = '';
@@ -1013,7 +1014,7 @@ protected function getRSSCombinewsAlbums() {
 	public function printRSSfeed() {
 		global $_zp_gallery;
 		$feeditems = $this->getRSSitems();
-		if(is_array($feeditems)) { 
+		if(is_array($feeditems)) {
 			$this->rssHitcounter();
 			$this->startRSSCache();
 			header('Content-Type: application/xml');
@@ -1030,7 +1031,6 @@ protected function getRSSCombinewsAlbums() {
 					<docs>http://blogs.law.harvard.edu/tech/rss</docs>
 					<generator>Zenphoto RSS Generator</generator>
 					<?php
-					if(is_array($feeditems)) {
 						foreach($feeditems as $feeditem) {
 							switch($this->feedtype) {
 								case 'gallery':
@@ -1041,6 +1041,9 @@ protected function getRSSCombinewsAlbums() {
 									break;
 								case 'comments':
 									$item = $this->getRSSitemComments($feeditem);
+								break;
+							default:
+								$item = $feeditem;
 									break;
 							}
 							?>
@@ -1069,7 +1072,7 @@ protected function getRSSCombinewsAlbums() {
 							</item>
 					<?php
 							} // foreach
-						}	?>
+					?>
 					</channel>
 				</rss>
 			<?php

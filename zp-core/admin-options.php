@@ -397,6 +397,7 @@ if (isset($_GET['action'])) {
 				zp_clearCookie("zenphoto_ssl");
 			}
 			setOption('IP_tied_cookies', (int) isset($_POST['IP_tied_cookies']));
+			setOption('image_processor_flooding_protection', (int) isset($_POST['image_processor_flooding_protection']));
 			$_zp_gallery->save();
 			$returntab = "&tab=security";
 		}
@@ -2007,15 +2008,14 @@ if ($subtab == 'image' && zp_loggedin(OPTIONS_RIGHTS)) {
 		<tr>
 			<td><?php echo gettext("Cache as:"); ?></td>
 			<td>
-				<?php $type = getOption('image_cache_suffix'); ?>
+				<?php $type = IMAGE_CACHE_SUFFIX; ?>
 				<input type="radio" name="image_cache_suffix" value=""<?php if (empty($type)) echo ' checked="checked"'; ?> />&nbsp;<?php echo gettext("Original"); ?>
 				<?php
-				foreach ($_zp_supported_images as $suffix) {
-					if ($suffix != 'jpeg') {
-						?>
-						<input type="radio" name="image_cache_suffix" value="<?php echo $suffix; ?>"<?php if ($type==$suffix) echo ' checked="checked"'; ?> />&nbsp;<?php echo strtoupper($suffix); ?>
-						<?php
-					}
+				$cachesuffix = array_unique($_zp_cachefileSuffix);
+				foreach ($cachesuffix as $suffix) {
+					?>
+					<input type="radio" name="image_cache_suffix" value="<?php echo $suffix; ?>"<?php if ($type==$suffix) echo ' checked="checked"'; ?> />&nbsp;<?php echo $suffix; ?>
+					<?php
 				}
 				?>
 			</td>
@@ -3082,7 +3082,16 @@ if ($subtab == 'security' && zp_loggedin(ADMIN_RIGHTS)) {
 						</p>
 					</td>
 				</tr>
-					<?php
+				<tr>
+					<td><?php echo gettext('Image Processor security')?></td>
+					<td>
+						<label><input type="checkbox" name="image_processor_flooding_protection" value="1" <?php echo checked(1, getOption('image_processor_flooding_protection')); ?> /><?php echo gettext('enable'); ?></label>
+					</td>
+					<td>
+						<?php echo gettext('Add a security parameter to image processor URIs to prevent denial of service attacks requesting arbitrary sized images.'); ?>
+					</td>
+				</tr>
+				<?php
 					if (GALLERY_SECURITY =='public') {
 						$disable = $_zp_gallery->getUser() || getOption('search_user') || getOption('protected_image_user') || getOption('downloadList_user');
 						?>
