@@ -74,13 +74,17 @@ class Zenphoto_Authority {
 	 * @return array
 	 */
 	function getOptionsSupported() {
+		$encodings = self::$hashList;
+		if (!function_exists('hash')) {
+			unset($encodings['pbkdf2']);
+		}
 		return array(	gettext('Primary album edit') => array('key' => 'user_album_edit_default', 'type' => OPTION_TYPE_CHECKBOX,
 										'desc' => gettext('Check if you want <em>edit rights</em> automatically assigned when a user <em>primary album</em> is created.')),
 									gettext('Minimum password strength') => array('key' => 'password_strength', 'type' => OPTION_TYPE_CUSTOM,
 										'desc' => sprintf(gettext('Users must provide passwords a strength of at least %s. The repeat password field will be disabled until this floor is met.'),
 										'<span id="password_strength_display">'.getOption('password_strength').'</span>')),
 									gettext('Password hash algorithm')=> array('key'=>'strong_hash', 'type'=>OPTION_TYPE_SELECTOR,
-										'selections' => self::$hashList,
+										'selections' => $encodings,
 										'desc'=> sprintf(gettext('The hashing algorithm used by Zenphoto. In order of robustness the choices are %s'), '<code>'.implode('</code> > <code>',array_flip(self::$hashList)).'</code>'))
 									);
 	}
@@ -158,7 +162,7 @@ class Zenphoto_Authority {
 				break;
 		}
 		if (DEBUG_LOGIN) {
-			debugLog("passwordHash($user, $pass, $hash_type)[{HASH_SEED}]:$hash");
+			debugLog("passwordHash($user, $pass, $hash_type)[ ".HASH_SEED." ]:$hash");
 		}
 		return $hash;
 	}
@@ -276,19 +280,21 @@ class Zenphoto_Authority {
 	/**
 	 * Checks a logon user/password against admins
 	 *
-	 * Returns true if there is a match
+	 * Returns the user object if there is a match
 	 *
 	 * @param string $user
 	 * @param string $pass
-	 * @return bool
+	 * @return object
 	 */
-	protected static function checkLogon($user, $pass) {
+	static function checkLogon($user, $pass) {
 		$userobj = self::getAnAdmin(array('`user`=' => $user, '`valid`=' => 1));
 		if ($userobj) {
 			$hash = self::passwordHash($user, $pass, $userobj->get('passhash'));
 			if ($hash != $userobj->getPass()) {
 				$userobj = NULL;
 			}
+		} else {
+			$hash = -1;
 		}
 
 		if (DEBUG_LOGIN) {
@@ -766,7 +772,7 @@ class Zenphoto_Authority {
 	function checkCookieCredentials() {
 		list($auth, $id) = explode('.',zp_getCookie('zp_user_auth').'.');
 		$loggedin = $this->checkAuthorization($auth, $id);
-		$loggedin = zp_apply_filter('authorization_cookie',$loggedin, $auth);
+		$loggedin = zp_apply_filter('authorization_cookie',$loggedin, $auth, $id);
 		if ($loggedin) {
 			return $loggedin;
 		} else {
@@ -801,7 +807,7 @@ class Zenphoto_Authority {
 		}
 		if (empty($requestor)) {
 			if (isset($_GET['ref'])) {
-				$requestor = sanitize($_GET['ref'], 0);
+				$requestor = sanitize($_GET['ref']);
 			}
 		}
 		$alt_handlers = zp_apply_filter('alt_login_handler',array());
@@ -887,7 +893,7 @@ class Zenphoto_Authority {
 					<fieldset id="logon_box">
 						<input type="hidden" name="login" value="1" />
 						<input type="hidden" name="password" value="challenge" />
-						<input type="hidden" name="redirect" value="<?php echo html_encode($redirect); ?>" />
+						<input type="hidden" name="redirect" value="<?php echo pathurlencode($redirect); ?>" />
 						<fieldset>
 							<legend><?php echo gettext('User')?></legend>
 							<input class="textfield" name="user" id="user" type="text" size="35" value="<?php echo html_encode($requestor); ?>" />
@@ -974,10 +980,10 @@ class Zenphoto_Authority {
 					<?php
 				}
 				?>
-				<form name="login" action="<?php echo html_encode(getRequestURI()); ?>" method="post">
+				<form name="login" action="<?php echo pathurlencode(getRequestURI()); ?>" method="post">
 					<input type="hidden" name="login" value="1" />
 					<input type="hidden" name="password" value="1" />
-					<input type="hidden" name="redirect" value="<?php echo html_encode($redirect); ?>" />
+					<input type="hidden" name="redirect" value="<?php echo pathurlencode($redirect); ?>" />
 					<fieldset id="logon_box"><legend><?php echo $legend; ?></legend>
 						<?php
 						if ($showUserField) {	//	requires a "user" field
@@ -1021,7 +1027,7 @@ class Zenphoto_Authority {
 					<?php if (isset($captcha['hidden'])) echo $captcha['hidden']; ?>
 					<input type="hidden" name="login" value="1" />
 					<input type="hidden" name="password" value="captcha" />
-					<input type="hidden" name="redirect" value="<?php echo html_encode($redirect); ?>" />
+					<input type="hidden" name="redirect" value="<?php echo pathurlencode($redirect); ?>" />
 					<?php
 					?>
 					<fieldset id="logon_box">
@@ -1157,14 +1163,14 @@ class Zenphoto_Authority {
 		}
 		function togglePassword(id) {
 		if($('#pass'+id).attr('type')=='password') {
-				var oldp = $('#pass'+id);
+		var oldp = $('#pass'+id);
 				var newp = oldp.clone();
 				newp.attr('type', 'text');
 				newp.insertAfter(oldp);
 				oldp.remove();
 				$('.password_field_'+id).hide();
 			} else {
-				var oldp = $('#pass'+id);
+			var oldp = $('#pass'+id);
 				var newp = oldp.clone();
 				newp.attr('type', 'password');
 				newp.insertAfter(oldp);
@@ -1337,10 +1343,11 @@ class Zenphoto_Administrator extends PersistentObject {
 	 * @param $pwd
 	 */
 	function setPass($pwd) {
-		$pwd = Zenphoto_Authority::passwordHash($this->getUser(),$pwd);
+		$hash_type = getOption('strong_hash');
+		$pwd = Zenphoto_Authority::passwordHash($this->getUser(),$pwd, $hash_type);
 		$this->set('pass', $pwd);
 		$this->set('passupdate', date('Y-m-d H:i:s'));
-		$this->set('passhash', $this->passhash);
+		$this->set('passhash', $hash_type);
 		return $this->get('pass');
 	}
 	/**

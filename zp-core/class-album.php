@@ -374,7 +374,7 @@ class AlbumBase extends MediaObject {
 	 *
 	 */
 	function move($newfolder) {
-		return parent::move($new_unique_set);
+		return parent::move($newfolder);
 	}
 
 	/**
@@ -863,7 +863,7 @@ class Album extends AlbumBase {
 			}
 			if ($this->isDynamic()) {
 				$search = $this->getSearchEngine();
-				$subalbums = $search->getAlbums($page,NULL,NULL,false);
+				$subalbums = $search->getAlbums(0,NULL,NULL,false);
 			} else {
 				$dirs = $this->loadFileNames(true);
 				$subalbums = array();

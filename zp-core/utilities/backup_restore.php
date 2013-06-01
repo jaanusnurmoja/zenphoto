@@ -476,11 +476,11 @@ if (isset($_GET['compression'])) {
 <div id="content">
 <?php
 if (!$_zp_current_admin_obj->reset) {
-	printSubtabs('backup');
+	printSubtabs();
 }
 ?>
 <div class="tabbox">
-<?php zp_apply_filter('admin_note','backkup', '');; ?>
+<?php zp_apply_filter('admin_note','backkup', ''); ?>
 <h1>
 	<?php
 	if ($_zp_current_admin_obj->reset) {

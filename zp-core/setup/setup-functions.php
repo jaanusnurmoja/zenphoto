@@ -365,6 +365,7 @@ function charsetSelector($select) {
 }
 
 function permissionsSelector($permission_names, $select) {
+	$select = $select|4;
 	global $_zp_UTF8;
 	$selector =	'<select id="chmod_permissions" name="chmod_permissions" >';
 	$c = 0;
@@ -462,13 +463,13 @@ function setupLanguageSelector() {
 	global $xsrftoken;
 	$languages = generateLanguageList();
 	if (isset($_REQUEST['locale'])) {
-		$locale = sanitize($_REQUEST['locale'], 0);
+		$locale = sanitize($_REQUEST['locale']);
 		if (getOption('locale') != $locale) {
 			?>
 			<div class="errorbox">
 				<h2>
-					<?php printf(gettext('<em>%s</em> is not available.'),$languages[$locale]); ?>
-					<?php printf(gettext('The locale %s is not supported on your server.'), $locale); ?>
+					<?php printf(gettext('<em>%s</em> is not available.'),html_encode($languages[$locale])); ?>
+					<?php printf(gettext('The locale %s is not supported on your server.'), html_encode($locale)); ?>
 					<br />
 					<?php echo gettext('See the <a href="http://www.zenphoto.org/news/troubleshooting-zenphoto#24">troubleshooting guide</a> on zenphoto.org for details.'); ?>
 				</h2>
@@ -601,7 +602,7 @@ function acknowledge($value) {
 }
 
 function configMod() {
-	$mod = 0600;
+	$mod = 0660;
 	$str = '';
 	while (empty($str)) {
 		@chmod(CONFIGFILE, $mod);
@@ -616,8 +617,8 @@ function configMod() {
 
 function printSetupFooter() {
 	echo "<div id=\"footer\">";
-	echo "\n  <a href=\"http://www.zenphoto.org\" title=\"".gettext('A simpler web album')."\">zen<strong>photo</strong></a>";
-	echo " | <a href=\"http://www.zenphoto.org/support/\" title=\"".gettext('Forum').'">'.gettext('Forum')."</a> | <a href=\"http://www.zenphoto.org/trac/\" title=\"Trac\">Trac</a> | <a href=\"changelog.html\" title=\"".gettext('View Change log')."\">".gettext('Change log')."</a>\n</div>";
+	echo "\n  <a href=\"http://www.zenphoto.org\" title=\"".gettext('The simpler media website CMS')."\">zen<strong>photo</strong></a>";
+	echo " | <a href=\"http://www.zenphoto.org/support/\" title=\"".gettext('Forum').'">'.gettext('Forum')."</a> | <a href=\"https://github.com/zenphoto/zenphoto/issues\" title=\"Bugtracker\">Bugtracker </a> | <a href=\"http://www.zenphoto.org/news/category/changelog\" title=\"".gettext('View Change log')."\">".gettext('Change log')."</a>\n</div>";
 }
 
 function setupUserAuthorized() {

@@ -21,6 +21,9 @@ define('HTACCESS_VERSION', '1.4.4');  // be sure to change this the one in .htac
 
 define('OFFSET_PATH', 2);
 
+if (version_compare(PHP_VERSION, '5.0.0', '<')) {
+    die(sprintf(gettext('Zenphoto requires PHP version %s or greater'),PHP_MIN_VERSION));
+}
 require_once(dirname(dirname(__FILE__)).'/global-definitions.php');
 header('Last-Modified: ' . ZP_LAST_MODIFIED);
 header('Content-Type: text/html; charset=UTF-8');
@@ -367,7 +370,13 @@ if (!isset($_zp_setupCurrentLocale_result) || empty($_zp_setupCurrentLocale_resu
 }
 
 $taskDisplay = array('create' => gettext("create"), 'update' => gettext("update"));
-$prevRel = getOption('zenphoto_version');
+if ($i = getOption('zenphoto_install')) {
+	$install = unserialize($i);
+	$prevRel = $install['ZENPHOTO'];
+} else {
+	$prevRel = '';
+}
+
 if (empty($prevRel)) {
 	// pre 1.4.2 release, compute the version
 	$prevRel = getOption('zenphoto_release');
@@ -497,18 +506,10 @@ if (!$setup_checked && (($upgrade && $autorun) || setupUserAuthorized())) {
 	$good = true;
 
 	if ($connection && $_zp_loggedin != ADMIN_RIGHTS) {
-		require_once(SERVERPATH.'/'.ZENFOLDER.'/'.PLUGIN_FOLDER.'/check_for_update.php');
-		$v = checkForUpdate();
-		if (!empty($v)) {
-			$autorun = false;
-		}
-		if (TEST_RELEASE || !empty($v)) {
+		if (TEST_RELEASE) {
 			?>
 			<div class="notebox">
-				<?php
-				if (!empty($v)) echo '<p>'.gettext('You are not installing the latest version of Zenphoto.').'<a href="http://www.zenphoto.org">'.sprintf(gettext("Version %s is available."), $v).'</a></p>';
-				if (TEST_RELEASE) echo '<p>'.gettext('<strong>Note:</strong> The release you are installing has debugging settings enabled!').'</p>';
-				?>
+				<?php echo '<p>'.gettext('<strong>Note:</strong> The release you are installing has debugging settings enabled!').'</p>'; ?>
 			</div>
 			<?php
 		}
@@ -525,15 +526,12 @@ if (!$setup_checked && (($upgrade && $autorun) || setupUserAuthorized())) {
 	}
 
 	$permission = fileperms(CONFIGFILE)&0777;
-	if (!checkPermissions($permission, 0660)) {
-		configMod();
-		$permission = fileperms(CONFIGFILE)&0777;
-	}
-	if (checkPermissions($permission, 0660)) {
+	if (checkPermissions($permission, 0600)) {
 		$p = true;
 	} else {
 		$p = -1;
 	}
+
 	checkMark($p, gettext("Log security"), gettext("Log security [is compromised]"),
 							sprintf(gettext("Zenphoto attempts to make log files accessable by <em>owner</em> only (permissions = 0600). This attempt has failed. The log file permissions are %04o which may allow unauthorized access."),$permission));
 	$err = versionCheck(PHP_MIN_VERSION, PHP_DESIRED_VERSION, PHP_VERSION);
@@ -619,7 +617,7 @@ if (!$setup_checked && (($upgrade && $autorun) || setupUserAuthorized())) {
 	}
 	checkmark($display, gettext('PHP <code>display_errors</code>'),
 			sprintf(gettext('PHP <code>display_errors</code> [is enabled]'),$display),
-			gettext('This setting may result in PHP error messages being displayed on WEB pages. These displays may contain sentsitive information about your site.').$aux,
+			gettext('This setting may result in PHP error messages being displayed on WEB pages. These displays may contain sensitive information about your site.').$aux,
 			$display && !TEST_RELEASE);
 
 	checkMark($noxlate, gettext('PHP <code>gettext()</code> support'), gettext('PHP <code>gettext()</code> support [is not present]'), gettext("Localization of Zenphoto requires native PHP <code>gettext()</code> support"));
@@ -640,7 +638,7 @@ if (!$setup_checked && (($upgrade && $autorun) || setupUserAuthorized())) {
 	} else {
 		$test = $_zp_UTF8->convert('test', 'ISO-8859-1', 'UTF-8');
 		if (empty($test)) {
-			$m2 = gettext("You need to install the <code>mbstring</code> package or correct the issue with <code>iconv(()</code>");
+			$m2 = gettext("You need to install the <code>mbstring</code> package or correct the issue with <code>iconv()</code>");
 			checkMark(0, '', gettext("PHP <code>mbstring</code> package [is not present and <code>iconv()</code> is not working]"), $m2);
 		} else {
 			$m2 = gettext("Strings generated internally by PHP may not display correctly. (e.g. dates)");
@@ -710,12 +708,12 @@ if (!$setup_checked && (($upgrade && $autorun) || setupUserAuthorized())) {
 		$chmodselector = '<form action="#"><input type="hidden" name="xsrfToken" value="'.$xsrftoken.'" />'.
 					'<p>'.sprintf(gettext('Set File permissions to %s.'),permissionsSelector($permission_names, $chmod)).
 					'</p></form>';
-		if (array_key_exists($chmod, $permission_names)) {
-			$value = sprintf(gettext('<em>%1$s</em> (<code>0%2$o</code>)'),$permission_names[$chmod],$chmod);
+		if (array_key_exists($chmod|4, $permission_names)) {
+			$value = sprintf(gettext('<em>%1$s</em> (<code>0%2$o</code>)'),$permission_names[$chmod|4],$chmod);
 		} else {
 			$value = sprintf(gettext('<em>unknown</em> (<code>%o</code>)'),$chmod);
 		}
-		if ($chmod>0644) {
+		if ($chmod>0664) {
 			if (isset($_zp_conf_vars['CHMOD'])) {
 				$severity = -3;
 			} else {
@@ -1012,7 +1010,6 @@ if (!$setup_checked && (($upgrade && $autorun) || setupUserAuthorized())) {
 
 			$dbn = "`".$_zp_conf_vars['mysql_database']. "`.*";
 			$db_results = db_permissions();
-
 			$access = -1;
 			$rightsfound = 'unknown';
 			$rightsneeded = array(gettext('Select')=>'SELECT',gettext('Create')=>'CREATE',gettext('Drop')=>'DROP',gettext('Insert')=>'INSERT',
@@ -1028,9 +1025,10 @@ if (!$setup_checked && (($upgrade && $autorun) || setupUserAuthorized())) {
 			if ($db_results) {
 				$report = "<br /><br /><em>".gettext("Grants found:")."</em> ";
 				foreach ($db_results as $row) {
+					$row = stripcslashes($row);
 					$row_report = "<br /><br />".$row;
 					$r = str_replace(',', '', $row);
-					preg_match('/\sON(.*)TO\s/i', $r, $matches);
+					preg_match('/\sON(.*)\sTO\s?/i', $r, $matches);
 					$found = trim(@$matches[1]);
 					if ($partial = (($i = strpos($found, '%')) !== false)) {
 						$found = substr($found, 0, $i);
@@ -1870,7 +1868,7 @@ if (file_exists(CONFIGFILE)) {
 		$db_schema[] = "CREATE TABLE IF NOT EXISTS ".prefix('news')." (
 		`id` int(11) UNSIGNED NOT NULL auto_increment,
 		`title` text,
-		`content` text,
+		`content` longtext,
 		`extracontent` text,
 		`show` int(1) unsigned NOT NULL default '1',
 		`date` datetime,
@@ -1930,7 +1928,7 @@ if (file_exists(CONFIGFILE)) {
 		`id` int(11) UNSIGNED NOT NULL auto_increment,
 		`parentid` int(11) unsigned default NULL,
 		`title` text,
-		`content` text,
+		`content` longtext,
 		`extracontent` text,
 		`sort_order`varchar(48) NOT NULL default '',
 		`show` int(1) unsigned NOT NULL default '1',
@@ -1981,7 +1979,7 @@ if (file_exists(CONFIGFILE)) {
 		`id` int(11) UNSIGNED NOT NULL auto_increment,
 		`type` varchar(32) NOT NULL,
 		`aux` varchar(255),
-		`data` TEXT,
+		`data` longtext,
 		PRIMARY KEY (`id`),
 		KEY `type` (`type`),
 		KEY `aux` (`aux`)
@@ -1993,7 +1991,7 @@ if (file_exists(CONFIGFILE)) {
 		`id` int(11) UNSIGNED NOT NULL auto_increment,
 		`criteria` TEXT,
 		`date` datetime default NULL,
-		`data` TEXT,
+		`data` longtext,
 		KEY (`criteria`(255)),
 		PRIMARY KEY (`id`)
 		) $collation;";
@@ -2293,6 +2291,11 @@ if (file_exists(CONFIGFILE)) {
 	$sql_statements[] = 'ALTER TABLE '.$tbl_administrators.' CHANGE `pass` `pass` varchar(64)';
 	$sql_statements[] = 'ALTER TABLE '.$tbl_administrators.' ADD COLUMN `passhash` int (1)';
 	$sql_statements[] = 'ALTER TABLE '.$tbl_administrators.' ADD COLUMN `passupdate` datetime';
+	//v1.4.4
+	$sql_statements[] = "ALTER TABLE $tbl_searches CHANGE `data` `data` LONGTEXT";
+	$sql_statements[] = "ALTER TABLE $tbl_plugin_storage CHANGE `data` `data` LONGTEXT";
+	$sql_statements[] = "ALTER TABLE $tbl_news CHANGE `content` `content` LONGTEXT";
+	$sql_statements[] = "ALTER TABLE $tbl_pages CHANGE `content` `content` LONGTEXT";
 
 	// do this last incase there are any field changes of like names!
 	foreach ($_zp_exifvars as $key=>$exifvar) {
@@ -2366,6 +2369,24 @@ if (file_exists(CONFIGFILE)) {
 				}
 			}
 			echo "</h3>";
+			$sql = 'SHOW KEYS FROM '.$tbl_options;
+			$result = query_full_array($sql);
+			$unique = array('name'=>0,'ownerid'=>0,'theme'=>0);
+			foreach ($result as $key) {
+				if (!$key['Non_unique']) {
+					unset($unique[$key['Column_name']]);
+				}
+			}
+			if (!empty($unique)) {
+				?>
+				<p class="notebox">
+				<?php
+				printf(gettext('<strong>Warning:</strong> the <code>%s</code> table appears not to have a proper <em>unique_options</em> key. There are probably duplicate options in the table. There should be a unique index key on <em>name</em>, <em>ownerid</em>, and <em>theme</em>.'),trim($tbl_options,'`'));
+				$autorun = false;
+				?>
+				</p>
+				<?php
+			}
 
 			// set defaults on any options that need it
 			setupLog(gettext("Done with database creation and update"));

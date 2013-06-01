@@ -11,7 +11,7 @@ $map = function_exists('printGoogleMap');
 <head>
 	<?php
 	zp_apply_filter('theme_head');
-	$personality = strtolower(getOption('effervescence_personality'));
+	list($personality, $themeColor) = getPersonality();
 	require_once(SERVERPATH.'/'.THEMEFOLDER.'/effervescence_plus/'.$personality.'/functions.php');
 	?>
 	<title><?php printBareGalleryTitle(); ?> | <?php printBareAlbumTitle(); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
@@ -83,7 +83,7 @@ $map = function_exists('printGoogleMap');
 				?>
 				<a href="<?php echo html_encode(getGalleryIndexURL());?>" title="<?php echo gettext('Albums Index'); ?>"><?php printGalleryTitle();?></a> |
 				<?php printParentBreadcrumb(); ?></span>
-				<?php printAlbumTitle(true);?>
+				<?php printAlbumTitle();?>
 			</div>
 		</div> <!-- wrapnav -->
 
@@ -102,7 +102,7 @@ $map = function_exists('printGoogleMap');
 			<!-- Album Description -->
 			<div id="description">
 				<?php
-				printAlbumDesc(true);
+				printAlbumDesc();
 				?>
 			</div>
 

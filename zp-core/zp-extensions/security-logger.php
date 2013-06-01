@@ -297,7 +297,7 @@ class security_logger {
 				if ($success) return true;
 				break;
 		}
-	$name = '';
+		$name = '';
 		if ($success) {
 			$admin = Zenphoto_Authority::getAnAdmin(array('`user`=' => $user, '`valid`=' => 1));
 			$pass = '';	// mask it from display
@@ -320,9 +320,13 @@ class security_logger {
 		return $allow;
 	}
 
-	static function adminCookie($allow, $auth) {
+	static function adminCookie($allow, $auth, $id) {
 		if (!$allow && $auth) {
-			security_logger::Logger(0, NULL, NULL, 'auth_cookie', '', NULL);
+			switch (getOption('logger_log_type')) {
+				case 'all':
+				case 'fail':
+					security_logger::Logger(0, NULL, NULL, 'auth_cookie', '', $id.':'.$auth);
+			}
 		}
 		return $allow;
 	}

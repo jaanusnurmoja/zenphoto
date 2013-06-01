@@ -49,13 +49,13 @@ if (getOption('dynamic_locale_subdomain')) {
 function printLanguageSelector($flags=NULL) {
 	$languages = generateLanguageList();
 	if (isset($_REQUEST['locale'])) {
-		$locale = sanitize($_REQUEST['locale'], 0);
+		$locale = sanitize($_REQUEST['locale']);
 		if (getOption('locale') != $locale) {
 			?>
 			<div class="errorbox">
 				<h2>
-					<?php printf(gettext('<em>%s</em> is not available.'),$locale); ?>
-					<?php printf(gettext('The locale %s is not supported on your server.'), $locale); ?>
+					<?php printf(gettext('<em>%s</em> is not available.'),html_encode($locale)); ?>
+					<?php printf(gettext('The locale %s is not supported on your server.'), html_encode($locale)); ?>
 					<br />
 					<?php echo gettext('See the troubleshooting guide on zenphoto.org for details.'); ?>
 				</h2>
@@ -73,6 +73,26 @@ function printLanguageSelector($flags=NULL) {
 			$_languages = generateLanguageList();
 
 			$currentValue = getOption('locale');
+			$request = parse_url(getRequestURI());
+			$separator = '?';
+			if (isset($request['query'])) {
+				$query = explode('&', $request['query']);
+				$uri['query'] = '';
+				foreach ($query as $key=>$str) {
+					if (preg_match('/^locale\s*=/', $str)) {
+						unset($query[$key]);
+					}
+				}
+				if (empty($query)) {
+					unset($request['query']);
+				} else {
+					$request['query'] = implode('&', $query);
+					$separator = '&';
+				}
+
+			}
+			$uri = $request['path'];
+			if (isset($request['query'])) $uri .= '?'.$request['query'];
 			foreach ($_languages as $text=>$lang) {
 				?>
 				<li<?php if ($lang==$currentValue) echo ' class="currentLanguage"'; ?>>
@@ -81,17 +101,17 @@ function printLanguageSelector($flags=NULL) {
 						switch (LOCALE_TYPE) {
 							case 2:
 								?>
-								<a href="<?php echo dynamic_locale::fullHostPath($lang).html_encode(getRequestURI()); ?>" >
+								<a href="<?php echo dynamic_locale::fullHostPath($lang).html_encode($uri); ?>" >
 								<?php
 								break;
 							case 1:
 								?>
-								<a href="<?php echo str_replace(WEBPATH, seo_locale::localePath(false, $lang), html_encode(getRequestURI())); ?>" >
+								<a href="<?php echo str_replace(WEBPATH, seo_locale::localePath(false, $lang), html_encode($uri)); ?>" >
 								<?php
 								break;
 							default:
 								?>
-								<a href="?locale=<?php echo $lang; ?>" >
+								<a href="<?php echo $uri.$separator; ?>locale=<?php echo $lang; ?>" >
 								<?php
 								break;
 						}

@@ -228,13 +228,32 @@ function setThemeDomain($themedomain) {
  * @param string $theme The name of the plugin. Only required for strings on the 'theme_description.php' file like the general theme description. If the theme is the current theme the function sets it automatically.
  * @return string
  */
-function gettext_th($string,$theme='') {
+function gettext_th($string,$theme=Null) {
 	global $_zp_gallery;
 	if(empty($theme)) {
 		$theme = $_zp_gallery->getCurrentTheme();
 	}
 	setupDomain($theme, 'theme');
 	$translation = gettext($string);
+	setupDomain();
+	return $translation;
+}
+
+/**
+ * ngettext replacement function for separate translations of third party themes.
+ * @param string $msgid1
+ * @param string $msgid2
+ * @param int $n
+ * @param string $plugin
+ * @return string
+ */
+function ngettext_th($msgid1,$msgid2,$n,$theme=NULL) {
+	global $_zp_gallery;
+	if(empty($theme)) {
+		$theme = $_zp_gallery->getCurrentTheme();
+	}
+	setupDomain($theme, 'theme');
+	$translation = ngettext($msgid1, $msgid2, $n);
 	setupDomain();
 	return $translation;
 }
@@ -248,6 +267,21 @@ function gettext_th($string,$theme='') {
 function gettext_pl($string,$plugin) {
 	setupDomain($plugin,'plugin');
 	$translation = gettext($string);
+	setupDomain();
+	return $translation;
+}
+
+/**
+ * ngettext replacement function for separate translations of third party plugins within the root plugins folder.
+ * @param string $msgid1
+ * @param string $msgid2
+ * @param int $n
+ * @param string $plugin
+ * @return string
+ */
+function ngettext_pl($msgid1,$msgid2,$n,$plugin) {
+	setupDomain($plugin,'plugin');
+	$translation = ngettext($msgid1, $msgid2, $n);
 	setupDomain();
 	return $translation;
 }
@@ -302,8 +336,6 @@ function setupDomain($domain=NULL,$type=NULL) {
  * Returns the result of the setlocale call
  *
  * @param string $override force locale to this
- * @param string $plugindomain domain
- * @param string $type case for settign domain
  * @return mixed
  */
 function setupCurrentLocale($override=NULL) {
@@ -362,19 +394,20 @@ function parseHttpAcceptLanguage($str=NULL) {
 	foreach ($langs as $lang) {
 		// parsing language preference instructions
 		// 2_digit_code[-longer_code][;q=coefficient]
-		preg_match('/([A-Za-z]{1,2})(-([A-Za-z0-9]+))?(;q=([0-9\.]+))?/', $lang, $found);
-		// 2 digit lang code
-		$code = $found[1];
-		// lang code complement
-		$morecode = array_key_exists(3,$found)?$found[3]:false;
-		// full lang code
-		$fullcode = $morecode?$code.'_'.$morecode:$code;
-		// coefficient
-		$coef = sprintf('%3.1f',array_key_exists(5,$found)?$found[5]:'1');
-		// for sorting by coefficient
-		$key = $coef.'-'.$code;
-		// adding
-		$accepted[$key]=array('code'=>$code,'coef'=>$coef,'morecode'=>$morecode,'fullcode'=>$fullcode);
+		if (preg_match('/([A-Za-z]{1,2})(-([A-Za-z0-9]+))?(;q=([0-9\.]+))?/', $lang, $found)) {
+			// 2 digit lang code
+			$code = $found[1];
+			// lang code complement
+			$morecode = array_key_exists(3,$found)?$found[3]:false;
+			// full lang code
+			$fullcode = $morecode?$code.'_'.$morecode:$code;
+			// coefficient
+			$coef = sprintf('%3.1f',array_key_exists(5,$found)?$found[5]:'1');
+			// for sorting by coefficient
+			$key = $coef.'-'.$code;
+			// adding
+			$accepted[$key]=array('code'=>$code,'coef'=>$coef,'morecode'=>$morecode,'fullcode'=>$fullcode);
+		}
 	}
 	// sorting the list by coefficient desc
 	krsort($accepted);
@@ -421,14 +454,14 @@ function getUserLocale() {
 	if (DEBUG_LOCALE) debugLogBackTrace("getUserLocale()");
 	if (isset($_REQUEST['locale'])) {
 		if (isset($_POST['locale'])) {
-			$locale = validateLocale(sanitize($_POST['locale'], 0), 'POST');
+			$locale = validateLocale(sanitize($_POST['locale']), 'POST');
 		} else {
-			$locale = validateLocale(sanitize($_GET['locale'], 0), 'URI string');
+			$locale = validateLocale(sanitize($_GET['locale']), 'URI string');
 		}
 		if ($locale) {
 			zp_setCookie('dynamic_locale', $locale);
 		}
-		if (DEBUG_LOCALE) debugLog("dynamic_locale from URL: ".sanitize($_REQUEST['locale'], 0)."=>$locale");
+		if (DEBUG_LOCALE) debugLog("dynamic_locale from URL: ".sanitize($_REQUEST['locale'])."=>$locale");
 	} else {
 		$matches = explode('.',@$_SERVER['HTTP_HOST']);
 		if ($locale = validateLocale($matches[0], 'HTTP_HOST')) {

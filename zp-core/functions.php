@@ -343,7 +343,7 @@ function is_valid_email_zp($input_email) {
  * @since  1.0.0
  */
 function zp_mail($subject, $message, $email_list=NULL, $cc_addresses=NULL, $bcc_addresses=NULL, $replyTo=NULL) {
-	global $_zp_authority, $_zp_gallery;
+	global $_zp_authority, $_zp_gallery, $_zp_UTF8;
 	$result = '';
 	if ($replyTo) {
 		$t = $replyTo;
@@ -720,7 +720,7 @@ function getManagedAlbumList() {
 	if (zp_loggedin(MANAGE_ALL_ALBUM_RIGHTS)) {
 		$sql = "SELECT `folder` FROM ".prefix('albums').' WHERE `parentid` IS NULL';
 		$albums = query($sql);
-		if ($album) {
+		if ($albums) {
 			while ($album = db_fetch_assoc($albums)) {
 				$_zp_admin_album_list[$album['folder']] = 32767;
 			}
@@ -1512,13 +1512,13 @@ function sanitizeRedirect($redirectTo, $forceHost=false) {
 		} else {
 			if ($forceHost) {
 				$redirect .= SERVER_PROTOCOL.'://'.$_SERVER['HTTP_HOST'];
-				if(strpos($redirectTo, WEBPATH) === false) {
+				if(WEBPATH && strpos($redirectTo, WEBPATH) === false) {
 					$redirect .= WEBPATH;
 				}
 			}
 		}
 		if (isset($redir['path'])) {
-			$redirect .= pathurlencode(sanitize($redir['path']));
+			$redirect .= urldecode(sanitize($redir['path']));
 		}
 		if (isset($redir['query'])) {
 			$redirect .= '?'.sanitize($redir['query']);
@@ -1594,6 +1594,7 @@ function zp_handle_password($authType=NULL, $check_auth=NULL, $check_user=NULL) 
 			$post_user = '';
 		}
 		$post_pass = sanitize($_POST['pass']);
+
 		foreach(Zenphoto_Authority::$hashList as $hash=>$hi) {
 			$auth = Zenphoto_Authority::passwordHash($post_user, $post_pass, $hi);
 			$success = ($auth == $check_auth) && $post_user == $check_user;
@@ -1602,7 +1603,6 @@ function zp_handle_password($authType=NULL, $check_auth=NULL, $check_user=NULL) 
 				break;
 			}
 		}
-
 		$success = zp_apply_filter('guest_login_attempt', $success, $post_user, $post_pass, $authType);;
 		if ($success) {
 			// Correct auth info. Set the cookie.
@@ -2254,7 +2254,15 @@ class zpFunctions {
 	 * @param string $text
 	 */
 	static function tagURLs($text) {
+		if (preg_match('/^a:[0-9]+:{/', $text)) {	//	seriualized array
+			$textlist = unserialize($text);
+			foreach ($textlist as $key=>$text) {
+				$textlist[$key] = str_replace(WEBPATH, '{*WEBPATH*}', str_replace(FULLWEBPATH, '{*FULLWEBPATH*}', $text));
+			}
+			return serialize($textlist);
+		} else {
 		return str_replace(WEBPATH, '{*WEBPATH*}', str_replace(FULLWEBPATH, '{*FULLWEBPATH*}', $text));
+		}
 	}
 	/**
 	 * reverses tagURLs()
@@ -2262,7 +2270,15 @@ class zpFunctions {
 	 * @return string
 	 */
 	static function unTagURLs($text) {
-		return str_replace('{*WEBPATH*}', WEBPATH, str_replace('{*FULLWEBPATH*}', FULLWEBPATH, $text));
+		if (preg_match('/^a:[0-9]+:{/', $text)) {	//	seriualized array
+			$textlist = unserialize($text);
+			foreach ($textlist as $key=>$text) {
+				$textlist[$key] = str_replace('{*WEBPATH*}', WEBPATH, str_replace('{*FULLWEBPATH*}', FULLWEBPATH, $text));
+			}
+			return serialize($textlist);
+		} else {
+			return str_replace('{*WEBPATH*}', WEBPATH, str_replace('{*FULLWEBPATH*}', FULLWEBPATH, $text));
+		}
 	}
 
 	/**

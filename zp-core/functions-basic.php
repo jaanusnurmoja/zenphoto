@@ -107,7 +107,7 @@ set_error_handler("zpErrorHandler");
 set_exception_handler("zpErrorHandler");
 if (OFFSET_PATH != 2 && !file_exists($const_serverpath.'/'.DATA_FOLDER."/zenphoto.cfg")) {
 	require_once(dirname(__FILE__).'/reconfigure.php');
-	reconfigureAction(true);
+	reconfigureAction(1);
 }
 // Including the config file more than once is OK, and avoids $conf missing.
 eval(file_get_contents($const_serverpath.'/'.DATA_FOLDER.'/zenphoto.cfg'));
@@ -127,7 +127,7 @@ $_zp_mutex = new Mutex();
 
 if (OFFSET_PATH != 2 && empty($_zp_conf_vars['mysql_database'])) {
 	require_once(dirname(__FILE__).'/reconfigure.php');
-	reconfigureAction(true);
+	reconfigureAction(2);
 }
 
 require_once(dirname(__FILE__).'/lib-utf8.php');
@@ -140,7 +140,7 @@ if (!defined('FILESYSTEM_CHARSET')) {
 	}
 }
 if (!defined('CHMOD_VALUE')) {
-	define('CHMOD_VALUE', 0666);
+	define('CHMOD_VALUE', fileperms(dirname(dirname(__FILE__)))&0666);
 }
 define('FOLDER_MOD',CHMOD_VALUE | 0311);
 define('FILE_MOD', CHMOD_VALUE & 0666);
@@ -158,7 +158,7 @@ if (!defined('DATABASE_SOFTWARE') && extension_loaded(strtolower(@$_zp_conf_vars
 }
 if (!$data && OFFSET_PATH != 2) {
 	require_once(dirname(__FILE__).'/reconfigure.php');
-	reconfigureAction(true);
+	reconfigureAction(3);
 }
 
 $data = getOption('charset');
@@ -441,7 +441,7 @@ function rewrite_get_album_image($albumvar, $imagevar) {
 	if (MOD_REWRITE) {
 		$uri = getRequestURI();
 		$path = substr($uri, strlen(WEBPATH)+1);
-		$scripturi = sanitize($_SERVER['PHP_SELF'],0);
+		$scripturi = sanitize($_SERVER['PHP_SELF']);
 		$script = substr($scripturi,strpos($scripturi, WEBPATH.'/')+strlen(WEBPATH)+1);
 		// Only extract the path when the request doesn't include the running php file (query request).
 		if (strlen($path) > 0 && strpos($uri, $script) === false && isset($_GET[$albumvar])) {
@@ -715,7 +715,7 @@ function getImageParameters($args, $album=NULL) {
 function getImageProcessorURI($args, $album, $image) {
 	list($size, $width, $height, $cw, $ch, $cx, $cy, $quality, $thumb, $crop, $thumbstandin, $passedWM, $adminrequest, $effects) = $args;
 	$args[8] = NULL;	// not used by image processo
-	$uri = WEBPATH.'/'.ZENFOLDER.'/i.php?a='.pathurlencode($album).'&i='.urlencode($image);
+	$uri = WEBPATH.'/'.ZENFOLDER.'/i.php?a='.$album.'&i='.$image;
 	if (empty($size)) {
 		$args[0] = NULL;
 	} else {
@@ -956,6 +956,24 @@ function rewrite_path($rewrite, $plain, $webpath=true) {
 }
 
 /**
+ * parses a query string WITHOUT url decoding it!
+ * @param string $str
+ */
+function parse_query($str) {
+	$pairs = explode('&', $str);
+	$params = array();
+	foreach($pairs as $pair) {
+		if (strpos($pair, '=') === false) {
+			$params[trim($pair)] = NULL;
+		} else {
+			list($name, $value) = explode('=', $pair, 2);
+			$params[trim($name)] = trim($value);
+		}
+	}
+	return $params;
+}
+
+/**
  * rawurlencode function that is path-safe (does not encode /)
  *
  * @param string $path URL
@@ -967,9 +985,16 @@ function pathurlencode($path) {
 	$link = implode("/", array_map("rawurlencode", explode("/", $parts[0])));
 	if (count($parts)==2) {
 		//	some kind of query link
-		$link .= '?'.html_encode($parts[1]);
+		$pairs = parse_query($parts[1]);
+		$query = '?';
+		foreach($pairs as $name=>$value) {
+			$query .= $name.'='.urlencode($value).'&';
+		}
+		$query - substr($query,0,-1);
+	} else {
+		$query = '';
 	}
-	return $matches[1].$link;
+	return $matches[1].$link.$query;
 }
 
 /**
@@ -1310,19 +1335,19 @@ function secureServer() {
  */
 function getRequestURI() {
 	if (array_key_exists('REQUEST_URI', $_SERVER)) {
-		$uri = $_SERVER['REQUEST_URI'];
+		$uri = sanitize($_SERVER['REQUEST_URI']);
 		preg_match('|^(http[s]*\://[a-zA-Z0-9\-\.]+/?)*(.*)$|xis', $uri, $matches);
 		$uri = $matches[2];
 		if (!empty($matches[1])) {
 			$uri = '/'.$uri;
 		}
 	} else {
-		$uri = @$_SERVER['SCRIPT_NAME'];
-		if (@$_SERVER['QUERY_STRING']) {
-			$uri .= '?'.$_SERVER['QUERY_STRING'];
+		$uri = sanitize(@$_SERVER['SCRIPT_NAME']);
+		if ($q = sanitize(@$_SERVER['QUERY_STRING'])) {
+			$uri .= '?'.$q;
 		}
 	}
-	return urldecode(sanitize(str_replace('\\','/',$uri),0));
+	return urldecode(str_replace('\\','/',$uri));
 }
 
 /**
@@ -1366,11 +1391,17 @@ function safe_glob($pattern, $flags=0) {
  * Check to see if the setup script needs to be run
  */
 function checkInstall() {
-	preg_match('|\[(.*)\]|', getOption('zenphoto_version'), $matches);
-	if (!($i = getOption('zenphoto_install')) || @$matches[1] != ZENPHOTO_RELEASE
+	preg_match('|([^-]*)|', ZENPHOTO_VERSION, $version);
+	if ($i = getOption('zenphoto_install')) {
+		$install = unserialize($i);
+	} else {
+		$install = array('ZENPHOTO'=>'0.0.0[0000]');
+	}
+	preg_match('|([^-]*).*\[(.*)\]|', $install['ZENPHOTO'], $matches);
+	if (@$matches[1] != $version[1] || @$matches[2] != ZENPHOTO_RELEASE
 									|| ((time() & 7)==0) && OFFSET_PATH!=2 && $i != serialize(installSignature())) {
 		require_once(dirname(__FILE__).'/reconfigure.php');
-		reconfigureAction(false);
+		reconfigureAction(0);
 	}
 }
 

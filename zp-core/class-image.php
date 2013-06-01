@@ -442,7 +442,7 @@ class _Image extends MediaObject {
 
 		$x = $this->getTitle();
 		if (empty($x)) {
-			$this->set('title',$this->displayname);
+			$this->setTitle($this->displayname);
 		}
 		if (empty($xdate)) {
 			$this->setDateTime(strftime('%Y-%m-%d %H:%M:%S', $this->filemtime));
@@ -525,7 +525,7 @@ class _Image extends MediaObject {
 	 */
 	function updateDimensions() {
 		$discard = NULL;
-		$size = zp_imageDims($this->localpath, $discard);
+		$size = zp_imageDims($this->localpath);
 		$width = $size['width'];
 		$height = $size['height'];
 		if (zp_imageCanRotate())  {
@@ -931,7 +931,7 @@ class _Image extends MediaObject {
 	function getThumbImageFile($path=NULL) {
 		$local = $this->localpath;
 		if (!is_null($path)) {
-			$local = $path.str_replace(SERVERPATH,$local);
+			$local = str_replace(SERVERPATH,$local,$path);
 		}
 		return $local;
 	}

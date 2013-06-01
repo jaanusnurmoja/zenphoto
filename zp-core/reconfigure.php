@@ -10,12 +10,16 @@
  */
 function reconfigureAction($mandatory) {
 	list($diff, $needs) = checkSignature();
-	$diff = array_keys($diff);
-	if ($mandatory || in_array('ZENPHOTO', $diff) || in_array('FOLDER', $diff)) {
+	$diffkeys = array_keys($diff);
+	if ($mandatory || in_array('ZENPHOTO', $diffkeys) || in_array('FOLDER', $diffkeys)) {
 		if (isset($_GET['rss'])) {
+			if (file_exists(SERVERPATH.'/'.DATA_FOLDER.'/rss-closed.xml')) {
+				$xml = file_get_contents(SERVERPATH.'/'.DATA_FOLDER.'/rss-closed.xml');
+				$xml = preg_replace('~<pubDate>(.*)</pubDate>~', '<pubDate>'.date("r",time()).'</pubDate>', $xml);
+				echo $xml;
+			}
 			exit();	//	can't really run setup from an RSS feed.
 		}
-
 		if (empty($needs)) {
 			$dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 			$p = strpos($dir, ZENFOLDER);
@@ -33,7 +37,7 @@ function reconfigureAction($mandatory) {
 			exitZP();
 		} else {
 			header('Last-Modified: ' . ZP_LAST_MODIFIED);
-			header('Content-Type: text/html; charset=' . LOCAL_CHARSET);
+			header('Content-Type: text/html; charset=UTF-8');
 			?>
 			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 			<html xmlns="http://www.w3.org/1999/xhtml">
@@ -46,7 +50,7 @@ function reconfigureAction($mandatory) {
 					<div id="main">
 						<div id="content">
 							<div class="tabbox">
-								<?php reconfigurePage($needs); ?>
+								<?php reconfigurePage($diff,$needs, $mandatory); ?>
 							</div>
 						</div>
 					</div>
@@ -55,7 +59,7 @@ function reconfigureAction($mandatory) {
 			<?php
 			exitZP();
 		}
-	} else {
+	} else if (!empty($diff)) {
 		if (function_exists('zp_register_filter')) {
 			zp_register_filter('admin_note', 'signatureChange');
 			zp_register_filter('admin_head', 'reconfigureCS');
@@ -88,7 +92,7 @@ function checkSignature() {
 	preg_match_all('|'.ZENFOLDER.'/setup/(.*)|', $package, $matches);
 	$needs = array();
 	foreach ($matches[1] as $need) {
-		$needs[] = trim($need);
+		$needs[] = trim($need,':*');
 	}
 	if (file_exists(dirname(__FILE__).'/setup/')) {
 		chdir(dirname(__FILE__).'/setup/');
@@ -106,7 +110,8 @@ function checkSignature() {
  * @return string
  */
 function signatureChange($tab=NULL, $subtab=NULL) {
-	reconfigurePage();
+	list($diff, $needs) = checkSignature();
+	reconfigurePage($diff, $needs, 0);
 	return $tab;
 }
 
@@ -159,21 +164,16 @@ function reconfigureCS() {
  *
  * HTML for the configuration change notification
  */
-function reconfigurePage() {
-	list($diff, $needs) = checkSignature();
-
+function reconfigurePage($diff, $needs, $mandatory) {
 	?>
 	<div class="reconfigbox">
 		<h1>
-			<?php
-			echo gettext('Zenphoto has detected a change in your installation.');
-			?>
+			<?php echo gettext('Zenphoto has detected a change in your installation.'); ?>
 		</h1>
 		<div id="errors">
 			<ul>
 				<?php
 				foreach ($diff as $thing=>$old) {
-
 					switch ($thing) {
 						case 'SERVER_SOFTWARE':
 							echo '<li>'.sprintf(gettext('Your server software has changed from %1$s to %2$s.'),$old,$_SERVER['SERVER_SOFTWARE']).'</li>';

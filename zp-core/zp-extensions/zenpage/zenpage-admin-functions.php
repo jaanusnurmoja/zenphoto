@@ -565,8 +565,11 @@ function printPageArticleTags($obj) {
  * @param string $option "all" to show all categories if creating a new article without categories assigned, empty if editing an existing article that already has categories assigned.
  */
 function printCategorySelection($id='', $option='') {
+	global $_zp_zenpage;
+
 	$selected = '';
 	echo "<ul class='zenpagechecklist'>\n";
+	$all_cats = $_zp_zenpage->getAllCategories(false);
 	foreach ($all_cats as $cats) {
 		$catobj = new ZenpageCategory($cats['titlelink']);
 		if($option != "all") {
@@ -1676,15 +1679,7 @@ function processZenpageBulkActions($type) {
 		if($action != 'noaction') {
 			if ($total > 0) {
 				if ($action == 'addtags' || $action == 'alltags') {
-					foreach ($_POST as $key => $value) {
-						$key = postIndexDecode($key);
-						if (substr($key, 0, 10) == 'mass_tags_') {
-							if ($value) {
-								$tags[] = substr($key, 10);
-							}
-						}
-					}
-					$tags = sanitize($tags, 3);
+					$tags = bulkTags();
 				}
 				if ($action == 'addcats') {
 					foreach ($_POST as $key => $value) {

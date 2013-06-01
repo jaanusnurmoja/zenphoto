@@ -1048,7 +1048,7 @@ function getParentAlbums($album=null) {
 		if (is_null($album)) {
 			if (in_context(ZP_SEARCH_LINKED) && !in_context(ZP_ALBUM_LINKED)) {
 				$album = $_zp_current_search->getDynamicAlbum();
-				if (empty($name)) return $parents;
+				if (empty($album)) return $parents;
 			} else {
 				$album = $_zp_current_album;
 			}
@@ -1140,7 +1140,7 @@ function printSearchBreadcrumb($between=NULL, $class=NULL, $search=NULL, $archiv
 		$between = ' | ';
 	}
 	if ($class) {
-		$class =' class="'.$classs.'"';
+		$class =' class="'.$class.'"';
 	}
 	if ($d = $_zp_current_search->getSearchDate()) {
 		if (is_null($archive)) {
@@ -1292,9 +1292,7 @@ function printHomeLink($before='', $after='', $title=NULL, $class=NULL, $id=NULL
 	global $_zp_gallery;
 	$site = rtrim($_zp_gallery->getWebsiteURL(),'/');
 	if (!empty($site)) {
-		if (empty($name)) {
-			$name = $_zp_gallery->getWebsiteTitle();
-		}
+		$name = $_zp_gallery->getWebsiteTitle();
 		if (empty($name)) {
 			$name = gettext('Home');
 		}
@@ -1343,7 +1341,7 @@ function printAlbumDate($before='', $nonemessage='', $format=null) {
 	$date = getAlbumDate($format);
 	if ($date) {
 		if ($before) {
-			$date = '<span class="beforetext">'.html_encode($date).'</span>';
+			$date = '<span class="beforetext">'.$before.'</span>';
 		}
 	} else {
 		$date = '';
@@ -1797,7 +1795,7 @@ function getCustomAlbumThumbMaxSpace($width, $height) {
  * @param string $id Optional style id
  * @param bool $thumbStandin set to true to treat as thumbnail
  */
-function printCustomAlbumThumbMaxSpace($alt='', $width, $height, $class=NULL, $id=NULL) {
+function printCustomAlbumThumbMaxSpace($alt, $width, $height, $class=NULL, $id=NULL) {
 	global $_zp_current_album;
 	$albumthumb = $_zp_current_album->getAlbumThumbImage();
 	getMaxSpaceContainer($width, $height, $albumthumb, true);
@@ -2111,7 +2109,7 @@ function printImageDate($before='', $nonemessage='', $format=null) {
 	$date = getImageDate($format);
 	if ($date) {
 		if ($before) {
-			$date = '<span class="beforetext">'.html_encode($before).'</span>'.$date;
+			$date = '<span class="beforetext">'.$before.'</span>'.$date;
 		}
 	}
 	printField('image', 'date', false, $date);
@@ -2743,7 +2741,7 @@ function getProtectedImageURL($image=NULL, $disposal=NULL) {
 	if ($disposal != 'Download' && OPEN_IMAGE_CACHE && file_exists($cache_path)) {
 		return WEBPATH.'/'.CACHEFOLDER.pathurlencode(imgSrcURI($cache_file));
 	} else if ($disposal == 'Unprotected') {
-		return getImageURI($args, $this->album->name, $filename, $image->filemtime);
+		return getImageURI($args, $album->name, $image->filename, $image->filemtime);
 	} else {
 		$params = '&q='.getOption('full_image_quality');
 		$watermark_use_image = getWatermarkParam($image, WATERMARK_FULL);
@@ -2763,7 +2761,7 @@ function getProtectedImageURL($image=NULL, $disposal=NULL) {
  * @param int $size The size the image is to be
  */
 function getSizedImageURL($size) {
-	getCustomImageURL($size);
+	return getCustomImageURL($size);
 }
 
 /**
@@ -2928,7 +2926,7 @@ function getCustomSizedImageThumbMaxSpace($width, $height) {
  * @param string $class Optional style class
  * @param string $id Optional style id
 	*/
-function printCustomSizedImageThumbMaxSpace($alt='',$width,$height,$class=NULL,$id=NULL) {
+function printCustomSizedImageThumbMaxSpace($alt,$width,$height,$class=NULL,$id=NULL) {
 	global $_zp_current_image;
 	if (is_null($_zp_current_image)) return;
 	getMaxSpaceContainer($width, $height, $_zp_current_image, true);
@@ -2945,7 +2943,7 @@ function printCustomSizedImageThumbMaxSpace($alt='',$width,$height,$class=NULL,$
  * @param string $class Optional style class
  * @param string $id Optional style id
  */
-function printCustomSizedImageMaxSpace($alt='',$width,$height,$class=NULL,$id=NULL, $thumb=false) {
+function printCustomSizedImageMaxSpace($alt,$width,$height,$class=NULL,$id=NULL, $thumb=false) {
 	global $_zp_current_image;
 	if (is_null($_zp_current_image)) return;
 	getMaxSpaceContainer($width, $height, $_zp_current_image, $thumb);
@@ -3197,7 +3195,6 @@ function getLatestComments($number,$type="all",$id=NULL) {
 						}
 						$commentcheck['pubdate'] = $commentcheck['date'];	//	for RSS
 						$comments[] = $commentcheck;
-
 					}
 				}
 				db_free_result($commentsearch);
@@ -3211,6 +3208,7 @@ function getLatestComments($number,$type="all",$id=NULL) {
 				$comment['pubdate'] = $comment['date'];
 				$alb = getItemByID('albums', $comment['ownerid']);
 				$comment['folder'] = $alb->name;
+				$comment['albumtitle'] = $alb->getTitle('all');
 				$comments[$key] = $comment;
 			}
 			break;
@@ -3221,8 +3219,10 @@ function getLatestComments($number,$type="all",$id=NULL) {
 			foreach ($comments as $key=>$comment) {
 				$comment['pubdate'] = $comment['date'];
 				$img = getItemByID('images', $comment['ownerid']);
-				$comment['folder'] = $img->$album->name;
+				$comment['folder'] = $img->album->name;
 				$comment['filename'] = $img->filename;
+				$comment['title'] = $img->getTitle('all');
+				$comment['albumtitle'] = $img->album->getTitle('all');
 				$comments[$key] = $comment;
 			}
 			break;
@@ -4031,6 +4031,7 @@ function getSearchURL($words, $dates, $fields, $page, $object_list=NULL) {
 			}
 			$words = implode(',', $words);
 		}
+		$words = strtr($words,array('%'=>'__25__','&'=>'__26__','#'=>'__23__'));
 		if($rewrite) {
 			$url .= urlencode($words);
 		} else {
@@ -4474,10 +4475,10 @@ function getPageRedirect() {
 			$action = '/index.php';
 			break;
 		case 'album.php':
-			$action = '/index.php?userlog=1&album='.urlencode($_zp_current_album->name);
+			$action = '/index.php?userlog=1&album='.pathurlencode($_zp_current_album->name);
 			break;
 		case 'image.php':
-			$action = '/index.php?userlog=1&album='.urlencode($_zp_current_album->name).'&image='.urlencode($_zp_current_image->filename);
+			$action = '/index.php?userlog=1&album='.pathurlencode($_zp_current_album->name).'&image='.urlencode($_zp_current_image->filename);
 			break;
 		case 'pages.php':
 			$action = '/index.php?userlog=1&p=pages&title='.urlencode(getPageTitlelink());
@@ -4500,6 +4501,7 @@ function getPageRedirect() {
 			$action = '/index.php?userlog=1&p='.substr($_zp_gallery_page, 0, -4);
 		}
 	}
+
 	return SEO_WEBPATH.$action;
 }
 /**
@@ -4553,7 +4555,7 @@ function printPasswordForm($_password_hint, $_password_showuser=NULL, $_password
  * @since 1.1.4
  **/
 function printCaptcha($preText='', $midText='', $postText='', $size=4) {
-	global $_zp_captcha;
+	global $_zp_captcha, $_zp_HTML_cache;
 	if ($_zp_captcha && getOption('Use_Captcha')) {
 		if (is_object($_zp_HTML_cache)) {	//	don't cache captch
 			$_zp_HTML_cache->abortHTMLCache();
@@ -4628,8 +4630,11 @@ function exposeZenPhotoInformations( $obj = '', $plugins = '', $theme = '' ) {
  *
  * @return string
  */
-function getCodeblock($number=0) {
+function getCodeblock($number=1) {
 	global $_zp_current_album, $_zp_current_image, $_zp_current_zenpage_news, $_zp_current_zenpage_page, $_zp_gallery, $_zp_gallery_page;
+	if (!$number) {
+		setOptionDefault('codeblock_first_tab', 0);
+	}
 	$getcodeblock = NULL;
 	if ($_zp_gallery_page == 'index.php') {
 		$getcodeblock = $_zp_gallery->getCodeblock();
@@ -4664,14 +4669,12 @@ function getCodeblock($number=0) {
 /**
  * Prints the content of a codeblock for an image, album or Zenpage newsarticle or page.
  *
- * NOTE: This executes PHP and JavaScript code if available
- *
  * @param int $number The codeblock you want to get
  * @param mixed $what optonal object for which you want the codeblock
  *
  * @return string
  */
-function printCodeblock($number=0,$what=NULL) {
+function printCodeblock($number=1,$what=NULL) {
 	if (is_object($what)) {
 		$codeblock = $what->getCodeblock();
 		if ($codeblock) {

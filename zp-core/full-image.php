@@ -22,13 +22,9 @@ if (!isset($_GET['a']) || !isset($_GET['i'])) {
 	imageError('404 Not Found', gettext("Too few arguments! Image not found."), 'err-imagenotfound.png');
 }
 
-list($ralbum, $rimage) = rewrite_get_album_image('a', 'i');
-$ralbum = internalToFilesystem($ralbum);
-$rimage = internalToFilesystem($rimage);
-$album =sanitize_path($ralbum);
-$image = sanitize_path($rimage);
-$album8 = filesystemToInternal($album);
-$image8 = filesystemToInternal($image);
+list($album8, $image8) = rewrite_get_album_image('a', 'i');
+$album = internalToFilesystem($album8);
+$image = internalToFilesystem($image8);
 $theme = themeSetup($album); // loads the theme based image options.
 
 /* Prevent hotlinking to the full image from other domains. */
@@ -79,25 +75,30 @@ if (($hash || !$albumobj->checkAccess()) && !zp_loggedin(VIEW_FULLIMAGE_RIGHTS))
 	}
 	if (empty($hash) || (!empty($hash) && zp_getCookie($authType) != $hash)) {
 		require_once(dirname(__FILE__) . "/template-functions.php");
-		$parms = '';
-		if (isset($_GET['wmk'])) {
-			$parms = '&wmk='.sanitize($_GET['wmk']);
+		require_once(SERVERPATH. "/".ZENFOLDER.'/functions-controller.php');
+		zp_load_gallery();
+		$theme = setupTheme($albumobj);
+		$custom = $_zp_themeroot.'/functions.php';
+		if (file_exists($custom)) {
+			require_once($custom);
 		}
-		if (isset($_GET['q'])) {
-			$parms .= '&q='.sanitize_numeric($_GET['q']);
+		$_zp_gallery_page = 'password.php';
+		$_zp_script = $_zp_themeroot.'/password.php';
+		if (!file_exists(internalToFilesystem($_zp_script))) {
+			$_zp_script = SERVERPATH.'/'.ZENFOLDER.'/password.php';
 		}
-		if (isset($_GET['dsp'])) {
-			$parms .= '&dsp='.sanitize_numeric($_GET['dsp']);
-		}
-		$action = WEBPATH.'/'.ZENFOLDER.'/full-image.php?userlog=1&a='.pathurlencode($album8).'&i='.urlencode($image8).$parms;
-		printPasswordForm($hint, $_zp_gallery->getUserLogonField() || $show, true, $action);
+		header ('Content-Type: text/html; charset=' . LOCAL_CHARSET);
+		header("HTTP/1.0 302 Found");
+		header("Status: 302 Found");
+		header('Last-Modified: ' . ZP_LAST_MODIFIED);
+		include(internalToFilesystem($_zp_script));
+		exposeZenPhotoInformations($_zp_script, array(), $theme);
 		exitZP();
 	}
 }
 
-$image_path = ALBUM_FOLDER_SERVERPATH.$album.'/'.$image;
+$image_path = $imageobj->localpath;
 $suffix = getSuffix($image_path);
-$cache_file = $album . "/" . substr($image, 0, -strlen($suffix)-1) . '_FULL.' . $suffix;
 
 switch ($suffix) {
 	case 'bmp':
@@ -134,6 +135,7 @@ if (getOption('cache_full_image')) {
 	$cache_path = SERVERCACHE.$cache_file;
 	mkdir_recursive(dirname($cache_path), FOLDER_MOD);
 } else {
+	$cache_file = $album."/" .stripSuffix($image).'_FULL.'.$suffix;
 	$cache_path = NULL;
 }
 

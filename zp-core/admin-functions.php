@@ -312,9 +312,6 @@ function printTabs() {
 						</ul>
 					<?php
 					} // if $subtabs end
-					?>
-		</li>
-		<?php
 		} // if array
 		?>
 	</li>
@@ -668,7 +665,7 @@ function customOptions($optionHandler, $indent="", $album=NULL, $showhide=false,
 					?>
 					<td width="350">
 						<input type="hidden" name="<?php echo CUSTOM_OPTION_PREFIX.'chkbox-'.$key; ?>" value="1" />
-						<input type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="1" <?php echo checked('1', $v); ?><?php echo $disabled; ?> />
+						<input type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="1" <?php checked('1', $v); ?><?php echo $disabled; ?> />
 					</td>
 					<?php
 					break;
@@ -729,7 +726,7 @@ function customOptions($optionHandler, $indent="", $album=NULL, $showhide=false,
 
 							<label class="checkboxlabel">
 								<?php if ($behind) echo($display); ?>
-								<input type="checkbox" id="<?php echo $checkbox; ?>" name="<?php echo $checkbox; ?>" value="1"<?php echo checked('1', $v); ?><?php echo $disabled; ?> />
+								<input type="checkbox" id="<?php echo $checkbox; ?>" name="<?php echo $checkbox; ?>" value="1"<?php checked('1', $v); ?><?php echo $disabled; ?> />
 								<?php if (!$behind) echo($display); ?>
 							</label>
 							<?php
@@ -904,7 +901,7 @@ function standardThemeOptions($theme, $album) {
  * @param string $str
  */
 function postIndexEncode($str) {
-	return strtr(urlencode($str),array('.'=>'__2E__','+'=> '_-_','%'=>'_--_'));
+	return strtr(urlencode($str),array('.'=>'__2E__','+'=> '__20__','%'=>'__25__','&'=>'__26__'));
 }
 
 /**
@@ -914,7 +911,7 @@ function postIndexEncode($str) {
  * @return string
  */
 function postIndexDecode($str) {
-	return urldecode(strtr($str,array('__2E__'=>'.','_-_'=>'+','_--_'=>'%')));
+	return urldecode(strtr($str,array('__2E__'=>'.','__20__'=>'+','__25__'=>'%','__26__'=>'&')));
 }
 
 
@@ -1140,9 +1137,6 @@ function printAlbumEditForm($index, $album, $collapse_tags, $buttons=true) {
 	}
 	$tagsort = getTagOrder();
 	if ($index == 0) {
-		if (isset($saved)) {
-			$album->setSubalbumSortType('manual');
-		}
 		$suffix = $prefix = '';
 	} else {
 		$prefix = "$index-";
@@ -2543,7 +2537,7 @@ function process_language_string_save($name, $sanitize_level=3) {
  */
 function getTagOrder() {
 	if (isset($_REQUEST['tagsort'])) {
-		$tagsort = sanitize($_REQUEST['tagsort'], 0);
+		$tagsort = sanitize($_REQUEST['tagsort']);
 		setOption('tagsort', (int) ($tagsort && true));
 	} else {
 		$tagsort = getOption('tagsort');
@@ -3489,15 +3483,15 @@ function printEditDropdown($subtab, $nestinglevels, $nesting) {
 			$link = '?selection=';
 			break;
 		case 'subalbuminfo':
-			$link = '?page=edit&amp;album='.html_encode($_GET['album'],3).'&amp;tab=subalbuminfo&amp;selection=';
+			$link = '?page=edit&amp;album='.html_encode($_GET['album']).'&amp;tab=subalbuminfo&amp;selection=';
 			break;
 		case 'imageinfo':
 			if (isset($_GET['tagsort'])) {
-				$tagsort = '&amp;tagsort='.html_encode($_GET['tagsort'],3);
+				$tagsort = '&amp;tagsort='.html_encode($_GET['tagsort']);
 			} else {
 				$tagsort = '';
 			}
-			$link = '?page=edit&amp;album='.html_encode($_GET['album'],3).'&amp;tab=imageinfo'.$tagsort.'&amp;selection=';
+			$link = '?page=edit&amp;album='.html_encode($_GET['album']).'&amp;tab=imageinfo'.$tagsort.'&amp;selection=';
 			break;
 	}
 	?>
@@ -3673,7 +3667,7 @@ function printBulkActions($checkarray, $checkAll=false) {
 		<div id="mass_cats" style="display:none;">
 			<ul id="mass_cats_data">
 				<?php
-				 printNestedItemsList('cats-checkboxlist','','','all');
+				 printNestedItemsList('cats-checkboxlist','','all');
 				?>
 			</ul>
 		</div>
@@ -3745,6 +3739,22 @@ function bulkActionRedirect($action)  {
 }
 
 /**
+ * Process the bulk tags
+ *
+ * @return array
+ */
+function bulkTags() {
+	$tags = array();
+	foreach ($_POST as $key => $value) {
+		$key = postIndexDecode($key);
+		if ($value && substr($key, 0, 10) == 'mass_tags_') {
+			$tags[] = sanitize(substr($key, 10));
+		}
+	}
+	return $tags;
+}
+
+/**
  * Processes the check box bulk actions for albums
  *
  */
@@ -3756,15 +3766,7 @@ function processAlbumBulkActions() {
 		$total = count($ids);
 		if($action != 'noaction' && $total > 0) {
 			if ($action == 'addtags' || $action == 'alltags') {
-				foreach ($_POST as $key => $value) {
-					$key = postIndexDecode($key);
-					if (substr($key, 0, 10) == 'mass_tags_') {
-						if ($value) {
-							$tags[] = substr($key, 10);
-						}
-					}
-				}
-				$tags = sanitize($tags, 3);
+				$tags = bulkTags();
 			}
 			if ($action == 'changeowner') {
 				$newowner = sanitize($_POST['massownerselect']);
@@ -3844,15 +3846,7 @@ function processImageBulkActions($album) {
 	if($action != 'noaction') {
 		if ($total > 0) {
 			if ($action == 'addtags') {
-				foreach ($_POST as $key => $value) {
-					$key = postIndexDecode($key);
-					if (substr($key, 0, 10) == 'mass_tags_') {
-						if ($value) {
-							$tags[] = substr($key, 10);
-						}
-					}
-				}
-				$tags = sanitize($tags, 3);
+				$tags = bulkTags();
 			}
 			if ($action == 'moveimages' || $action == 'copyimages') {
 				$dest = sanitize($_POST['massalbumselect']);
@@ -3976,11 +3970,11 @@ function codeblocktabsJS() {
 				$('#cbt'+num+'-'+id).addClass('selected');
 			};
 
-		function cbadd(id) {
-			var num = $('#cbu-'+id+' li').size()-1;
+		function cbadd(id,offset) {
+			var num = $('#cbu-'+id+' li').size()-offset;
 			$('li:last', $('#cbu-'+id)).remove();
 			$('#cbu-'+id).append('<li><a class="cbt-'+id+'" id="cbt'+num+'-'+id+'" href="javascript:cbclick('+num+','+id+');" title="'+'<?php echo gettext('codeblock %u'); ?>'.replace(/%u/,num)+'">&nbsp;&nbsp;'+num+'&nbsp;&nbsp;</a></li>');
-			$('#cbu-'+id).append('<li><a id="cbp-'+id+'" href="javascript:cbadd('+id+');" title="<?php echo gettext('add codeblock'); ?>">&nbsp;&nbsp;+&nbsp;&nbsp;</a></li>');
+			$('#cbu-'+id).append('<li><a id="cbp-'+id+'" href="javascript:cbadd('+id+','+offset+');" title="<?php echo gettext('add codeblock'); ?>">&nbsp;&nbsp;+&nbsp;&nbsp;</a></li>');
 			$('#cbd-'+id).append('<div class="cbx-'+id+'" id="cb'+num+'-'+id+'" style="display:none">'+
 														'<textarea name="codeblock'+num+'-'+id+'" class="codeblock" id="codeblock'+num+'-'+id+'" rows="40" cols="60"></textarea>'+
 														'</div>');
@@ -4003,25 +3997,38 @@ function printCodeblockEdit($obj, $id) {
 		$codeblock = array();
 	}
 	$keys = array_keys($codeblock);
-	array_push($keys, 0);
+	array_push($keys, 1);
 	$codeblockCount =  max($keys)+1;
+
+	if (array_key_exists(0, $codeblock) &&  !empty($codeblock)) {
+		$start = 0;
+	} else {
+		$start = (int) getOption('codeblock_first_tab');
+	}
 	?>
 	<div id="cbd-<?php echo $id; ?>" class="tabs">
 		<ul id="<?php echo 'cbu'.'-'.$id; ?>" class="tabNavigation">
 			<?php
-			for ($i=0; $i<$codeblockCount; $i++) {
+			for ($i=$start; $i<$codeblockCount; $i++) {
 				?>
-				<li><a class="<?php if (!$i) echo 'first '; ?>cbt-<?php echo $id; ; ?>" id="<?php echo 'cbt'.$i.'-'.$id; ?>" href="javascript:cbclick(<?php echo $i.','.$id; ?>);" title="<?php printf(gettext('codeblock %u'),$i); ?>">&nbsp;&nbsp;<?php echo $i; ?>&nbsp;&nbsp;</a></li>
+				<li><a class="<?php if ($i==1) echo 'first '; ?>cbt-<?php echo $id; ; ?>" id="<?php echo 'cbt'.$i.'-'.$id; ?>" href="javascript:cbclick(<?php echo $i.','.$id; ?>);" title="<?php printf(gettext('codeblock %u'),$i); ?>">&nbsp;&nbsp;<?php echo $i; ?>&nbsp;&nbsp;</a></li>
 				<?php
 			}
 			?>
-			<li><a id="<?php echo 'cbp'.'-'.$id; ?>" href="javascript:cbadd(<?php echo $id; ?>);" title="<?php echo gettext('add codeblock'); ?>">&nbsp;&nbsp;+&nbsp;&nbsp;</a></li>
+			<li><a id="<?php echo 'cbp'.'-'.$id; ?>" href="javascript:cbadd(<?php echo $id; ?>,<?php echo (int) 1-$start; ?>);" title="<?php echo gettext('add codeblock'); ?>">&nbsp;&nbsp;+&nbsp;&nbsp;</a></li>
 		</ul>
 
 		<?php
-		for ($i=0; $i<$codeblockCount; $i++) {
+		for ($i=$start; $i<$codeblockCount; $i++) {
 			?>
-			<div class="cbx-<?php echo $id; ?>" id="cb<?php echo $i.'-'.$id; ?>"<?php if ($i) echo ' style="display:none"'; ?>">
+			<div class="cbx-<?php echo $id; ?>" id="cb<?php echo $i.'-'.$id; ?>"<?php if ($i!=1) echo ' style="display:none"'; ?>">
+				<?php
+				if (!$i) {
+					?>
+					<span class="notebox"><?php echo gettext('Codeblock 0 is deprecated.')?></span>
+					<?php
+				}
+				?>
 				<textarea name="codeblock<?php echo $i; ?>-<?php echo $id; ?>" class="codeblock" id="codeblock<?php echo $i; ?>-<?php echo $id; ?>" rows="40" cols="60"><?php echo html_encode(@$codeblock[$i]); ?></textarea>
 			</div>
 			<?php
@@ -4040,7 +4047,7 @@ function printCodeblockEdit($obj, $id) {
  */
 function processCodeblockSave($id) {
 	$codeblock = array();
-	$i = 0;
+	$i = (int) !isset($_POST['codeblock0-'.$id]);
 	while (isset($_POST['codeblock'.$i.'-'.$id])) {
 		$v = sanitize($_POST['codeblock'.$i.'-'.$id], 0);
 		if ($v) {

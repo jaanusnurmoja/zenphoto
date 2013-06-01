@@ -88,7 +88,7 @@ class SearchEngine {
 		}
 		$this->search_unpublished = false;
 		if (isset($_REQUEST['words'])) {
-			$this->words = sanitize($_REQUEST['words'],0);
+			$this->words = strtr(sanitize($_REQUEST['words'],0),array('__23__'=>'#','__25__'=>'%','__26__'=>'&'));
 		} else {
 			$this->words = NULL;
 			if (isset($_REQUEST['date'])) {  // words & dates are mutually exclusive
@@ -841,7 +841,7 @@ class SearchEngine {
 					} else {
 						$key = $this->album->getAlbumSortKey();
 						if ($key != '`sort_order`' && $key != 'RAND()') {
-							if ($thie->album->getSortDirection('album')) {
+							if ($this->album->getSortDirection('album')) {
 								$key .= " DESC";
 							}
 						}
@@ -1236,19 +1236,19 @@ class SearchEngine {
 	 */
 	private function getSearchAlbums($sorttype, $sortdirection, $mine=NULL) {
 		if (getOption('search_no_albums') || $this->search_no_albums) { return array(); }
-		if (!is_null($sorttype)) {
+		if (is_null($sorttype)) {
 			$sorttype = $this->albumsorttype;
 		} else {
 			$this->albumsorttype = $sorttype;
 		}
-		if (!is_null($sortdirection)) {
+		if (is_null($sortdirection)) {
 			$sortdirection = $this->albumsortdirection;
 		} else {
 			$this->albumsortdirection = $sortdirection;
 		}
 		$albums = array();
 		$searchstring = $this->getSearchString();
-		if (empty($searchstring)) { return $albums; } // nothing to find
+		if (empty($searchstring)) { return array(); } // nothing to find
 		$criteria = $this->getCacheTag('albums',serialize($searchstring), $sorttype.' '.$sortdirection);
 		if ($this->albums && $criteria == $this->searches['albums']) {
 			return $this->albums;
@@ -1499,6 +1499,9 @@ class SearchEngine {
 		if ($page == 0) {
 			return $this->images;
 		} else {
+			if (empty($this->images)) {
+				return array();
+			}
 			// Only return $firstPageCount images if we are on the first page and $firstPageCount > 0
 			if (($page==1) && ($firstPageCount>0)) {
 				$pageStart = 0;
@@ -1684,7 +1687,6 @@ class SearchEngine {
 			$result = array();
 			if (empty($searchdate)) {
 				list ($search_query,$weights) = $this->searchFieldsAndTags($searchstring, 'news', $sorttype, $sortdirection);
-				zp_apply_filter('search_statistics',$searchstring, 'news', !empty($search_results), false, $this->iteration++);
 			} else {
 				$search_query = $this->searchDate($searchstring, $searchdate, 'news', $sorttype, $sortdirection,$this->whichdates);
 			}
@@ -1693,6 +1695,7 @@ class SearchEngine {
 			} else {
 				$search_result = query($search_query);
 			}
+			zp_apply_filter('search_statistics',$searchstring, 'news', !empty($search_results), false, $this->iteration++);
 			if ($search_result) {
 				while ($row = db_fetch_assoc($search_result)) {
 					$data = array('id'=>$row['id'],'titlelink'=>$row['titlelink']);
@@ -1768,7 +1771,9 @@ class SearchEngine {
 				if ((time() - strtotime($result['date'])) > SEARCH_CACHE_DURATION*60) {
 					query('DELETE FROM '.prefix('search_cache').' WHERE `id`='.$result['id']);
 				} else {
-					return unserialize($result['data']);
+					if ($result = unserialize($result['data'])) {
+						return $result;
+					}
 				}
 			}
 		}
@@ -1785,7 +1790,7 @@ class SearchEngine {
  */
 function search_quote($word) {
 	if (is_numeric($word) || preg_match("/[ &|!'\"`,()]/",$word)) {
-		$word = '"'.addslashes($word).'"';
+		$word = '"'.str_replace("\\'","'",addslashes($word)).'"';
 	}
 	return $word;
 
