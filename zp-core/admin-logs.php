@@ -56,13 +56,6 @@ if (isset($_GET['action'])) {
 				$zip->add_file_from_path(basename($file), $file);
 				$zip->finish();
 				break;
-			case 'change_size':
-				$newsize = sanitize_numeric($_POST['log_size']);
-				$log = sanitize(@$_GET['tab']);
-				setOption($log.'_log_size', $newsize);
-				$class = 'messagebox';
-				$result = sprintf(gettext('%s log maximum size changed.'),$what);
-				break;
 		}
 	}
 }
@@ -112,36 +105,26 @@ echo "\n</head>";
 				}
 				?>
 				<form method="post" action="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-logs.php'; ?>?action=change_size&amp;page=logs&amp;tab=<?php echo html_encode($subtab).'&amp;filename='.html_encode($subtab); ?>" >
-				<span class="button buttons tooltip" title="<?php printf(gettext("Delete %s"),$logfiletext);?>">
+				<span class="button buttons">
 					<a href="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-logs.php?action=delete_log&amp;page=logs&amp;tab='.html_encode($subtab).'&amp;filename='.html_encode($subtab); ?>&amp;XSRFToken=<?php  echo getXSRFToken('delete_log'); ?>">
 					<img src="images/edit-delete.png" /><?php echo gettext('Delete'); ?></a>
 				</span>
 				<?php
 				if (!empty($logtext)) {
 					?>
-					<span class="button buttons tooltip" title="<?php printf(gettext("Reset %s"),$logfiletext);?>">
+					<span class="button buttons">
 						<a href="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-logs.php?action=clear_log&amp;page=logs&amp;tab='.html_encode($subtab).'&amp;filename='.html_encode($subtab); ?>&amp;XSRFToken=<?php  echo getXSRFToken('clear_log'); ?>">
 						<img src="images/refresh.png" /><?php echo gettext('Reset'); ?></a>
 					</span>
-					<span class="button buttons tooltip" title="<?php printf(gettext("Download %s ZIP file"),$logfiletext);?>">
+					<span class="button buttons">
 						<a href="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-logs.php?action=download_log&amp;page=logs&amp;tab='.html_encode($subtab).'&amp;filename='.html_encode($subtab); ?>&amp;XSRFToken=<?php  echo getXSRFToken('download_log'); ?>">
 						<img src="images/arrow_down.png" /><?php echo gettext('Download'); ?></a>
 					</span>
 					<?php
 				}
-				if (!is_null($size = getOption(strtolower($logfiletext).'_log_size'))) {
-					XSRFToken('change_size');
-					?>
-					<span class="floatright buttons">
-						<?php echo gettext('Log file size limit')?>
-						<input type="text" name="log_size" value="<?php echo $size; ?>" size="8" />&nbsp;
-						<button class="floatright" type="submit" title="<?php echo gettext("Update"); ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Update"); ?></strong></button>
-					</span>
-				<?php
-				}
 				?>
 				</form>
-				<br clear="all" />
+				<br class="clearall" />
 				<br />
 				<blockquote class="logtext">
 					<?php

@@ -361,10 +361,13 @@ width: 100%;
 	color: #036;
 }
 
-#search_form .pushbutton {
+#search_form .button {
 width: 200px;
 }
 
+.clearall {
+clear: both !important;
+}
 
 
 @media screen and (min-width: 500px) {
@@ -395,4 +398,8 @@ width: 200px;
    	float: right;
   }
 
+}
+.error {
+	color: #C33;
+	font-weight: bold;
 }

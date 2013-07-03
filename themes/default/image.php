@@ -3,8 +3,8 @@
 
 if (!defined('WEBPATH')) die();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 	<head>
 		<?php zp_apply_filter('theme_head'); ?>
 		<title><?php printBareGalleryTitle(); ?> | <?php printBareAlbumTitle(); ?> | <?php printBareImageTitle(); ?></title>
@@ -24,7 +24,7 @@ if (!defined('WEBPATH')) die();
 				// ]]> -->
 			</script>
 		<?php } ?>
-		<?php printRSSHeaderLink('Gallery', gettext('Gallery RSS')); ?>
+		<?php if (class_exists('RSS')) printRSSHeaderLink('Gallery', gettext('Gallery RSS')); ?>
 	</head>
 	<body>
 		<?php zp_apply_filter('theme_body_open'); ?>
@@ -53,7 +53,11 @@ if (!defined('WEBPATH')) die();
 			<div id="image">
 				<strong>
 					<?php
-					$fullimage = getFullImageURL();
+					if (isImagePhoto()) {
+						$fullimage = getFullImageURL();
+					} else {
+						$fullimage = NULL;
+					}
 					if (!empty($fullimage)) {
 						?>
 						<a href="<?php echo html_encode($fullimage); ?>" title="<?php printBareImageTitle(); ?>">
@@ -81,23 +85,25 @@ if (!defined('WEBPATH')) die();
 				<hr /><br />
 				<?php
 				If (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_image);
+				@call_user_func('printSlideShowLink');
+
 				if (getImageMetaData()) {
 					printImageMetadata(NULL, 'colorbox');
 					?>
-					<br clear="all" />
+					<br class="clearall" />
 					<?php
 				}
 				printTags('links', gettext('<strong>Tags:</strong>') . ' ', 'taglist', '');
 				?>
-				<br clear="all" />
-				<?php @call_user_func('printSlideShowLink'); ?>
+				<br class="clearall" />
+				
 				<?php @call_user_func('printGoogleMap'); ?>
 				<?php @call_user_func('printRating'); ?>
 				<?php @call_user_func('printCommentForm'); ?>
 			</div>
 		</div>
 		<div id="credit">
-			<?php printRSSLink('Gallery', '', 'RSS', ' | '); ?>
+			<?php if (class_exists('RSS')) printRSSLink('Gallery', '', 'RSS', ' | '); ?>
 			<?php printCustomPageURL(gettext("Archive View"), "archive"); ?> |
 			<?php
 			if (function_exists('printFavoritesLink')) {
@@ -109,7 +115,6 @@ if (!defined('WEBPATH')) die();
 			<?php @call_user_func('printUserLogin_out'," | "); ?>
 		</div>
 		<?php
-		printAdminToolbox();
 		zp_apply_filter('theme_body_close');
 		?>
 	</body>

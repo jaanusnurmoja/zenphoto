@@ -10,6 +10,7 @@ $_zp_gallery = new Gallery();
 class Gallery {
 
 	var $albumdir = NULL;
+	var $table = 'gallery';
 	protected $albums = NULL;
 	protected $theme;
 	protected $themes;
@@ -70,10 +71,11 @@ class Gallery {
 	 */
 	function getDesc($locale=NULL) {
 		$text = $this->get('Gallery_description');
-		if ($locale!=='all') {
-			$text = get_language_string($text,$locale);
+		if ($locale =='all') {
+			return zpFunctions::unTagURLs($text);
+		} else {
+			return applyMacros(zpFunctions::unTagURLs(get_language_string($text,$locale)));
 		}
-		$text = zpFunctions::unTagURLs($text);
 		return $text;
 	}
 	/**
@@ -199,7 +201,6 @@ class Gallery {
 	 */
 	private function loadAlbumNames() {
 		$albumdir = $this->getAlbumDir();
-
 		$dir = opendir($albumdir);
 		if (!$dir) {
 			if (!is_dir($albumdir)) {
@@ -212,8 +213,7 @@ class Gallery {
 		$albums = array();
 
 		while ($dirname = readdir($dir)) {
-			if ((is_dir($albumdir.$dirname) && (substr($dirname, 0, 1) != '.')) ||
-								hasDynamicAlbumSuffix($dirname)) {
+			if ((is_dir($albumdir.$dirname) && (substr($dirname, 0, 1) != '.')) ||hasDynamicAlbumSuffix($dirname)) {
 				$albums[] = filesystemToInternal($dirname);
 			}
 		}
@@ -232,7 +232,7 @@ class Gallery {
 	function getAlbum($index) {
 		$this->getAlbums();
 		if ($index >= 0 && $index < $this->getNumAlbums()) {
-			return  new Album(NULL, $this->albums[$index]);
+			return  newAlbum($this->albums[$index]);
 		} else {
 			return false;
 		}
@@ -278,7 +278,7 @@ class Gallery {
 						if (file_exists($themefile)) {
 							$theme_description = array();
 							require($themefile);
-							$themes[$dir8] = sanitize($theme_description, 1);
+							$themes[$dir8] = $theme_description;
 						} else {
 							$themes[$dir8] = array('name'=>gettext('Unknown'), 'author'=>gettext('Unknown'), 'version'=>gettext('Unknown'), 'desc'=>gettext('<strong>Missing theme info file!</strong>'), 'date'=>gettext('Unknown'));
 						}
@@ -353,7 +353,7 @@ class Gallery {
 				$count = 0;
 				$albums = $this->getAlbums(0);
 				foreach ($albums as $analbum) {
-					$album = new Album(NULL, $analbum);
+					$album = newAlbum($analbum);
 					if (!$album->isDynamic()) {
 						$count = $count + self::getImageCount($album);
 					}
@@ -367,7 +367,7 @@ class Gallery {
 		$count = $album->getNumImages();
 		$albums = $album->getAlbums(0);
 		foreach ($albums as $analbum) {
-			$album = new Album(NULL, $analbum);
+			$album = newAlbum($analbum);
 			if (!$album->isDynamic()) {
 				$count = $count + self::getImageCount($album);
 			}
@@ -405,7 +405,10 @@ class Gallery {
 		if (empty($restart)) {
 			setOption('last_garbage_collect', time());
 			/* purge old search cache items */
-			$sql = 'DELETE FROM '.prefix('search_cache').' WHERE `date`<'.db_quote(date('Y-m-d H:m:s',time()-SEARCH_CACHE_DURATION*60));
+			$sql = 'DELETE FROM '.prefix('search_cache');
+			if (!$complete) {
+				$sql .= ' WHERE `date`<'.db_quote(date('Y-m-d H:m:s',time()-SEARCH_CACHE_DURATION*60));
+			}
 			$result = query($sql);
 
 			/* clean the comments table */
@@ -527,7 +530,7 @@ class Gallery {
 					while ($analbum = db_fetch_assoc($albumids)) {
 						if (($mtime=filemtime(ALBUM_FOLDER_SERVERPATH.internalToFilesystem($analbum['folder']))) > $analbum['mtime']) {
 							// refresh
-							$album =  new Album(NULL, $analbum['folder']);
+							$album =  newAlbum($analbum['folder']);
 							$album->set('mtime', $mtime);
 							if ($this->getAlbumUseImagedate()) {
 								$album->setDateTime(NULL);
@@ -599,7 +602,7 @@ class Gallery {
 
 					// Then go into existing albums recursively to clean them... very invasive.
 					foreach ($this->getAlbums(0) as $folder) {
-						$album =  new Album(NULL, $folder);
+						$album =  newAlbum($folder);
 						if (!$album->isDynamic()) {
 							if(is_null($album->getDateTime())) {  // see if we can get one from an image
 								$images = $album->getImages(0,0,'date','DESC');
@@ -637,7 +640,7 @@ class Gallery {
 					if (file_exists($imageName)) {
 						$mtime = filemtime($imageName);
 						if ($image['mtime'] != $mtime) { // file has changed since we last saw it
-							$imageobj = newImage( new Album(NULL, $row['folder']), $image['filename']);
+							$imageobj = newImage( newAlbum($row['folder']), $image['filename']);
 							$imageobj->set('mtime', $mtime);
 							$imageobj->updateMetaData(); // prime the EXIF/IPTC fields
 							$imageobj->updateDimensions(); // update the width/height & account for rotation
@@ -761,7 +764,7 @@ class Gallery {
 		}
 		db_free_result($result);
 		foreach ($albums as $folder) {	// these albums are not in the database
-			$albumobj =  new Album(NULL,$folder);
+			$albumobj =  newAlbum($folder);
 			if ($albumobj->exists) {	// fail to instantiate?
 				$results[$folder] = $albumobj->getData();
 			}
@@ -772,7 +775,7 @@ class Gallery {
 		$albums_ordered = array();
 		foreach($results as $row) { // check for visible
 			$folder = $row['folder'];
-			$album =  new Album(NULL, $folder);
+			$album =  newAlbum($folder);
 			switch (checkPublishDates($row)) {
 				case 1:
 					$album->setShow(0);
@@ -932,7 +935,7 @@ class Gallery {
 	 * @return array
 	 */
 	function getCodeblock() {
-		return $this->get("codeblock");
+		return zpFunctions::unTagURLs($this->get("codeblock"));
 	}
 
 	/**
@@ -940,9 +943,8 @@ class Gallery {
 	 *
 	 */
 	function setCodeblock($cb) {
-		$this->set("codeblock",$cb);
+		$this->set('codeblock', zpFunctions::tagURLs($cb));
 	}
-
 
 	/**
 	 * Checks if guest is loggedin for the album

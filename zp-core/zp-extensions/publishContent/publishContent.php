@@ -10,7 +10,7 @@ function unpublishSubalbums($album) {
 	global $_zp_gallery;
 	$albums = $album->getAlbums();
 	foreach ($albums as $albumname) {
-		$subalbum = new Album(NULL, $albumname);
+		$subalbum = newAlbum($albumname);
 		$subalbum->setShow(false);
 		$subalbum->save();
 		unpublishSubalbums($subalbum);
@@ -35,7 +35,7 @@ if (isset($_POST['set_defaults'])) {
 		case 'albums':
 			unset($_POST['checkAllAuto']);
 			foreach ($_POST as $key=>$albumid) {
-				$album = new Album(NULL, postIndexDecode($key));
+				$album = newAlbum(postIndexDecode($key));
 				$album->setShow(1);
 				$album->save();
 			}
@@ -47,7 +47,7 @@ if (isset($_POST['set_defaults'])) {
 				$imageid = sanitize_numeric(substr($action,$i+1));
 				$rowi = query_single_row('SELECT * FROM '.prefix('images').' WHERE `id`='.$imageid);
 				$rowa = query_single_row('SELECT * FROM '.prefix('albums').' WHERE `id`='.$rowi['albumid']);
-				$album = new Album(NULL, $rowa['folder']);
+				$album = newAlbum($rowa['folder']);
 				$image = newImage($album, $rowi['filename']);
 				switch(substr($action,0,$i)) {
 					case 'pub':
@@ -151,7 +151,7 @@ echo '</head>';
 	}
 	if (isset($_GET['propagate_unpublished'])) {
 		foreach ($albumlist as $albumname) {
-			$album = new Album(NULL, $albumname);
+			$album = newAlbum($albumname);
 			if (!$album->getShow()) {
 				unpublishSubalbums($album);
 			}
@@ -200,19 +200,19 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			<label><input type="checkbox" name="album_default"	value="1"<?php if ($albpublish) echo ' checked="checked"'; ?> /> <?php echo gettext("Publish albums by default"); ?></label>
 			&nbsp;&nbsp;&nbsp;
 			<label><input type="checkbox" name="image_default"	value="1"<?php if ($imgpublish) echo ' checked="checked"'; ?> /> <?php echo gettext("Publish images by default"); ?></label>
-			<br clear="all" />
-			<br clear="all" />
+			<br class="clearall" />
+			<br class="clearall" />
 			<div class="buttons pad_button" id="setdefaults">
 				<button class="tooltip" type="submit" title="<?php echo gettext("Set defaults for album publishing and image visibility."); ?>">
 					<img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/burst.png" alt="" /> <?php echo gettext("Apply"); ?>
 				</button>
 			</div>
 		</form>
-		<br clear="all" />
+		<br class="clearall" />
 	</div>
 </fieldset>
-<br clear="all" />
-<br clear="all" />
+<br class="clearall" />
+<br class="clearall" />
 <?php
 }
 ?>
@@ -246,38 +246,23 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 		if ($c > 0) {
 			?>
 			<form name="publish_albums" action="" method="post"><?php echo gettext('Albums:'); ?>
-			<label id="autocheck">
-				<input type="checkbox" name="checkAllAuto" id="checkAllAuto" />
-				<span id="autotext"><?php echo gettext('all');?></span>
-			</label>
-			<script type="text/javascript">
-				// <!-- <![CDATA[
-				var checked = false;
-				$('#autocheck').click(
-				   function() {
-				      if (checked) {
-					      checked = false;
-				      } else {
-					      checked = 'checked';
-				      }
-				      $('.albumcheck').attr('checked', checked);
-				   }
-				)
-				// ]]> -->
-			</script>
+				<label id="autocheck">
+					<input type="checkbox" name="checkAllAuto" id="checkAllAuto" onclick="$('.checkAuto').prop('checked', $('#checkAllAuto').prop('checked'));"/>
+					<span id="autotext"><?php echo gettext('all');?></span>
+				</label>
 			<?php XSRFToken('publishContent');?>
 			<input type="hidden" name="publish" value="albums" />
 			<ul class="schedulealbumchecklist">
 			<?php
 			foreach ($publish_albums_list as $analbum=>$albumid) {
-				$album = new Album(NULL, $analbum);
+				$album = newAlbum($analbum);
 				$thumbimage = $album->getAlbumThumbImage();
 				$thumb = $thumbimage->getCustomImage(40,NULL,NULL,40,40,NULL,NULL,-1,NULL);
 				?>
 				<li>
 					<label>
-						<input type="checkbox" name="<?php echo postIndexEncode($analbum); ?>" value="<?php echo $albumid; ?>" class="albumcheck" />
-						<img src="<?php echo pathurlencode($thumb); ?>" width="40" height="40" alt="" title="album thumb" />
+						<input type="checkbox" class="checkAuto" name="<?php echo postIndexEncode($analbum); ?>" value="<?php echo $albumid; ?>" class="albumcheck" />
+						<img src="<?php html_encode(echo html_encode(pathurlencode($thumb))); ?>" width="40" height="40" alt="" title="album thumb" />
 						<?php echo $album->name; ?>
 					</label>
 					<a href="<?php echo $album->getAlbumLink(); ?>" title="<?php echo gettext('view'); ?>"> (<?php echo gettext('view'); ?>)</a>
@@ -286,23 +271,23 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			}
 			?>
 			</ul>
-			<br clear="all" />
-			<br clear="all" />
+			<br class="clearall" />
+			<br class="clearall" />
 
 			<div class="buttons pad_button" id="publishalbums">
 			<button class="tooltip" type="submit" title="<?php echo gettext("Publish waiting albums."); ?>">
 				<img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/cache.png" alt="" /> <?php echo gettext("Publish albums"); ?>
 			</button>
 			</div>
-			<br clear="all" />
+			<br class="clearall" />
 			</form>
-			<p class="buttons">
+			<p class="buttons tooltip">
 				<a href="?propagate_unpublished" title="<?php echo gettext('Set all subalbums of an un-published album to un-published.'); ?>">
 				<img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/redo.png" alt="" />
 					<?php echo gettext('Propagate un-published state'); ?>
 				</a>
 			</p>
-			<br clear="all" />
+			<br class="clearall" />
 			<?php
 		}
 	?>
@@ -313,7 +298,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 	}
 	?>
 </fieldset>
-<br clear="all" />
+<br class="clearall" />
 
 <script type="text/javascript">
 	//<!-- <![CDATA[
@@ -334,8 +319,8 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 	<form name="review" action="" method="post">
 		<?php XSRFToken('publishContent');?>
 		<?php printf(gettext('Review images older than: %s'),'<input type="text" size="20" id="publish_date" name="publish_date" value="'.$requestdate.'" />'); ?>
-		<br clear="all" />
-		<br clear="all" />
+		<br class="clearall" />
+		<br class="clearall" />
 		<input type="hidden" name="review" value="true" />
 		<div class="buttons pad_button" id="reviewobjects">
 			<button class="tooltip" type="submit" title="<?php echo gettext("Review un-published images."); ?>">
@@ -343,8 +328,8 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			</button>
 		</div>
 	</form>
-	<br clear="all" />
-	<br clear="all" />
+	<br class="clearall" />
+	<br class="clearall" />
 	<?php
 	$c = count($publish_images_list);
 	?>
@@ -374,9 +359,9 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			}
 			function publishAll(id,what) {
 				if (id) {
-					$('.album_'+id+'_'+what).attr('checked','checked');
+					$('.album_'+id+'_'+what).prop('checked',true);
 				} else {
-					$('.global_'+what).attr('checked','checked');
+					$('.global_'+what).prop('checked',true);
 				}
 			}
 			// ]]> -->
@@ -388,7 +373,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 		<ul class="scheduleimagechecklist">
 		<?php
 		foreach ($publish_images_list as $key=>$imagelist) {
-			$album = new Album(NULL,$key);
+			$album = newAlbum($key);
 			$albumid = $album->getID();
 			$imagelist = array_flip($imagelist);
 			natcasesort($imagelist);
@@ -433,7 +418,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 								</td>
 								<td>
 									<?php $image = newImage($album,$display); ?>
-									<img src="<?php echo pathurlencode($image->getThumb());?>" alt="<?php echo $image->filename; ?>"/>
+									<img src="<?php echo html_encode(pathurlencode($image->getThumb()));?>" alt="<?php echo $image->filename; ?>"/>
 								</td>
 								<td>
 									<?php printf(gettext('%s'),$display); ?><a href="<?php echo html_encode($image->getImageLink());?>" title="<?php echo html_encode($image->getTitle());?>"> (<?php echo gettext('View'); ?>)</a>
@@ -466,7 +451,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 				<img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/cache.png" alt="" /> <?php echo gettext("Process changes"); ?>
 			</button>
 		</div>
-		<br clear="all" />
+		<br class="clearall" />
 		</form>
 		<?php
 		}
@@ -494,12 +479,12 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			}
 		}
 		?>
-		<br clear="all" />
+		<br class="clearall" />
 		<fieldset class="smallbox">
 			<legend><?php reveal('catbox',$visible); echo gettext('Categories not published'); ?></legend>
 			<?php
 			if ($output) {
-				echo sprintf(ngettext('%u unpublished category','%u unpublished categories',$c),$c);;
+				echo sprintf(ngettext('%u unpublished category','%u unpublished categories',$c),$c);
 				?>
 			<div id="catbox"<?php if (!$visible) echo ' style="display:none"'?>>
 				<?php
@@ -513,36 +498,21 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 				?>
 				<form name="publish_cat" action="" method="post"><?php echo gettext('Categories:'); ?>
 				<label id="autocheck_cat">
-					<input type="checkbox" name="checkAllcat" />
+					<input type="checkbox" id="checkAllcat" name="checkAllcat" onclick="$('.catcheck').prop('checked', $('#checkAllcat').prop('checked'));" />
 					<span id="autotext_cat"><?php echo gettext('all');?></span>
 				</label>
-				<script type="text/javascript">
-					// <!-- <![CDATA[
-					var checked = false;
-					$('#autocheck_cat').click(
-					   function() {
-					      if (checked) {
-						      checked = false;
-					      } else {
-						      checked = 'checked';
-					      }
-					      $('.catcheck').attr('checked', checked);
-					   }
-					)
-					// ]]> -->
-				</script>
 				<?php XSRFToken('publishContent');?>
 				<input type="hidden" name="publish" value="categories" />
 				<ul class="schedulealbumchecklist">
 				<?php echo $output; ?>
 				</ul>
-				<br clear="all" />
+				<br class="clearall" />
 				<div class="buttons pad_button">
 					<button class="tooltip" type="submit" title="<?php echo gettext("Publish waiting categories."); ?>">
 						<img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/cache.png" alt="" /> <?php echo gettext("Publish categories"); ?>
 					</button>
 				</div>
-				<br clear="all" />
+				<br class="clearall" />
 			</form>
 			</div>
 			<?php
@@ -550,7 +520,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 		}
 		?>
 		</fieldset>
-		<br clear="all" />
+		<br class="clearall" />
 		<?php
 		$visible = $report == 'news';
 		$items = $_zp_zenpage->getArticles(0,false);
@@ -568,7 +538,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			<legend><?php reveal('newsbox',$visible); echo gettext('News articles not published'); ?></legend>
 		<?php
 		if ($output) {
-			echo sprintf(ngettext('%u unpublished article','%u unpublished articles',$c),$c);;
+			echo sprintf(ngettext('%u unpublished article','%u unpublished articles',$c),$c);
 			?>
 		<div id="newsbox"<?php if (!$visible) echo ' style="display:none"'?>>
 			<?php
@@ -582,36 +552,21 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			?>
 			<form name="publish_articles" action="" method="post"><?php echo gettext('Articles:'); ?>
 			<label id="autocheck_art">
-				<input type="checkbox" name="checkAllcat" />
+				<input type="checkbox" name="checkAllcat" onclick="$('.artcheck').prop('checked', checked)" />
 				<span id="autotext_art"><?php echo gettext('all');?></span>
 			</label>
-			<script type="text/javascript">
-				// <!-- <![CDATA[
-				var checked = false;
-				$('#autocheck_art').click(
-				   function() {
-				      if (checked) {
-					      checked = false;
-				      } else {
-					      checked = 'checked';
-				      }
-				      $('.artcheck').attr('checked', checked);
-				   }
-				)
-				// ]]> -->
-			</script>
 			<?php XSRFToken('publishContent');?>
 			<input type="hidden" name="publish" value="news" />
 			<ul class="schedulealbumchecklist">
 			<?php echo $output; ?>
 			</ul>
-			<br clear="all" />
+			<br class="clearall" />
 			<div class="buttons pad_button">
 				<button class="tooltip" type="submit" title="<?php echo gettext("Publish waiting articles."); ?>">
 					<img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/cache.png" alt="" /> <?php echo gettext("Publish articles"); ?>
 				</button>
 			</div>
-			<br clear="all" />
+			<br class="clearall" />
 		</div>
 		<?php
 		} else {
@@ -632,7 +587,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 			}
 		}
 		?>
-		<br clear="all" />
+		<br class="clearall" />
 		<fieldset class="smallbox">
 			<legend><?php reveal('pagebox',$visible); echo gettext('Pages not published'); ?></legend>
 			<?php
@@ -644,35 +599,20 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 				<?php
 			}
 			if ($output) {
-				echo sprintf(ngettext('%u unpublished page','%u unpublished pages',$c),$c);;
+				echo sprintf(ngettext('%u unpublished page','%u unpublished pages',$c),$c);
 				?>
 		<div id="pagebox"<?php if (!$visible) echo ' style="display:none"'?>>
 			<form name="publish_pages" action="" method="post"><?php echo gettext('Pages:'); ?>
 			<label id="autocheck_page">
-				<input type="checkbox" name="checkAllpage" />
+				<input type="checkbox" name="checkAllpage" onclick="$('.pagecheck').prop('checked', checked);" />
 				<span id="autotext_page"><?php echo gettext('all');?></span>
 			</label>
-			<script type="text/javascript">
-				// <!-- <![CDATA[
-				var checked = false;
-				$('#autocheck_page').click(
-				   function() {
-				      if (checked) {
-					      checked = false;
-				      } else {
-					      checked = 'checked';
-				      }
-				      $('.pagecheck').attr('checked', checked);
-				   }
-				)
-				// ]]> -->
-			</script>
 			<?php XSRFToken('publishContent');?>
 			<input type="hidden" name="publish" value="pages" />
 			<ul class="schedulealbumchecklist">
 				<?php echo $output; ?>
 			</ul>
-			<br clear="all" />
+			<br class="clearall" />
 			<div class="buttons pad_button">
 				<button class="tooltip" type="submit" title="<?php echo gettext("Publish waiting pages."); ?>">
 					<img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/cache.png" alt="" /> <?php echo gettext("Publish pages"); ?>
@@ -684,7 +624,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {	//only admin should be allowed to do this
 				echo gettext('No unpublished pages');
 			}
 			?>
-			<br clear="all" />
+			<br class="clearall" />
 		</fieldset>
 		<?php
 	}

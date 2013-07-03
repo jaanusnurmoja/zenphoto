@@ -55,10 +55,11 @@ class ThemeOptions {
 			setThemeOption('custom_index_page', 'gallery', NULL, 'effervescence_plus', false);
 		}
 		if (class_exists('cacheManager')) {
-			cacheManager::deleteThemeCacheSizes('effervescence_plus');
-			cacheManager::addThemeCacheSize('effervescence_plus', 595, NULL, NULL, NULL, NULL, NULL, NULL, false, getOption('fullimage_watermark'), NULL, NULL);
-			cacheManager::addThemeCacheSize('effervescence_plus', getThemeOption('thumb_size'), NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
-			cacheManager::addThemeCacheSize('effervescence_plus', NULL, 180, 80, NUll, NULL, NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
+			$me = basename(dirname(__FILE__));
+			cacheManager::deleteThemeCacheSizes($me);
+			cacheManager::addThemeCacheSize($me, 595, NULL, NULL, NULL, NULL, NULL, NULL, false, getOption('fullimage_watermark'), NULL, NULL);
+			cacheManager::addThemeCacheSize($me, getThemeOption('thumb_size'), NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
+			cacheManager::addThemeCacheSize($me, NULL, 180, 80, NUll, NULL, NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
 		}
 		if (function_exists('createMenuIfNotExists')) {
 			$menuitems = array(
@@ -146,12 +147,12 @@ class ThemeOptions {
 	}
 
 	 function getOptionsDisabled() {
-		$disabled = array('image_size');
-		if (getOption('zp_plugin_zenpage')) {
-			$disabled[] = 'custom_index_page';
-		}
-		return $disabled;
-	}
+	 	$disabled = array('image_size');
+	 	if (getOption('zp_plugin_zenpage')) {
+	 		$disabled[] = 'custom_index_page';
+	 	}
+  	return $disabled;
+  }
 
 	function handleOption($option, $currentValue) {
 		global $themecolors;

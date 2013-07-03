@@ -5,13 +5,13 @@
 if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<title><?php echo gettext("News"); ?> <?php printBareNewsTitle(); ?><?php printCurrentNewsCategory(" | "); printCurrentNewsArchive(); ?> | <?php printBareGalleryTitle(); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
 	<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
-	<?php printZenpageRSSHeaderLink("News","", "Zenpage news", ""); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink("News","Zenpage news", ""); ?>
 	<?php zp_apply_filter('theme_head'); ?>
 </head>
 
@@ -55,7 +55,7 @@ if(is_NewsArticle()) {
   <?php if(getNextNewsURL()) { ?><div class="singlenews_next"><?php printNextNewsLink(); ?></div><?php } ?>
   <?php if(getPrevNewsURL() OR getNextNewsURL()) { ?><br style="clear:both" /><?php } ?>
   <h3><?php printNewsTitle(); ?></h3>
-  <div class="newsarticlecredit"><span class="newsarticlecredit-left"><?php printNewsDate();?> | <?php echo gettext("Comments:"); ?> <?php echo getCommentCount(); ?> | </span> <?php printNewsCategories(", ",gettext("Categories: "),"newscategories"); ?></div>
+  <div class="newsarticlecredit"><span class="newsarticlecredit-left"><?php printNewsDate();?> | <?php if (function_exists('getCommentCount')) { echo gettext("Comments:"); ?> <?php echo getCommentCount(); ?> |<?php } ?> </span> <?php printNewsCategories(", ",gettext("Categories: "),"newscategories"); ?></div>
   <?php printNewsContent(); ?>
   <?php printTags('links', gettext('<strong>Tags:</strong>').' ', 'taglist', ', '); ?>
   <br style="clear:both;" /><br />
@@ -71,7 +71,20 @@ echo "<hr />";
   while (next_news()): ;?>
  <div class="newsarticle">
     <h3><?php printNewsTitleLink(); ?><?php echo " <span class='newstype'>[".getNewsType()."]</span>"; ?></h3>
-        <div class="newsarticlecredit"><span class="newsarticlecredit-left"><?php printNewsDate();?> | <?php echo gettext("Comments:"); ?> <?php echo getCommentCount(); ?></span>
+        <div class="newsarticlecredit">
+        <span class="newsarticlecredit-left">
+        	<?php
+        	printNewsDate();
+        	if (function_exists('getCommentCount')) {
+	        	?>
+	        	|
+	        	<?php
+	        	echo gettext("Comments:");
+	        	?>
+	        	<?php
+	        	echo getCommentCount();
+        	}
+        	?></span>
 <?php
 if(is_GalleryNewsType()) {
 	if(!is_NewsType("album")) {
@@ -111,7 +124,6 @@ if(is_GalleryNewsType()) {
 
 </div><!-- main -->
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 </body>

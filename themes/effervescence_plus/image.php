@@ -4,15 +4,12 @@
 if (!defined('WEBPATH')) die();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareGalleryTitle(); ?> | <?php printBareAlbumTitle();?> | <?php printBareImageTitle();?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
-	<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
-	<link rel="stylesheet" href="<?php echo WEBPATH.'/'.THEMEFOLDER; ?>/effervescence_plus/common.css" type="text/css" />
-	<?php effervescence_theme_head(); ?>
 	<?php if(zp_has_filter('theme_head','colorbox::css')) { ?>
 		<script type="text/javascript">
 			// <!-- <![CDATA[
@@ -39,7 +36,7 @@ if (!defined('WEBPATH')) die();
 			// ]]> -->
 		</script>
 	<?php } ?>
-	<?php printRSSHeaderLink('Gallery','Gallery RSS'); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink('Gallery','Gallery RSS'); ?>
 </head>
 
 <body onload="blurAnchors()">
@@ -115,7 +112,11 @@ if (!defined('WEBPATH')) die();
 
 				<div id="image_container">
 					<?php
-					$fullimage = getFullImageURL();
+					if (isImagePhoto()) {
+						$fullimage = getFullImageURL();
+					} else {
+						$fullimage = NULL;
+					}
 					if (!empty($fullimage)) {
 						?>
 						<a href="<?php echo html_encode($fullimage);?>" title="<?php printBareImageTitle();?>" class="thickbox">
@@ -130,13 +131,13 @@ if (!defined('WEBPATH')) die();
 					?>
 				</div>
 			</div>
-			<br clear="all" />
+			<br class="clearall" />
 		</div>
 
 		<!-- Image Description -->
 
 		<div id="description">
-			<p><?php	printImageDesc(); ?></p>
+			<p><?php printImageDesc(); ?></p>
 			<?php
 			@call_user_func('printRating');
 			If (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_image);
@@ -145,7 +146,7 @@ if (!defined('WEBPATH')) die();
 				<div id="map_link">
 					<?php printGoogleMap(); ?>
 				</div>
-				<br clear="all" />
+				<br class="clearall" />
 				<?php
 			}
 			if (getImageMetaData()) {

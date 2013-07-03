@@ -3,15 +3,15 @@
 
 if (!defined('WEBPATH')) die();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 	<head>
 		<?php zp_apply_filter('theme_head'); ?>
 		<title><?php printBareGalleryTitle(); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 		<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
 		<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 		<link rel="stylesheet" href="<?php echo WEBPATH.'/'.THEMEFOLDER; ?>/default/common.css" type="text/css" />
-		<?php printRSSHeaderLink('Gallery', gettext('Gallery RSS')); ?>
+		<?php if (class_exists('RSS')) printRSSHeaderLink('Gallery', gettext('Gallery RSS')); ?>
 	</head>
 	<body>
 		<?php zp_apply_filter('theme_body_open'); ?>
@@ -34,19 +34,19 @@ if (!defined('WEBPATH')) die();
 							<div class="albumdesc">
 								<h3><a href="<?php echo html_encode(getAlbumLinkURL()); ?>" title="<?php echo gettext('View album:'); ?> <?php printAnnotatedAlbumTitle(); ?>"><?php printAlbumTitle(); ?></a></h3>
 								<small><?php printAlbumDate(""); ?></small>
-								<p><?php printAlbumDesc(); ?></p>
+								<div><?php printAlbumDesc(); ?></div>
 							</div>
 							<p style="clear: both; "></p>
 						</div>
 					<?php endwhile; ?>
 				</div>
-				<br clear="all" />
+				<br class="clearall" />
 				<?php printPageListWithNav("« " . gettext("prev"), gettext("next") . " »"); ?>
 			</div>
 		</div>
 		<div id="credit">
 			<?php @call_user_func('printUserLogin_out','', ' | ');?>
-			<?php printRSSLink('Gallery', '', 'RSS', ' | '); ?>
+			<?php if (class_exists('RSS')) printRSSLink('Gallery', '', 'RSS', ' | '); ?>
 			<?php printCustomPageURL(gettext("Archive View"), "archive"); ?> |
 			<?php
 			if (getOption('zp_plugin_contact_form')) {
@@ -69,7 +69,6 @@ if (!defined('WEBPATH')) die();
 		<?php @call_user_func('mobileTheme::controlLink'); ?>
 		<?php @call_user_func('printLanguageSelector'); ?>
 		<?php
-		printAdminToolbox();
 		zp_apply_filter('theme_body_close');
 		?>
 	</body>

@@ -146,22 +146,22 @@ foreach ($reports as $report) {
 }
 ?>
 <span class="buttons">
-	<button class="serialize" type="submit" title="<?php echo gettext("Apply"); ?>">
+	<button class="serialize" type="submit">
 		<img src="../../images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong>
 	</button>
-	<a href="menu_tab_edit.php?add&amp;menuset=<?php echo urlencode($menuset); ?>" title="<?php echo gettext("Add Menu Items"); ?>">
+	<a href="menu_tab_edit.php?add&amp;menuset=<?php echo urlencode($menuset); ?>">
 		<img src="../../images/add.png" alt="" /> <strong><?php echo gettext("Add Menu Items"); ?></strong>
 	</a>
 	<div class="floatright">
-		<a href="javascript:newMenuSet();" title="<?php echo gettext("New Menu"); ?>">
+		<a href="javascript:newMenuSet();">
 			<img src="../../images/add.png" alt="" /> <strong><?php echo gettext("New Menu"); ?></strong>
 		</a>
-		<a title="<?php echo gettext('Menu Manager options')?>" href="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/admin-options.php?'page=options&amp;tab=plugin&amp;show-menu_manager#menu_manager">
-			<strong><?php echo gettext('Options')?></strong>
+		<a href="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/admin-options.php?'page=options&amp;tab=plugin&amp;show-menu_manager#menu_manager">
+			<img src="../../images/options.png" alt="" /> <strong><?php echo gettext('Options')?></strong>
 		</a>
 	</div>
 </span>
-<br clear="all" /><br />
+<br class="clearall" /><br />
 
 <div class="bordered">
 	<?php
@@ -188,7 +188,7 @@ foreach ($reports as $report) {
 							<strong><a href="javascript:dupMenuSet();" title="<?php printf(gettext('Duplicate %s menu'),$menuset); ?>"><img src="../../images/page_white_copy.png" alt="" /><?php echo gettext("Duplicate menu"); ?></a></strong>
 						</span>
 						<span class="buttons">
-							<strong><a href="javascript:deleteMenuSet();" title="<?php printf(gettext('Delete %s menu'),$menuset);; ?>"><img src="../../images/fail.png" alt="" /><?php echo gettext("Delete menu"); ?></a></strong>
+							<strong><a href="javascript:deleteMenuSet();" title="<?php printf(gettext('Delete %s menu'),$menuset); ?>"><img src="../../images/fail.png" alt="" /><?php echo gettext("Delete menu"); ?></a></strong>
 						</span>
 						<?php
 					}
@@ -198,7 +198,7 @@ foreach ($reports as $report) {
 				</select>
 			</span>
 		</div>
-		<br clear="all" />
+		<br class="clearall" />
 		<div class="subhead">
 			<label style="float: right">
 				<?php echo gettext("Check All"); ?> <input type="checkbox" name="allbox" id="allbox" onclick="checkAll(this.form, 'ids[]', this.checked);" />
@@ -221,7 +221,7 @@ foreach ($reports as $report) {
 		<div class="headline">
 			<strong><?php echo gettext("No menus exist"); ?></strong>
 		</div>
-		<br clear="all" />
+		<br class="clearall" />
 		<?php
 	}
 	?>
@@ -230,7 +230,7 @@ foreach ($reports as $report) {
 <span id="serializeOutput" /></span>
 <input name="update" type="hidden" value="Save Order" />
 <p class="buttons">
-	<button class="serialize" type="submit" title="<?php echo gettext("Apply"); ?>"><img src="../../images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
+	<button class="serialize" type="submit"><img src="../../images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
 </p>
 </form>
 	<ul class="iconlegend">

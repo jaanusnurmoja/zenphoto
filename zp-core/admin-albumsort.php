@@ -19,7 +19,7 @@ admin_securityChecks($localrights, $return = currentRelativeURL());
 
 if (isset($_GET['album'])) {
 	$folder = sanitize($_GET['album']);
-	$album = new Album(NULL, $folder);
+	$album = newAlbum($folder);
 	if (!$album->isMyItem(ALBUM_RIGHTS)) {
 		if (!zp_apply_filter('admin_managed_albums_access',false, $return)) {
 			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
@@ -133,17 +133,17 @@ if (!isset($_GET['album'])) {
 				</script>
 
 				<p class="buttons">
-					<a href="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-edit.php?page=edit'.$parent; ?>" title="<?php echo gettext('Back to the album list'); ?>" ><img	src="images/arrow_left_blue_round.png" alt="" /><strong><?php echo gettext("Back"); ?></strong></a>
-					<button type="button" title="<?php echo gettext("Apply"); ?>" onclick="postSort(this.form);" >
+					<a href="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-edit.php?page=edit'.$parent; ?>"><img	src="images/arrow_left_blue_round.png" alt="" /><strong><?php echo gettext("Back"); ?></strong></a>
+					<button type="button"" onclick="postSort(this.form);" >
 					<img	src="images/pass.png" alt="" />
 					<strong><?php echo gettext("Apply"); ?></strong>
 					</button>
-					<a title="<?php echo gettext('View Album'); ?>" href="<?php echo WEBPATH . "/index.php?album=". pathurlencode($album->getFolder()); ?>">
+					<a href="<?php echo WEBPATH . "/index.php?album=". pathurlencode($album->getFolder()); ?>">
 					<img src="images/view.png" alt="" />
 					<strong><?php echo gettext('View Album'); ?></strong>
 					</a>
 				</p>
-				<br clear="all"/><br />
+				<br class="clearall" /><br />
 				<p><?php echo gettext("Set the image order by dragging them to the positions you desire."); ?></p>
 
 				<div id="images">
@@ -159,22 +159,22 @@ if (!isset($_GET['album'])) {
 				<div>
 					<input type="hidden" id="sortableList" name="sortableList" value="" />
 					<p class="buttons">
-						<a title="<?php echo gettext('Back to the album list'); ?>" href="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-edit.php?page=edit'.$parent; ?>">
+						<a href="<?php echo WEBPATH.'/'.ZENFOLDER.'/admin-edit.php?page=edit'.$parent; ?>">
 						<img	src="images/arrow_left_blue_round.png" alt="" />
 						<strong><?php echo gettext("Back"); ?></strong>
 						</a>
-						<button type="button" title="<?php echo gettext("Apply"); ?>" onclick="postSort(this.form);" >
+						<button type="button" onclick="postSort(this.form);" >
 						<img	src="images/pass.png" alt="" />
 						<strong><?php echo gettext("Apply"); ?></strong>
 						</button>
-						<a title="<?php echo gettext('View Album'); ?>" href="<?php echo WEBPATH . "/index.php?album=". pathurlencode($album->getFolder()); ?>">
+						<a href="<?php echo WEBPATH . "/index.php?album=". pathurlencode($album->getFolder()); ?>">
 						<img src="images/view.png" alt="" />
 						<strong><?php echo gettext('View Album'); ?></strong>
 						</a>
 					</p>
 					</div>
 			</form>
-			<br clear="all"/>
+			<br class="clearall" />
 
 		</div>
 

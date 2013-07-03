@@ -1,13 +1,13 @@
 <?php
 if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printGalleryTitle(); ?> | <?php echo gettext('News'); ?> <?php printNewsTitle(); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 	<link rel="stylesheet" href="<?php echo $_zp_themeroot ?>/zen.css" type="text/css" />
-	<?php printZenpageRSSHeaderLink("News","", "Zenpage news", ""); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink("News","Zenpage news", ""); ?>
 </head>
 <body class="sidebars">
 <?php zp_apply_filter('theme_body_open'); ?>
@@ -52,7 +52,7 @@ if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 								<div class="newsarticlecredit">
 									<span class="newsarticlecredit-left">
 									<?php
-									$count = getCommentCount();
+									$count = @call_user_func('getCommentCount');
 									printNewsDate();
 									if ($count > 0) {
 										echo ' | ';
@@ -96,14 +96,14 @@ if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 					}
 					if(getPrevNewsURL() || getNextNewsURL()) {
 					 ?>
-					 <br clear="all" />
+					 <br class="clearall" />
 					 <?php
 					}
 					$cat = getNewsCategories();
 					if (!empty($cat)) {
 						printNewsCategories(", ",gettext("Categories: "),"newscategories");
 						?>
-						<br clear="all" />
+						<br class="clearall" />
 						<?php
 					}
 					printTags('links', gettext('Tags: '), NULL, '');
@@ -114,7 +114,6 @@ if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 	</div><!-- /container -->
 </div>
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 </body>

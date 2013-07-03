@@ -10,16 +10,12 @@ $backgroundImagePath="";
 // End of config
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareGalleryTitle(); ?> | <?php echo gettext("Contact"); ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
-	<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
-	<link rel="stylesheet" href="<?php echo WEBPATH.'/'.THEMEFOLDER; ?>/effervescence_plus/common.css" type="text/css" />
-	<?php effervescence_theme_head(); ?>
-	<script type="text/javascript" src="<?php echo  $_zp_themeroot ?>/scripts/swfobject.js"></script>
 </head>
 
 <body onload="blurAnchors()">
@@ -79,7 +75,6 @@ $backgroundImagePath="";
 
 
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 

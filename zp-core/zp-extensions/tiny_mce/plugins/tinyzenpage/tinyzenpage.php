@@ -14,28 +14,27 @@ header('Content-Type: text/html; charset=' . LOCAL_CHARSET);
 		 Author: Malte Müller (acrylian), Stephen Billard (sbillard)
 		 inspired by Alessandro "Simbul" Morandi's  ZenphotoPress (http://simbul.bzaar.net/zenphotopress)
 		 License: GPL v2 http://www.gnu.org/licenses/gpl.html -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<title>tinyZenpage</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<script type="text/javascript" src="<?php echo WEBPATH.'/'. ZENFOLDER; ?>/js/htmlencoder.js"></script>
 	<script type="text/javascript" src="<?php echo WEBPATH.'/'. ZENFOLDER; ?>/js/jquery.js"></script>
 	<script type="text/javascript" src="<?php echo WEBPATH.'/'. ZENFOLDER.'/'.PLUGIN_FOLDER; ?>/tiny_mce/tiny_mce_popup.js"></script>
-
 	<link rel="stylesheet" type="text/css" href="css/tinyzenpage.css" media="screen" />
 	<script language="javascript" type="text/javascript">
 	$(document).ready(function(){
 		$("a[rel='colorbox']").colorbox({
 			iframe:true,
-			innerWidth:450,
-			innerHeight:450,
+			innerWidth:'90%',
+			innerHeight:'85%',
 			close: '<?php echo gettext("close"); ?>'
 			});
 		$("a.colorbox").colorbox({
 			iframe:true,
-			innerWidth:450,
-			innerHeight:450,
+			innerWidth:'90%',
+			innerHeight:'85%',
 			close: '<?php echo gettext("close"); ?>'
 			});
 
@@ -185,7 +184,7 @@ if(showZenphotoOptions()) {
 				<p>
 					<?php echo gettext("Select an album to include images from into your page or article. Click on the image to include it.".
 															" Un-published albums or images are marked with an '*'.".
-															" You can also click on the magnify glass icon to see a preview of the item. (Multimedia files are previewed in Flowplayer, no matter if that plugin is activated or not.)".
+															" You can also click on the magnify glass icon to see a preview of the item. The preview opens in a colorbox showing the frontend/theme view.".
 															" The first thumbnail is always the thumbnail of the selected album.".
 															" It is titled <em>Albumthumb</em> and appears on every thumbnail page."); ?>
 				</p>
@@ -206,7 +205,7 @@ if(showZenphotoOptions()) {
 					<li>
 						<?php echo gettext("Sized image/multimedia item: The sized image as set in gallery default theme's options."); ?>
 						<br />
-						<?php echo gettext("<strong>Multimedia item: </strong>If the FLowplayer3 plugin is enabled you can also embed video/audio files (.flv, .mp4, .mp3). These items are highlighted with an orange border to be easily spotted. <br />Default values for the player width and height can be set on the TinyMCE plugin options (except for mp3s only the controlbar is shown). All other settings are inherited from the Flowplayer3 plugin options (cover/splash images are not supported).<br />NOTE: After embedding no frame of the embedded item might be visible in the editor until saving the page/article for unknown reasons."); ?>
+						<?php echo gettext("<strong>Multimedia item</strong>: This embeds the content macro MEDIAPLAYER into the text. This generates a video or audio player on the front end if any suitable multimedia player plugin for the file type is enabled and also has registered to the macro."); ?>
 					</li>
 					<li><?php echo gettext("Custom size (un-cropped)."); ?></li>
 					<li><?php echo gettext("Full image: The original image directly. NOTE: Full image protection options do not apply!."); ?></li>

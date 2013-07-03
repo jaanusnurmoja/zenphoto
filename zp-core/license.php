@@ -47,11 +47,11 @@ echo "\n</head>";
 				<p class="buttons">
 					<a href="<?php echo FULLWEBPATH.'/'.ZENFOLDER.'/license.php?licenseAccept&amp;XSRFToken='.getXSRFToken('ZenphotoLicense'); ?>" alt="<?php echo gettext('You must accept this license to continue to use Zenphoto.'); ?>"><?php echo gettext('I agree to these terms and conditions'); ?></a>
 				</p>
-				<br clear="all" />
+				<br class="clearall" />
 				<?php
 			}
 			?>
-			<br clear="all">
+			<br class="clearall" />
 			<div class="tabbox">
 				<iframe src="<?php echo FULLWEBPATH.'/'.ZENFOLDER; ?>/gpl-2.0-standalone.htm" width="100%" height="480" style="border: 0">
 				</iframe>
@@ -59,7 +59,7 @@ echo "\n</head>";
 		</div>
 	</div>
 </div>
-<br clear="all" />
+<br class="clearall" />
 <?php printAdminFooter(); ?>
 
 </body>

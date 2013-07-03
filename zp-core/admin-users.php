@@ -148,9 +148,7 @@ if (isset($_GET['action'])) {
 										$notify = '?mismatch=format&error='.urlencode($msg);
 									} else {
 										$userobj->setPass($pass);
-										if ($pass2 !=  $userobj->getPass($pass)) {
-											markUpdated();
-										}
+										markUpdated();
 									}
 								} else {
 									$notify = '?mismatch=password';
@@ -172,7 +170,7 @@ if (isset($_GET['action'])) {
 								markUpdated();
 							}
 							$rights = 0;
-							if ($alter && !$userobj->getGroup()) {
+							if ($alter) {
 								$oldrights = $userobj->getRights() & ~(ALBUM_RIGHTS | ZENPAGE_PAGES_RIGHTS | ZENPAGE_NEWS_RIGHTS);
 								$rights = processRights($i);
 								if (($rights & ~(ALBUM_RIGHTS | ZENPAGE_PAGES_RIGHTS | ZENPAGE_NEWS_RIGHTS)) != $oldrights) {
@@ -442,10 +440,10 @@ function languageChange(id,lang) {
 	}
 	?>
 	<p class="buttons">
-		<button type="submit" value="<?php echo gettext('Apply') ?>" title="<?php echo gettext("Apply"); ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
-		<button type="reset" value="<?php echo gettext('reset') ?>" title="<?php echo gettext("Reset"); ?>"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
+		<button type="submit" value="<?php echo gettext('Apply') ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
+		<button type="reset" value="<?php echo gettext('reset') ?>"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
 	</p>
-	<br clear="all" /><br />
+	<br class="clearall" /><br />
 <table class="bordered"> <!-- main table -->
 
 	<tr>
@@ -471,9 +469,11 @@ function languageChange(id,lang) {
 						<?php
 						$groups = $_zp_authority->getAdministrators('groups');
 						foreach ($groups as $group) {
-							?>
-							<option value="<?php echo $group['user']; ?>"<?php if ($showgroup==$group['user']) echo ' selected="selected"'; ?>><?php printf('%s group', $group['user']); ?></option>
-							<?php
+							if ($group['name'] != 'template') {
+								?>
+								<option value="<?php echo $group['user']; ?>"<?php if ($showgroup==$group['user']) echo ' selected="selected"'; ?>><?php printf('%s group', $group['user']); ?></option>
+								<?php
+							}
 						}
 					}
 					?>
@@ -494,7 +494,7 @@ function languageChange(id,lang) {
 	$id = 0;
 	$albumlist = array();
 	foreach ($_zp_gallery->getAlbums() as $folder) {
-		$alb = new Album(NULL, $folder);
+		$alb = newAlbum($folder);
 		$name = $alb->getTitle();
 		$albumlist[$name] = $folder;
 	}
@@ -757,7 +757,7 @@ function languageChange(id,lang) {
 						</li>
 						<?php
 						$c++;
-						if (($c % 7) == 0) echo '<br clear="all" />';
+						if (($c % 7) == 0) echo '<br class="clearall" />';
 					}
 					?>
 				</ul>
@@ -829,8 +829,8 @@ function languageChange(id,lang) {
 if (!$_zp_current_admin_obj->transient) {
 	?>
 	<p class="buttons">
-	<button type="submit" title="<?php echo gettext("Apply"); ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
-	<button type="reset" title="<?php echo gettext("Reset"); ?>"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
+	<button type="submit"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
+	<button type="reset"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
 	</p>
 	<?php
 }
@@ -840,29 +840,29 @@ if (!$_zp_current_admin_obj->transient) {
 if (zp_loggedin(ADMIN_RIGHTS)) {
 	if (Zenphoto_Authority::getVersion() < Zenphoto_Authority::$supports_version) {
 		?>
-		<br clear="all" />
+		<br class="clearall" />
 		<p class="notebox">
 		<?php printf(gettext('The <em>Zenphoto_Authority</em> object supports a higher version of user rights than currently selected. You may wish to migrate the user rights to gain the new functionality this version provides.'),Zenphoto_Authority::getVersion(),Zenphoto_Authority::$supports_version); ?>
-			<br clear="all" />
+			<br class="clearall" />
 			<span class="buttons">
 				<a onclick="launchScript('',['action=migrate_rights','XSRFToken=<?php echo getXSRFToken('migrate_rights')?>']);"><?php echo gettext('Migrate rights');?></a>
 			</span>
-			<br clear="all" />
+			<br class="clearall" />
 		</p>
-		<br clear="all" />
+		<br class="clearall" />
 		<?php
 	} else if (Zenphoto_Authority::getVersion() > Zenphoto_Authority::$preferred_version) {
 		?>
-		<br clear="all" />
+		<br class="clearall" />
 		<p class="notebox">
 		<?php printf(gettext('You may wish to revert the <em>Zenphoto_Authority</em> user rights to version %s for backwards compatibility with prior Zenphoto releases.'),Zenphoto_Authority::getVersion()-1); ?>
-			<br clear="all" />
+			<br class="clearall" />
 			<span class="buttons">
 				<a onclick="launchScript('',['action=migrate_rights','revert=true','XSRFToken=<?php echo getXSRFToken('migrate_rights')?>']);"><?php echo gettext('Revert rights');?></a>
 			</span>
-			<br clear="all" />
+			<br class="clearall" />
 		</p>
-		<br clear="all" />
+		<br class="clearall" />
 		<?php
 	}
 }
@@ -872,7 +872,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {
 	var admins = ["<?php echo implode('","', $alladmins); ?>"];
 	function checkNewuser() {
 		newuserid = <?php echo ($id-1); ?>;
-		newuser = $('#adminuser'+newuserid).val().replace(/^\s+|\s+$/g,"");;
+		newuser = $('#adminuser'+newuserid).val().replace(/^\s+|\s+$/g,"");
 		if (newuser=='') return true;
 		if (newuser.indexOf('?')>=0 || newuser.indexOf('&')>=0 || newuser.indexOf('"')>=0 || newuser.indexOf('\'')>=0) {
 			alert('<?php echo js_encode(gettext('User names may not contain "?", "&", or quotation marks.')); ?>');
@@ -898,7 +898,7 @@ if (zp_loggedin(ADMIN_RIGHTS)) {
 	// ]]> -->
 </script>
 
-<br clear="all" />
+<br class="clearall" />
 <br />
 </div><!-- end of tab_admin div -->
 

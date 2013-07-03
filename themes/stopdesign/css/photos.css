@@ -165,6 +165,7 @@ input.text:focus, textarea:focus {
 p {
 	margin:0 0 .75em;
 	}
+
 .buttons p {
 	margin:0;
 	}
@@ -1105,9 +1106,6 @@ Comment Submission form
 #comments-form .text {
 	width:65%;
 	}
-#captcha {
-	vertical-align:middle;
-}
 
 
 /* jQuery pagination comments */
@@ -1271,6 +1269,10 @@ background-image:url(../images/50percent.png);
 }
 /* Error Messages
 ------------------------------ */
+.error {
+	color: #C33;
+	font-weight: bold;
+}
 .errorbox {
 	padding: 20px;
 	background-color: #FDD;
@@ -1430,6 +1432,5 @@ width: 150px;
 .logon_link {
 	text-align:center;
 }
-
 
 

@@ -6,15 +6,15 @@ if (!defined('WEBPATH') || !function_exists('printContactForm')) die();
 require_once('normalizer.php');
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareGalleryTitle(); ?> <?php echo gettext("Contact form"); ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
 	<link rel="stylesheet" type="text/css" media="screen, projection" href="<?php echo $_zp_themeroot ?>/css/master.css" />
 	<?php
-	printRSSHeaderLink('Gallery',gettext('Gallery RSS'));
+	if (class_exists('RSS')) printRSSHeaderLink('Gallery',gettext('Gallery RSS'));
 	setOption('thumb_crop_width', 85, false);
 	setOption('thumb_crop_height', 85, false);
 	?>
@@ -32,7 +32,7 @@ require_once('normalizer.php');
 </div>
 
 <p id="path">
-	<?php printHomeLink('', ' &gt; '); ?>
+	<?php printHomeLink('', ' > '); ?>
 	<a href="<?php echo html_encode(getGalleryIndexURL(false));?>" title="<?php echo gettext('Main Index'); ?>"><?php echo gettext('Home');?></a> &gt;
 	<?php printGalleryTitle();?>
 	&gt; <em><?php echo gettext('Contact'); ?></em>
@@ -46,7 +46,6 @@ require_once('normalizer.php');
 </div>
 
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 

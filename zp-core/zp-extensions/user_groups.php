@@ -41,7 +41,7 @@ class user_groups {
 			$objects = $before->getObjects();
 		} else {
 			$rights = 0;
-			foreach ($groups as $groupname) {
+			foreach ($groups as $key=>$groupname) {
 				if (empty($groupname)) {
 					//	force the first template to happen
 					$group = new Zenphoto_Administrator('', 0);
@@ -50,13 +50,12 @@ class user_groups {
 					$group = Zenphoto_Authority::newAdministrator($groupname, 0);
 				}
 				if ($group->getName() == 'template') {
-					unset($groups[$groupname]);
+					unset($groups[$key]);
 					if ($userobj->getID() > 0 && !$templates) {
 						//	fetch the existing rights and objects
 						$templates = true;	//	but only once!
-						$before = Zenphoto_Authority::newAdministrator($userobj->getUser(), 1);
-						$rights = $before->getRights();
-						$objects = $before->getObjects();
+						$rights = $userobj->getRights();
+						$objects = $userobj->getObjects();
 					}
 				}
 				$rights = $group->getRights() | $rights;
@@ -98,7 +97,7 @@ class user_groups {
 	 * @return bool
 	 */
 	static function save_admin($updated, $userobj, $i, $alter) {
-		if ($alter) {
+		if ($alter && $userobj->getValid()) {
 			if (isset($_POST[$i.'group'])) {
 				$newgroups = sanitize($_POST[$i.'group']);
 			} else {
@@ -124,28 +123,28 @@ class user_groups {
 		if (empty($groups)) return gettext('no groups established'); // no groups setup yet
 		$grouppart =	'
 		<script type="text/javascript">
-		// <!-- <![CDATA[
-		function groupchange'.$i.'(type) {
-		switch (type) {
-		case 0:	//	none
-		$(\'.user-'.$i.'\').removeAttr(\'disabled\');
-		$(\'.templatelist'.$i.'\').removeAttr(\'checked\');
-		$(\'.grouplist'.$i.'\').removeAttr(\'checked\');
-		break;
-		case 1:	//	group
-		$(\'.user-'.$i.'\').attr(\'disabled\',\'disabled\');
-		$(\'.user-'.$i.'\').removeAttr(\'checked\');
-		$(\'#noGroup_'.$i.'\').removeAttr(\'checked\');
-		$(\'.templatelist'.$i.'\').removeAttr(\'checked\');
-		break;
-		case 2:	//	template
-		$(\'.user-'.$i.'\').attr(\'disabled\',\'disabled\');
-		$(\'#noGroup_'.$i.'\').removeAttr(\'checked\');
-		$(\'.grouplist'.$i.'\').removeAttr(\'checked\');
-		break;
-	}
-	}
-	//]]> -->
+			// <!-- <![CDATA[
+			function groupchange'.$i.'(type) {
+				switch (type) {
+				case 0:	//	none
+					$(\'.user-'.$i.'\').prop(\'disabled\',false);
+					$(\'.templatelist'.$i.'\').prop(\'checked\',false);
+					$(\'.grouplist'.$i.'\').prop(\'checked\',false);
+					break;
+				case 1:	//	group
+					$(\'.user-'.$i.'\').prop(\'disabled\',true);
+					$(\'.user-'.$i.'\').prop(\'checked\',false);
+					$(\'#noGroup_'.$i.'\').prop(\'checked\',false);
+					$(\'.templatelist'.$i.'\').prop(\'checked\',false);
+					break;
+				case 2:	//	template
+					$(\'.user-'.$i.'\').prop(\'disabled\',true);
+					$(\'#noGroup_'.$i.'\').prop(\'checked\',false);
+					$(\'.grouplist'.$i.'\').prop(\'checked\',false);
+					break;
+			}
+		}
+		//]]> -->
 	</script>'."\n";
 
 		$grouppart .= '<ul class="customchecklist">'."\n";
@@ -187,6 +186,7 @@ class user_groups {
 	 * @return string
 	 */
 	static function edit_admin($html, $userobj, $i, $background, $current) {
+		if (!$userobj->getValid()) return $html;
 		if (zp_loggedin(ADMIN_RIGHTS)) {
 			if ($userobj->getID()>=0) {
 				$notice = ' '.gettext("Applying a template will merge the template with the current <em>rights</em> and <em>objects</em>.");

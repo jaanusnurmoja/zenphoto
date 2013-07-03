@@ -6,15 +6,12 @@ if (!defined('WEBPATH')) die();
 
 $map = function_exists('printGoogleMap');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareGalleryTitle(); ?> | <?php printBareAlbumTitle(); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
-	<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
-	<?php effervescence_theme_head(); ?>
-	<link rel="stylesheet" href="<?php echo WEBPATH.'/'.THEMEFOLDER; ?>/effervescence_plus/common.css" type="text/css" />
 </head>
 
 <body onload="blurAnchors()">
@@ -164,7 +161,6 @@ $map = function_exists('printGoogleMap');
 									if ($map) {
 										$coord = getGeoCoord($_zp_current_image);
 										if ($coord) {
-											$coord['desc'] = '<p align=center>'.$coord['desc'].'</p>';
 											$points[] = $coord;
 										}
 									}
@@ -184,6 +180,7 @@ $map = function_exists('printGoogleMap');
 							</div><!-- images -->
 						</div> <!-- main -->
 					 <div class="clearage"></div>
+					 <span style="text-align:center"><?php @call_user_func('printSlideShowLink'); ?></span>
 					 <?php if (isset($firstImage)) printNofM('Photo', $firstImage, $lastImage, getNumImages()); ?>
 					</div> <!-- content -->
 					<?php

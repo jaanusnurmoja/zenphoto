@@ -23,6 +23,7 @@ class SearchEngine {
 	var $albums = NULL;
 	var $articles = NULL;
 	var $pages = NULL;
+	private $exact;
 	protected $dynalbumname;
 	protected $album = NULL;
 	protected $words;
@@ -58,10 +59,12 @@ class SearchEngine {
 	 */
 	function __construct($dynamic_album = false) {
 		global $_zp_exifvars, $_zp_gallery;
+		$this->exact  = getOption('exact_tag_match');
 		//image/album fields
 		$this->search_structure['title']							= gettext('Title');
 		$this->search_structure['desc']								= gettext('Description');
 		$this->search_structure['tags']								= gettext('Tags');
+		$this->search_structure['tags_exact']					= '';	//	internal use only field
 		$this->search_structure['filename']						= gettext('File/Folder name');
 		$this->search_structure['date']								= gettext('Date');
 		$this->search_structure['custom_data']				= gettext('Custom data');
@@ -184,7 +187,9 @@ class SearchEngine {
 	function getSearchFieldList() {
 		$list = array();
 		foreach ($this->search_structure as $key=>$display) {
-			$list[$display] = $key;
+			if ($display) {
+				$list[$display] = $key;
+			}
 		}
 		return $list;
 	}
@@ -356,15 +361,18 @@ class SearchEngine {
 					$this->page = $v;
 					break;
 				case 'albumname':
-					$this->dynalbumname = $v;
-					$this->album = new Album(NULL, $v);
-					$this->albumsorttype = $this->album->getAlbumSortType();
-					if ($this->album->getSortDirection('album')) {
-						$this->albumsortdirection = 'DESC';
-					}
-					$this->imagesorttype = $this->album->getSortType();
-					if ($this->album->getSortDirection('image')) {
-						$this->imagesortdirection = 'DESC';
+					$alb = newAlbum($v, true, true);
+					if ($alb->loaded) {
+						$this->album = $alb;
+						$this->dynalbumname = $v;
+						$this->albumsorttype = $this->album->getAlbumSortType();
+						if ($this->album->getSortDirection('album')) {
+							$this->albumsortdirection = 'DESC';
+						}
+						$this->imagesorttype = $this->album->getSortType();
+						if ($this->album->getSortDirection('image')) {
+							$this->imagesortdirection = 'DESC';
+						}
 					}
 					break;
 				case 'inimages':
@@ -897,7 +905,6 @@ class SearchEngine {
 	protected function searchFieldsAndTags($searchstring, $tbl, $sorttype, $sortdirection) {
 		global $_zp_gallery;
 		$weights = $idlist = array();
-		$exact = EXACT_TAG_MATCH;
 		$sql = $allIDs = NULL;
 
 		// create an array of [tag, objectid] pairs for tags
@@ -934,6 +941,8 @@ class SearchEngine {
 						$tag_objects = $objects;
 					}
 					break;
+				case 'tags_exact':
+					$this->exact = true;
 				case 'tags':
 					unset($fields[$key]);
 					query('SET @serachfield="tags"');
@@ -948,7 +957,7 @@ class SearchEngine {
 								break;
 							default:
 								$targetfound = true;
-							if ($exact) {
+							if ($this->exact) {
 								$tagsql .= '`name` = '.db_quote($singlesearchstring).' OR ';
 							} else {
 								$tagsql .= '`name` LIKE '.db_quote('%'.db_LIKE_escape($singlesearchstring).'%').' OR ';
@@ -1070,10 +1079,9 @@ class SearchEngine {
 						break;
 					default:
 						$lookfor = strtolower($singlesearchstring);
-						$matchtarget = '%'.str_replace('%', '\%', $lookfor).'%';
 						$objectid = NULL;
 						foreach ($taglist as $key => $objlist) {
-							if (($exact && $lookfor == $key) || (!$exact && preg_match($matchtarget, $key))) {
+							if (($this->exact && $lookfor == $key) || (!$this->exact && preg_match('|'.preg_quote($lookfor).'|', $key))) {
 								if (is_array($objectid)) {
 									$objectid = array_merge($objectid, $objlist);
 								} else {
@@ -1267,7 +1275,7 @@ class SearchEngine {
 						$albumname = $row['folder'];
 						if ($albumname != $this->dynalbumname) {
 							if (file_exists(ALBUM_FOLDER_SERVERPATH . internalToFilesystem($albumname))) {
-								$album = new Album(NULL, $albumname);
+								$album = newAlbum($albumname);
 								$uralbum = getUrAlbum($album);
 								$viewUnpublished = ($this->search_unpublished || zp_loggedin() && $uralbum->albumSubRights() & (MANAGED_OBJECT_RIGHTS_EDIT | MANAGED_OBJECT_RIGHTS_VIEW));
 								switch (checkPublishDates($row)) {
@@ -1287,7 +1295,7 @@ class SearchEngine {
 					}
 					db_free_result($search_result);
 					if (is_null($sorttype)) {
-						$result = sortMultiArray($result, 'weight', true);
+						$result = sortMultiArray($result, 'weight', true, true, false, false, array('weight'));
 					}
 					foreach ($result as $album) {
 						$albums[] = $album['name'];
@@ -1346,7 +1354,7 @@ class SearchEngine {
 		$albums = $this->getAlbums(0);
 		$inx = array_search($curalbum, $albums)+1;
 		if ($inx >= 0 && $inx < count($albums)) {
-			return new Album(NULL, $albums[$inx]);
+			return newAlbum($albums[$inx]);
 		}
 		return null;
 	}
@@ -1362,7 +1370,7 @@ class SearchEngine {
 		$albums = $this->getAlbums(0);
 		$inx = array_search($curalbum, $albums)-1;
 		if ($inx >= 0 && $inx < count($albums)) {
-			return new Album(NULL, $albums[$inx]);
+			return newAlbum($albums[$inx]);
 		}
 		return null;
 	}
@@ -1436,16 +1444,16 @@ class SearchEngine {
 						if ($row2) {
 							$albumname = $row2['folder'];
 							$allow = false;
-							$album = new Album(NULL, $albumname);
+							$album = newAlbum($albumname);
 							$uralbum = getUrAlbum($album);
 							$viewUnpublished = ($this->search_unpublished || zp_loggedin() && $uralbum->albumSubRights() & (MANAGED_OBJECT_RIGHTS_EDIT | MANAGED_OBJECT_RIGHTS_VIEW));
 							switch (checkPublishDates($row)) {
-							case 1:
-								$imageobj = newImage($this,$row['filename']);
-								$imageobj->setShow(0);
-								$imageobj->save();
-							case 2:
-								$row['show'] = 0;
+								case 1:
+									$imageobj = newImage($this,$row['filename']);
+									$imageobj->setShow(0);
+									$imageobj->save();
+								case 2:
+									$row['show'] = 0;
 									break;
 							}
 							if ($mine || is_null($mine) && ($album->isMyItem(LIST_RIGHTS) || checkAlbumPassword($albumname) && $album->getShow())) {
@@ -1469,7 +1477,7 @@ class SearchEngine {
 				}
 				db_free_result($search_result);
 				if (is_null($sorttype) && isset($weights)) {
-					$images = sortMultiArray($images, 'weight', true);
+					$images = sortMultiArray($images, 'weight', true, true, false, false, array('weight'));
 				}
 			}
 
@@ -1551,7 +1559,7 @@ class SearchEngine {
 		}
 		if ($index >= 0 && $index < $this->getNumImages()) {
 			$img = $this->images[$index];
-			return newImage(new Album($_zp_gallery, $img['folder']), $img['filename']);
+			return newImage(newAlbum($img['folder']), $img['filename']);
 		}
 		return false;
 	}
@@ -1580,11 +1588,14 @@ class SearchEngine {
 	 *
 	 * Returns pages from a search
 	 * @param bool $published ignored, left for parameter compatibility
+	 * @param int $number ignored, left for parameter compatibility
+	 * @param string $sorttype the sort key
+	 * @param strng $sortdirection the sort order
 	 *
 	 * @return array
 	 */
-	function getPages($published=NULL) {
-		return $this->getSearchPages(NULL, NULL);
+	function getPages($published=NULL, $number=NULL, $sorttype=NULL, $sortdirection=NULL) {
+		return $this->getSearchPages($sorttype, $sortdirection);
 	}
 
 	/**
@@ -1629,7 +1640,7 @@ class SearchEngine {
 				db_free_result($search_result);
 			}
 			if (isset($weights)) {
-				$result = sortMultiArray($result, 'weight', true);
+				$result = sortMultiArray($result, 'weight', true, true, false, false, array('weight'));
 			}
 
 
@@ -1695,10 +1706,10 @@ class SearchEngine {
 			} else {
 				$search_result = query($search_query);
 			}
-			zp_apply_filter('search_statistics',$searchstring, 'news', !empty($search_results), false, $this->iteration++);
+			zp_apply_filter('search_statistics',$searchstring, 'news', !empty($search_result), false, $this->iteration++);
 			if ($search_result) {
 				while ($row = db_fetch_assoc($search_result)) {
-					$data = array('id'=>$row['id'],'titlelink'=>$row['titlelink']);
+					$data = array('titlelink'=>$row['titlelink']);
 					if (isset($weights)) {
 						$data['weight'] = $weights[$row['id']];
 					}
@@ -1707,7 +1718,7 @@ class SearchEngine {
 				db_free_result($search_result);
 			}
 			if (isset($weights)) {
-				$result = sortMultiArray($result, 'weight', true);
+				$result = sortMultiArray($result, 'weight', true, true, false, false, array('weight'));
 			}
 			$this->cacheSearch($criteria,$result);
 		}

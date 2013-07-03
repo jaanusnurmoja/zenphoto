@@ -4,27 +4,60 @@
 
 zp_register_filter('themeSwitcher_head', 'switcher_head');
 zp_register_filter('themeSwitcher_Controllink', 'switcher_controllink');
-zp_register_filter('theme_head', 'css_head', 0);
+zp_register_filter('theme_head', 'EF_head', 0);
 
-$personalities = array(gettext('Image page') => 'image_page', gettext('Simpleviewer') => 'simpleviewer', gettext('Colorbox') => 'colorbox', gettext('Image gallery') => 'image_gallery');
-$curdir = getcwd();
+$cwd = getcwd();
+chdir(dirname(__FILE__));
+$persona = safe_glob('*',GLOB_ONLYDIR);
+chdir($cwd);
+$persona = array_diff($persona, array('images','styles'));
+$personalities = array();
+foreach ($persona as $personality) {
+	$personalities[ucfirst(str_replace('_',' ',$personality))] = $personality;
+}
+
+$personality = strtolower(getOption('effervescence_personality'));
+if (!in_array($personality, $personalities)) {
+	$persona = $personalities;
+	$personality = array_shift($persona);
+}
+
 chdir(SERVERPATH . "/themes/".basename(dirname(__FILE__))."/styles");
-$filelist = safe_glob('*.css');
+$filelist = safe_glob('*.txt');
 $themecolors = array();
 foreach($filelist as $file) {
-	$file = filesystemToInternal(str_replace('.css', '', $file));
-	$themecolors[basename($file)] = filesystemToInternal($file);
+	$themecolors[basename($file)] = stripSuffix(filesystemToInternal($file));
 }
-chdir($curdir);
+chdir($cwd);
 
-function css_head($ignore) {
-	global $themecolors, $zenCSS, $themeColor, $_zp_themeroot;
-	list($personality, $themeColor) = getPersonality();
-	$zenCSS = $_zp_themeroot . '/styles/' . $themeColor . '.css';
-	$unzenCSS = str_replace(WEBPATH, '', $zenCSS);
-	if (!file_exists(SERVERPATH . internalToFilesystem($unzenCSS))) {
-		$zenCSS = $_zp_themeroot. "/styles/light.css";
+function EF_head($ignore) {
+	global $themeColor;
+	if (!$themeColor) {
+		$themeColor = getThemeOption('Theme_colors');
 	}
+	eval(file_get_contents(SERVERPATH.'/'.THEMEFOLDER.'/effervescence_plus/styles/'.$themeColor.'.txt'));
+	$css = file_get_contents(SERVERPATH.'/'.THEMEFOLDER.'/effervescence_plus/base.css');
+	$css = strtr($css, $tr);
+	$css = preg_replace('|\.\./images/|', WEBPATH.'/'.THEMEFOLDER.'/effervescence_plus/images/', $css);
+	?>
+	<style type="text/css">
+	<?php echo $css; ?>
+	</style>
+	<link rel="stylesheet" href="<?php echo WEBPATH.'/'.THEMEFOLDER; ?>/effervescence_plus/common.css" type="text/css" />
+	<script type="text/javascript">
+		// <!-- <![CDATA[
+		function blurAnchors(){
+			if(document.getElementsByTagName){
+				var a = document.getElementsByTagName("a");
+				for(var i = 0; i < a.length; i++){
+					a[i].onfocus = function(){this.blur()};
+				}
+			}
+		}
+		// ]]> -->
+	</script>
+	<?php
+
 	return $ignore;
 }
 
@@ -292,7 +325,7 @@ function printFooter($admin=true) {
 	<!-- Footer -->
 	<div class="footlinks">
 		<?php
-		$h = getHitcounter();
+		$h = @call_user_func('getHitcounter');
 		if (!is_null($h)) {
 			?>
 			<p>
@@ -333,19 +366,16 @@ function printFooter($admin=true) {
 			echo '<br />';
 		}
 		?>
-		<?php if ($_zp_gallery_page == 'gallery.php') { printRSSLink('Gallery','', 'Gallery RSS', ''); echo '<br />'; } ?>
+		<?php if ($_zp_gallery_page == 'gallery.php') { if (class_exists('RSS')) printRSSLink('Gallery','', 'Gallery RSS', ''); echo '<br />'; } ?>
 		<?php	if ($_zp_gallery_page != 'password.php') { @call_user_func('printUserLogin_out',''); echo '<br />'; } ?>
 		<?php	if ($_zp_gallery_page!='contact.php' && getOption('zp_plugin_contact_form') && ($_zp_gallery_page != 'password.php' || $_zp_gallery->isUnprotectedPage('contact'))) { printCustomPageURL(gettext('Contact us'), 'contact', '', '');	echo '<br />'; } ?>
 		<?php if ($_zp_gallery_page!='register.php' && !zp_loggedin() && ($_zp_gallery_page != 'password.php' || $_zp_gallery->isUnprotectedPage('register'))) { printCustomPageURL(gettext('Register for this site'), 'register', '', ''); echo '<br />'; }	?>
 		<?php @call_user_func('mobileTheme::controlLink'); ?>
 		<?php @call_user_func('printLanguageSelector'); ?>
-		<br clear="all" />
+		<br class="clearall" />
 	</div>
 	<!-- Administration Toolbox -->
 	<?php
-	if ($admin) {
-		printAdminToolbox();
-	}
 }
 
 function commonNewsLoop($paged) {
@@ -362,7 +392,7 @@ function commonNewsLoop($paged) {
 			<div class="newsarticlecredit">
 				<span class="newsarticlecredit-left">
 					<?php
-					$count = getCommentCount();
+					$count = @call_user_func('getCommentCount');
 					$cat = getNewsCategories();
 					printNewsDate();
 					if ($count > 0) {
@@ -385,7 +415,7 @@ function commonNewsLoop($paged) {
 			<?php printCodeblock(1); ?>
 			<?php printNewsContent(); ?>
 			<?php printCodeblock(2); ?>
-			<br clear="all" />
+			<br class="clearall" />
 			</div>
 	<?php
 	}
@@ -403,35 +433,20 @@ function commonComment() {
 		?>
 		<div id="commentbox">
 			<?php
-			if (getCommentErrors()) {
+			if (getCommentErrors() || getCommentCount()==0) {
 				$style = NULL;
 				$head = '';
 			} else {
-				$style = 'style="display:none;"';
-				$head = '<br clear="all" /><p class="buttons"><a href="javascript:toggle(\'commententry\');" >'.gettext('Add a comment').'</a></p><br clear="all" />';
+//TODO: if the following line is used as intended the comment textarea is hidden to start with and when shown is not full width.
+//				$style = ' class="comment" style="display:none;"';
+				$style = ' class="commentx" style="display:block;"';
+				$head = "<div$style><h3>".gettext('Add a comment').'</h3></div>';
 			}
 			printCommentForm(true, $head, true, $style);
 			?>
 		</div><!-- id="commentbox" -->
 		<?php
 	}
-}
-
-function effervescence_theme_head() {
-	?>
-	<script type="text/javascript">
-		// <!-- <![CDATA[
-		function blurAnchors(){
-			if(document.getElementsByTagName){
-				var a = document.getElementsByTagName("a");
-				for(var i = 0; i < a.length; i++){
-					a[i].onfocus = function(){this.blur()};
-				}
-			}
-		}
-		// ]]> -->
-	</script>
-	<?php
 }
 
 if (($_ef_menu = getOption('effervescence_menu')) == 'effervescence' || $_ef_menu == 'zenpage') {

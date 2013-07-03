@@ -550,7 +550,7 @@ class ThemeObject extends PersistentObject {
 	 * @return array
 	 */
 	function getCodeblock() {
-		return $this->get("codeblock");
+		return zpFunctions::unTagURLs($this->get("codeblock"));
 	}
 
 	/**
@@ -558,7 +558,7 @@ class ThemeObject extends PersistentObject {
 	 *
 	 */
 	function setCodeblock($cb) {
-		$this->set("codeblock",$cb);
+		$this->set('codeblock', zpFunctions::tagURLs($cb));
 	}
 
 /**
@@ -727,11 +727,11 @@ class MediaObject extends ThemeObject {
 	 */
 	function getDesc($locale=NULL) {
 		$text =  $this->get('desc');
-		if ($locale!=='all') {
-			$text =  get_language_string($text,$locale);
+		if ($locale =='all') {
+			return zpFunctions::unTagURLs($text);
+		} else {
+			return  applyMacros(zpFunctions::unTagURLs(get_language_string($text,$locale)));
 		}
-		$text = zpFunctions::unTagURLs($text);
-		return $text;
 	}
 
 	/**

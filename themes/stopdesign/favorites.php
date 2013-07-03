@@ -7,15 +7,15 @@ require_once('normalizer.php');
 $thisalbum = $_zp_current_album;
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareGalleryTitle(); ?> &gt; <?php printBareAlbumTitle(); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
 	<link rel="stylesheet" type="text/css" media="screen, projection" href="<?php echo $_zp_themeroot ?>/css/master.css" />
 	<?php
-	printRSSHeaderLink('Album',getAlbumTitle());
+	if (class_exists('RSS')) printRSSHeaderLink('Album',getAlbumTitle());
 	if (function_exists('getCommentErrors') && getCommentErrors()) {
 		$errors = 1;
 		?>
@@ -167,6 +167,7 @@ $thisalbum = $_zp_current_album;
 		</p>
 
 		<div class="main">
+			<?php @call_user_func('printSlideShowLink'); ?>
 			<?php if (function_exists('printGoogleMap')) printGoogleMap(NULL, NULL, NULL, $thisalbum); ?>
 			<?php
 			if (function_exists('printCommentForm')) {
@@ -181,7 +182,6 @@ $thisalbum = $_zp_current_album;
 			</p>
 		</div>
 		<?php
-		printAdminToolbox();
 		zp_apply_filter('theme_body_close');
 		?>
 </body>

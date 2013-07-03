@@ -109,7 +109,7 @@ function handleSelectorChange(type) {
 			$('#description').html('<?php echo js_encode(gettext("Creates a link to the Zenpage News Index.")); ?>');
 			$('#link').attr('disabled',true);
 			$('#titleinput').show();
-			$('#link').val('<?php echo rewrite_path('news','?p=news'); ?>');
+			$('#link').val('<?php echo rewrite_path(_NEWS_,'?p=news'); ?>');
 			break;
 		case 'all_zenpagecategorys':
 			$('#albumselector,#pageselector,#categoryselector,#custompageselector,#titleinput,#titlelabel,#link_row,#visible_row,#span_row').hide();
@@ -218,12 +218,12 @@ if (isset($_GET['save']) && !isset($_GET['add'])) {
 }
 ?>
 <p class="buttons">
-	<strong><a href="menu_tab.php?menuset=<?php echo $menuset; ?>" title="<?php echo gettext("Back"); ?>"><img	src="../../images/arrow_left_blue_round.png" alt="" /><?php echo gettext("Back"); ?></a></strong>
+	<strong><a href="menu_tab.php?menuset=<?php echo $menuset; ?>"><img	src="../../images/arrow_left_blue_round.png" alt="" /><?php echo gettext("Back"); ?></a></strong>
 	<span class="floatright">
-	<strong><a href="menu_tab_edit.php?add&amp;menuset=<?php echo urlencode($menuset); ?>" title="<?php echo gettext("Add Menu Items"); ?>"><img src="../../images/add.png" alt="" /> <?php echo gettext("Add Menu Items"); ?></a></strong>
+	<strong><a href="menu_tab_edit.php?add&amp;menuset=<?php echo urlencode($menuset); ?>"><img src="../../images/add.png" alt="" /> <?php echo gettext("Add Menu Items"); ?></a></strong>
 	</span>
 </p>
-<br clear="all" /><br />
+<br class="clearall" /><br />
 <div class="box" style="padding:15px; margin-top: 10px">
 <?php
 $action = $type = $id = $link = '';
@@ -355,10 +355,10 @@ if (isset($_GET['add']) && !isset($_GET['save'])) {
 			?>
 	</table>
 	<p class="buttons">
-	<button type="submit" title="<?php echo gettext("Apply"); ?>"><img src="../../images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
-	<button type="reset" title="<?php echo gettext("Reset"); ?>"><img src="../../images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
+	<button type="submit"><img src="../../images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
+	<button type="reset""><img src="../../images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
 	</p>
-	<br clear="all" /><br />
+	<br class="clearall" /><br />
 </form>
 </div>
 </div>

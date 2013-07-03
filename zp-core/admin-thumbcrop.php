@@ -8,7 +8,7 @@ admin_securityChecks(ALBUM_RIGHTS, $return = currentRelativeURL());
 $albumname = sanitize_path($_REQUEST['a']);
 $imagename = sanitize_path($_REQUEST['i']);
 
-$albumobj = new Album(new Gallery,$albumname);
+$albumobj = newAlbum($albumname);
 if (!$albumobj->isMyItem(ALBUM_RIGHTS)) { // prevent nefarious access to this page.
 	if (!zp_apply_filter('admin_managed_albums_access',false, $return)) {
 		header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?from=' . $return);
@@ -32,11 +32,7 @@ if (isImagePhoto($imageobj)) {
 	$height = $imageobj->getHeight();
 } else {
 	$imgpath = $imageobj->getThumbImageFile();
-	if ($imageobj->objectsThumb == NULL) {
-		$imagepart = makeSpecialImageName($imgpath);
-	} else {
-		$imagepart = basename($imgpath);
-	}
+	$imagepart = basename($imgpath);
 	$timg = zp_imageGet($imgpath);
 	$width = zp_imageWidth($timg);
 	$height = zp_imageHeight($timg);
@@ -50,11 +46,7 @@ if (getOption('thumb_crop')) {
 		$thumbcropheight = $imageobj->getHeight();
 	} else {
 		$imgpath = $imageobj->getThumbImageFile();
-		if ($this->objectsThumb == NULL) {
-			$imagepart = makeSpecialImageName($imgpath);
-		} else {
-			$imagepart = basename($imgpath);
-		}
+		$imagepart = basename($imgpath);
 		$thumbcropwidth = zp_imageWidth($timg);
 		$thumbcropheight = zp_imageHeight($timg);
 	}
@@ -183,13 +175,13 @@ printAdminHeader('edit','thumbcrop');
 	});
 
 	function resetCheck() {
-		if ($('#clear_crop').attr('checked')) {
+		if ($('#clear_crop').prop('checked')) {
 			jcrop_api.setSelect([ <?php echo $oX; ?>, <?php echo $oY; ?>, <?php echo $oX+$oW; ?>, <?php echo $oY+$oH; ?> ]);
 		}
 	}
 
 	function resetBoundingBox() {
-		if ($('#clear_crop').attr('checked')) {
+		if ($('#clear_crop').prop('checked')) {
 			jcrop_api.setSelect([ <?php echo $oX; ?>, <?php echo $oY; ?>, <?php echo $oX+$oW; ?>, <?php echo $oY+$oH; ?> ]);
 		} else {
 			jcrop_api.setSelect([ <?php echo $iX; ?>, <?php echo $iY; ?>, <?php echo $iX+$iW; ?>, <?php echo $iY+$iH; ?> ]);
@@ -232,7 +224,7 @@ printAdminHeader('edit','thumbcrop');
 				<p><?php echo gettext("You can change the portion of your image which is shown in thumbnails by cropping it here."); ?></p>
 				<div style="display:block">
 					<div style="float: left; width:<?php echo $thumbcropwidth; ?>px; text-align: center;margin-right: 18px;  margin-bottom: 10px;">
-						<img src="<?php echo pathurlencode($currentthumbimage); ?>" style="width:<?php echo $thumbcropwidth; ?>px;height:<?php echo $thumbcropheight; ?>px; border: 4px solid gray; float: left"/>
+						<img src="<?php echo html_encode(pathurlencode($currentthumbimage)); ?>" style="width:<?php echo $thumbcropwidth; ?>px;height:<?php echo $thumbcropheight; ?>px; border: 4px solid gray; float: left"/>
 						<?php echo gettext("current thumbnail"); ?>
 					</div>
 
@@ -268,11 +260,11 @@ printAdminHeader('edit','thumbcrop');
 									<button type="button" onclick="resetBoundingBox();" >
 										<img src="images/fail.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong>
 									</button>
-									<button type="submit" id="submit" name="submit" value="<?php echo gettext('Apply the cropping') ?>" title="<?php echo gettext("Apply"); ?>">
+									<button type="submit" id="submit" name="submit" value="<?php echo gettext('Apply the cropping') ?>">
 										<img src="images/pass.png" alt="" />
 										<strong><?php echo gettext("Apply"); ?></strong>
 									</button>
-									<button type="reset" value="<?php echo gettext('Back') ?>" title="<?php echo gettext("Back"); ?>" onclick="window.location='admin-edit.php?page=edit&album=<?php echo pathurlencode($albumname); ?>&subpage=<?php echo html_encode($subpage); ?>&tagsort=<?php echo html_encode($tagsort); ?>&tab=imageinfo'">
+									<button type="reset" value="<?php echo gettext('Back') ?>" onclick="window.location='admin-edit.php?page=edit&album=<?php echo pathurlencode($albumname); ?>&subpage=<?php echo html_encode($subpage); ?>&tagsort=<?php echo html_encode($tagsort); ?>&tab=imageinfo'">
 										<img src="images/arrow_left_blue_round.png" alt="" />
 										<strong><?php echo gettext("Back"); ?></strong>
 									</button>
@@ -289,7 +281,7 @@ printAdminHeader('edit','thumbcrop');
 
 					<div style="float: left; width:<?php echo $cropwidth; ?>px; text-align: center; margin-left: 10px; margin-bottom: 10px;">
 						<div style="width:<?php echo $cropwidth; ?>px;height:<?php echo $cropheight; ?>px; overflow:hidden; border: 4px solid green; float: left">
-							<img src="<?php echo pathurlencode($imageurl); ?>" id="preview" />
+							<img src="<?php echo html_encode(pathurlencode($imageurl)); ?>" id="preview" />
 						</div>
 						<?php echo gettext("thumbnail preview"); ?>
 					</div>

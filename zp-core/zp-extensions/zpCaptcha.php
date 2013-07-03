@@ -16,13 +16,7 @@ $plugin_disable = ($_zp_captcha->name && $_zp_captcha->name != 'zpCaptcha')?spri
 
 $option_interface = 'zpCaptcha';
 
-if ($plugin_disable) {
-	setOption('zp_plugin_zpCaptcha', 0);
-} else {
-	$_zp_captcha = new zpCaptcha();
-}
-
-class zpCaptcha {
+class zpCaptcha extends _zp_captcha {
 
 	var $name='zpCaptcha';
 
@@ -32,9 +26,12 @@ class zpCaptcha {
 	 * @return captcha
 	 */
 	function __construct() {
-		setOptionDefault('zenphoto_captcha_length', 5);
-		setOptionDefault('zenphoto_captcha_key', sha1($_SERVER['HTTP_HOST'].'a9606420399a77387af2a4b541414ee5'.getUserIP()));
-		setOptionDefault('zenphoto_captcha_string', 'abcdefghijkmnpqrstuvwxyz23456789ABCDEFGHJKLMNPQRSTUVWXYZ');
+		if (OFFSET_PATH == 2) {
+			setOptionDefault('zenphoto_captcha_length', 5);
+			setOptionDefault('zenphoto_captcha_font_size', 18);
+			setOptionDefault('zenphoto_captcha_key', sha1($_SERVER['HTTP_HOST'].'a9606420399a77387af2a4b541414ee5'.getUserIP()));
+			setOptionDefault('zenphoto_captcha_string', 'abcdefghijkmnpqrstuvwxyz23456789ABCDEFGHJKLMNPQRSTUVWXYZ');
+		}
 	}
 
 	/**
@@ -43,7 +40,8 @@ class zpCaptcha {
 	 * @return unknown
 	 */
 	function getOptionsSupported() {
-		return array(
+		$fontlist = zp_getFonts();
+		$options = array(
 								gettext('Hash key') => array('key' => 'zenphoto_captcha_key', 'type' => OPTION_TYPE_TEXTBOX,
 												'order'=> 2,
 												'desc' => gettext('The key used in hashing the CAPTCHA string. Note: this key will change with each successful CAPTCHA verification.')),
@@ -56,15 +54,20 @@ class zpCaptcha {
 												'desc' => gettext('The number of characters in the CAPTCHA.')),
 								gettext('CAPTCHA font') => array('key' => 'zenphoto_captcha_font', 'type' => OPTION_TYPE_SELECTOR,
 												'order'=> 3,
-												'selections' => array_merge(array('*'.gettext('random').'*'=>'*'),zp_getFonts()),
+												'selections' => array_merge(array('*'.gettext('random').'*'=>'*'),$fontlist),
 												'desc' => gettext('The font to use for CAPTCHA characters.')),
-								'' 			=> array('key' => 'zenphoto_captcha_image', 'type' => OPTION_TYPE_CUSTOM,
+								gettext('CAPTCHA font size') => array('key' => 'zenphoto_captcha_font_size', 'type' => OPTION_TYPE_CLEARTEXT,
+												'order'=> 3.5,
+												'desc' => gettext('The size to use if the font is scalable (<em>TTF</em> and <em>Imagick</em> fonts.)')),
+				'' 			=> array('key' => 'zenphoto_captcha_image', 'type' => OPTION_TYPE_CUSTOM,
 												'order' => 4,
 												'desc' => gettext('Sample CAPTCHA image'))
 								);
+		return $options;
 	}
+
 	function handleOption($key, $cv) {
-		$captcha = $this->getCaptcha();
+		$captcha = $this->getCaptcha(NULL);
 		?>
 		<span id="zenphoto_captcha_image_loc"><?php echo $captcha['html']; ?></span>
 		<script type="text/javascript">
@@ -82,7 +85,6 @@ class zpCaptcha {
 		</script>
 		<?php
 	}
-
 
 	/**
 	 * gets (or creates) the CAPTCHA encryption key
@@ -137,7 +139,8 @@ class zpCaptcha {
 	 *
 	 * @return array;
 	 */
-	function getCaptcha() {
+	function getCaptcha($prompt) {
+		parent::getCaptcha($prompt);
 		$captcha_len = getOption('zenphoto_captcha_length');
 		$key = $this->getCaptchaKey();
 		$lettre = getOption('zenphoto_captcha_string');
@@ -151,11 +154,17 @@ class zpCaptcha {
 		$code=sha1($cypher);
 		query('DELETE FROM '.prefix('captcha').' WHERE `ptime`<'.(time()-3600), false);  // expired tickets
 		query("INSERT INTO " . prefix('captcha') . " (ptime, hash) VALUES (" . db_quote(time()) . "," . db_quote($code) . ")", false);
-		$html = '<img id="captcha" src="'.WEBPATH .'/'.ZENFOLDER.'/'.PLUGIN_FOLDER.'/zpCaptcha/c.php?i='.$cypher.'" alt="Code" />';
+		$html = '<label for="code" class="captcha_label">'.$prompt.'</label><img id="captcha" src="'.WEBPATH .'/'.ZENFOLDER.'/'.PLUGIN_FOLDER.'/zpCaptcha/c.php?i='.$cypher.'" alt="Code" />';
 		$input = '<input type="text" id="code" name="code" class="captchainputbox" />';
 		$hidden = '<input type="hidden" name="code_h" value="'.$code.'" />';
 		return array('input'=>$input, 'html'=>$html, 'hidden'=>$hidden);
 	}
+}
+
+if ($plugin_disable) {
+	setOption('zp_plugin_zpCaptcha', 0);
+} else {
+	$_zp_captcha = new zpCaptcha();
 }
 
 ?>

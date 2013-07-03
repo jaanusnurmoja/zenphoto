@@ -53,7 +53,7 @@ class Zenphoto_Authority {
 	var $master_user = NULL;
 	static $preferred_version = 4;
 	static $supports_version = 4;
-	static $hashList =  array('pbkdf2'=>2, 'sha1'=>1, 'md5'=>0);
+	static $hashList =  array('pbkdf2'=>3, 'pbkdf2*'=>2, 'sha1'=>1, 'md5'=>0);
 
 	/**
 	 * class instantiation function
@@ -75,6 +75,7 @@ class Zenphoto_Authority {
 	 */
 	function getOptionsSupported() {
 		$encodings = self::$hashList;
+		unset($encodings['pbkdf2*']);	// don't use this one any more
 		if (!function_exists('hash')) {
 			unset($encodings['pbkdf2']);
 		}
@@ -85,7 +86,7 @@ class Zenphoto_Authority {
 										'<span id="password_strength_display">'.getOption('password_strength').'</span>')),
 									gettext('Password hash algorithm')=> array('key'=>'strong_hash', 'type'=>OPTION_TYPE_SELECTOR,
 										'selections' => $encodings,
-										'desc'=> sprintf(gettext('The hashing algorithm used by Zenphoto. In order of robustness the choices are %s'), '<code>'.implode('</code> > <code>',array_flip(self::$hashList)).'</code>'))
+										'desc'=> sprintf(gettext('The hashing algorithm used by Zenphoto. In order of robustness the choices are %s'), '<code>'.implode('</code> > <code>',array_flip($encodings)).'</code>'))
 									);
 	}
 
@@ -155,7 +156,11 @@ class Zenphoto_Authority {
 				$hash = sha1($user.$pass.HASH_SEED);
 				break;
 			case 2:
+				//	deprecated beause of possible "+" in the text
 				$hash = base64_encode(self::pbkdf2($pass,$user.HASH_SEED));
+				break;
+			case 3:
+				$hash = str_replace('+','-',base64_encode(self::pbkdf2($pass,$user.HASH_SEED)));
 				break;
 			default:
 				$hash = md5($user.$pass.HASH_SEED);
@@ -286,12 +291,23 @@ class Zenphoto_Authority {
 	 * @param string $pass
 	 * @return object
 	 */
-	static function checkLogon($user, $pass) {
+	function checkLogon($user, $pass) {
 		$userobj = self::getAnAdmin(array('`user`=' => $user, '`valid`=' => 1));
 		if ($userobj) {
 			$hash = self::passwordHash($user, $pass, $userobj->get('passhash'));
 			if ($hash != $userobj->getPass()) {
-				$userobj = NULL;
+				//	maybe not yet updated passhash field
+				foreach (self::$hashList as $hashv) {
+					$hash = self::passwordHash($user, $pass, $hashv);
+					if ($hash == $userobj->getPass()) {
+						break;
+					} else {
+						$hash = -1;
+					}
+				}
+				if ($hash === -1) {
+					$userobj = NULL;
+				}
 			}
 		} else {
 			$hash = -1;
@@ -612,7 +628,7 @@ class Zenphoto_Authority {
 
 	/**
 	 * Set log-in cookie for a user
-	 * @param string $user
+	 * @param object $user
 	 */
 	static function logUser($user) {
 		$user->set('lastloggedin', $user->get('loggedin'));
@@ -893,7 +909,7 @@ class Zenphoto_Authority {
 					<fieldset id="logon_box">
 						<input type="hidden" name="login" value="1" />
 						<input type="hidden" name="password" value="challenge" />
-						<input type="hidden" name="redirect" value="<?php echo pathurlencode($redirect); ?>" />
+						<input type="hidden" name="redirect" value="<?php echo html_encode(pathurlencode($redirect)); ?>" />
 						<fieldset>
 							<legend><?php echo gettext('User')?></legend>
 							<input class="textfield" name="user" id="user" type="text" size="35" value="<?php echo html_encode($requestor); ?>" />
@@ -927,7 +943,7 @@ class Zenphoto_Authority {
 							<button type="button" value="<?php echo gettext("Refresh"); ?>" id="challenge_refresh" onclick="javascript:launchScript('<?php echo WEBPATH.'/'.ZENFOLDER; ?>/admin.php',['logon_step=challenge', 'ref='+$('#user').val()]);" ><img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/refresh.png" alt="" /><?php echo gettext("Refresh"); ?></button>
 							<button type="button" value="<?php echo gettext("Return"); ?>" onclick="javascript:launchScript('<?php echo WEBPATH.'/'.ZENFOLDER; ?>/admin.php',['logon_step=', 'ref='+$('#user').val()]);" ><img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/refresh.png" alt="" /><?php echo gettext("Return"); ?></button>
 						</div>
-						<br clear="all" />
+						<br class="clearall" />
 					</fieldset>
 					<br />
 					<?php
@@ -980,10 +996,10 @@ class Zenphoto_Authority {
 					<?php
 				}
 				?>
-				<form name="login" action="<?php echo pathurlencode(getRequestURI()); ?>" method="post">
+				<form name="login" action="<?php echo html_encode(pathurlencode(getRequestURI())); ?>" method="post">
 					<input type="hidden" name="login" value="1" />
 					<input type="hidden" name="password" value="1" />
-					<input type="hidden" name="redirect" value="<?php echo pathurlencode($redirect); ?>" />
+					<input type="hidden" name="redirect" value="<?php echo html_encode(pathurlencode($redirect)); ?>" />
 					<fieldset id="logon_box"><legend><?php echo $legend; ?></legend>
 						<?php
 						if ($showUserField) {	//	requires a "user" field
@@ -996,14 +1012,14 @@ class Zenphoto_Authority {
 						?>
 						<fieldset><legend><?php echo gettext("Password"); ?></legend>
 							<input class="textfield" name="pass" id="pass" type="password" size="35" /><br />
-							<label><input type="checkbox" name="disclose_password" onclick="togglePassword('');" /><?php echo gettext('Show password')?></label>
+							<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="togglePassword('');" /><?php echo gettext('Show password')?></label>
 						</fieldset>
 						<br />
 						<div class="buttons">
 							<button type="submit" value="<?php echo gettext("Log in"); ?>" ><img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/pass.png" alt="" /><?php echo gettext("Log in"); ?></button>
 							<button type="reset" value="<?php echo gettext("Reset"); ?>" ><img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/reset.png" alt="" /><?php echo gettext("Reset"); ?></button>
 						</div>
-						<br clear="all" />
+						<br class="clearall" />
 					</fieldset>
 				</form>
 				<?php
@@ -1021,13 +1037,13 @@ class Zenphoto_Authority {
 				}
 				break;
 			case 'captcha':
-				$captcha = $_zp_captcha->getCaptcha();
+				$captcha = $_zp_captcha->getCaptcha(NULL);
 				?>
 				<form name="login" action="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/admin.php" method="post">
 					<?php if (isset($captcha['hidden'])) echo $captcha['hidden']; ?>
 					<input type="hidden" name="login" value="1" />
 					<input type="hidden" name="password" value="captcha" />
-					<input type="hidden" name="redirect" value="<?php echo pathurlencode($redirect); ?>" />
+					<input type="hidden" name="redirect" value="<?php echo html_encode(pathurlencode($redirect)); ?>" />
 					<?php
 					?>
 					<fieldset id="logon_box">
@@ -1049,7 +1065,7 @@ class Zenphoto_Authority {
 							<button type="submit" value="<?php echo gettext("Request"); ?>" ><img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/pass.png" alt="" /><?php echo gettext("Request password reset"); ?></button>
 							<button type="button" value="<?php echo gettext("Return"); ?>" onclick="javascript:launchScript('<?php echo WEBPATH.'/'.ZENFOLDER; ?>/admin.php',['logon_step=', 'ref='+$('#user').val()]);" ><img src="<?php echo WEBPATH.'/'.ZENFOLDER; ?>/images/refresh.png" alt="" /><?php echo gettext("Return"); ?></button>
 						</div>
-						<br clear="all" />
+						<br class="clearall" />
 					</fieldset>
 				</form>
 				<?php
@@ -1138,7 +1154,7 @@ class Zenphoto_Authority {
 			var inputa = '#pass'+id;
 			var inputb = '#pass_r'+id;
 			var display = '#match'+id;
-			if ($('#disclose_password'+id).attr('checked') != 'checked') {
+			if ($('#disclose_password'+id).prop('checked')) {
 				if ($(inputa).val() === $(inputb).val()) {
 					if ($(inputa).val().trim() !== '') {
 						$(display).css('color','#008000');
@@ -1192,8 +1208,8 @@ class Zenphoto_Authority {
 
 		?>
 		<input type="hidden" name="passrequired<?php echo $id; ?>" id="passrequired-<?php echo $id; ?>" value="<?php echo (int) $required; ?>" />
-		<fieldset>
-			<legend id="strength<?php echo $id; ?>"><?php echo gettext("Password").$flag; ?></legend>
+		<p>
+			<label for="pass<?php echo $id; ?>" id="strength<?php echo $id; ?>"><?php echo gettext("Password").$flag; ?></label>
 			<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
 							name="pass<?php echo $id ?>" value="<?php echo $x; ?>"
 							id="pass<?php echo $id; ?>"
@@ -1201,18 +1217,20 @@ class Zenphoto_Authority {
 							onclick="passwordClear('<?php echo $id; ?>');"
 							onkeyup="passwordStrength('<?php echo $id; ?>');"
 							<?php echo $disable; ?> />
-			<br clear="all" />
-			<label><input type="checkbox" name="disclose_password<?php echo $id; ?>" id="disclose_password<?php echo $id; ?>" onclick="passwordClear('<?php echo $id; ?>');togglePassword('<?php echo $id; ?>');"><?php echo gettext('Show password'); ?></label>
-		</fieldset>
-		<fieldset class="password_field_<?php echo $id; ?>">
-			<legend id="match<?php echo $id; ?>"><?php echo gettext("Repeat password").$flag; ?></legend>
+		</p>
+		<p>
+			<label for="disclose_password<?php echo $id; ?>"><?php echo gettext('Show password'); ?></label>
+			<input type="checkbox" name="disclose_password<?php echo $id; ?>" id="disclose_password<?php echo $id; ?>" onclick="passwordClear('<?php echo $id; ?>');togglePassword('<?php echo $id; ?>');">
+		</p>
+		<p class="password_field_<?php echo $id; ?>">
+			<label for="pass_r<?php echo $id; ?>" id="match<?php echo $id; ?>"><?php echo gettext("Repeat password").$flag; ?></label>
 			<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
 							name="pass_r<?php echo $id ?>" value="<?php echo $x; ?>"
 							id="pass_r<?php echo $id; ?>" disabled="disabled"
 							onchange="$('#passrequired-<?php echo $id; ?>').val(1);"
 							onkeydown="passwordClear('<?php echo $id; ?>');"
 							onkeyup="passwordMatch('<?php echo $id; ?>');" />
-		</fieldset>
+		</p>
 		<?php
 	}
 
@@ -1530,7 +1548,7 @@ class Zenphoto_Administrator extends PersistentObject {
 				}
 				switch ($object['type']) {
 					case 'album':
-						$album = new Album(NULL, $object['data']);
+						$album = newAlbum($object['data']);
 						$albumid = $album->getID();
 						$sql = "INSERT INTO ".prefix('admin_to_object')." (adminid, objectid, type, edit) VALUES ($id, $albumid, 'albums', $edit)";
 						$result = query($sql);
@@ -1586,7 +1604,7 @@ class Zenphoto_Administrator extends PersistentObject {
 			$sql = 'SELECT `folder` FROM '.prefix('albums').' WHERE `id`='.$id;
 			$result = query_single_row($sql);
 			if ($result) {
-				$album = new Album(NULL, $result['folder']);
+				$album = newAlbum($result['folder']);
 				return $album;
 			}
 		}
@@ -1639,7 +1657,7 @@ class Zenphoto_Administrator extends PersistentObject {
 		$path = ALBUM_FOLDER_SERVERPATH.$filename.$ext;
 		$albumname = filesystemToInternal($filename.$ext);
 		if (@mkdir_recursive($path,FOLDER_MOD)) {
-			$album = new Album(NULL, $albumname);
+			$album = newAlbum($albumname);
 			if ($title = $this->getName()) {
 				$album->setTitle($title);
 			}

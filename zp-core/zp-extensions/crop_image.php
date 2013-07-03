@@ -27,7 +27,7 @@ if (isset($_REQUEST['performcrop'])) {
 class crop_image {
 
 	static function toolbox($albumname, $imagename) {
-		$album = new Album(NULL, $albumname);
+		$album = newAlbum($albumname);
 		if ($album->isMyItem(ALBUM_RIGHTS)) {
 			$image = newimage($album,$imagename);
 			if (isImagePhoto($image)) {
@@ -51,7 +51,7 @@ class crop_image {
 						'<a href="'.WEBPATH."/".ZENFOLDER . '/'.PLUGIN_FOLDER.'/crop_image.php?a='.pathurlencode($albumname)."\n".
 								'&amp;i='.urlencode($imagename).'&amp;performcrop=backend&amp;subpage='.$subpage.'&amp;tagsort='.html_encode($tagsort).'">'."\n".
 								'<img src="images/shape_handles.png" alt="" />'.gettext("Crop image").'</a>'."\n".
-					'<br clear="all" />'.
+					'<br class="clearall" />'.
 				'</div>'."\n";
 		}
 		return $output;
@@ -61,7 +61,7 @@ class crop_image {
 
 $albumname = sanitize_path($_REQUEST['a']);
 $imagename = sanitize_path($_REQUEST['i']);
-$album = new Album(NULL, $albumname);
+$album = newAlbum($albumname);
 if (!$album->isMyItem(ALBUM_RIGHTS)) { // prevent nefarious access to this page.
 	if (!zp_apply_filter('admin_managed_albums_access',false, $return)) {
 		header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?from=' . $return);
@@ -72,7 +72,7 @@ if (!$album->isMyItem(ALBUM_RIGHTS)) { // prevent nefarious access to this page.
 // get what image side is being used for resizing
 $use_side = getOption('image_use_side');
 // get full width and height
-$albumobj = new Album(NULL,$albumname);
+$albumobj = newAlbum($albumname);
 $imageobj = newImage($albumobj,$imagename);
 
 if (isImagePhoto($imageobj)) {
@@ -304,13 +304,13 @@ printAdminHeader('edit',gettext('crop image'));
 
 					<div style="width: <?php echo $sizedwidth; ?>px; height: <?php echo $sizedheight; ?>px; margin-bottom: 10px; border: 4px solid gray;">
 						<!-- This is the image we're attaching Jcrop to -->
-						<img src="<?php echo pathurlencode($imageurl); ?>" id="cropbox" />
+						<img src="<?php echo html_encode(pathurlencode($imageurl)); ?>" id="cropbox" />
 						<p class="floatright">
 							<?php echo sprintf(gettext('(<span id="new-width">%1$u</span> x <span id="new-height">%2$u</span> pixels)'),
 														round($iW * ($width / $sizedwidth)), round($iH * ($height / $sizedheight))); ?>
 						</p>
 					</div>
-					<span style="line-height: 0em;"><br clear="all" /></span>
+					<span style="line-height: 0em;"><br class="clearall" /></span>
 						<?php printf(gettext('width:%1$s %2$s height:%3$s %4$s clear %5$s'),
 										'<input type="text" id="aspect-ratio-width" name="aspect-ratio-width" value="" size="5" />',
 										'&nbsp;<span id="aspect" ><a id="swap_button" href="javascript:swapAspect();" title="'.gettext('swap width and height fields').'" > <img src="crop_image/swap.png"> </a></span>&nbsp;',
@@ -337,19 +337,19 @@ printAdminHeader('edit',gettext('crop image'));
 							<button type="button" onclick="clearAspect();" >
 								<img src="../images/fail.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong>
 							</button>
-							<button type="submit" id="submit" name="submit" value="<?php echo gettext('Apply the cropping') ?>" title="<?php echo gettext("Apply"); ?>">
+							<button type="submit" id="submit" name="submit" value="<?php echo gettext('Apply the cropping') ?>">
 								<img src="../images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong>
 							</button>
 							<?php
 							if ($_REQUEST['performcrop'] == 'backend') {
 								?>
-								<button type="reset" value="<?php echo gettext('Back') ?>" title="<?php echo gettext("Back"); ?>" onclick="window.location='../admin-edit.php?page=edit&album=<?php echo pathurlencode($albumname); ?>&subpage=<?php echo $subpage; ?>&tagsort=<?php echo html_encode($tagsort); ?>&tab=imageinfo'">
+								<button type="reset" value="<?php echo gettext('Back') ?>" onclick="window.location='../admin-edit.php?page=edit&album=<?php echo pathurlencode($albumname); ?>&subpage=<?php echo $subpage; ?>&tagsort=<?php echo html_encode($tagsort); ?>&tab=imageinfo'">
 									<img src="../images/arrow_left_blue_round.png" alt="" /><strong><?php echo gettext("Back"); ?></strong>
 								</button>
 								<?php
 							} else {
 								?>
-								<button type="reset" value="<?php echo gettext('Back') ?>" title="<?php echo gettext("Back"); ?>" onclick="window.location='../../index.php?album=<?php echo pathurlencode($albumname); ?>&image=<?php echo urlencode($imagename); ?>'">
+								<button type="reset" value="<?php echo gettext('Back') ?>" onclick="window.location='../../index.php?album=<?php echo pathurlencode($albumname); ?>&image=<?php echo urlencode($imagename); ?>'">
 									<img src="../images/arrow_left_blue_round.png" alt="" /><strong><?php echo gettext("Back"); ?></strong>
 								</button>
 								<?php

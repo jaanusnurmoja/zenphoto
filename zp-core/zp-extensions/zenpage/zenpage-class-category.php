@@ -14,6 +14,9 @@ class ZenpageCategory extends ZenpageRoot {
 	var $view_rights = ALL_NEWS_RIGHTS;
 
 	function __construct($catlink, $create=NULL) {
+		if (is_array($catlink)) {
+			$catlink = $catlink['titlelink'];
+		}
 		$new = parent::PersistentObject('news_categories', array('titlelink'=>$catlink), 'titlelink', true, empty($catlink), $create);
 	}
 
@@ -24,11 +27,11 @@ class ZenpageCategory extends ZenpageRoot {
 	 */
 	function getDesc($locale=NULL) {
 		$text = $this->get('desc');
-		if ($locale !=='all') {
-			$text = get_language_string($text,$locale);
+		if ($locale =='all') {
+			return zpFunctions::unTagURLs($text);
+		} else {
+			return applyMacros(zpFunctions::unTagURLs(get_language_string($text,$locale)));
 		}
-		$text = zpFunctions::unTagURLs($text);
-		return $text;
 	}
 
 	/**
@@ -48,11 +51,11 @@ class ZenpageCategory extends ZenpageRoot {
 	 */
 	function getContent($locale=NULL) {
 		$content = $this->get("content");
-		if ($locale!=='all') {
-			$content = get_language_string($content,$locale);
+		if ($locale =='all') {
+			return zpFunctions::unTagURLs($content);
+		} else {
+			return applyMacros(zpFunctions::unTagURLs(get_language_string($content,$locale)));
 		}
-		$content = zpFunctions::unTagURLs($content);
-		return $content;
 	}
 
 	/**
@@ -72,11 +75,11 @@ class ZenpageCategory extends ZenpageRoot {
 	 */
 	function getExtraContent($locale=NULL) {
 		$text =  $this->get("extracontent");
-		if ($locale!=='all') {
-			$text = get_language_string($text,$locale);
+		if ($locale =='all') {
+			return zpFunctions::unTagURLs($text);
+		} else {
+			return applyMacros(zpFunctions::unTagURLs(get_language_string($text,$locale)));
 		}
-		$text = zpFunctions::unTagURLs($text);
-		return $text;
 	}
 
 	/**
@@ -167,14 +170,16 @@ class ZenpageCategory extends ZenpageRoot {
 
 	/**
 	 * Gets the sub categories recursivly by titlelink
-	 *
+	 * @param bool $visible TRUE for published and unprotected
+	 * @param string $sorttype NULL for the standard order as sorted on the backend, "title", "date", "popular"
+	 * @param string $sortdirection "asc" or "desc" for ascending or descending order
 	 * @return array
 	 */
-	function getSubCategories() {
+	function getSubCategories($visible=true,$sorttype=NULL, $sortdirection=NULL) {
 		global $_zp_zenpage;
 		$subcategories = array();
 		$sortorder = $this->getSortOrder();
-		foreach($_zp_zenpage->getAllCategories(false) as $cat) {
+		foreach($_zp_zenpage->getAllCategories($visible,$sorttype, $sortdirection) as $cat) {
 			$catobj = new ZenpageCategory($cat['titlelink']);
 			if($catobj->getParentID() == $this->getID() && $catobj->getSortOrder() != $sortorder) { // exclude the category itself!
 				array_push($subcategories,$catobj->getTitlelink());
@@ -322,11 +327,9 @@ class ZenpageCategory extends ZenpageRoot {
 	 * 													"sticky" for sticky articles (published or not!) for Admin page use only,
 	 * 													"all" for all articles
 	 * @param boolean $ignorepagination Since also used for the news loop this function automatically paginates the results if the "page" GET variable is set. To avoid this behaviour if using it directly to get articles set this TRUE (default FALSE)
-	 * @param string $sortorder "date" for sorting by date (default)
-	 * 													"title" for sorting by title
+	 * @param string $sortorder "date" (default), "title", "popular", "mostrated", "toprated", "random"
 	 * 													This parameter is not used for date archives
-	 * @param string $sortdirection "desc" (default) for descending sort order
-	 * 													    "asc" for ascending sort order
+	 * @param string $sortdirection "asc" or "desc" for ascending or descending order
 	 * 											        This parameter is not used for date archives
 	 * @param bool $sticky set to true to place "sticky" articles at the front of the list.
 	 * @return array
@@ -371,6 +374,19 @@ class ZenpageCategory extends ZenpageRoot {
 				break;
 			case "title":
 				$sort1 = "title";
+				break;
+			case "popular":
+				$sort1 = 'hitcounter';
+				break;
+			case "mostrated":
+				$sort1 = 'total_votes';
+				break;
+			case "toprated":
+				$sort1 = '(total_value/total_votes) DESC, total_value';
+				$dir = '';
+				break;
+			case "random":
+				$sort1 = 'RAND()';
 				break;
 		}
 		switch($sortdirection) {
@@ -507,7 +523,7 @@ function getArticle($index,$published=NULL,$sortorder='date', $sortdirection='de
  */
 function getCategoryLink() {
 	global $_zp_zenpage;
-	return $_zp_zenpage->getNewsBaseURL().$_zp_zenpage->getNewsCategoryPath().urlencode($this->getTitlelink());
+	return rewrite_path('/'._CATEGORY_.'/'.$this->getTitlelink(), "/index.php?p=news&category=".$this->getTitlelink());
 }
 
 

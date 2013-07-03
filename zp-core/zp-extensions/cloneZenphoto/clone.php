@@ -113,7 +113,7 @@ if (trim($folder,'/') == SERVERPATH) {
 }
 if ($success) {
 	array_unshift($msg, '<h2>'.sprintf(gettext('Successful clone to %s'),$folder).'</h2>'."\n");
-	list($diff, $needs) = checkSignature();
+	list($diff, $needs) = checkSignature(false);
 	if (empty($needs)) {
 		if (WEBPATH) {
 			$rootpath = str_replace(WEBPATH,'/',SERVERPATH);
@@ -124,7 +124,7 @@ if ($success) {
 		}
 
 		if (substr($folder,0,strlen($rootpath)) == $rootpath) {
-			$msg[] = '<p><span class="buttons"><a href="'.$urlpath.$newinstall.ZENFOLDER.'/setup/index.php?autorun">'.gettext('setup the new install').'</a></span><br clear="all"></p>'."\n";
+			$msg[] = '<p><span class="buttons"><a href="'.$urlpath.$newinstall.ZENFOLDER.'/setup/index.php?autorun">'.gettext('setup the new install').'</a></span><br class="clearall" /></p>'."\n";
 		}
 	} else {
 		$reinstall = '<p>'.sprintf(gettext('Before running setup for <code>%1$s</code> please reinstall the following setup files from the %2$s [%3$s] to this installation:'),$newinstall,ZENPHOTO_VERSION,ZENPHOTO_RELEASE).

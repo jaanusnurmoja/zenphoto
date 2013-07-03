@@ -7,6 +7,12 @@
  * @subpackage zenpage
  */
 
+if (!defined('NEWS_POSITION_NORMAL')) {	// No idea why this is needed, but clones get already defined errors.
+	define('NEWS_POSITION_NORMAL',0);
+	define('NEWS_POSITION_STICKY',1);
+	define('NEWS_POSITION_STICK_TO_TOP',9);
+}
+
 class ZenpageNews extends ZenpageItems {
 
 	var $manage_rights = MANAGE_ALL_NEWS_RIGHTS;
@@ -16,6 +22,9 @@ class ZenpageNews extends ZenpageItems {
 	var $index = NULL;
 
 	function __construct($titlelink, $allowCreate=NULL) {
+		if (is_array($titlelink)) {
+			$titlelink = $titlelink['titlelink'];
+		}
 		$new = parent::PersistentObject('news', array('titlelink'=>$titlelink), 'titlelink', true, empty($titlelink), $allowCreate);
 	}
 
@@ -53,6 +62,12 @@ class ZenpageNews extends ZenpageItems {
 	}
 	function setSticky($v) {
 		$this->set('sticky',$v);
+	}
+	function getTruncation() {
+		return $this->get('truncation');
+	}
+	function setTruncation($v) {
+		$this->set('truncation',$v);
 	}
 
 	/**
@@ -144,9 +159,8 @@ class ZenpageNews extends ZenpageItems {
 		global $_zp_zenpage;
 		$categories = $this->getCategories(false);
 		if(count($categories) > 0) {
-			$structure = $_zp_zenpage->getCategoryStructure();
 			foreach($categories as $cat) {
-				if ($structure[$cat['cat_id']]['show']) {
+				if ($_zp_zenpage->visibleCategory($cat)) {
 					return true;
 				}
 			}
@@ -264,14 +278,14 @@ class ZenpageNews extends ZenpageItems {
 	}
 
 	/**
- 	* Returns the url to a news article
- 	*
- 	*
- 	* @return string
- 	*/
+	* Returns the url to a news article
+	*
+	*
+	* @return string
+	*/
 	function getNewsLink() {
 		global $_zp_zenpage;
-		return $_zp_zenpage->getNewsBaseURL().$_zp_zenpage->getNewsTitlePath().urlencode($this->getTitlelink());
+		return $_zp_zenpage->getNewsTitlePath($this->getTitlelink());
 	}
 
 

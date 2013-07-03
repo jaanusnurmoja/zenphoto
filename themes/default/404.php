@@ -3,8 +3,8 @@
 
 if (!defined('WEBPATH')) die();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 	<head>
 		<?php zp_apply_filter('theme_head'); ?>
 		<title><?php printBareGalleryTitle(); ?> | <?php echo gettext("Object not found"); ?></title>
@@ -41,7 +41,6 @@ if (!defined('WEBPATH')) die();
 			<?php printZenphotoLink(); ?>
 		</div>
 		<?php
-		printAdminToolbox();
 		zp_apply_filter('theme_body_close');
 		?>
 	</body>

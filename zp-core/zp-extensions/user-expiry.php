@@ -183,26 +183,30 @@ class user_expiry {
 		query('DELETE FROM '.prefix('plugin_storage').' WHERE `type`='.db_quote('user_expiry_usedPasswords').' AND `aux`='.$user->getID());
 	}
 
-	static function passwordAllowed($msg,$pwd, $user) {
+	static function passwordAllowed($msg, $pwd, $user) {
 		if ($id = $user->getID()>0) {
-		$store = query_single_row('SELECT * FROM '.prefix('plugin_storage').' WHERE `type`='.db_quote('user_expiry_usedPasswords').' AND `aux`='.$id);
-		if ($store) {
-			$used = unserialize($store['data']);
-			if (in_array($pwd, $used)) {
-				return gettext('You have used that password recently. Please choose a different password.');
+			$store = query_single_row('SELECT * FROM '.prefix('plugin_storage').' WHERE `type`='.db_quote('user_expiry_usedPasswords').' AND `aux`='.$id);
+			if ($store) {
+				$used = unserialize($store['data']);
+				if (in_array($pwd, $used)) {
+					if (zp_loggedin(ADMIN_RIGHTS)) {	// persons with ADMIN_RIGHTS get to override this so they can reset a passwrod for a user
+						unset($used[$pwd]);
+					} else {
+						return gettext('You have used that password recently. Please choose a different password.');
+					}
+				}
+				if (count($used)>9) {
+					$used = array_slice($used, 1);
+				}
+			} else {
+				$used = array();
 			}
-			if (count($used)>9) {
-				$used = array_slice($used, 1);
+			array_push($used, $pwd);
+			if ($store) {
+				query('UPDATE '.prefix('plugin_storage').'SET `data`='.db_quote(serialize($used)).' WHERE `type`='.db_quote('user_expiry_usedPasswords').' AND `aux`='.$id);
+			} else {
+				query('INSERT INTO '.prefix('plugin_storage').' (`type`, `aux`, `data`) VALUES ('.db_quote('user_expiry_usedPasswords').','.$id.','.db_quote(serialize($used)).')');
 			}
-		} else {
-			$used = array();
-		}
-		array_push($used, $pwd);
-		if ($store) {
-			query('UPDATE '.prefix('plugin_storage').'SET `data`='.db_quote(serialize($used)).' WHERE `type`='.db_quote('user_expiry_usedPasswords').' AND `aux`='.$id);
-		} else {
-			query('INSERT INTO '.prefix('plugin_storage').' (`type`, `aux`, `data`) VALUES ('.db_quote('user_expiry_usedPasswords').','.$id.','.db_quote(serialize($used)).')');
-		}
 		}
 		return $msg;
 	}
@@ -263,6 +267,7 @@ class user_expiry {
 
 	static function edit_admin($html, $userobj, $i, $background, $current, $local_alterrights) {
 		global $_zp_current_admin_obj;
+		if (!$userobj->getValid()) return $html;
 		$subscription = 86400*getOption('user_expiry_interval');
 		if ($subscription && !zp_loggedin(ADMIN_RIGHTS) && $userobj->getID() == $_zp_current_admin_obj->getID()) {
 			$now = time();

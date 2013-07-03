@@ -215,7 +215,7 @@ function getItemTitleAndURL($item) {
 				$url = '';
 				$protected = 0;
 			} else {
-				$obj = new Album(NULL,$item['link']);
+				$obj = newAlbum($item['link']);
 				$url = $obj->getAlbumLink(0);
 				$protected = $obj->isProtected();
 				$title = $obj->getTitle();
@@ -227,7 +227,7 @@ function getItemTitleAndURL($item) {
 			$result = query_single_row($sql);
 			if (is_array($result)) {
 				$obj = new ZenpagePage($item['link']);
-				$url = rewrite_path("/pages/".$item['link'],"/index.php?p=pages&amp;title=".$item['link']);
+				$url = rewrite_path("/"._PAGES_."/".$item['link'],"/index.php?p=pages&amp;title=".$item['link']);
 				$protected = $obj->isProtected();
 				$title = $obj->getTitle();
 			} else {
@@ -238,7 +238,7 @@ function getItemTitleAndURL($item) {
 			$array = array("title"=>$title,"url"=>$url,"name"=>$item['link'],'protected'=>$protected);
 			break;
 		case "zenpagenewsindex":
-			$url = rewrite_path("/news","/news/index.php?p=news");
+			$url = rewrite_path('/'._NEWS_,"index.php?p=news");
 			$array = array("title" => get_language_string($item['title']),"url" => $url,"name" => $url,'protected'=>false);
 			break;
 		case "zenpagecategory":
@@ -248,7 +248,7 @@ function getItemTitleAndURL($item) {
 				$obj = new ZenpageCategory($item['link']);
 				$title = $obj->getTitle();
 				$protected = $obj->isProtected();
-				$url = rewrite_path("/news/category/".$item['link'],"/index.php?p=news&amp;category=".$item['link']);
+				$url = rewrite_path('/'._CATEGORY_.'/'.$item['link'],"/index.php?p=news&amp;category=".$item['link']);
 			} else {
 				$valid = false;
 				$url = '';
@@ -260,7 +260,7 @@ function getItemTitleAndURL($item) {
 			$themename = $_zp_gallery->getCurrentTheme();
 			$root = SERVERPATH.'/'.THEMEFOLDER.'/'.$themename.'/';
 			if (file_exists($root.$item['link'].'.php')) {
-				$url = rewrite_path("/page/".$item['link'],"/index.php?p=".$item['link']);
+				$url = rewrite_path('/'._PAGE_.'/'.$item['link'],"/index.php?p=".$item['link']);
 			} else {
 				$valid = false;
 				$url = '';
@@ -414,7 +414,7 @@ function getCurrentMenuItem($menuset) {
 	if (isset($_GET['page'])) {	// must strip out page numbers, all "pages" are equal
 		if (MOD_REWRITE) {
 			if (isset($_GET['album'])) {
-				$target = '/page/'.sanitize($_GET['page']);
+				$target = '/'._PAGE_.'/'.sanitize($_GET['page']);
 			} else {
 				$target = '/'.sanitize($_GET['page']);
 			}
@@ -792,7 +792,7 @@ function createMenuIfNotExists($menuitems, $menuset='default') {
 					if(getOption('zp_plugin_zenpage')) {
 						$orders[$nesting]++;
 						query("INSERT INTO ".prefix('menu')." (title`,`link`,`type`,`show`,`menuset`,`sort_order`) ".
-									"VALUES ('".gettext('News index')."', '".rewrite_path('news','?p=news').	"','zenpagenewsindex','1',".db_quote($menuset).','.db_quote(sprintf('%03u',$base+1)),true);
+									"VALUES ('".gettext('News index')."', '".rewrite_path(_NEWS_,'?p=news').	"','zenpagenewsindex','1',".db_quote($menuset).','.db_quote(sprintf('%03u',$base+1)),true);
 						$orders[$nesting] = addPagesToDatabase($menuset, $orders)+1;
 						$orders[$nesting] = addCategoriesToDatabase($menuset,$orders);
 					}
@@ -850,7 +850,7 @@ function createMenuIfNotExists($menuitems, $menuset='default') {
 					break;
 				case 'custompage':
 					if(empty($result['title']) || empty($result['link'])) {
-						$success = -1;;
+						$success = -1;
 						debugLog(sprintf(gettext('createMenuIfNotExists item %s has an empty title or link.'),$key));
 					}
 					break;
@@ -871,13 +871,13 @@ function createMenuIfNotExists($menuitems, $menuset='default') {
 					break;
 				case 'menufunction':
 					if(empty($result['title']) || empty($result['link'])) {
-						$success = -1;;
+						$success = -1;
 						debugLog(sprintf(gettext('createMenuIfNotExists item %s has an empty title or link.'),$key));
 					}
 					break;
 				case 'html':
 					if(empty($result['title']) || empty($result['link'])) {
-						$success = -1;;
+						$success = -1;
 						debugLog(sprintf(gettext('createMenuIfNotExists item %s has an empty title or link.'),$key));
 					}
 					break;
@@ -1011,7 +1011,7 @@ function printCustomMenu($menuset='default', $option='list',$css_id='',$css_clas
 			if($counter) {
 				switch($item['type']) {
 					case'album':
-						$albumobj = new Album(NULL,$item['link']);
+						$albumobj = newAlbum($item['link']);
 						$numimages = $albumobj->getNumImages();
 						$numsubalbums = $albumobj->getNumAlbums();
 						$itemcounter = ' <span style="white-space:nowrap;"><small>(';

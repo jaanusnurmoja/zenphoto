@@ -296,7 +296,7 @@ function publishItem($id,$show,$menuset) {
  * @param string $sort xxx-xxx-xxx style sort order for album
  */
 function addSubalbumMenus($menuset, $id, $link, $sort) {
-	$album = new Album(NULL, $link);
+	$album = newAlbum($link);
 	$show = $album->getShow();
 	$title = $album->getTitle();
 	$sql = "INSERT INTO ".prefix('menu')." (`link`,`type`,`title`,`show`,`menuset`,`sort_order`, `parentid`) ".
@@ -450,7 +450,7 @@ function addItem(&$reports) {
 			addAlbumsToDatabase($menuset);
 			if(getOption('zp_plugin_zenpage')) {
 				query("INSERT INTO ".prefix('menu')." (`title`,`link`,`type`,`show`,`menuset`,`sort_order`) ".
-							"VALUES ('".gettext('News index')."', '".rewrite_path('news','?p=news').	"','zenpagenewsindex','1',".db_quote($menuset).",'001')",true);
+							"VALUES ('".gettext('News index')."', '".rewrite_path(_NEWS_,'?p=news').	"','zenpagenewsindex','1',".db_quote($menuset).",'001')",true);
 				addPagesToDatabase($menuset);
 				addCategoriesToDatabase($menuset);
 			}
@@ -759,7 +759,7 @@ function printAlbumsSelector($current) {
 	<select id="albumselector" name="albumselect">
 	<?php
 	foreach($albumlist as $key => $value) {
-		$albumobj = new Album(NULL,$key);
+		$albumobj = newAlbum($key);
 		$albumname = $albumobj->name;
 		if ($albumname == $current) {
 			$selected = ' selected="selected"';

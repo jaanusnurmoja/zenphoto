@@ -49,7 +49,7 @@ if(is_AdminEditPage('page')) {
 	}
 	if(isset($_GET['save'])) {
 		XSRFdefender('save');
-		$result = addPage($reports);
+		$result = updatePage($reports, true);
 	}
 	if(isset($_GET['delete'])) {
 		XSRFdefender('delete');
@@ -91,7 +91,7 @@ if(is_AdminEditPage('newsarticle')) {
 	}
 	if(isset($_GET['save'])) {
 		XSRFdefender('save');
-		$result = addArticle($reports);
+		$result = updateArticle($reports, true);
 	}
 	if(isset($_GET['delete'])) {
 		XSRFdefender('delete');
@@ -106,7 +106,7 @@ if(is_AdminEditPage('newscategory')) {
 	$_GET['tab'] = 'categories';
 	if(isset($_GET['save'])) {
 		XSRFdefender('save');
-		addCategory($reports);
+		updateCategory($reports, true);
 	}
 	if(isset($_GET['titlelink'])) {
 		$result = new ZenpageCategory(urldecode(sanitize($_GET['titlelink'])));
@@ -296,26 +296,20 @@ if ($result->loaded || $result->transient) {
 	if($result->transient) {
 		?>
 		<form method="post" name="addnews" action="admin-edit.php?<?php echo $admintype; ?>&amp;save">
-			<?php XSRFToken('save');?>
-		<?php
+			<?php
+			XSRFToken('save');
 	} else {
 		?>
 		<form method="post" name="update" action="admin-edit.php?<?php echo $admintype; ?>&amp;update<?php echo $page; ?>">
-			<?php XSRFToken('update');?>
-			<input type="hidden" name="id" value="<?php echo $result->getID(); ?>" />
-			<input type="hidden" name="titlelink-old" id="titlelink-old" value="<?php echo html_encode($result->getTitlelink()); ?>" />
 			<?php
-			if(!is_AdminEditPage('newscategory')) {
-				?>
-					<input type="hidden" name="lastchange" id="lastchange" value="<?php echo date('Y-m-d H:i:s'); ?>" />
-					<input type="hidden" name="lastchangeauthor" id="lastchangeauthor" value="<?php echo $_zp_current_admin_obj->getUser(); ?>" />
-				<?php
-			}
-			?>
-			<input type="hidden" name="hitcounter" id="hitcounter" value="<?php echo $result->getHitcounter(); ?>" />
-			<?php
+			XSRFToken('update');
 	}
 	?>
+	<input type="hidden" name="id" value="<?php echo $result->getID(); ?>" />
+	<input type="hidden" name="titlelink-old" id="titlelink-old" value="<?php echo html_encode($result->getTitlelink()); ?>" />
+	<input type="hidden" name="lastchange" id="lastchange" value="<?php echo date('Y-m-d H:i:s'); ?>" />
+	<input type="hidden" name="lastchangeauthor" id="lastchangeauthor" value="<?php echo $_zp_current_admin_obj->getUser(); ?>" />
+	<input type="hidden" name="hitcounter" id="hitcounter" value="<?php echo $result->getHitcounter(); ?>" />
 
 	<?php
 	if(is_AdminEditPage("newsarticle")) {
@@ -345,9 +339,9 @@ if ($result->loaded || $result->transient) {
 	}
 	?>
 	<span class="buttons">
-		<strong><a href="<?php echo $backurl; ?>" title="<?php echo gettext("Back"); ?>"><img	src="../../images/arrow_left_blue_round.png" alt="" /><?php echo gettext("Back"); ?></a></strong>
+		<strong><a href="<?php echo $backurl; ?>"><img	src="../../images/arrow_left_blue_round.png" alt="" /><?php echo gettext("Back"); ?></a></strong>
 		<button type="submit" title="<?php echo $updateitem; ?>"><img src="../../images/pass.png" alt="" /><strong><?php if($result->transient) { echo $saveitem; } else { echo $updateitem; } ?></strong></button>
-		<button type="reset" title="<?php echo gettext("Reset"); ?>" onclick="javascript:$('.copydelete').hide();" >
+		<button type="reset" onclick="javascript:$('.copydelete').hide();" >
 			<img src="../../images/reset.png" alt="" />
 			<strong><?php echo gettext("Reset"); ?></strong>
 		</button>
@@ -438,11 +432,15 @@ if ($result->loaded || $result->transient) {
 					if(is_AdminEditPage('newsarticle')) {
 						$sticky = $result->get('sticky');
 						?>
+						<p class="checkbox">
+						<input name="truncation" type="checkbox" id="truncation" value="1" <?php checkIfChecked($result->getTruncation());?> />
+						<label for="truncation"><?php echo gettext("Truncate at <em>pagebreak</em>"); ?></label>
+						</p>
 						<p><?php echo gettext("Position:"); ?>
 							<select id="sticky" name="sticky">
-								<option value="0" <?php if ($sticky==0) echo 'selected="selected"';?>><?php echo gettext("normal"); ?></option>
-								<option value="1" <?php if ($sticky==1) echo 'selected="selected"';?>><?php echo gettext("sticky"); ?></option>
-								<option value="9" <?php if ($sticky==9) echo 'selected="selected"';?>><?php echo gettext("Stick to top"); ?></option>
+								<option value="<?php echo NEWS_POSITION_NORMAL; ?>" <?php if ($sticky==NEWS_POSITION_NORMAL) echo 'selected="selected"';?>><?php echo gettext("normal"); ?></option>
+								<option value="<?php echo NEWS_POSITION_STICKY; ?>" <?php if ($sticky==NEWS_POSITION_STICKY) echo 'selected="selected"';?>><?php echo gettext("sticky"); ?></option>
+								<option value="<?php echo NEWS_POSITION_STICK_TO_TOP; ?>" <?php if ($sticky==NEWS_POSITION_STICK_TO_TOP) echo 'selected="selected"';?>><?php echo gettext("Stick to top"); ?></option>
 							</select>
 						</p>
 						<?php
@@ -533,7 +531,7 @@ if ($result->loaded || $result->transient) {
 										onclick="deleteConfirm('delete_object','','<?php printf(gettext('Are you sure you want to delete this %s?'), $deleteitem); ?>');$('#copyfield').hide();" />
 								<?php echo gettext('delete'); ?>
 							</label>
-							<br clear="all" />
+							<br class="clearall" />
 							<div class="copydelete" id="copyfield" style="display:none" >
 							<?php printf(gettext('copy as: %s'), '<input type="text" name="copy_object_as" value = "" />');?>
 							</div>
@@ -782,9 +780,9 @@ if ($result->loaded || $result->transient) {
 			?>
 		</table>
 		<span class="buttons">
-			<strong><a href="<?php echo $backurl; ?>" title="<?php echo gettext("Back"); ?>"><img	src="../../images/arrow_left_blue_round.png" alt="" /><?php echo gettext("Back"); ?></a></strong>
+			<strong><a href="<?php echo $backurl; ?>"><img	src="../../images/arrow_left_blue_round.png" alt="" /><?php echo gettext("Back"); ?></a></strong>
 			<button type="submit" title="<?php echo $updateitem; ?>"><img src="../../images/pass.png" alt="" /><strong><?php if($result->transient) { echo $saveitem; } else { echo $updateitem; } ?></strong></button>
-			<button type="reset" title="<?php echo gettext("Reset"); ?>" onclick="javascript:$('.copydelete').hide();">
+			<button type="reset" onclick="javascript:$('.copydelete').hide();">
 				<img src="../../images/reset.png" alt="" />
 			<strong><?php echo gettext("Reset"); ?></strong>
 			</button>

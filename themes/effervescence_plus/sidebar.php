@@ -62,19 +62,20 @@ if(function_exists('printCustomMenu') && ($menu = getOption('effervescence_menu'
 	<h3><?php echo gettext("Archive"); ?></h3>
 		<ul>
 		<?php
-		  if($_zp_gallery_page == "archive.php") {
-		  	?>
-		  	<li class='menu-active'>
-		  	<?php echo gettext("Gallery and News");	?>
-		  	</li>
-		  	<?php
-		  } else {
-		  	?>
-		  	<li>
+
+			if($_zp_gallery_page == "archive.php") {
+				?>
+				<li class='menu-active'>
+				<?php echo gettext("Gallery and News");	?>
+				</li>
+				<?php
+			} else {
+				?>
+				<li>
 			<?php printCustomPageURL(gettext("Gallery and News"),"archive"); ?>
-		  	</li>
-		  	<?php
-	 	 	}
+				</li>
+				<?php
+			}
 			?>
 		</ul>
 		<div class="menu_rule"></div>
@@ -86,12 +87,12 @@ if(function_exists('printCustomMenu') && ($menu = getOption('effervescence_menu'
 		<div class="menu">
 		<h3><?php echo gettext("RSS"); ?></h3>
 			<ul>
-				<?php printRSSLink('Gallery','<li>',gettext('Gallery'), '</li>'); ?>
+				<?php if (class_exists('RSS')) printRSSLink('Gallery','<li>',gettext('Gallery'), '</li>'); ?>
 				<?php
-				if(function_exists("printZenpageRSSLink")) {
+				if(getOption('zp_plugin_zenpage')) {
 					?>
-					<?php printZenpageRSSLink("News","","<li>",gettext("News"), '</li>'); ?>
-					<?php printZenpageRSSLink("NewsWithImages","","<li>",gettext("News and Gallery"),'</li>'); ?>
+					<?php if (class_exists('RSS')) printRSSLink("News","<li>",gettext("News"), '</li>'); ?>
+					<?php if (class_exists('RSS')) printRSSLink("NewsWithImages","<li>",gettext("News and Gallery"),'</li>'); ?>
 				<?php
 				}
 				?>

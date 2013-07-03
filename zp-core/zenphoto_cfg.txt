@@ -62,8 +62,22 @@ $conf['server_protocol'] = "http";
 
 // Change this to "https" if you use an HTTPS server (a "https://..." url)
 // Otherwise you should leave it at "http"
-// NOTE: If you change this on an already installed configuration you will also have
-// to change the gallery configuration server protocol option.
+//
+////////////////////////////////////////////////////////////////////////////////
+// Zenphoto special URL rule definitions
+//
+// for further documentation see the rewrite.php doc block
+//
+$conf['special_pages'] = array(
+														'page'=>				array('define'=>'_PAGE_',					'rewrite'=>'page'),
+														'search'=>			array('define'=>'_SEARCH_',				'rewrite'=>'page/search'),
+														'archive'=>			array('define'=>'_ARCHIVE_',			'rewrite'=>'page/archive'),
+														'tags'=>				array('define'=>'_TAGS_',					'rewrite'=>'page/search/tags'),
+														'news'=>				array('define'=>'_NEWS_',					'rewrite'=>'news'),
+														'category'=>		array('define'=>'_CATEGORY_',			'rewrite'=>'news/category'),
+														'news_archive'=>array('define'=>'_NEWS_ARCHIVE_',	'rewrite'=>'news/archive'),
+														'pages'=>				array('define'=>'_PAGES_',				'rewrite'=>'pages')
+												);
 //
 ////////////////////////////////////////////////////////////////////////////////
 // Path Overrides

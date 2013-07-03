@@ -1,4 +1,5 @@
 <?php
+
 /**
  * basic functions used by zenphoto i.php
  * Keep this file to the minimum to allow the largest available memory for processing images!
@@ -105,12 +106,23 @@ if (TEST_RELEASE) {
 }
 set_error_handler("zpErrorHandler");
 set_exception_handler("zpErrorHandler");
-if (OFFSET_PATH != 2 && !file_exists($const_serverpath.'/'.DATA_FOLDER."/zenphoto.cfg")) {
+if (OFFSET_PATH != 2 && !file_exists($const_serverpath.'/'.DATA_FOLDER.'/'.CONFIGFILE)) {
 	require_once(dirname(__FILE__).'/reconfigure.php');
 	reconfigureAction(1);
 }
 // Including the config file more than once is OK, and avoids $conf missing.
-eval(file_get_contents($const_serverpath.'/'.DATA_FOLDER.'/zenphoto.cfg'));
+eval(file_get_contents($const_serverpath.'/'.DATA_FOLDER.'/'.CONFIGFILE));
+
+if (isset($_zp_conf_vars['special_pages'])) {
+	foreach ($_zp_conf_vars['special_pages'] as $definition) {
+		if ($definition['define']) {
+			define($definition['define'], $definition['rewrite']);
+		}
+	}
+	unset($definition);
+} else {
+	$_zp_conf_vars['special_pages'] = array();
+}
 
 define('DATABASE_PREFIX',$_zp_conf_vars['mysql_prefix']);
 
@@ -122,6 +134,7 @@ unset($const_webpath);
 if (!defined('SERVERPATH')) {
 	define('SERVERPATH', $const_serverpath);
 }
+
 unset($const_serverpath);
 $_zp_mutex = new Mutex();
 
@@ -144,6 +157,7 @@ if (!defined('CHMOD_VALUE')) {
 }
 define('FOLDER_MOD',CHMOD_VALUE | 0311);
 define('FILE_MOD', CHMOD_VALUE & 0666);
+define('DATA_MOD', fileperms(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE)&0777);
 
 // If the server protocol is not set, set it to the default.
 if (!isset($_zp_conf_vars['server_protocol'])) {
@@ -212,6 +226,7 @@ if (function_exists('zp_graphicsLibInfo')) {
 } else {
 	$_zp_cachefileSuffix = array('Library'=>gettext('none'), 'Library_desc'=>NULL);
 }
+
 define('GRAPHICS_LIBRARY',$_zp_cachefileSuffix['Library']);
 unset($_zp_cachefileSuffix['Library']);
 unset($_zp_cachefileSuffix['Library_desc']);
@@ -243,6 +258,11 @@ if (!defined('COOKIE_PESISTENCE')) {
 	if (!$persistence) $persistence = 5184000;
 	define('COOKIE_PESISTENCE', $persistence);
 	unset($persistence);
+}
+if ($c = getOption('zenphoto_cookie_path')) {
+	define('COOKIE_PATH', $c);
+} else {
+	define('COOKIE_PATH',WEBPATH);
 }
 
 define('SAFE_MODE',preg_match('#(1|ON)#i', ini_get('safe_mode')));
@@ -328,7 +348,7 @@ function getOption($key) {
  * otherwise it is preserved in the database
  */
 function setOption($key, $value, $persistent=true) {
-	global $_zp_conf_vars, $_zp_options;
+	global $_zp_options;
 	if ($persistent) {
 		$sql = 'INSERT INTO '.prefix('options').' (`name`,`ownerid`,`theme`,`value`) VALUES ('.db_quote($key).',0,"",';
 		$sqlu = ' ON DUPLICATE KEY UPDATE `value`=';
@@ -361,33 +381,63 @@ function setOption($key, $value, $persistent=true) {
  * @param mixed $default the value to be used as the default
  */
 function setOptionDefault($key, $default) {
-	$bt = debug_backtrace();
-	$b = array_shift($bt);
+	if (!is_null($default)) {
+		$bt = debug_backtrace();
+		$b = array_shift($bt);
 
-	$serverpath = str_replace('\\','/',dirname($b['file']));
-	if (!preg_match('~(.*)/('.ZENFOLDER.')~',$serverpath, $matches)) {
-		preg_match('~(.*)/('.USER_PLUGIN_FOLDER.'|'.THEMEFOLDER.')~',$serverpath, $matches);
-	}
-	if ($matches) {
-		$creator = str_replace($matches[1].'/', '', str_replace('\\','/',$b['file']));
-	} else {
-		$creator = NULL;
-	}
+		$serverpath = str_replace('\\','/',dirname($b['file']));
+		if (!preg_match('~(.*)/('.ZENFOLDER.')~',$serverpath, $matches)) {
+			preg_match('~(.*)/('.USER_PLUGIN_FOLDER.'|'.THEMEFOLDER.')~',$serverpath, $matches);
+		}
+		if ($matches) {
+			$creator = str_replace($matches[1].'/', '', str_replace('\\','/',$b['file']));
+		} else {
+			$creator = NULL;
+		}
 
-	$sql = 'INSERT INTO ' . prefix('options') . ' (`name`, `value`, `ownerid`, `theme`, `creator`) VALUES (' . db_quote($key) . ',';
-	if (is_null($default)) {
-		$sql .= 'NULL';
-	} else {
-		$sql .= db_quote($default);
+		$sql = 'INSERT INTO ' . prefix('options') . ' (`name`, `value`, `ownerid`, `theme`, `creator`) VALUES (' . db_quote($key) . ',';
+		if (is_null($default)) {
+			$sql .= 'NULL';
+		} else {
+			$sql .= db_quote($default);
+		}
+		$sql .= ',0,"",';
+		if (is_null($creator)) {
+			$sql .= 'NULL);';
+		} else {
+			$sql .= db_quote($creator).');';
+		}
+		if (query($sql, false)) {
+			$_zp_options[$key] = $default;
+		}
 	}
-	$sql .= ',0,"",';
-	if (is_null($creator)) {
-		$sql .= 'NULL);';
-	} else {
-		$sql .= db_quote($creator).');';
+}
+
+/**
+ * Loads option table with album/theme options
+ *
+ * @param int $albumid
+ * @param string $theme
+ */
+function loadLocalOptions($albumid, $theme) {
+	global $_zp_options;
+	//raw theme options
+	$sql = "SELECT `name`, `value` FROM ".prefix('options').' WHERE `theme`='.db_quote($theme).' AND `ownerid`=0';
+	$optionlist = query_full_array($sql, false);
+	if ($optionlist !== false) {
+		foreach($optionlist as $option) {
+			$_zp_options[$option['name']] = $option['value'];
+		}
 	}
-	if (query($sql, false)) {
-		$_zp_options[$key] = $default;
+	if ($albumid) {
+		//album-theme options
+		$sql = "SELECT `name`, `value` FROM ".prefix('options').' WHERE `theme`='.db_quote($theme).' AND `ownerid`='.$albumid;
+		$optionlist = query_full_array($sql, false);
+		if ($optionlist !== false) {
+			foreach($optionlist as $option) {
+				$_zp_options[$option['name']] = $option['value'];
+			}
+		}
 	}
 }
 
@@ -422,93 +472,75 @@ function hasDynamicAlbumSuffix($path) {
 }
 
 /**
- * rewrite_get_album_image - Fix special characters in the album and image names if mod_rewrite is on:
- * This is redundant and hacky; we need to either make the rewriting completely internal,
- * or fix the bugs in mod_rewrite. The former is probably a good idea.
+ * Handles the special cases of album/image[rewrite_suffix]
  *
- *  Old explanation:
- *    rewrite_get_album_image() parses the album and image from the requested URL
- *    if mod_rewrite is on, and replaces the query variables with corrected ones.
- *    This is because of bugs in mod_rewrite that disallow certain characters.
+ * Separates the image part from the album if it is an image reference
+ * Strips off the mod_rewrite_suffix if present
+ * Handles dynamic album names that do not have the .alb suffix appended
  *
- * @param string $albumvar "$_GET" parameter for the album
- * @param string $imagevar "$_GET" parameter for the image
+ * @param string $albumvar	$_GET index for "albums"
+ * @param string $imagevar	$_GET index for "images"
  */
 function rewrite_get_album_image($albumvar, $imagevar) {
-	//	initialize these. If not mod_rewrite, then they are fine. If so, they may be overwritten
-	$ralbum = isset($_GET[$albumvar]) ? sanitize_path($_GET[$albumvar]) : null;
-	$rimage = isset($_GET[$imagevar]) ? sanitize_path($_GET[$imagevar]) : null;
-	if (MOD_REWRITE) {
-		$uri = getRequestURI();
-		$path = substr($uri, strlen(WEBPATH)+1);
-		$scripturi = sanitize($_SERVER['PHP_SELF']);
-		$script = substr($scripturi,strpos($scripturi, WEBPATH.'/')+strlen(WEBPATH)+1);
-		// Only extract the path when the request doesn't include the running php file (query request).
-		if (strlen($path) > 0 && strpos($uri, $script) === false && isset($_GET[$albumvar])) {
-			// remove query string if present
-			$qspos = strpos($path, '?');
-			if ($qspos !== false) {
-				$path = substr($path, 0, $qspos);
-			}
-			// Strip off the image suffix (could interfere with the rest, needs to go anyway).
-			$im_suffix = getOption('mod_rewrite_image_suffix');
-			$suf_len = strlen($im_suffix);
-			if ($suf_len > 0 && substr($path, -($suf_len)) == $im_suffix) {
-				$path = substr($path, 0, -($suf_len));
-			} else {
-				$im_suffix = false;
-			}
-			//	sanitize the path
-			$ralbum = $path = sanitize_path($path);
-			//strip off things discarded by the rewrite rules
-			$pagepos  = strpos($path, '/page/');
-			$slashpos = strrpos($path, '/');
-			$imagepos = strpos($path, '/image/');
-			$albumpos = strpos($path, '/album/');
-			if ($imagepos !== false) {
-				$ralbum = substr($path, 0, $imagepos);
-				$rimage = substr($path, $slashpos+1);
-			} else if ($albumpos !== false) {
-				$ralbum = substr($path, 0, $albumpos);
-				$rimage = substr($path, $slashpos+1);
-			} else if ($pagepos !== false) {
-				$ralbum = substr($path, 0, $pagepos);
-				$rimage = null;
-			} else if ($slashpos !== false) {
-				$ralbum = substr($path, 0, $slashpos);
-				$rimage = substr($path, $slashpos+1);
-				//	check if it might be an album, not an album/image form
-				if (!$im_suffix && !(is_valid_image($rimage) || is_valid_other_type($rimage))) {
-					$ralbum = $ralbum . '/' . $rimage;
-					$albumpath = ALBUM_FOLDER_SERVERPATH . internalToFilesystem($ralbum);
-					if (!is_dir($albumpath)) {
-						if (file_exists($albumpath.'.alb')) {
+	global $_zp_rewritten;
+	$ralbum = isset($_GET[$albumvar]) ? trim(sanitize_path($_GET[$albumvar]),'/') : NULL;
+	$rimage = isset($_GET[$imagevar]) ? sanitize($_GET[$imagevar]) : NULL;
+	//	we assume that everything is correct if rewrite rules were not applied
+	if ($_zp_rewritten) {
+		if (!empty($ralbum) && empty($rimage)) {	//	rewrite rules never set the image part!
+			if (IM_SUFFIX && preg_match('|^(.*)'.preg_quote(IM_SUFFIX).'$|',$ralbum, $matches)) {
+				//has an IM_SUFFIX attached
+				$rimage = basename($matches[1]);
+				$ralbum = trim(dirname($matches[1]),'/');
+				$path = internalToFilesystem(getAlbumFolder(SERVERPATH).$ralbum);
+				if (!is_dir($path)) {
+					if (file_exists($path.'.alb')) {
+						//	it is a dynamic album sans suffix
+						$ralbum .= '.alb';
+					}
+				}
+			} else if (getSuffix($ralbum)!='alb') {
+				//	have to figure it out
+				$path = internalToFilesystem(getAlbumFolder(SERVERPATH).$ralbum);
+				if (file_exists($path)) {
+					if (!is_dir($path)) {
+						//	it is not an album. Assume image
+						$rimage = basename($ralbum);
+						$ralbum = trim(dirname($ralbum),'/');
+					}
+				} else if (file_exists($path.'.alb')) {
+					//	it is a dynamic album sans suffix
+					$ralbum .= '.alb';
+				} else {
+					//	Perhaps a dynamicalbum/image 
+					$rimage = basename($ralbum);
+					$ralbum = trim(dirname($ralbum),'/');
+					$path = internalToFilesystem(getAlbumFolder(SERVERPATH).$ralbum);
+
+					if (!is_dir($path)) {
+
+						if (file_exists($path.'.alb')) {
+
+							//	it is a dynamic album sans suffix
 							$ralbum .= '.alb';
 						}
 					}
-					$rimage = null;
 				}
-			} else {
-				$albumpath = ALBUM_FOLDER_SERVERPATH . internalToFilesystem($path);
-				if (!is_dir($albumpath)) {
-					if (file_exists($albumpath.'.alb')) {
-						$path .= '.alb';
-					}
-				}
-				$ralbum = $path;
-				$rimage = null;
 			}
-			if (empty($ralbum)) {
-				if (isset($_GET[$albumvar])) unset($_GET[$albumvar]);
-			} else {
-				$_GET[$albumvar] = $ralbum;
+		}
+		if (empty($ralbum)) {
+			if (isset($_GET[$albumvar])) {
+				unset($_GET[$albumvar]);
 			}
-			if (empty($rimage)) {
-				if (isset($_GET[$imagevar])) unset($_GET[$imagevar]);
-			} else {
-				$_GET[$imagevar] = $rimage;
+		} else {
+			$_GET[$albumvar] = $ralbum;
+		}
+		if (empty($rimage)) {
+			if (isset($_GET[$imagevar])) {
+				unset($_GET[$imagevar]);
 			}
-			return array($ralbum, $rimage);
+		} else {
+			$_GET[$imagevar] = $rimage;
 		}
 	}
 	return array($ralbum, $rimage);
@@ -527,6 +559,9 @@ function getImageCacheFilename($album8, $image8, $args) {
 	global $_zp_supported_images, $_zp_cachefileSuffix;
 	// this function works in FILESYSTEM_CHARSET, so convert the file names
 	$album = internalToFilesystem($album8);
+	if (is_array($image8)) {
+		$image8 = $image8['name'];
+	}
 	if (IMAGE_CACHE_SUFFIX) {
 		$suffix = IMAGE_CACHE_SUFFIX;
 	} else {
@@ -535,7 +570,12 @@ function getImageCacheFilename($album8, $image8, $args) {
 			$suffix = 'jpg';
 		}
 	}
-	$image = stripSuffix(internalToFilesystem($image8));
+	if (is_array($image8)) {
+		$image = internalToFilesystem($image8['name']);
+	} else {
+		$image = stripSuffix(internalToFilesystem($image8));
+	}
+
 	// Set default variable values.
 	$postfix = getImageCachePostfix($args);
 	if (empty($album)) {
@@ -554,6 +594,31 @@ function getImageCacheFilename($album8, $image8, $args) {
 		$result = '/' . $album . $albumsep . $image . $postfix . '.'.$suffix;
 	}
 	return $result;
+}
+
+/**
+ * Returns an i.php "image name" for an image not within the albums structure
+ *
+ * @param string $image Path to the image
+ * @return string
+ */
+function makeSpecialImageName($image) {
+	$filename = basename($image);
+	$i = strpos($image, ZENFOLDER);
+	if ($i === false) {
+		$i = strpos($image, USER_PLUGIN_FOLDER);
+		if ($i === false) {
+			$sourceFolder = basename(dirname(dirname($image)));
+			$sourceSubfolder = basename(dirname($image));
+		} else {
+			$sourceFolder = USER_PLUGIN_FOLDER;
+			$sourceSubfolder = trim(substr($image, $i + strlen(USER_PLUGIN_FOLDER) + 1 , - strlen($filename) - 1),'/');
+		}
+	} else {
+		$sourceFolder = ZENFOLDER;
+		$sourceSubfolder = trim(substr($image, $i + strlen(ZENFOLDER) + 1 , - strlen($filename) - 1),'/');
+	}
+	return array('source'=>$sourceFolder.'/'.$sourceSubfolder.'/'.$filename,'name'=>$sourceFolder.'_'.basename($sourceSubfolder).'_'.$filename);
 }
 
 define('NO_WATERMARK','!');
@@ -608,13 +673,18 @@ function getWatermarkParam($image, $use) {
  */
 function getImageCachePostfix($args) {
 	list($size, $width, $height, $cw, $ch, $cx, $cy, $quality, $thumb, $crop, $thumbStandin, $passedWM, $adminrequest, $effects) = $args;
-	$postfix_string = ($size ? "_$size" : "") . ($width ? "_w$width" : "")
-	. ($height ? "_h$height" : "") . ($cw ? "_cw$cw" : "") . ($ch ? "_ch$ch" : "")
-	. (is_numeric($cx) ? "_cx$cx" : "") . (is_numeric($cy) ? "_cy$cy" : "")
-	. ($thumb || $thumbStandin ? '_thumb' : '')
-	. ($adminrequest ? '_admin' : '')
-	. (($passedWM && $passedWM != NO_WATERMARK) ? '_'.$passedWM : '')
-	. ($effects ? '_'.$effects : '');
+	$postfix_string =
+		($size ? "_$size" : "") .
+		($width ? "_w$width" : "") .
+		($height ? "_h$height" : "") .
+		($cw ? "_cw$cw" : "") .
+		($ch ? "_ch$ch" : "") .
+		(is_numeric($cx) ? "_cx$cx" : "") .
+		(is_numeric($cy) ? "_cy$cy" : "") .
+		($thumb || $thumbStandin ? '_thumb' : '') .
+		($adminrequest ? '_admin' : '') .
+		(($passedWM && $passedWM != NO_WATERMARK) ? '_'.$passedWM : '') .
+		($effects ? '_'.$effects : '');
 	return $postfix_string;
 }
 
@@ -714,8 +784,14 @@ function getImageParameters($args, $album=NULL) {
  */
 function getImageProcessorURI($args, $album, $image) {
 	list($size, $width, $height, $cw, $ch, $cx, $cy, $quality, $thumb, $crop, $thumbstandin, $passedWM, $adminrequest, $effects) = $args;
-	$args[8] = NULL;	// not used by image processo
-	$uri = WEBPATH.'/'.ZENFOLDER.'/i.php?a='.$album.'&i='.$image;
+	$args[8] = NULL;	// not used by image processor
+	$uri = WEBPATH.'/'.ZENFOLDER.'/i.php?a='.$album;
+	if (is_array($image)) {
+		$uri .= '&i='.$image['name'].'&z='.($z = $image['source']);
+	} else {
+		$uri .= '&i='.$image;
+		$z = NULL;
+	}
 	if (empty($size)) {
 		$args[0] = NULL;
 	} else {
@@ -783,11 +859,12 @@ function getImageProcessorURI($args, $album, $image) {
 	} else {
 		$args[13] = NULL;
 	}
+	$args[14] = $z;
+
 	$uri .= '&check='.sha1(HASH_SEED.serialize($args));
 
-	if (class_exists('static_html_cache')) {	// don't cache pages that have image processor URIs
-		static_html_cache::disable();
-	}
+	$uri = zp_apply_filter('image_processor_uri', $uri);
+
 	return $uri;
 }
 
@@ -799,7 +876,7 @@ define('MAX_SIZE', 3000);
  * @return array
  */
 function getImageArgs($set) {
-	$args = array(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	$args = array(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	if (isset($set['s'])) { //0
 		if (is_numeric($s = $set['s'])) {
 			if ($s) {
@@ -848,6 +925,10 @@ function getImageArgs($set) {
 	if (isset($set['effects'])) {	//13
 		$args[13] = sanitize($set['effects']);
 	}
+	if (isset($set['z'])) {	//	14
+		$args[14] = sanitize($set['z']);
+	}
+
 	return $args;
 }
 
@@ -933,26 +1014,26 @@ function getAllowedTags($which) {
  * This is here because it's used in both template-functions.php and in the classes.
  * @param string $rewrite is the path to return if rewrite is enabled. (eg: "/myalbum")
  * @param string $plain is the path if rewrite is disabled (eg: "/?album=myalbum")
- * @param bool $webpath true if you want the WEBPATH to be returned, false if you want to generate a partly path. A trailing "/" is always added.
+ * @param bool $webpath host path to be prefixed. If "false" is passed you will get a localized "WEBPATH"
  * @return string
  */
-function rewrite_path($rewrite, $plain, $webpath=true) {
-	$path = null;
+function rewrite_path($rewrite, $plain, $webpath=NULL) {
+	if (is_null($webpath)) {
+		if (class_exists('seo_locale')) {
+			$webpath = seo_locale::localePath();
+		} else {
+			$webpath = WEBPATH;
+		}
+	}
 	if (MOD_REWRITE) {
 		$path = $rewrite;
 	} else {
 		$path = $plain;
 	}
-	if ($webpath && $path{0} == "/") $path = substr($path, 1);
-	if($webpath) {
-		if (class_exists('seo_locale')) {
-			return seo_locale::localePath() . "/" . $path;
-		} else {
-			return WEBPATH . "/" . $path;
-		}
-	} else {
-		return $path;
+	if ($path{0} == "/") {
+		$path = substr($path, 1);
 	}
+	return $webpath . "/" . $path;
 }
 
 /**
@@ -988,9 +1069,13 @@ function pathurlencode($path) {
 		$pairs = parse_query($parts[1]);
 		$query = '?';
 		foreach($pairs as $name=>$value) {
-			$query .= $name.'='.urlencode($value).'&';
+			$query .= $name;
+			if($value) {
+				$query .= '='.implode("/", array_map("rawurlencode", explode("/", $value)));
+			}
+			$query .= '&';
 		}
-		$query - substr($query,0,-1);
+		$query = substr($query,0,-1);
 	} else {
 		$query = '';
 	}
@@ -1056,6 +1141,9 @@ function switchLog($log) {
 	}
 	chdir($dir);
 	@copy(SERVERPATH.'/'. DATA_FOLDER.'/'.$log.'.log',SERVERPATH.'/'. DATA_FOLDER.'/'.$log.'-'.$counter.'.log');
+	if (getOption($log.'_log_mail')) {
+		zp_mail(sprintf(gettext('%s log size limit exceeded'),$log), sprintf(gettext('The %1$s log has exceeded its size limit and has been renamed to %2$s.'),$log,$log.'-'.$counter.'.log'));
+	}
 }
 
 /**
@@ -1068,39 +1156,41 @@ function switchLog($log) {
  * @param bool $reset set to true to reset the log to zero before writing the message
  */
 function debugLog($message, $reset=false) {
-	global $_zp_mutex;
-	$path = SERVERPATH . '/' . DATA_FOLDER . '/debug.log';
-	$me = getmypid();
-	$max = getOption('debug_log_size');
-	if (is_object($_zp_mutex)) $_zp_mutex->lock();
-	if ($reset || ($size = @filesize($path)) == 0 || ($max && $size > $max)) {
-		if (!$reset && $size > 0) {
-			switchLog('debug');
-		}
-		$f = fopen($path, 'w');
-		if ($f) {
-			if (!class_exists('zpFunctions') || zpFunctions::hasPrimaryScripts()) {
-				$clone = '';
-			} else {
-				$clone = ' '.gettext('clone');
+	if (defined('SERVERPATH')) {
+		global $_zp_mutex;
+		$path = SERVERPATH . '/' . DATA_FOLDER . '/debug.log';
+		$me = getmypid();
+		$max = getOption('debug_log_size');
+		if (is_object($_zp_mutex)) $_zp_mutex->lock();
+		if ($reset || ($size = @filesize($path)) == 0 || ($max && $size > $max)) {
+			if (!$reset && $size > 0) {
+				switchLog('debug');
 			}
-			fwrite($f, '{'.$me.':'.gmdate('D, d M Y H:i:s')." GMT} Zenphoto v".ZENPHOTO_VERSION.'['.ZENPHOTO_FULL_RELEASE.']'.$clone."\n");
+			$f = fopen($path, 'w');
+			if ($f) {
+				if (!class_exists('zpFunctions') || zpFunctions::hasPrimaryScripts()) {
+					$clone = '';
+				} else {
+					$clone = ' '.gettext('clone');
+				}
+				fwrite($f, '{'.$me.':'.gmdate('D, d M Y H:i:s')." GMT} Zenphoto v".ZENPHOTO_VERSION.'['.ZENPHOTO_FULL_RELEASE.']'.$clone."\n");
+			}
+		} else {
+			$f = fopen($path, 'a');
+			if ($f) {
+				fwrite($f, '{'.$me.':'.gmdate('D, d M Y H:i:s')." GMT}\n");
+			}
 		}
-	} else {
-		$f = fopen($path, 'a');
 		if ($f) {
-			fwrite($f, '{'.$me.':'.gmdate('D, d M Y H:i:s')." GMT}\n");
+			fwrite($f, "  ".$message . "\n");
+			fclose($f);
+			clearstatcache();
+			if (defined('DATA_MOD')) {
+				@chmod($path, DATA_MOD);
+			}
 		}
+		if (is_object($_zp_mutex)) $_zp_mutex->unlock();
 	}
-	if ($f) {
-		fwrite($f, "  ".$message . "\n");
-		fclose($f);
-		clearstatcache();
-		if (defined('FILE_MOD')) {
-			@chmod($path, FILE_MOD);
-		}
-	}
-	if (is_object($_zp_mutex)) $_zp_mutex->unlock();
 }
 /**
  * Tool to log execution times of script bits
@@ -1259,33 +1349,6 @@ function themeSetup($album) {
 }
 
 /**
- * Loads option table with album/theme options
- *
- * @param int $albumid
- * @param string $theme
- */
-function loadLocalOptions($albumid, $theme) {
-	//raw theme options
-	$sql = "SELECT `name`, `value` FROM ".prefix('options').' WHERE `theme`='.db_quote($theme).' AND `ownerid`=0';
-	$optionlist = query_full_array($sql, false);
-	if ($optionlist !== false) {
-		foreach($optionlist as $option) {
-			setOption($option['name'], $option['value'], false);
-		}
-	}
-	if ($albumid) {
-		//album-theme options
-		$sql = "SELECT `name`, `value` FROM ".prefix('options').' WHERE `theme`='.db_quote($theme).' AND `ownerid`='.$albumid;
-		$optionlist = query_full_array($sql, false);
-		if ($optionlist !== false) {
-			foreach($optionlist as $option) {
-				setOption($option['name'], $option['value'], false);
-			}
-		}
-	}
-}
-
-/**
  * Checks access for the album root
  *
  * @param bit $action what the caller wants to do
@@ -1343,9 +1406,6 @@ function getRequestURI() {
 		}
 	} else {
 		$uri = sanitize(@$_SERVER['SCRIPT_NAME']);
-		if ($q = sanitize(@$_SERVER['QUERY_STRING'])) {
-			$uri .= '?'.$q;
-		}
 	}
 	return urldecode(str_replace('\\','/',$uri));
 }
@@ -1372,8 +1432,10 @@ function safe_glob($pattern, $flags=0) {
 		$glob=array();
 		while(($file=readdir($dir))!==false) {
 			if(@preg_match($match, $file) && $file{0}!='.') {
-				if ((is_dir("$path/$file"))||(!($flags&GLOB_ONLYDIR))) {
+				if (is_dir("$path/$file")) {
 					if ($flags&GLOB_MARK) $file.='/';
+					$glob[]=$path_return.$file;
+				} else if (!is_dir("$path/$file")&&!($flags&GLOB_ONLYDIR)) {
 					$glob[]=$path_return.$file;
 				}
 			}
@@ -1398,7 +1460,7 @@ function checkInstall() {
 		$install = array('ZENPHOTO'=>'0.0.0[0000]');
 	}
 	preg_match('|([^-]*).*\[(.*)\]|', $install['ZENPHOTO'], $matches);
-	if (@$matches[1] != $version[1] || @$matches[2] != ZENPHOTO_RELEASE
+	if (isset($matches[1]) && isset($matches[2]) && $matches[1] != $version[1] || $matches[2] != ZENPHOTO_RELEASE
 									|| ((time() & 7)==0) && OFFSET_PATH!=2 && $i != serialize(installSignature())) {
 		require_once(dirname(__FILE__).'/reconfigure.php');
 		reconfigureAction(0);
@@ -1494,7 +1556,7 @@ class Mutex {
 	// rotates locks sequentially mod $concurrent
 	private static function which_lock($lock, $concurrent) {
 		global $_zp_mutex;
-		$counter_file = SERVERPATH.'/'.DATA_FOLDER.'/mutex/'.$lock.'_counter';
+		$counter_file = SERVERPATH.'/'.DATA_FOLDER.'/'.MUTEX_FOLDER.'/'.$lock.'_counter';
 		$_zp_mutex->lock();
 		// increment the lock id:
 		if (@file_put_contents($counter_file, $count = (((int) @file_get_contents($counter_file))+1) % $concurrent)) {
@@ -1516,7 +1578,7 @@ class Mutex {
 		//if "flock" is not supported run un-serialized
 		//Only lock an unlocked mutex, we don't support recursive mutex'es
 		if(!$this->locked && $this->lock) {
-			if ($this->mutex = @fopen(SERVERPATH.'/'.DATA_FOLDER.'/mutex/'.$this->lock, 'wb')) {
+			if ($this->mutex = @fopen(SERVERPATH.'/'.DATA_FOLDER.'/'.MUTEX_FOLDER.'/'.$this->lock, 'wb')) {
 				if (flock($this->mutex, LOCK_EX)) {
 					$this->locked = true;
 					//We are entering a critical section so we need to change the ignore_user_abort setting so that the

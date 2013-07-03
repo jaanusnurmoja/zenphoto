@@ -8,6 +8,7 @@ if(!function_exists("gettext")) {
 
 define('ZENFOLDER', 'zp-core');
 define('PLUGIN_FOLDER', 'zp-extensions');
+define('COMMON_FOLDER',PLUGIN_FOLDER.'/common');
 define('USER_PLUGIN_FOLDER', 'plugins');
 define('ALBUMFOLDER', 'albums');
 define('THEMEFOLDER', 'themes');
@@ -17,14 +18,18 @@ define('DATA_FOLDER','zp-data');
 define('CACHEFOLDER', 'cache');
 define('UPLOAD_FOLDER','uploaded');
 define("STATIC_CACHE_FOLDER","cache_html");
+define('CONFIGFILE','zenphoto.cfg');
+define('MUTEX_FOLDER','.mutex');
 
 //bit masks for plugin priorities
-define('CLASS_PLUGIN',4096);
-define('ADMIN_PLUGIN',2048);
+define('CLASS_PLUGIN',8192);
+define('ADMIN_PLUGIN',4096);
+define('FEATURE_PLUGIN',2048);
 define('THEME_PLUGIN',1024);
 define('PLUGIN_PRIORITY',1023);
 
 define('SYMLINK',function_exists('symlink') && strpos(@ini_get("suhosin.executor.func.blacklist"),'symlink')===false);
+
 define('TEST_RELEASE',strpos(ZENPHOTO_VERSION, '-')!==false);
 
 define('DEBUG_LOGIN', false); // set to true to log admin saves and login attempts

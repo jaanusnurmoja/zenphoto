@@ -5,7 +5,21 @@ require_once (SERVERPATH.'/'.ZENFOLDER.'/'.PLUGIN_FOLDER.'/image_album_statistic
 zp_register_filter('themeSwitcher_head', 'switcher_head');
 zp_register_filter('themeSwitcher_Controllink', 'switcher_controllink');
 
-$personalities = array(gettext('Image page') => 'image_page', gettext('Colorbox') => 'colorbox', gettext('Image gallery') => 'image_gallery');
+$cwd = getcwd();
+chdir(dirname(__FILE__));
+$persona = safe_glob('*',GLOB_ONLYDIR);
+chdir($cwd);
+$persona = array_diff($persona, array('images','contact_form'));
+$personalities = array();
+foreach ($persona as $personality) {
+	$personalities[ucfirst(str_replace('_',' ',$personality))] = $personality;
+}
+
+$personality = strtolower(getOption('garland_personality'));
+if (!in_array($personality, $personalities)) {
+	$persona = $personalities;
+	$personality = array_shift($persona);
+}
 
 function switcher_head($ignore) {
 	global $personalities;
@@ -70,16 +84,16 @@ function footer() {
 		$prev = ' | ';
 		switch ($_zp_gallery_page) {
 			default:
-				printRSSLink('Gallery', '','RSS', '');
+				if (class_exists('RSS')) printRSSLink('Gallery', '','RSS', '');
 				break;
 			case 'album.php':
-				printRSSLink('Album', '','RSS', '');
+				if (class_exists('RSS')) printRSSLink('Album', '','RSS', '');
 				break;
 			case 'news.php':
 				if (is_NewsCategory()) {
-					printZenpageRSSLink('Category', $_zp_current_category->getTitlelink(), '','RSS', '');
+					if (class_exists('RSS')) printRSSLink('Category', '', 'RSS', '', true, null, '', NULL, $_zp_current_category->getTitlelink());
 				} else {
-					printZenpageRSSLink('News', '', '','RSS', '');
+					if (class_exists('RSS')) printRSSLink('News', '','RSS', '');
 				}
 				break;
 			case 'password.php':
@@ -120,7 +134,7 @@ function commonNewsLoop($paged) {
 			<div class="newsarticlecredit">
 				<span class="newsarticlecredit-left">
 					<?php
-					$count = getCommentCount();
+					$count = @call_user_func('getCommentCount');
 					$cat = getNewsCategories();
 					printNewsDate();
 					if ($count > 0) {
@@ -140,11 +154,11 @@ function commonNewsLoop($paged) {
 				}
 				?>
 			</div> <!-- newsarticlecredit -->
-			<br clear="all" />
+			<br class="clearall" />
 			<?php printCodeblock(1); ?>
 			<?php printNewsContent(); ?>
 			<?php printCodeblock(2); ?>
-			<br clear="all" />
+			<br class="clearall" />
 			</div>
 	<?php
 	}

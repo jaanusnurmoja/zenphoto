@@ -1,8 +1,8 @@
 <?php
 if (!defined('WEBPATH')) die();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printGalleryTitle(); ?> | <?php echo html_encode(getAlbumTitle()); ?> | <?php echo html_encode(getImageTitle()); ?></title>
@@ -33,7 +33,7 @@ if (!defined('WEBPATH')) die();
 			// ]]> -->
 		</script>
 	<?php } ?>
-	<?php printRSSHeaderLink('Album',gettext('Gallery RSS')); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink('Album',gettext('Gallery RSS')); ?>
 </head>
 <body class="sidebars">
 <?php zp_apply_filter('theme_body_open'); ?>
@@ -69,7 +69,11 @@ if (!defined('WEBPATH')) die();
 							<?php printCodeblock(1); ?>
 							<div id="image_container">
 							<?php
-							$fullimage = getFullImageURL();
+							if (isImagePhoto()) {
+								$fullimage = getFullImageURL();
+							} else {
+								$fullimage = NULL;
+							}
 							if (!empty($fullimage)) {
 								?>
 								<a href="<?php echo html_encode($fullimage);?>" title="<?php printBareImageTitle();?>" class="thickbox">
@@ -102,20 +106,20 @@ if (!defined('WEBPATH')) die();
 				<?php
 				if (hasNextImage()) {
 					?>
-					<div id="next" class="slides">
+					<div id="nextalbum" class="slides">
 						<a href="<?php echo html_encode(getNextImageURL()); ?>" title="<?php echo gettext('Next image'); ?>">
 							<h2><?php echo gettext('Next »'); ?></h2>
-							<img src="<?php echo pathurlencode(getNextImageThumb()); ?>" />
+							<img src="<?php echo html_encode(pathurlencode(getNextImageThumb())); ?>" />
 						</a>
 					</div>
 					<?php
 				}
 				if (hasPrevImage()) {
 					?>
-					<div id="prev" class="slides">
+					<div id="prevalbum" class="slides">
 						<a href="<?php echo html_encode(getPrevImageURL()); ?>" title="<?php echo gettext('Previous image'); ?>">
 							<h2><?php echo gettext('« Previous'); ?></h2>
-							<img src="<?php echo pathurlencode(getPrevImageThumb()); ?>" />
+							<img src="<?php echo html_encode(pathurlencode(getPrevImageThumb())); ?>" />
 						</a>
 					</div>
 					<?php
@@ -127,7 +131,7 @@ if (!defined('WEBPATH')) die();
 				if (getImageMetaData()) {
 					printImageMetadata(NULL, 'colorbox');
 					?>
-					<br clear="all" />
+					<br class="clearall" />
 					<?php
 				}
 				if (function_exists('hasMapData') && hasMapData()) {
@@ -136,7 +140,7 @@ if (!defined('WEBPATH')) die();
 					<span id="map_link">
 						<?php printGoogleMap(NULL,NULL,NULL,NULL,'gMapOptionsImage'); ?>
 					</span>
-					<br clear="all" />
+					<br class="clearall" />
 					<?php
 				}
 				?>
@@ -146,7 +150,6 @@ if (!defined('WEBPATH')) die();
 	<!-- /container -->
 </div>
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 </body>

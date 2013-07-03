@@ -10,7 +10,7 @@ define('OFFSET_PATH', 1);
 
 require_once(dirname(__FILE__).'/admin-globals.php');
 
-admin_securityChecks(UPLOAD_RIGHTS, $return = currentRelativeURL());
+admin_securityChecks(UPLOAD_RIGHTS | FILES_RIGHTS, $return = currentRelativeURL());
 
 if (isset($_GET['uploadtype'])) {
 	$uploadtype = sanitize($_GET['uploadtype'])	;
@@ -19,6 +19,14 @@ if (isset($_GET['uploadtype'])) {
 }
 
 $handlers = array_keys($uploadHandlers = zp_apply_filter('upload_handlers',array()));
+if (!zp_loggedin(UPLOAD_RIGHTS) || empty($handlers)) {
+	//	redirect to the files page if present
+	if (isset($zenphoto_tabs['upload'])) {
+		header('location: '.$zenphoto_tabs['upload']['link']);
+		exit();
+	}
+	$handlers = array();
+}
 
 if (count($handlers) > 0) {
 	if (!isset($uploadHandlers[$uploadtype]) || !file_exists($uploadHandlers[$uploadtype].'/upload_form.php')) {
@@ -27,7 +35,9 @@ if (count($handlers) > 0) {
 	require_once($uploadHandlers[$uploadtype].'/upload_form.php');
 	zp_setCookie('uploadtype', $uploadtype);
 } else {
+
 	require_once(SERVERPATH.'/'.ZENFOLDER.'/no_uploader.php');
+	exitZP();
 }
 
 $page = "upload";
@@ -50,7 +60,7 @@ printLogoAndLinks();
 	?>
 		<div id="content">
 			<?php
-			if (zp_loggedin(FILES_RIGHTS)) {
+			if (!empty($zenphoto_tabs['upload']['subtabs'])) {
 				printSubtabs();
 			}
 			$albumlist = array();
@@ -169,7 +179,7 @@ if ($rootrights || !empty($albumlist)) {
 		<?php 	seoFriendlyJS(); ?>
 		function buttonstate(good) {
 			$('#albumtitleslot').val($('#albumtitle').val());
-			$('#publishalbumslot').val($('#publishalbum').attr('checked'));
+			$('#publishalbumslot').val($('#publishalbum').prop('checked'));
 			if (good) {
 				$('#fileUploadbuttons').show();
 			} else {
@@ -177,7 +187,7 @@ if ($rootrights || !empty($albumlist)) {
 			}
 		}
 		function publishCheck() {
-			$('#publishalbumslot').val($('#publishalbum').attr('checked'));
+			$('#publishalbumslot').val($('#publishalbum').prop('checked'));
 		}
 		function albumSelect() {
 			var sel = document.getElementById('albumselectmenu');
@@ -244,7 +254,7 @@ if ($rootrights || !empty($albumlist)) {
 			if (empty($passedalbum)) {
 				$modified_rights = MANAGED_OBJECT_RIGHTS_EDIT;
 			} else {
-				$rightsalbum = $rightsalbum = new Album(NULL, $passedalbum);
+				$rightsalbum = $rightsalbum = newAlbum($passedalbum);
 				$modified_rights = $rightsalbum->albumSubRights();
 			}
 			if ($modified_rights & MANAGED_OBJECT_RIGHTS_EDIT) {	//	he has edit rights, allow new album creation
@@ -287,16 +297,6 @@ if ($rootrights || !empty($albumlist)) {
 			<?php
 			//	load the uploader specific form stuff
 			upload_extra($uploadlimit, $passedalbum);
-			if (count($uploadHandlers)>1) {
-				?>
-				<p>
-					<?php echo gettext('Upload handler:')?>
-					<select name="uploadtype" id="uploadtype" onchange="switchUploader()">
-						<?php generateListFromArray(array($uploadtype), array_keys($uploadHandlers), false, false); ?>
-					</select>
-				</p>
-				<?php
-			}
 			?>
 		</div><!-- upload action -->
 
@@ -325,7 +325,7 @@ if ($rootrights || !empty($albumlist)) {
 				}
 				if (isset($_GET['autogen']) && !$_GET['autogen']) {
 					?>
-					$('#autogen').removeAttr('checked');
+					$('#autogen').prop('checked',false);
 					$('#folderdisplay').removeAttr('disabled');
 					if ($('#folderdisplay').val() != '') {
 						$('#foldererror').hide();
@@ -333,7 +333,7 @@ if ($rootrights || !empty($albumlist)) {
 					<?php
 				} else {
 					?>
-					$('#autogen').attr('checked', 'checked');
+					$('#autogen').checked;
 					$('#folderdisplay').attr('disabled', 'disabled');
 					if ($('#albumtitle').val() != '') {
 						$('#foldererror').hide();

@@ -102,7 +102,7 @@ if ( $file_to_edit ) {
 		<strong><?php echo gettext("Back"); ?></strong>
 	</a>
 </p>
-<br clear="all">
+<br class="clearall" />
 <div id="theme-editor">
 
 	<div id="files">
@@ -142,9 +142,9 @@ if ( $file_to_edit ) {
 			<input type="hidden" name="action" value="edit_file"/>
 			<p class="buttons">
 			<button type="submit" value="<?php echo gettext('Update File') ?>" title="<?php echo gettext("Update File"); ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Update File"); ?></strong></button>
-			<button type="reset" value="<?php echo gettext('Reset') ?>" title="<?php echo gettext("Reset"); ?>"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
+			<button type="reset" value="<?php echo gettext('Reset') ?>"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
 			</p>
-			<br clear="all"/>
+			<br class="clearall" />
 			</form>
 		</div>
 

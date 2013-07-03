@@ -1,13 +1,13 @@
 <?php
 if (!defined('WEBPATH')) die();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printGalleryTitle(); ?> | <?php echo html_encode(getAlbumTitle()); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 	<link rel="stylesheet" href="<?php echo $_zp_themeroot ?>/zen.css" type="text/css" />
-	<?php printRSSHeaderLink('Album',getAlbumTitle()); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink('Album',getAlbumTitle()); ?>
 </head>
 <body class="sidebars">
 <?php zp_apply_filter('theme_body_open'); ?>
@@ -80,7 +80,8 @@ if (!defined('WEBPATH')) die();
 								}
 								?>
 							</div>
-							<br clear="all">
+							<br class="clearall" />
+							<?php @call_user_func('printSlideShowLink'); ?>
 							<?php
 							if ((getNumAlbums() != 0) || !$oneImagePage){
 								printPageListWithNav(gettext("« prev"), gettext("next »"), $oneImagePage);
@@ -108,7 +109,7 @@ if (!defined('WEBPATH')) die();
 					<?php
 					if ($nextalbum) {
 						?>
-						<div id="next" class="slides">
+						<div id="nextalbum" class="slides">
 						<a href="<?php echo html_encode(getNextAlbumURL()); ?>" title="<?php echo gettext('Next album'); ?>"><?php echo gettext('Next album »'); ?><br /><img src="<?php echo pathurlencode($nextalbum->getAlbumThumb()); ?>" /></a>
 						</div>
 						<br />
@@ -116,7 +117,7 @@ if (!defined('WEBPATH')) die();
 					}
 					if ($prevalbum) {
 						?>
-						<div id="prev" class="slides">
+						<div id="prevalbum" class="slides">
 						<a href="<?php echo html_encode(getPrevAlbumURL());?>" title="<?php echo gettext('Prev Album'); ?>"><?php echo gettext('« Prev Album'); ?><br /><img src="<?php echo pathurlencode($prevalbum->getAlbumThumb()); ?>" /></a>
 						</div>
 						<?php
@@ -129,7 +130,6 @@ if (!defined('WEBPATH')) die();
 	<span class="clear"></span>
 </div><!-- wrapper -->
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 </body>

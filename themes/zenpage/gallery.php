@@ -5,14 +5,14 @@
 if (!defined('WEBPATH')) die();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareGalleryTitle(); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
 	<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
-	<?php printRSSHeaderLink('Gallery',gettext('Gallery RSS')); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink('Gallery',gettext('Gallery RSS')); ?>
 </head>
 <body>
 <?php zp_apply_filter('theme_body_open'); ?>
@@ -61,7 +61,7 @@ if (!defined('WEBPATH')) die();
 	while (next_news()): ;?>
 	 <div class="newsarticle">
 			<h3><?php printNewsTitleLink(); ?><?php echo " <span class='newstype'>[".getNewsType()."]</span>"; ?></h3>
-					<div class="newsarticlecredit"><span class="newsarticlecredit-left"><?php printNewsDate();?> | <?php echo gettext("Comments:"); ?> <?php echo getCommentCount(); ?></span>
+					<div class="newsarticlecredit"><span class="newsarticlecredit-left"><?php printNewsDate(); if (function_exists('getCommentCount')) { ?> | <?php echo gettext("Comments:"); ?> <?php echo getCommentCount(); } ?></span>
 	<?php
 	if(is_GalleryNewsType()) {
 		if(!is_NewsType("album")) {
@@ -101,7 +101,6 @@ if (!defined('WEBPATH')) die();
 
 </div><!-- main -->
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 </body>

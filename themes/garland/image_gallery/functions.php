@@ -12,8 +12,8 @@ class imagegallery {
 
 	function theme_head($_zp_themeroot) {
 		?>
-		<link rel="stylesheet" type="text/css" href="<?php echo $_zp_themeroot; ?>/image_gallery/jquery.ad-gallery.css">
-		<script type="text/javascript" src="<?php echo $_zp_themeroot; ?>/image_gallery/jquery.ad-gallery.js"></script>
+		<link rel="stylesheet" type="text/css" href="<?php echo WEBPATH.'/'.ZENFOLDER.'/'.COMMON_FOLDER; ?>/adGallery/jquery.ad-gallery.css">
+		<script type="text/javascript" src="<?php echo WEBPATH.'/'.ZENFOLDER.'/'.COMMON_FOLDER; ?>/adGallery/jquery.ad-gallery.min.js"></script>
 		<?php
 		return true;
 	}
@@ -34,7 +34,7 @@ class imagegallery {
 		  	  display_next_and_prev: true, // Can you navigate by clicking on the left/right on the image?
 		  	  display_back_and_forward: true, // Are you allowed to scroll the thumb list?
 		  	  scroll_jump: 0, // If 0, it jumps the width of the container
-		  	  loader_image: '<?php echo $_zp_themeroot; ?>/image_gallery/loader.gif',
+		  	  loader_image: '<?php echo WEBPATH.'/'.ZENFOLDER.'/'.COMMON_FOLDER; ?>/adGallery/loader.gif',
 		  	  slideshow: {
 		  	    enable: true,
 		  	    autostart: true,
@@ -110,7 +110,6 @@ class imagegallery {
 										if ($map) {
 											$coord = getGeoCoord($_zp_current_image);
 											if ($coord) {
-												$coord['desc'] = '<p align=center>'.$coord['desc'].'</p>';
 												$points[] = $coord;
 											}
 										}
@@ -125,7 +124,7 @@ class imagegallery {
 											?>
 											<li>
 												<a href="<?php echo html_encode(getDefaultSizedImage()); ?>">
-													<img src="<?php echo pathurlencode(getImageThumb()); ?>"
+													<img src="<?php echo html_encode(pathurlencode(getImageThumb())); ?>"
 														class="image<?php echo $lastImage; ?>"
 														alt="<?php echo html_encode(getImageDesc()); ?>">
 												</a>
@@ -146,7 +145,7 @@ class imagegallery {
 			    </div>
 				<div class="clearage"></div>
 			</div><!-- images -->
-			<br clear = "all">
+			<br class="clearall" />
 			<?php
 		}
 	}

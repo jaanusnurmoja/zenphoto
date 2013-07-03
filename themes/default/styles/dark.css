@@ -400,15 +400,24 @@ cursor: pointer !important;
 	margin-right: 0px;
 }
 
+img#captcha {
+display: block;
+float: left;
+margin-bottom: 5px;
+}
+input#code {
+float: left;
+margin-left: 10px;
+width: 10em !important;
+}
+#recaptcha_widget_div {
+float: left;
+}
+
+
 /* Forms
 ------------------------------ */
-.captchainputbox {
-	width: 6.5em;
-	padding: 2px;
-}
-#captcha {
-	vertical-align:middle;
-}
+
 .inputbox {
 	width: 250px;
 	padding: 2px;
@@ -422,7 +431,7 @@ textarea {
 .checkbox {
 	cursor: pointer;
 }
-.pushbutton {
+.button {
 	cursor: pointer;
 	padding: 5px 10px;
 }
@@ -470,7 +479,7 @@ label:hover {
 	padding:0;
 	background: #222;
 }
-#search input.pushbutton {
+#search input.button {
 	padding: 1px;
 	font-size: 80%;
 }
@@ -542,6 +551,10 @@ ul.archive .month {
 }
 /* Error Messages
 ------------------------------ */
+.error {
+	color: #C33;
+	font-weight: bold;
+}
 .errorbox {
 	padding: 20px;
 	background-color: #FDD;
@@ -649,7 +662,64 @@ label:hover {
 	color: #000;
 }
 
-#registration_form {
-	width:370px;
+#registration_form p,
+#commentform p,
+#mailform p {
+clear: both;
 }
 
+#registration_form label,
+#commentform label,
+#mailform label {
+width: 30% !important;
+float: left; 
+display: block;
+}
+#registration_form input[type="text"],
+#registration_form input[type="password"],
+#mailform input[type="text"],
+#commentform input[type="text"] {
+width: 65%;
+}
+
+input.button {
+padding: 5px 8px 5px 8px!important;
+margin: 5px 0 0 0;
+}
+
+#mailform textarea, 
+#commentform textarea#comment {
+clear: both;
+width: 95% !important;
+height: 150px;
+}
+
+form input[type="submit"],
+form input[type="reset"],
+form input[type="button"],
+a.slideshowlink {
+background-color: gray;
+border: 0;
+font-size: 12px;
+}
+
+a.slideshowlink { 
+color: black;
+padding: 5px 6px 3px 6px;
+margin-top: 10px !important;
+text-decoration: none;
+clear: both;
+margin-top: 10px;
+display: inline-block;
+}
+
+
+.clearall {
+clear: both !important;
+}
+.clearleft {
+clear: left !important;
+}
+.clearright {
+clear: right !important;
+}

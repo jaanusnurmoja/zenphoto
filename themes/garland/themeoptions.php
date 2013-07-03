@@ -19,6 +19,7 @@ class ThemeOptions {
 		setThemeOptionDefault('thumb_crop_width', 85);
 		setThemeOptionDefault('thumb_crop_height', 85);
 		setThemeOptionDefault('thumb_crop', 1);
+		setThemeOptionDefault('garland_customHome', '');
 		setThemeOptionDefault('garland_personality', 'image_page');
 		setThemeOptionDefault('garland_transition', 'slide-hori');
 		setThemeOptionDefault('garland_caption_location', 'image');
@@ -32,9 +33,10 @@ class ThemeOptions {
 			setThemeOption('custom_index_page', '', NULL, 'garland', false);
 		}
 		if (class_exists('cacheManager')) {
-			cacheManager::deleteThemeCacheSizes('garland');
-			cacheManager::addThemeCacheSize('garland', 520, NULL, NULL, NULL, NULL, NULL, NULL, false, getOption('fullimage_watermark'), NULL, NULL);
-			cacheManager::addThemeCacheSize('garland', 85, NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
+			$me = basename(dirname(__FILE__));
+			cacheManager::deleteThemeCacheSizes($me);
+			cacheManager::addThemeCacheSize($me, 520, NULL, NULL, NULL, NULL, NULL, NULL, false, getOption('fullimage_watermark'), NULL, NULL);
+			cacheManager::addThemeCacheSize($me, 85, NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
 		}
 		if (function_exists('createMenuIfNotExists')) {
 			$menuitems = array(
@@ -73,6 +75,18 @@ class ThemeOptions {
 						  		gettext('Allow cloud') => array('key' => 'Allow_cloud', 'type' => OPTION_TYPE_CHECKBOX, 'desc' => gettext('Set to enable tag cloud for album page.')),
 									gettext('Custom menu') => array('key' => 'garland_menu', 'type' => OPTION_TYPE_CUSTOM, 'desc' => gettext('Set this to the <em>menu_manager</em> menu you wish to use.').$note)
 						  	);
+  	if (getOption('zp_plugin_zenpage')) {
+  		global $_zp_zenpage;
+  		$pages = $_zp_zenpage->getPages(false);
+  		$list = array();
+  		foreach ($pages as $page) {
+  			$list[strip_tags($page['title'])] = $page['titlelink'];
+  		}
+  		$options[gettext('Custom Homepage')] = array('key' => 'garland_customHome', 'type' => OPTION_TYPE_SELECTOR,
+															'selections' => $list,
+  														'null_selection'=>gettext('none'),
+															'desc' => gettext('Select the <em>pages</em> titlelink for the home page. Only unpublished pages are offered for selection.'));
+  	}
   	if (getOption('garland_personality')=='image_gallery') {
 			$options[gettext('Image gallery transition')] = array('key' => 'garland_transition', 'type' => OPTION_TYPE_SELECTOR,
 															'selections' => array(gettext('None') => '', gettext('Fade') => 'fade', gettext('Shrink/grow') => 'resize', gettext('Horizontal') => 'slide-hori', gettext('Vertical') => 'slide-vert'),

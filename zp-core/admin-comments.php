@@ -56,7 +56,7 @@ if (isset($_GET['action'])) {
 		$id = sanitize_numeric($_GET['id']);
 		$comment = new Comment($id);
 		$comment->remove();
-		header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-comments.php?ndeleted=1");
+ 		header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-comments.php?ndeleted=1");
 		exitZP();
 
 	case 'savecomment':
@@ -124,7 +124,7 @@ zp_apply_filter('admin_note','comments', 'edit');
 				<?php echo gettext('Delete'); ?></a>
 			</p>
 			<p class="buttons" style="margin-top: 10px">
-				<button type="submit" title="<?php echo gettext("Apply"); ?>">
+				<button type="submit">
 				<img src="images/pass.png" alt="" />
 				<strong><?php echo gettext("Apply"); ?></strong>
 				</button>
@@ -209,14 +209,14 @@ zp_apply_filter('admin_note','comments', 'edit');
 
 		?>
 		<p><?php echo $status_moderation; ?>. <div class="buttons"><a href="<?php echo $url_moderation; ?>&amp;XSRFToken=<?php echo getXSRFToken('comment_update')?>" title="<?php echo $title_moderation; ?>" ><img src="<?php echo $linkimage; ?>" alt="" /><?php echo $link_moderation; ?></a></div></p>
-		<br clear="all" />
+		<br class="clearall" />
 		<hr />
 		<p><?php echo $status_private; ?></p>
 		<p><?php echo $status_anon; ?></p>
 		</div><!-- div box-edit-unpadded end -->
 		</div>
 		</form>
-		<br clear="all" />
+		<br class="clearall" />
 		</div> <!-- div box end -->
 		<?php
 		// end of $page == "editcomment"
@@ -228,12 +228,11 @@ zp_apply_filter('admin_note','comments', 'edit');
 } else {
 	// Set up some view option variables.
 
+	define('COMMENTS_PER_PAGE',max(1,getOption('comments_per_page')));
 	if (isset($_GET['fulltext']) && $_GET['fulltext']) {
-		define('COMMENTS_PER_PAGE',10);
 		$fulltext = true;
 		$fulltexturl = '?fulltext=1';
 	} else {
-		define('COMMENTS_PER_PAGE',20);
 		$fulltext = false;
 		$fulltexturl = '';
 	}
@@ -312,7 +311,7 @@ if ($totalpages > 1) {
 <form name="comments" action="?action=applycomments" method="post"	onsubmit="return confirmAction();">
 	<?php XSRFToken('applycomments');?>
 <input type="hidden" name="subpage" value="<?php echo html_encode($pagenum) ?>" />
-<p class="buttons"><button type="submit" title="<?php echo gettext("Apply"); ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button></p>
+<p class="buttons"><button type="submit"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button></p>
 <p class="buttons">
 <?php
 	if(!$fulltext) {
@@ -326,19 +325,19 @@ if ($totalpages > 1) {
 	}
 	?>
 </p>
-<br clear="all" /><br />
+<br class="clearall" /><br />
 <table class="bordered">
 	<tr>
 		<th colspan="11"><?php echo gettext("Edit this comment"); ?>
 		<?php
-			$checkarray = array(
-											gettext('*Bulk actions*') => 'noaction',
-											gettext('Delete') => 'deleteall',
-											gettext('Mark as spam') => 'spam',
-											gettext('Approve') => 'approve',
-											);
-			printBulkActions($checkarray);
-			?>
+	  	$checkarray = array(
+									  	gettext('*Bulk actions*') => 'noaction',
+									  	gettext('Delete') => 'deleteall',
+									  	gettext('Mark as spam') => 'spam',
+									  	gettext('Approve') => 'approve',
+							  			);
+	  	printBulkActions($checkarray);
+	  	?>
 		</th>
 
 	</tr>
@@ -398,7 +397,7 @@ if ($totalpages > 1) {
 						$pagesdata = $pagesdata[0];
 						$titlelink = $pagesdata['titlelink'];
 						$title = get_language_string($pagesdata['title']);
-						$link = "<a href=\"".rewrite_path("/pages/".$titlelink,"/index.php?p=pages&amp;title=".urlencode($titlelink)).'#zp_comment_id_'.$id.'">'.$title."</a><br /> ".gettext("[page]");
+						$link = "<a href=\"".rewrite_path('/'._PAGES_.'/'.$titlelink,"/index.php?p=pages&amp;title=".urlencode($titlelink)).'#zp_comment_id_'.$id.'">'.$title."</a><br /> ".gettext("[page]");
 					}
 				}
 				break;
@@ -443,14 +442,14 @@ if ($totalpages > 1) {
 		</td>
 		<td><?php echo $link; ?></td>
 		<td><?php echo $comment['IP']; ?></td>
-		<td class="icons">
+		<td class="page-list_icon">
 			<?php
 			if($private) {
 				echo '<a title="'.gettext("Private message").'"><img src="images/reset.png" style="border: 0px;" alt="'. gettext("Private message").'" /></a>';
 			}
 			?>
 		</td>
-		<td align="center"><?php
+		<td class="page-list_icon"><?php
 		if ($inmoderation) {
 			?>
 			<a href="?action=notspam&amp;id=<?php echo $id; ?>&amp;XSRFToken=<?php echo getXSRFToken('comment_update')?>" title="<?php echo gettext('Approve this message (not SPAM)'); ?>">
@@ -463,17 +462,17 @@ if ($totalpages > 1) {
 			<?php
 		}
 		?></td>
-		<td class="icons"><a href="?page=editcomment&amp;id=<?php echo $id; ?>" title="<?php echo gettext('Edit this comment.'); ?>">
+		<td class="page-list_icon"><a href="?page=editcomment&amp;id=<?php echo $id; ?>" title="<?php echo gettext('Edit this comment.'); ?>">
 			<img src="images/pencil.png" style="border: 0px;" alt="<?php echo gettext('Edit'); ?>" /></a></td>
-		<td class="icons">
+		<td class="page-list_icon">
 		<a href="mailto:<?php echo $email; ?>?body=<?php echo commentReply($fullcomment, $author, $image, $albumtitle); ?>" title="<?php echo gettext('Reply:').' '.$email; ?>">
 		<img src="images/icon_mail.png" style="border: 0px;" alt="<?php echo gettext('Reply'); ?>" /></a>
 		</td>
-		<td class="icons">
+		<td class="page-list_icon">
 			<a href="javascript:if(confirm('<?php echo gettext('Are you sure you want to delete this comment?'); ?>')) { window.location='?action=deletecomment&id=<?php echo $id; ?>&amp;XSRFToken=<?php echo getXSRFToken('deletecomment')?>'; }"
 			title="<?php echo gettext('Delete this comment.'); ?>" > <img
 			src="images/fail.png" style="border: 0px;" alt="<?php echo gettext('Delete'); ?>" /></a></td>
-		<td class="icons"><input type="checkbox" name="ids[]" value="<?php echo $id; ?>"
+		<td class="page-list_icon"><input type="checkbox" name="ids[]" value="<?php echo $id; ?>"
 			onclick="triggerAllBox(this.form, 'ids[]', this.form.allbox);" /></td>
 	</tr>
 	<?php } ?>
@@ -481,7 +480,7 @@ if ($totalpages > 1) {
 
 
 </table>
-<p class="buttons"><button type="submit" title="<?php echo gettext("Apply"); ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button></p>
+<p class="buttons"><button type="submit"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button></p>
 		<ul class="iconlegend">
 				<li><img src="images/reset.png" alt="" /><?php echo gettext("Private message"); ?></li>
 				<li><img src="images/warn.png" alt="Marked as spam" /><img src="images/pass.png" alt="Approved" /><?php echo gettext("Marked as spam/approved"); ?></li>

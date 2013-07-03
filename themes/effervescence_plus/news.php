@@ -4,16 +4,13 @@
 if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareGalleryTitle(); ?> | <?php echo gettext('News'); if ($_zp_page>1) echo "[$_zp_page]"; ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
-	<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
-	<link rel="stylesheet" href="<?php echo WEBPATH.'/'.THEMEFOLDER; ?>/effervescence_plus/common.css" type="text/css" />
-	<?php effervescence_theme_head(); ?>
-	<?php printZenpageRSSHeaderLink("News","", "Zenpage news", ""); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink("News","Zenpage news", ""); ?>
 </head>
 
 <body onload="blurAnchors()">
@@ -45,9 +42,9 @@ if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 				<span><?php printHomeLink('', ' | '); ?>
 				<?php
 				if (getOption('custom_index_page') === 'gallery') {
-				?>
-				<a href="<?php echo html_encode(getGalleryIndexURL(false));?>" title="<?php echo gettext('Main Index'); ?>"><?php echo gettext('Home');?></a> |
-				<?php
+					?>
+					<a href="<?php echo html_encode(getGalleryIndexURL(false));?>" title="<?php echo gettext('Main Index'); ?>"><?php echo gettext('Home');?></a> |
+					<?php
 				}
 				?>
 				<a href="<?php echo html_encode(getGalleryIndexURL());?>" title="<?php echo gettext('Albums Index'); ?>"><?php printGalleryTitle();?></a></span>
@@ -76,12 +73,13 @@ if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 		?>
 		<?php if(getPrevNewsURL()) { ?><div class="singlenews_prev"><?php printPrevNewsLink(); ?></div><?php } ?>
 		<?php if(getPrevNewsURL()) { ?><div class="singlenews_next"><?php printNextNewsLink(); ?></div><?php } ?>
-		<?php if(getPrevNewsURL() OR getPrevNewsURL()) { ?><br clear:both /><?php } ?>
+		<?php if(getPrevNewsURL() OR getPrevNewsURL()) { ?><br class="clearall" /><?php } ?>
 		<h3><?php printNewsTitle(); ?></h3>
 
 		<div class="newsarticlecredit">
-			<span class="newsarticlecredit-left"> <?php
-			$count = getCommentCount();
+			<span class="newsarticlecredit-left">
+			<?php
+			$count = @call_user_func('getCommentCount');
 			$cat = getNewsCategories();
 			printNewsDate();
 			if ($count > 0) {

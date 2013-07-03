@@ -131,7 +131,7 @@ class themeSwitcher {
 			if (empty($text)) {
 				$text = gettext('Theme');
 			}
-			$reloc = trim(preg_replace('~themeSwitcher=.*?&~','',getRequestURI().'&'),'?&');
+			$reloc = pathurlencode(trim(preg_replace('~themeSwitcher=.*?&~','',getRequestURI().'&'),'?&'));
 			if (strpos($reloc, '?')) {
 				$reloc .= '&themeSwitcher=%t';
 			} else {

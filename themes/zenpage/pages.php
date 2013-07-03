@@ -5,13 +5,13 @@
 if (!defined('WEBPATH') || !class_exists('Zenpage')) die();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<title><?php if(!isset($ishomepage)) { printBarePageTitle(); } ?> | <?php printBareGalleryTitle(); ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
 	<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
-	<?php printZenpageRSSHeaderLink("News","", "Zenpage news", ""); ?>
+	<?php if (class_exists('RSS')) printRSSHeaderLink("News", "Zenpage news", ""); ?>
 	<?php zp_apply_filter('theme_head'); ?>
 </head>
 
@@ -58,7 +58,6 @@ if(getTags()) { echo gettext('<strong>Tags:</strong>'); } printTags('links', '',
 
 </div><!-- main -->
 <?php
-printAdminToolbox();
 zp_apply_filter('theme_body_close');
 ?>
 </body>

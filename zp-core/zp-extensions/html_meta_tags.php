@@ -127,7 +127,8 @@ class htmlmetatags {
 																												"property='og:image'" => "htmlmeta_og-image",
 																												"property='og:description'" => "htmlmeta_og-description",
 																												"property='og:url'" => "htmlmeta_og-url",
-																												"property='og:type'" => "htmlmeta_og-type"
+																												"property='og:type'" => "htmlmeta_og-type",
+																												"name='pinterest' content='nopin'" => "htmlmeta_name-pinterest"
 																												),
 																										"desc" => gettext("Which of the HTML meta tags should be used. For info about these in detail please refer to the net.")),
 
@@ -151,17 +152,28 @@ class htmlmetatags {
 	}
 
 	/**
+	 * Traps imageProcessorURIs for causing them to be cached.
+	 * @param string $uri
+	 */
+	static function ipURI($uri) {
+		global $htmlmetatags_need_cache;
+		$htmlmetatags_need_cache[] = $uri;
+	}
+
+	/**
 	 * Prints html meta data to be used in the <head> section of a page
 	 *
 	 */
 	static function getHTMLMetaData() {
 		global $_zp_gallery, $_zp_galley_page, $_zp_current_album, $_zp_current_image, $_zp_current_zenpage_news,
-						$_zp_current_zenpage_page, $_zp_gallery_page, $_zp_current_category, $_zp_authority;
+						$_zp_current_zenpage_page, $_zp_gallery_page, $_zp_current_category, $_zp_authority, $_zp_conf_vars,
+						$htmlmetatags_need_cache;
+		zp_register_filter('image_processor_uri', 'htmlmetatags::ipURI');
 		$host = sanitize("http://".$_SERVER['HTTP_HOST']);
 		$url = $host.getRequestURI();
 
 		// Convert locale shorttag to allowed html meta format
-		$locale = zpFunctions::getLanguageText(getOption("locale"),"-");
+		$locale = str_replace("_","-",getUserLocale());
 		$canonicalurl = '';
 		// generate page title, get date
 		$pagetitle = ""; // for gallery index setup below switch
@@ -221,25 +233,19 @@ class htmlmetatags {
 				$desc = trim(strip_tags(getPageContent()));
 				$canonicalurl = $host.getPageLinkURL($_zp_current_zenpage_page->getTitlelink());
 				break;
-			case 'archive.php':
-				$pagetitle = gettext('Archive')." - ";
+			default: // for all other possible static custom pages
+				$custompage = sanitize(@$_GET['p']);
+				$standard = array('contact'=>gettext('Contact'),'register'=>gettext('Register'),'search'=>gettext('Search'),'archive'=>gettext('Archive view'),'password'=>gettext('Password required'));
+				if (class_exists('favorites')) {
+					$standard[str_replace(_PAGE_.'/','',favorites::getFavorites_link())] = gettext('My favorites');
+				}
+				If (array_key_exists($custompage, $standard)) {
+					$pagetitle = $standard[$custompage]." - ";
+				} else {
+					$pagetitle = $custompage." - ";
+				}
 				$desc = '';
-				$canonicalurl = $host.getCustomPageURL('archive');
-				break;
-			case 'search.php':
-				$pagetitle = gettext('Search')." - ";
-				$desc = '';
-				$canonicalurl = $host.getCustomPageURL('search');
-				break;
-			case 'contact.php':
-				$pagetitle = gettext('Contact')." - ";
-				$desc = '';
-				$canonicalurl = $host.getCustomPageURL('contact');
-				break;
-			default: // for all other possible none standard custom pages
-				$pagetitle = sanitize(@$_GET['p']);
-				$desc = '';
-				$canonicalurl = $host.getCustomPageURL($pagetitle);
+				$canonicalurl = $host.getCustomPageURL($custompage);
 				break;
 		}
 		// shorten desc to the allowed 200 characters if necesssary.
@@ -274,7 +280,7 @@ class htmlmetatags {
 
 		// DC meta data
 		if(getOption('htmlmeta_name-DC-title')) { $meta .= '<meta name="DC.title" content="'.$pagetitle.'" />'."\n"; }
-		if(getOption('htmlmeta_name-DC-keywords')) { $meta .= '<meta name="DC.keywords" content="'.gettMetaKeywords().'" />'."\n"; }
+		if(getOption('htmlmeta_name-DC-keywords')) { $meta .= '<meta name="DC.keywords" content="'.htmlmetatags::getMetaKeywords().'" />'."\n"; }
 		if(getOption('htmlmeta_name-DC-description')) { $meta .= '<meta name="DC.description" content="'.$desc.'" />'."\n"; }
 		if(getOption('htmlmeta_name-DC-language')) { $meta .= '<meta name="DC.language" content="'.$locale.'" />'."\n"; }
 		if(getOption('htmlmeta_name-DC-subject')) { $meta .= '<meta name="DC.subject" content="'.$desc.'" />'."\n"; }
@@ -293,8 +299,11 @@ class htmlmetatags {
 		if(getOption('htmlmeta_og-title')) { $meta .= '<meta property="og:title" content="'.$pagetitle.'" />'."\n"; }
 		if(getOption('htmlmeta_og-image') && !empty($thumb)) { $meta .= '<meta property="og:image" content="'.$thumb.'" />'."\n"; }
 		if(getOption('htmlmeta_og-description')) { $meta .= '<meta property="og:description" content="'.$desc.'" />'."\n"; }
-		if(getOption('htmlmeta_og-url')) { $meta .= '<meta property="og:url" content="'.$url.'" />'."\n"; }
+		if(getOption('htmlmeta_og-url')) { $meta .= '<meta property="og:url" content="'.html_encode($url).'" />'."\n"; }
 		if(getOption('htmlmeta_og-type')) { $meta .= '<meta property="og:type" content="'.$type.'" />'."\n"; }
+
+		// Social network extras
+		if(getOption('htmlmeta_name-expires')) { $meta .= '<meta name="pinterest" content="nopin" />'."\n"; } // dissalow users to pin images on Pinterest
 
 		// Canonical url
 		if(getOption('htmlmeta_canonical-url')) {
@@ -325,28 +334,28 @@ class htmlmetatags {
 								case 'news.php':
 									if(function_exists("is_NewsArticle")) {
 										if(is_NewsArticle()) {
-											$altlink .= '/news/'.html_encode($_zp_current_zenpage_news->getTitlelink());
+											$altlink .= '/'._NEWS_.'/'.html_encode($_zp_current_zenpage_news->getTitlelink());
 										} else 	if(is_NewsCategory()) {
-											$altlink .= '/news/'.html_encode($_zp_current_category->getTitlelink());
+											$altlink .= '/'._NEWS_.'/'.html_encode($_zp_current_category->getTitlelink());
 										} else {
-											$altlink .= '/news';
+											$altlink .= '/'._NEWS_;
 										}
 									}
 									break;
 								case 'pages.php':
-									$altlink .= '/pages/'.html_encode($_zp_current_zenpage_page->getTitlelink());
+									$altlink .= '/'. _PAGES_.'/'.html_encode($_zp_current_zenpage_page->getTitlelink());
 									break;
 								case 'archive.php':
-									$altlink .= '/page/archive';
+									$altlink .= '/'.$_zp_conf_vars['special_pages']['archive']['rewrite'].'/';
 									break;
 								case 'search.php':
-									$altlink .= '/page/search';
+									$altlink .= '/'.$_zp_conf_vars['special_pages']['search']['rewrite'].'/';
 									break;
 								case 'contact.php':
-									$altlink .= '/page/contact';
+									$altlink .= '/'._PAGE_.'/contact';
 									break;
 								default: // for all other possible none standard custom pages
-									$altlink .= '/page/'.html_encode($pagetitle);
+									$altlink .= '/'._PAGE_.'/'.html_encode($pagetitle);
 									break;
 							} // switch
 							$meta .= '<link rel="alternate" hreflang="'.$langcheck.'" href="'.$altlink.'" />'."\n";
@@ -355,6 +364,25 @@ class htmlmetatags {
 				} // if count
 			} // if option
 		} // if canonical
+		if (!empty($htmlmetatags_need_cache)) {
+			$meta .= '<script type="text/javascript">'."\n";
+			$meta .= 'var caches = ["'.implode('","',$htmlmetatags_need_cache).'"];'."\n";
+			$meta .= '
+					window.onload = function() {
+						var index,value;
+						for (index in caches) {
+						    value = caches[index];
+								$.ajax({
+									cache: false,
+									type: "GET",
+									url: value
+								});
+						}
+					}
+					';
+			$meta .= '</script>'."\n";
+		}
+		zp_remove_filter('image_processor_uri', 'htmlmetatags::ipURI');
 		echo $meta;
 	}
 

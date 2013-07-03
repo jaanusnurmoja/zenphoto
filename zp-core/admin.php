@@ -10,13 +10,15 @@
 define('OFFSET_PATH', 1);
 
 require_once(dirname(__FILE__).'/admin-globals.php');
-
+require_once(dirname(__FILE__).'/reconfigure.php');
 if (isset($_GET['_zp_login_error'])) {
 	$_zp_login_error = sanitize($_GET['_zp_login_error']);
 }
 
 checkInstall();
-
+if (time() > getOption('last_garbage_collect')+864000) {
+	$_zp_gallery->garbageCollect();
+}
 if (isset($_GET['report'])) {
 	$class = 'messagebox';
 	$msg = sanitize($_GET['report']);
@@ -48,11 +50,13 @@ if (zp_loggedin()) { /* Display the admin pages. Do action handling first. */
 				/** clear the RSScache ***********************************************************/
 				/******************************************************************************/
 				case "clear_rss_cache":
-					XSRFdefender('clear_cache');
-					require_once(SERVERPATH.'/'.ZENFOLDER.'/class-rss.php');
-					RSS::clearRSScache();
-					$class = 'messagebox';
-					$msg = gettext('RSS cache cleared.');
+					if (class_exists('RSS')) {
+						XSRFdefender('clear_cache');
+						$RSS = new RSS();
+						$RSS->clearCache();
+						$class = 'messagebox';
+						$msg = gettext('RSS cache cleared.');
+					}
 					break;
 
 				/** clear the HTMLcache *******************************************************/
@@ -63,6 +67,37 @@ if (zp_loggedin()) { /* Display the admin pages. Do action handling first. */
 					static_html_cache::clearHTMLCache();
 					$class = 'messagebox';
 					$msg = gettext('HTML cache cleared.');
+					break;
+
+				/** restore the setup files ***************************************************/
+				/******************************************************************************/
+				case 'restore_setup':
+					XSRFdefender('restore_setup');
+					checkSignature(true);
+					zp_apply_filter('log_setup', true, 'protect', gettext('enabled'));
+					$class = 'messagebox';
+					$msg = gettext('Setup files restored.');
+					break;
+
+				/** protect the setup files ***************************************************/
+				/******************************************************************************/
+				case 'protect_setup':
+					XSRFdefender('protect_setup');
+					chdir(SERVERPATH.'/'.ZENFOLDER.'/setup/');
+					$list = safe_glob('*.php');
+					$rslt = array();
+					foreach ($list as $component) {
+						@chmod(SERVERPATH.'/'.ZENFOLDER.'/setup/'.$component, 0666);
+						if(@rename(SERVERPATH.'/'.ZENFOLDER.'/setup/'.$component, SERVERPATH.'/'.ZENFOLDER.'/setup/'.$component.'.xxx')) {
+							@chmod(SERVERPATH.'/'.ZENFOLDER.'/setup/'.$component.'.xxx', FILE_MOD);
+						} else {
+							@chmod(SERVERPATH.'/'.ZENFOLDER.'/setup/'.$component, FILE_MOD);
+							$rslt[] = '../setup/'.$component;
+						}
+					}
+					zp_apply_filter('log_setup', true, 'protect', gettext('protected'));
+					$class = 'messagebox';
+					$msg = gettext('Setup files protected.');
 					break;
 
 				/** external script return ****************************************************/
@@ -203,7 +238,34 @@ zp_apply_filter('admin_note','Overview', NULL);
 	}
 	$graphics_lib = zp_graphicsLibInfo();
 	?>
-	<li><?php printf(gettext('Zenphoto version <strong>%1$s [%2$s] (%3$s)</strong>'),ZENPHOTO_VERSION,'<a title="'.ZENPHOTO_FULL_RELEASE.'">'.ZENPHOTO_RELEASE.'</a>',$official); ?></li>
+	<li>
+		<?php
+		printf(gettext('Zenphoto version <strong>%1$s [%2$s] (%3$s)</strong>'),ZENPHOTO_VERSION,'<a title="'.ZENPHOTO_FULL_RELEASE.'">'.ZENPHOTO_RELEASE.'</a>',$official);
+		if (getOption('zp_plugin_check_for_update') && TEST_RELEASE) {
+			if (is_connected() && class_exists('DOMDocument')) {
+				require_once(SERVERPATH.'/'.ZENFOLDER.'/'.PLUGIN_FOLDER.'/zenphoto_news/rsslib.php');
+				$recents = RSS_Retrieve("http://www.zenphoto.org/index.php?rss=news&category=changelog");
+				if ($recents) {
+					array_shift($recents);
+					$article = array_shift($recents);	//	most recent changelog article
+					$v = trim(str_replace('zenphoto-', '', basename($article['link'])));
+					$c = explode('-',ZENPHOTO_VERSION);
+					$c = array_shift($c);
+					if ($v && version_compare($c, $v, '>')) {
+						?>
+						<p class="notebox">
+							<a href="http://www.zenphoto.org/index.php?p=news&title=zenphoto-<?php echo $c; ?>">
+							<?php printf( gettext('Preview the release notes for Zenphoto %s'),$c); ?>
+							</a>
+						</p>
+						<?php
+						}
+					}
+				}
+			}
+
+		?>
+	</li>
 	<li><?php if (ZENPHOTO_LOCALE) {
 							printf(gettext('Current locale setting: <strong>%1$s</strong>'),ZENPHOTO_LOCALE);
 						} else {
@@ -430,6 +492,7 @@ zp_apply_filter('admin_note','Overview', NULL);
 	<?php
 	}
 	$buttonlist = array();
+
 	$curdir = getcwd();
 	chdir(SERVERPATH . "/" . ZENFOLDER . '/'.UTILITIES_FOLDER.'/');
 	$filelist = safe_glob('*'.'php');
@@ -455,6 +518,37 @@ zp_apply_filter('admin_note','Overview', NULL);
 		} else {
 			unset($buttonlist[$key]);
 		}
+	}
+	//	button to restore setup files if needed
+	list($diff,$needs) = checkSignature(false);
+	if (!empty($needs)) {
+		$buttonlist[] = array(
+				'XSRFTag'=>'restore_setup',
+				'category'=>gettext('Admin'),
+				'enable'=>true,
+				'button_text'=>gettext('Setup » restore scripts'),
+				'formname'=>'restore_setup.php',
+				'action'=>WEBPATH.'/'.ZENFOLDER.'/admin.php?action=restore_setup',
+				'icon'=>'images/lock_open.png',
+				'alt'=>'',
+				'title'=>gettext('Restores setup files so setup can be run.'),
+				'hidden'=>'<input type="hidden" name="action" value="restore_setup" />',
+				'rights'=> ADMIN_RIGHTS
+		);
+	} else {
+		$buttonlist[] = array(
+				'XSRFTag'=>'protect_setup',
+				'category'=>gettext('Admin'),
+				'enable'=>true,
+				'button_text'=>gettext('Setup » protect scripts'),
+				'formname'=>'restore_setup.php',
+				'action'=>WEBPATH.'/'.ZENFOLDER.'/admin.php?action=protect_setup',
+				'icon'=>'images/lock_2.png',
+				'alt'=>'',
+				'title'=>gettext('Protects setup files so setup cannot be run.'),
+				'hidden'=>'<input type="hidden" name="action" value="protect_setup" />',
+				'rights'=> ADMIN_RIGHTS
+		);
 	}
 	$buttonlist = sortMultiArray($buttonlist, array('category','button_text'), false);
 	?>
@@ -581,7 +675,7 @@ zp_apply_filter('admin_note','Overview', NULL);
 
 	</div><!-- boxouter -->
 </div><!-- content -->
-<br clear="all" />
+<br class="clearall" />
 <?php
 printAdminFooter();
 /* No admin-only content allowed after point! */

@@ -7,15 +7,15 @@
 <?php $showhide = "<a href=\"#comments\" id=\"showcomments\"><img src=\"" .
 	$_zp_themeroot . "/images/btn_show.gif\" width=\"35\" height=\"11\" alt=\"".gettext("SHOW")."\" /></a> <a href=\"#content\" id=\"hidecomments\"><img src=\"" .
 	$_zp_themeroot . "/images/btn_hide.gif\" width=\"35\" height=\"11\" alt=\"".gettext("HIDE")."\" /></a>";
- $num = getCommentCount();
+ $num = @call_user_func('getCommentCount');
 ?>
 <h2>
 	<?php
- 	if ($num == 0) {
- 		echo gettext("No comments yet");
- 	} else {
- 		printf(ngettext('%u comment so far','%u comments so far', $num),$num).' '. $showhide;
- 	}
+	if ($num == 0) {
+		echo gettext("No comments yet");
+	} else {
+		printf(ngettext('%u comment so far','%u comments so far', $num),$num).' '. $showhide;
+	}
  ?>
 </h2>
 <?php printCommentErrors(); ?>
@@ -34,7 +34,7 @@
 		?>
 		<dt id="comment<?php echo $autonumber; ?>">
 			<a href="#comment<?php echo $autonumber; ?>" class="postno" title="<?php printf(gettext('Link to Comment %u'),$autonumber); ?>"><?php echo $autonumber; ?>.</a>
-			<em>On <?php echo getCommentDateTime();?>, <?php printCommentAuthorLink(); echo gettext('wrote:'); ?></em>
+			<em>On <?php echo getCommentDateTime();?>, <?php printf(gettext('%s wrote:'),getCommentAuthorLink()); ?></em>
 		</dt>
 		<dd><p><?php echo html_encodeTagged(getCommentBody(),false); ?><?php printEditCommentLink(gettext('Edit'), ' | ', ''); ?></p></dd>
 		<?php

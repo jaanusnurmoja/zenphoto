@@ -38,9 +38,10 @@ class ThemeOptions {
 			setThemeOption('custom_index_page', '', NULL, 'zenpage', false);
 		}
 		if (class_exists('cacheManager')) {
-			cacheManager::deleteThemeCacheSizes('zenpage');
-			cacheManager::addThemeCacheSize('zenpage', NULL, 580, 580, NULL, NULL, NULL, NULL, NULL, false, getOption('fullimage_watermark'), true);
-			cacheManager::addThemeCacheSize('zenpage', 95, NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
+			$me = basename(dirname(__FILE__));
+			cacheManager::deleteThemeCacheSizes($me);
+			cacheManager::addThemeCacheSize($me, NULL, 580, 580, NULL, NULL, NULL, NULL, NULL, false, getOption('fullimage_watermark'), true);
+			cacheManager::addThemeCacheSize($me, 95, NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
 		}
 		if (function_exists('createMenuIfNotExists')) {
 			$menuitems = array(
@@ -59,7 +60,7 @@ class ThemeOptions {
 		$unpublishedpages = query_full_array("SELECT title,titlelink FROM ".prefix('pages')." WHERE `show` != 1 ORDER by `sort_order`");
 		$list = array();
 		foreach ($unpublishedpages as $page) {
-			$list[$page['title']] = $page['titlelink'];
+			$list[get_language_string($page['title'])] = $page['titlelink'];
 		}
 		return array(	gettext('Allow search') => array('key' => 'Allow_search', 'type' => OPTION_TYPE_CHECKBOX, 'desc' => gettext('Check to enable search form.')),
 									gettext('Use Colorbox') => array('key' => 'Use_thickbox', 'type' => OPTION_TYPE_CHECKBOX, 'desc' => gettext('Check to display of the full size image with Colorbox.')),

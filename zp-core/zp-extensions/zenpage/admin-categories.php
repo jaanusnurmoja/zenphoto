@@ -48,7 +48,7 @@ if(isset($_GET['publish'])) {
 }
 if(isset($_GET['save'])) {
 	XSRFdefender('save_categories');
-	addCategory($reports);
+	updateCategory($reports, true);
 }
 if(isset($_GET['id'])){
 	$x = 	$_zp_zenpage->getCategory(sanitize_numeric($_GET['id']));
@@ -138,7 +138,7 @@ printLogoAndLinks();
 						}
 					?>
 				</p>
-				<br clear="all" /><br />
+				<br class="clearall" /><br />
 				<div class="bordered">
 					<div class="headline"><?php echo gettext('Edit this Category'); ?>
 					<?php

@@ -114,24 +114,24 @@ printLogoAndLinks();
 		if ($tagsort == 1) {
 			?>
 			<p class="buttons">
-				<a class="tagsort" href="?tagsort=0" title="<?php echo gettext('Sort the tags alphabetically'); ?>">
+				<a class="tagsort" href="?tagsort=0">
 					<img src="images/sortorder.png" alt="" /> <?php echo gettext('Order alphabetically'); ?>
 				</a>
 			</p>
 			<br />
 			<br />
-			<br clear="all" />
+			<br class="clearall" />
 			<?php
 		} else{
 			?>
 			<p class="buttons">
-				<a class="tagsort" href="?tagsort=1" title="<?php echo gettext('Sort the tags by most used'); ?>">
+				<a class="tagsort" href="?tagsort=1">
 					<img src="images/sortorder.png" alt="" /> <?php echo gettext('Order by most used'); ?>
 				</a>
 			</p>
 			<br />
 			<br />
-			<br clear="all" />
+			<br class="clearall" />
 			<?php
 		}
 		?>
@@ -139,7 +139,7 @@ printLogoAndLinks();
 			<tr>
 			<td valign='top'>
 				<h2 class="h2_bordered_edit"><?php echo gettext("Delete tags from the gallery"); ?></h2>
-				<form name="tag_delete" action="?delete=true&amp;tagsort=<?php echo $tagsort; ?>" method="post">
+				<form name="tag_delete" action="?delete=true&amp;tagsort=<?php echo html_encode($tagsort); ?>" method="post">
 					<?php XSRFToken('tag_delete');?>
 					<div class="box-tags-unpadded">
 						<?php
@@ -148,30 +148,15 @@ printLogoAndLinks();
 					</div>
 
 					<p class="buttons">
-						<button type="submit" id='delete_tags' value="<?php echo gettext("Delete checked tags"); ?>" title="<?php echo gettext("Delete all the tags checked above."); ?>" >
+						<button type="submit" id='delete_tags' value="<?php echo gettext("Delete checked tags"); ?>">
 						<img src="images/fail.png" alt="" /><?php echo gettext("Delete checked tags"); ?>
 						</button>
 					</p>
 					<label id="autocheck">
-						<input type="checkbox" name="checkAllAuto" id="checkAllAuto" />
+						<input type="checkbox" name="checkAllAuto" id="checkAllAuto" onclick="$('.checkTagsAuto').prop('checked', $('#checkAllAuto').prop('checked'));"/>
 						<span id="autotext"><?php echo gettext('all');?></span>
 					</label>
-					<script type="text/javascript">
-						// <!-- <![CDATA[
-						var checked = false;
-						$('#autocheck').click(
-							 function() {
-									if (checked) {
-										checked = false;
-									} else {
-										checked = true;
-									}
-									$("INPUT[type='checkbox']").attr('checked', checked);
-							 }
-						)
-						// ]]> -->
-					</script>
-					<br clear="all" />
+					<br class="clearall" />
 					<br />
 					<br />
 
@@ -183,7 +168,7 @@ printLogoAndLinks();
 
 			<td valign='top'>
 				<h2 class="h2_bordered_edit"><?php echo gettext("Rename tags"); ?></h2>
-				<form name="tag_rename" action="?rename=true&amp;tagsort=<?php echo $tagsort; ?>" method="post">
+				<form name="tag_rename" action="?rename=true&amp;tagsort=<?php echo html_encode($tagsort); ?>" method="post">
 					<?php XSRFToken('tag_rename');?>
 					<div class="box-tags-unpadded">
 						<ul class="tagrenamelist">
@@ -204,11 +189,11 @@ printLogoAndLinks();
 						</ul>
 					</div>
 					<p class="buttons">
-						<button type="submit" id='rename_tags' value="<?php echo gettext("Rename tags"); ?>" title="<?php echo gettext("Apply all the changes entered above."); ?>" >
+						<button type="submit" id='rename_tags' value="<?php echo gettext("Rename tags"); ?>">
 							<img src="images/pass.png" alt="" /><?php echo gettext("Rename tags"); ?>
 						</button>
 					</p>
-					<br clear="all" />
+					<br class="clearall" />
 					<br />
 					<br />
 				</form>
@@ -235,11 +220,11 @@ printLogoAndLinks();
 						</ul>
 					</div>
 					<p class="buttons">
-						<button type="submit" id='save_tags' value="<?php echo gettext("Add tags"); ?>" title="<?php echo gettext("Add all the tags entered above."); ?>" >
+						<button type="submit" id='save_tags' value="<?php echo gettext("Add tags"); ?>">
 							<img src="images/add.png" alt="" /><?php echo gettext("Add tags"); ?>
 						</button>
 					</p>
-					<br clear="all" />
+					<br class="clearall" />
 					<br />
 					<br />
 

@@ -10,7 +10,7 @@ require_once('../../functions.php');
 
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s').' GMT');
 header ("Content-type: image/png");
-$cypher = preg_replace('/[^0-9a-f]/', '', sanitize(@$_GET['i']));
+$cypher = preg_replace('/[^0-9a-f]/', '', sanitize(isset($_GET['i'])?$_GET['i']:NULL));
 
 $key = getOption('zenphoto_captcha_key');
 $string = rc4($key, pack("H*", $cypher));
@@ -27,7 +27,7 @@ if (isset($_GET['f'])) {
 		$fontname = array_shift($fonts);
 	}
 }
-$font = zp_imageLoadFont($fontname);
+$font = zp_imageLoadFont($fontname, getOption('zenphoto_captcha_font_size'));
 
 $pallet = array(array('R'=>16, 'G'=>110, 'B'=>3),
 								array('R'=>132, 'G'=>4, 'B'=>16),

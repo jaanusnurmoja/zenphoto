@@ -5,8 +5,8 @@
 if (!defined('WEBPATH')) die();
 require_once('normalizer.php');
  ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 	<?php zp_apply_filter('theme_head'); ?>
 	<title><?php printBareImageTitle();?></title>
@@ -27,7 +27,7 @@ require_once('normalizer.php');
 		</script>
   <?php } ?>
 	<?php
-		printRSSHeaderLink('Gallery',gettext('Gallery RSS'));
+		if (class_exists('RSS')) printRSSHeaderLink('Gallery',gettext('Gallery RSS'));
 		setOption('thumb_crop_width', 85, false);
 		setOption('thumb_crop_height', 85, false);
 		setOption('images_per_page', getOption('images_per_page') - 1, false);
@@ -88,7 +88,11 @@ require_once('normalizer.php');
 						printImageMetadata(NULL, 'colorbox');
 						if (isImagePhoto()) echo "&nbsp;/&nbsp;";
 					}
-					$fullimage = getFullImageURL();
+					if (isImagePhoto()) {
+						$fullimage = getFullImageURL();
+					} else {
+						$fullimage = NULL;
+					}
 					if (!empty($fullimage)) {
 						?>
 						<a href="<?php echo html_encode($fullimage);?>" title="<?php printBareImageTitle();?>"><?php echo gettext('Full Size'); ?></a>
@@ -177,7 +181,6 @@ require_once('normalizer.php');
 			</p>
 		</div>
 		<?php
-		printAdminToolbox();
 		zp_apply_filter('theme_body_close');
 		?>
 </body>

@@ -27,7 +27,7 @@ if (isset($_GET['action'])) {
 					$_zp_gallery->save();
 					$_set_theme_album = NULL;
 				} else {
-					$_set_theme_album = new Album(NULL, $alb);
+					$_set_theme_album = newAlbum($alb);
 					$oldtheme = $_set_theme_album->getAlbumTheme();
 					$_set_theme_album->setAlbumTheme($newtheme);
 					$_set_theme_album->save();
@@ -48,6 +48,7 @@ if (isset($_GET['action'])) {
 			if (isset($_GET['source']) && isset($_GET['target']) && isset($_GET['name'])) {
 				$message = copyThemeDirectory(sanitize($_GET['source'],3), sanitize($_GET['target'],3), sanitize($_GET['name'],3));
 			}
+			$_zp_gallery = new Gallery();	//	flush out remembered themes
 			break;
 		case 'deletetheme':
 			if (isset($_GET['theme'])) {
@@ -56,6 +57,7 @@ if (isset($_GET['action'])) {
 				} else {
 					$message = sprintf(gettext('Error removing theme <em>%s</em>'),html_encode($theme));
 				}
+				$_zp_gallery = new Gallery();	//	flush out remembered themes
 				break;
 			}
 	}
@@ -103,7 +105,7 @@ echo "\n" . '<div id="content">';
 	}
 	$albums = $_zp_gallery->getAlbums(0);
 	foreach ($albums as $alb) {
-		$album = new Album(NULL, $alb);
+		$album = newAlbum($alb);
 		if ($album->isMyItem(THEMES_RIGHTS)) {
 			$key = $album->getTitle();
 			if ($key != $alb) {
@@ -114,7 +116,7 @@ echo "\n" . '<div id="content">';
 	}
 	if (!empty($_REQUEST['themealbum'])) {
 		$alb = sanitize_path($_REQUEST['themealbum']);
-		$album = new Album(NULL, $alb);
+		$album = newAlbum($alb);
 		$albumtitle = $album->getTitle();
 		$themename = $album->getAlbumTheme();
 		$current_theme = $themename;
@@ -125,7 +127,7 @@ echo "\n" . '<div id="content">';
 			$themename = $_zp_gallery->getCurrentTheme();
 		} else {
 			$alb = sanitize_path($alb);
-			$album = new Album(NULL, $alb);
+			$album = newAlbum($alb);
 			$albumtitle = $album->getTitle();
 			$themename = $album->getAlbumTheme();
 		}
@@ -256,7 +258,7 @@ foreach($themes as $theme => $themeinfo) {
 				?>
 				<li>
 				<p class="buttons">
-					<a onclick="launchScript('admin-themes.php',['action=settheme','themealbum=<?php echo pathurlencode($alb); ?>','theme=<?php echo $theme; ?>','XSRFToken=<?php echo getXSRFToken('admin-themes')?>']);" title="<?php printf(gettext('Set %s as your theme'),$theme); ?>">
+					<a onclick="launchScript('admin-themes.php',['action=settheme','themealbum=<?php echo pathurlencode($alb); ?>','theme=<?php echo $theme; ?>','XSRFToken=<?php echo getXSRFToken('admin-themes')?>']);">
 						<img src="images/pass.png" alt="" /><?php echo gettext("Activate"); ?>
 					</a>
 				</p>
@@ -268,7 +270,7 @@ foreach($themes as $theme => $themeinfo) {
 					?>
 					<li>
 					<p class="buttons">
-						<a onclick="launchScript('admin-themes.php',['action=settheme','themealbum=<?php echo pathurlencode($alb); ?>','theme=<?php echo $theme; ?>','XSRFToken=<?php echo getXSRFToken('admin-themes')?>']);" title="<?php printf(gettext('Assign %s as your album theme'),$theme); ?>">
+						<a onclick="launchScript('admin-themes.php',['action=settheme','themealbum=<?php echo pathurlencode($alb); ?>','theme=<?php echo $theme; ?>','XSRFToken=<?php echo getXSRFToken('admin-themes')?>']);">
 							<img src="images/pass.png" alt="" /><?php echo gettext("Assign"); ?>
 						</a>
 					</p>
@@ -283,7 +285,7 @@ foreach($themes as $theme => $themeinfo) {
 				?>
 				<li>
 				<p class="buttons">
-					<a onclick="launchScript('admin-themes-editor.php',['theme=<?php echo $theme; ?>']);" title="<?php printf(gettext('Edit %s'),$theme); ?>">
+					<a onclick="launchScript('admin-themes-editor.php',['theme=<?php echo $theme; ?>']);">
 						<img src="images/pencil.png" alt="" /><?php echo gettext("Edit"); ?>
 					</a>
 				</p><br />
@@ -293,7 +295,7 @@ foreach($themes as $theme => $themeinfo) {
 					?>
 					<li>
 					<p class="buttons">
-						<a onclick="launchScript('admin-themes.php',['action=deletetheme','themealbum=<?php echo pathurlencode($alb); ?>','theme=<?php echo $theme; ?>','XSRFToken=<?php echo getXSRFToken('admin-themes')?>']);" title="<?php printf(gettext('Delete this %s'),$theme); ?>">
+						<a onclick="launchScript('admin-themes.php',['action=deletetheme','themealbum=<?php echo pathurlencode($alb); ?>','theme=<?php echo $theme; ?>','XSRFToken=<?php echo getXSRFToken('admin-themes')?>']);">
 							<img src="images/edit-delete.png" alt="" /><?php echo gettext("Delete"); ?>
 						</a>
 					</p>
@@ -304,7 +306,7 @@ foreach($themes as $theme => $themeinfo) {
 				?>
 				<li class="zp_copy_theme">
 				<p class="buttons">
-					<a onclick="copyClick('<?php echo $theme; ?>');" title="<?php printf(gettext('Duplicate %s'), $theme); ?>">
+					<a onclick="copyClick('<?php echo $theme; ?>');">
 						<img src="images/page_white_copy.png" alt="" /><?php echo gettext("Duplicate"); ?>
 					</a>
 				</p>

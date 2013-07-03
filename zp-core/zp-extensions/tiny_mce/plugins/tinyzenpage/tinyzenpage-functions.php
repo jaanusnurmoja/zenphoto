@@ -16,7 +16,7 @@ function printFullAlbumsList() {
 	global $_zp_gallery;
 	$albumlist = $_zp_gallery->getAlbums();
 	foreach($albumlist as $album) {
-		$albumobj = new Album(NULL, $album);
+		$albumobj = newAlbum($album);
 		if ($albumobj->isMyItem(LIST_RIGHTS)) {
 			echo "<option value='".pathurlencode($albumobj->name)."'>".html_encode($albumobj->getTitle()).unpublishedZenphotoItemCheck($albumobj)." (".$albumobj->getNumImages().")</option>";
 			if (!$albumobj->isDynamic()) {
@@ -35,7 +35,7 @@ function printSubLevelAlbums(&$albumobj) {
 	global $_zp_gallery;
 	$albumlist = $albumobj->getAlbums();
 	foreach($albumlist as $album) {
-		$subalbumobj = new Album(NULL,$album);
+		$subalbumobj = newAlbum($album);
 		$subalbumname = $subalbumobj->name;
 		$level = substr_count($subalbumname,"/");
 		$arrow = "";
@@ -100,7 +100,7 @@ function printImageslist($number) {
 	if(isset($_GET['album']) AND !empty($_GET['album'])) {
 
 		$album = urldecode(sanitize($_GET['album']));
-		$albumobj = new Album(NULL,$album);
+		$albumobj = newAlbum($album);
 		echo "<h3>".gettext("Album:")." <em>".html_encode($albumobj->getTitle()).unpublishedZenphotoItemCheck($albumobj,false)."</em> / ".gettext("Album folder:")." <em>".html_encode($albumobj->name)."</em><br /><small>".gettext("(Click on image to include)")."</small></h3>";
 
 		$images_per_page = $number;
@@ -125,13 +125,15 @@ function printImageslist($number) {
 			// Not a pure image
 			$backgroundcss = 'albumthumb-image';
 			$imgurl = $albumthumb->getThumb();
+			$itemid = $albumthumb->getID();
 		} else {
 			$backgroundcss = 'albumthumb-other';
 			$imgurl = getImageProcessorURI($args, $albumthumbalbum->name, $albumthumb->filename);
+			$itemid = $albumthumb->getID();
 		}
 		$imgsizeurl = $albumthumb->getCustomImage(85, NULL, NULL, 85, 85, NULL, NULL, TRUE);
 		echo "<div class='thumb'>";
-		echo "<a href=\"javascript: ZenpageDialog.insert('".$imgurl."','".
+		echo "<a href=\"javascript: ZenpageDialog.insert('".$itemid."','".$imgurl."','".
 																											$albumobj->getAlbumThumb()."','".
 																											"','".
 																											urlencode($albumthumb->filename)."','".
@@ -147,7 +149,7 @@ function printImageslist($number) {
 																											" title='".html_encode($albumthumb->getTitle())." (".html_encode($albumthumb->filename).")'>
 																											<img src='".$imgsizeurl."' class='".$backgroundcss."' /></a>\n";
 
-		echo "<a href='zoom.php?image=".urlencode($albumthumb->filename)."&amp;album=".pathurlencode($albumthumbalbum->name).
+		echo "<a href='../../../../../..".html_encode($albumthumb->getImageLink()).
 																											"' title='Zoom' rel='colorbox' style='outline: none;'><img src='img/magnify.png' alt='' style='border: 0' /></a> ".
 																											gettext('<em>Albumthumb</em>').unpublishedZenphotoItemCheck($albumthumb,false);
 		echo "</div>";
@@ -164,7 +166,7 @@ function printImageslist($number) {
 					break;
 				}
 				if($albumobj->isDynamic()) {
-					$linkalbumobj = new Album(NULL,$images[$nr]['folder']);
+					$linkalbumobj = newAlbum($images[$nr]['folder']);
 					$imageobj = newImage($linkalbumobj,$images[$nr]['filename']);
 				} else {
 					$linkalbumobj = $albumobj;
@@ -184,38 +186,32 @@ function printImageslist($number) {
 						$imgurl = getImageProcessorURI($args, $linkalbumobj->name, $imageobj->filename);
 						$sizedimage = $imageobj->getSizedImage(getOption('image_size'));
 						$sizedimage = '<img src="'.$sizedimage.'" alt="'.$imageobj->getTitle().'" class="zenpage_sizedimage" />';
+						$itemid = '';
 						break;
 					case 'textobject':
-						if (is_null($imageobj->objectsThumb)) {
-							$filename = makeSpecialImageName($imageobj->getThumbImageFile());
-						} else {
-							$filename = $imageobj->objectsThumb;
-						}
 						$sizedimage = $imageobj->getSizedImage(getOption('image_size'));
 						$sizedimage = str_replace('class="textobject"', 'class="textobject zenpage_sizedimage"', $sizedimage);
 						$imgurl = getImageProcessorURI($args, $linkalbumobj->name, $imageobj->filename);
 						$backgroundcss = 'thumb-textobject';
+						$itemid = '';
 						break;
 					case 'video':
 					case 'audio':
 						$sizedimage = $imageobj->getThumb();
 						$sizedimage = str_replace('class="flowplayer"', 'class="flowplayer zenpage_sizedimage"', $sizedimage);
-						if (is_null($imageobj->objectsThumb)) {
-							$filename = makeSpecialImageName($imageobj->getThumbImageFile());
-						} else {
-							$filename = $imageobj->objectsThumb;
-						}
 						$imgurl = getImageProcessorURI($args, $linkalbumobj->name, $imageobj->filename);
 						$backgroundcss = 'thumb-multimedia';
+						$itemid = $imageobj->getID();
 						break;
 					default:
 						$sizedimage = $imageobj->getSizedImage(getOption('image_size'));
 						$backgroundcss = 'thumb-default';
+						$itemid = '';
 						break;
 				}
 				$imgsizeurl = $imageobj->getCustomImage(85, NULL, NULL, 85, 85, NULL, NULL, TRUE);
 				echo "<div class='thumb'>\n";
-				echo "<a href=\"javascript:ZenpageDialog.insert('".$imgurl."','".
+				echo "<a href=\"javascript:ZenpageDialog.insert('".$itemid."','".$imgurl."','".
 																												$thumburl."','".
 																												html_encode($sizedimage)."','".
 																												urlencode($imageobj->filename)."','".
@@ -230,7 +226,7 @@ function printImageslist($number) {
 																												'".html_encode(addslashes($albumdesc))."');\"".
 																												" title='".html_encode($imageobj->getTitle())." (".html_encode($imageobj->filename).")'>
 																												<img src='".$imgsizeurl."' class='".$backgroundcss."' /></a>\n";
-				echo "<a href='zoom.php?image=".urlencode($imageobj->filename)."&amp;album=".pathurlencode($linkalbumobj->name).
+				echo "<a href='../../../../../..".html_encode($imageobj->getImageLink()).
 																												"' title='Zoom' rel='colorbox' style='outline: none;'><img src='img/magnify.png' alt='' style='border: 0' /></a> ".
 																												html_encode(shortentitle($imageobj->getTitle(),8)).unpublishedZenphotoItemCheck($imageobj,false);
 				echo "</div>\n";
@@ -263,25 +259,21 @@ function getImageType($imageobj) {
 	$imageType = strtolower(get_class($imageobj));
 	switch ($imageType) {
 		case 'video':
-			if(getOption('zp_plugin_flowplayer3')) {
-				$imagesuffix = getSuffix($imageobj->filename);
-				switch($imagesuffix) {
-					case 'flv':
-					case 'mp4':
-					case 'm4v':
-						$imageType = 'video';
-						break;
-					case 'mp3':
-					case 'fla':
-					case 'm4a':
-						$imageType = 'audio';
-						break;
-				}
-			} else {
-				$imageType = 'other';
-			}
+			$imagesuffix = getSuffix($imageobj->filename);
+			switch($imagesuffix) {
+				case 'flv':
+				case 'mp4':
+				case 'm4v':
+					$imageType = 'video';
+					break;
+				case 'mp3':
+				case 'fla':
+				case 'm4a':
+					$imageType = 'audio';
+					break;
+			} 
 			break;
-		case '_image':
+		case 'image':
 			$imageType = '';
 			break;
 		default:
@@ -339,7 +331,7 @@ function printNewsArticlesList($number) {
 				$count++;
 				echo "<li>";
 				if($_GET['zenpage'] == "articles") {
-					echo "<a href=\"javascript:ZenpageDialog.insert('news/".$newsobj->getTitlelink()."','','','".$newsobj->getTitlelink()."','".html_encode($newsobj->getTitle())."','','','articles','','','','');\" title='".html_encode(truncate_string(strip_tags($newsobj->getContent()),300))."'>".html_encode($newsobj->getTitle()).unpublishedZenpageItemCheck($newsobj)."</a> <small><em>".$newsobj->getDatetime()."</em></small>";
+					echo "<a href=\"javascript:ZenpageDialog.insert('','news/".$newsobj->getTitlelink()."','','','".$newsobj->getTitlelink()."','".html_encode($newsobj->getTitle())."','','','articles','','','','');\" title='".html_encode(truncate_string(strip_tags($newsobj->getContent()),300))."'>".html_encode($newsobj->getTitle()).unpublishedZenpageItemCheck($newsobj)."</a> <small><em>".$newsobj->getDatetime()."</em></small>";
 					echo " <a href='zoom.php?news=".urlencode($newsobj->getTitlelink())."' title='Zoom' class='colorbox' style='outline: none;'><img src='img/magnify.png' alt='' style='border: 0' /></a><br />";
 					echo '<small><em>'.gettext('Categories:');
 					$cats = $newsobj->getCategories();
@@ -378,7 +370,7 @@ function checkAlbumForImages() {
 		if($album == 'gallery') {
 			return FALSE;
 		}
-		$albumobj = new Album(NULL,$album);
+		$albumobj = newAlbum($album);
 		if($albumobj->getNumImages() != 0) {
 			return TRUE;
 		} else {
@@ -509,7 +501,7 @@ function printAllNestedList() {
 				case 'pages':
 					$obj = new ZenpagePage($item['titlelink']);
 					$itemcontent = truncate_string(strip_tags($obj->getContent()),300);
-					$zenpagepage = 'pages/'.$item['titlelink'];
+					$zenpagepage = _PAGES_.'/'.$item['titlelink'];
 					$unpublished = unpublishedZenpageItemCheck($obj);
 					$counter = '';
 					break;
@@ -553,7 +545,7 @@ function printAllNestedList() {
 				$open[$indent]--;
 			}
 			echo "<li id='".$itemid."' class='itemborder'>";
-			echo "<a href=\"javascript:ZenpageDialog.insert('".$zenpagepage."','','','".$itemtitlelink."','".html_encode($itemtitle)."','','','".$mode."','','','','');\" title='".html_encode($itemcontent)."'>".html_encode($itemtitle).$unpublished.$counter."</a> <small><em>".$obj->getDatetime()."</em></small>";
+			echo "<a href=\"javascript:ZenpageDialog.insert('','".$zenpagepage."','','','".$itemtitlelink."','".html_encode($itemtitle)."','','','".$mode."','','','','');\" title='".html_encode($itemcontent)."'>".html_encode($itemtitle).$unpublished.$counter."</a> <small><em>".$obj->getDatetime()."</em></small>";
 			if($mode == 'pages') {
 				echo " <a href='zoom.php?pages=".urlencode($itemtitlelink)."' title='Zoom' class='colorbox' style='outline: none;'><img src='img/magnify.png' alt='' style='border: 0' /></a>";
 			}

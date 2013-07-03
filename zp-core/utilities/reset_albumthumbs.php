@@ -79,7 +79,7 @@ if (db_connect($_zp_conf_vars)) {
 	<form name="set_random" action="">
 		<?php XSRFToken('reset_thumbs')?>
 				<div class="buttons pad_button" id="set_all">
-					<button class="fixedwidth tooltip" type="submit"
+					<button class="fixedwidth" type="submit"
 						title="<?php echo gettext("Sets all album thumbs to the selected criteria"); ?>">
 						<img src="<?php echo $webpath; ?>images/burst.png" alt="" />
 						 <?php echo gettext("Set all albums to"); ?>
@@ -90,9 +90,9 @@ if (db_connect($_zp_conf_vars)) {
 						?>
 					</select>
 				</div>
-				<br clear="all" /> <br clear="all" />
+				<br class="clearall" /> <br />
 			</form>
-			<br clear="all" /> <br clear="all" />
+			<br class="clearall" /> <br />
 	<?php
 } else {
 	echo "<h3>".gettext("database not connected")."</h3>";

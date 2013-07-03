@@ -38,15 +38,6 @@ $_zp_graphics_optionhandlers += array('lib_Imagick_Options' => new lib_Imagick_O
  */
 class lib_Imagick_Options {
 	function __construct() {
-		global $_zp_imagick_present;
-
-		$this->defaultFontSize = 18;
-
-		setOptionDefault('magick_font_size', $this->defaultFontSize);
-
-		if (!sanitize_numeric(getOption('magick_font_size'))) {
-			setOption('magick_font_size', $this->defaultFontSize);
-		}
 	}
 
 	/**
@@ -68,17 +59,6 @@ class lib_Imagick_Options {
 				'desc' => ($disabled) ? '<p class="notebox">'.$disabled.'</p>' : gettext('Your PHP has support for Imagick. Check this option if you wish to use the Imagick graphics library.')
 			)
 		);
-
-		if (!$disabled && !isset($_zp_graphics_optionhandlers['lib_Gmagick_Options'])) {
-			$imagickOptions += array(
-				gettext('Imagick font size') => array(
-					'key' => 'magick_font_size',
-					'type' => OPTION_TYPE_TEXTBOX,
-					'order' => 3,
-					'desc' => sprintf(gettext('The Imagick font size (in pixels). Default is <strong>%s</strong>.'), $this->defaultFontSize)
-				)
-			);
-		}
 
 		return $imagickOptions;
 	}
@@ -573,14 +553,14 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 	 * @param string $font
 	 * @return ImagickDraw
 	 */
-	function zp_imageLoadFont($font = NULL) {
+	function zp_imageLoadFont($font = NULL, $size = 18) {
 		$draw = new ImagickDraw();
 
 		if (!empty($font)) {
 			$draw->setFont($font);
 		}
 
-		$draw->setFontSize(getOption('magick_font_size'));
+		$draw->setFontSize($size);
 
 		return $draw;
 	}

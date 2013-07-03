@@ -53,7 +53,6 @@
  */
 $plugin_is_filter = 5|ADMIN_PLUGIN;
 $plugin_description = gettext("Provides cache management utilities for Image, HTML, and RSS caches.");
-$plugin_notice = gettext('<strong>NOTE</strong>: The image caching process requires that your WEB browser <em>fetch</em> each image size. For a full gallery cache this may exceed the capacity of your server and not complete.');
 $plugin_author = "Stephen Billard (sbillard)";
 
 $option_interface = 'cacheManager';
@@ -284,8 +283,12 @@ class cacheManager {
 	 */
 	static function published($obj) {
 		if (getOption('cacheManager_'.$obj->table)) {
-			require_once (SERVERPATH.'/'.ZENFOLDER.'/class-rss.php');
-			//TODO: there should be a finer purging for RSS
+			//	TODO: clear other feed caches?
+			if (class_exists('RSS')) {
+				$RSS = new RSS();
+			} else {
+				$RSS = NULL;
+			}
 			if (class_exists('static_html_cache')) {
 				static_html_cache::clearHTMLCache('index');
 			}
@@ -294,25 +297,25 @@ class cacheManager {
 					if (class_exists('static_html_cache')) {
 						static_html_cache::clearHTMLCache();
 					}
-					RSS::clearRSSCache();
+					if ($RSS) $RSS->clearCache();
 					break;
 				case 'news':
 					if (class_exists('static_html_cache')) {
 						static_html_cache::clearHTMLCache();
 					}
-					RSS::clearRSSCache();
+					if ($RSS) $RSS->clearCache();
 					break;
 				case 'albums':
 					if (class_exists('static_html_cache')) {
 						static_html_cache::clearHTMLCache();
 					}
-					RSS::clearRSSCache();
+					if ($RSS) $RSS->clearCache();
 					break;
 				case 'images':
 					if (class_exists('static_html_cache')) {
 						static_html_cache::clearHTMLCache();
 					}
-					RSS::clearRSSCache();
+					if ($RSS) $RSS->clearCache();
 					break;
 			}
 		}
@@ -340,19 +343,21 @@ class cacheManager {
 									'rights'=>ADMIN_RIGHTS,
 									'title'=>$title
 									);
-		$buttons[] = array(
+		if (class_exists('RSS')) {
+			$buttons[] = array(
 									'XSRFTag'=>'clear_cache',
 									'category'=>gettext('Cache'),
 									'enable'=>true,
-									'button_text'=>gettext('Purge RSS cache'),
-									'formname'=>'purge_rss_cache.php',
-									'action'=>WEBPATH.'/'.ZENFOLDER.'/admin.php?action=clear_rss_cache',
-									'icon'=>'images/edit-delete.png',
-									'alt'=>'',
-									'title'=>gettext('Delete all files from the RSS cache'),
-									'hidden'=>'<input type="hidden" name="action" value="clear_rss_cache" />',
-									'rights'=> ADMIN_RIGHTS
-									);
+										'button_text'=>gettext('Purge RSS cache'),
+										'formname'=>'purge_rss_cache.php',
+										'action'=>WEBPATH.'/'.ZENFOLDER.'/admin.php?action=clear_rss_cache',
+										'icon'=>'images/edit-delete.png',
+										'alt'=>'',
+										'title'=>gettext('Delete all files from the RSS cache'),
+										'hidden'=>'<input type="hidden" name="action" value="clear_rss_cache" />',
+										'rights'=> ADMIN_RIGHTS
+										);
+		}
 		$buttons[] = array(
 									'XSRFTag'=>'clear_cache',
 									'category'=>gettext('Cache'),
@@ -391,7 +396,7 @@ class cacheManager {
 			$disable = ' disabled="disabled"';
 			$title = gettext("You must first set the plugin's options for cached image parameters.");
 		}
-		$html .= '<div class="button buttons tooltip" title="'.$title.'"><a href="'.WEBPATH.'/'.ZENFOLDER.'/'.PLUGIN_FOLDER.'/cacheManager/cacheImages.php?album='.html_encode($object->name).'&amp;XSRFToken='.getXSRFToken('cacheImages').'"'.$disable.'><img src="images/cache.png" />'.gettext('Cache album images').'</a><br clear="all" /></div>';
+		$html .= '<div class="button buttons tooltip" title="'.$title.'"><a href="'.WEBPATH.'/'.ZENFOLDER.'/'.PLUGIN_FOLDER.'/cacheManager/cacheImages.php?album='.html_encode($object->name).'&amp;XSRFToken='.getXSRFToken('cacheImages').'"'.$disable.'><img src="images/cache.png" />'.gettext('Cache album images').'</a><br class="clearall" /></div>';
 		return $html;
 	}
 

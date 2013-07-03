@@ -18,8 +18,9 @@ if (empty($matches)) {
 }
 
 define('SETUPLOG',$serverpath.'/'.DATA_FOLDER . '/setup.log');
-define('CONFIGFILE',$serverpath.'/'.DATA_FOLDER.'/zenphoto.cfg');
 if (!defined('SERVERPATH')) define('SERVERPATH',$serverpath);
+
+require_once(dirname(dirname(__FILE__)).'/functions-config.php');
 
 /**
  *
@@ -234,7 +235,7 @@ function folderCheck($which, $path, $class, $subfolders, $recurse, $chmod, $upda
 								type: 'POST',
 								cache: false,
 								url: '<?php echo WEBPATH.'/'.ZENFOLDER; ?>/setup/setup_permissions_changer.php',
-								data: 'folder=<?php echo $path; ?>&key=<?php echo sha1(filemtime(CONFIGFILE).file_get_contents(CONFIGFILE)); ?>'
+								data: 'folder=<?php echo $path; ?>&key=<?php echo sha1(filemtime(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE).file_get_contents(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE)); ?>'
 							});
 							// ]]> -->
 						</script>
@@ -374,7 +375,7 @@ function permissionsSelector($permission_names, $select) {
 		$c++;
 	}
 	$selector .= '</select>';
-	$selector .= '<span class="buttons" style="float: right;"><button type="submit" alt="'.gettext('change the definition').'"><strong>'.gettext('apply').'</strong></button></span><br clear="all" />';
+	$selector .= '<span class="buttons" style="float: right;"><button type="submit" alt="'.gettext('change the definition').'"><strong>'.gettext('apply').'</strong></button></span><br class="clearall" />';
 	return $selector;
 }
 
@@ -396,25 +397,6 @@ function setupLog($message, $anyway=false, $reset=false) {
 	}
 }
 
-/*
- * updates database config parameters
- */
-function updateConfigItem($item, $value, $quote=true) {
-	global $zp_cfg;
-	if ($quote) {
-		$value = '"'.$value.'"';
-	}
-	$i = strpos($zp_cfg, $item);
-	if ($i === false) {
-		$i = strpos($zp_cfg, '/** Do not edit below this line. **/');
-		$zp_cfg = substr($zp_cfg, 0, $i)."\$conf['".$item."'] = ".$value.";\n".substr($zp_cfg,$i);
-	} else {
-		$i = strpos($zp_cfg, '=', $i);
-		$j = strpos($zp_cfg, "\n", $i);
-		$zp_cfg = substr($zp_cfg, 0, $i) . '= ' . $value . ';' . substr($zp_cfg, $j);
-	}
-}
-
 /**
  *
  * Checks for bad parentIDs from old move/copy bug
@@ -423,7 +405,7 @@ function updateConfigItem($item, $value, $quote=true) {
  */
 function checkAlbumParentid($albumname, $id) {
 	Global $_zp_gallery;
-	$album = new Album(NULL, $albumname);
+	$album = newAlbum($albumname);
 	$oldid = $album->getParentID();
 	if ($oldid != $id) {
 		$album->set('parentid', $id);
@@ -442,22 +424,6 @@ function checkAlbumParentid($albumname, $id) {
 		}
 	}
 }
-
-/**
- * helper delete function for setup files.
- *
- * @param string $component
- */
-function setupDeleteComponent($rslt, $component) {
-	if ($rslt) {
-		setupLog(sprintf(gettext('%s deleted.'),$component),true);
-		return true;
-	} else {
-		setupLog(sprintf(gettext('failed to delete %s.'),$component),true);
-		return false;
-	}
-}
-
 
 function setupLanguageSelector() {
 	global $xsrftoken;
@@ -568,7 +534,7 @@ function checkPermissions($actual, $expected) {
 	if (isWin()) {
 		return ($actual & 0700) == ($expected & 0700);	//	with windows owner==group==public
 	} else {
-		return ($actual & 0770) == ($expected & 0770);	//	We do not care about the public permissions
+		return ($actual & 0770) == ($expected & 0770);	//	We do not care about the execute permissions
 	}
 }
 
@@ -597,16 +563,16 @@ function close_site($nht) {
 
 function acknowledge($value) {
 	global $xsrftoken, $_zp_conf_vars;
-	$link = WEBPATH.'/'.ZENFOLDER.'/setup/index.php?security_ack='.(@$_zp_conf_vars['security_ack'] | $value).'&amp;xsrfToken='.$xsrftoken;
+	$link = WEBPATH.'/'.ZENFOLDER.'/setup/index.php?security_ack='.((isset($_zp_conf_vars['security_ack'])?$_zp_conf_vars['security_ack']:NULL) | $value).'&amp;xsrfToken='.$xsrftoken;
 	return sprintf(gettext('Click <a href="%s">here</a> to acknowledge that you wish to ignore this issue. It will then become a warning.'), $link);
 }
 
 function configMod() {
-	$mod = 0660;
+	$mod = 0600;
 	$str = '';
 	while (empty($str)) {
-		@chmod(CONFIGFILE, $mod);
-		$str = @file_get_contents(CONFIGFILE);
+		@chmod(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE, $mod);
+		$str = @file_get_contents(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE);
 		if ($mod == 0666) {
 			break;
 		}
@@ -629,11 +595,12 @@ function setupUserAuthorized() {
 	}
 }
 
-function updateConfigFile($zp_cfg) {
+function updateConfigfile($zp_cfg) {
 	global $xsrftoken;
-	@chmod(CONFIGFILE, 0666);
-	if (is_writeable(CONFIGFILE)) {
-		if ($handle = fopen(CONFIGFILE, 'w')) {
+	@chmod(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE, 0666);
+	if (is_writeable(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE)) {
+		@rename(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE,SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE.'.bak');
+		if ($handle = fopen(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE, 'w')) {
 			if (fwrite($handle, $zp_cfg)) {
 				setupLog(gettext("Updated configuration file"));
 				$base = true;
@@ -643,7 +610,6 @@ function updateConfigFile($zp_cfg) {
 		clearstatcache();
 	}
 	$str = configMod();
-	$xsrftoken = sha1(CONFIGFILE.$str.session_id());
+	$xsrftoken = sha1(SERVERPATH.'/'.DATA_FOLDER.'/'.CONFIGFILE.$str.session_id());
 }
-
 ?>
