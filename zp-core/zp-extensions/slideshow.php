@@ -187,8 +187,6 @@ class slideshow {
 		// jQuery Cycle slideshow config
 		// get slideshow data
 
-		if ($shuffle)
-			shuffle($images);
 		$showdesc = getOption("slideshow_showdesc");
 		// slideshow display section
 		$validtypes = array('jpg', 'jpeg', 'gif', 'png', 'mov', '3gp');
@@ -205,6 +203,9 @@ class slideshow {
 				var DynTime=(' . (int) getOption("slideshow_timeout") . ');
 				';
 		$images = $albumobj->getImages(0);
+		if ($shuffle) {
+			shuffle($images);
+		}
 		for ($imgnr = 0, $cntr = 0, $idx = $imagenumber; $imgnr < $numberofimages; $imgnr++, $idx++) {
 			if (is_array($images[$idx])) {
 				$filename = $images[$idx]['filename'];
@@ -267,9 +268,9 @@ class slideshow {
 		';
 		if ($linkslides) {
 			if (MOD_REWRITE) {
-				$slideshow .= 'htmlblock += "<a href=\"' . pathurlencode($album->name) . '/"+ImageNameList[currentImageNum]+"' . getOption('mod_rewrite_image_suffix') . '\">";';
+				$slideshow .= 'htmlblock += "<a href=\"' . pathurlencode($albumobj->name) . '/"+ImageNameList[currentImageNum]+"' . getOption('mod_rewrite_image_suffix') . '\">";';
 			} else {
-				$slideshow .= 'htmlblock += "<a href=\"index.php?album=' . pathurlencode($album->name) . '&image="+ImageNameList[currentImageNum]+"\">";';
+				$slideshow .= 'htmlblock += "<a href=\"index.php?album=' . pathurlencode($albumobj->name) . '&image="+ImageNameList[currentImageNum]+"\">";';
 			}
 		}
 		$slideshow .= ' htmlblock += "<img src=\"" + ImageList[currentImageNum] + "\"/>";';
@@ -418,7 +419,7 @@ class slideshow {
 						getMaxSpaceContainer($maxwidth, $maxheight, $image);
 						$img = $image->getCustomImage(NULL, $maxwidth, $maxheight, NULL, NULL, NULL, NULL, NULL, NULL);
 					}
-					$slideshow .= '<img src="' . html_encode($img) . '" alt="" />';
+					$slideshow .= '<img src="' . html_encode(pathurlencode($img)) . '" alt="" />';
 					if ($linkslides)
 						$slideshow .= '</a>';
 				}
@@ -740,7 +741,7 @@ function printSlideShow($heading = true, $speedctl = false, $albumobj = NULL, $i
 		$returnpath = getSearchURL($searchwords, $searchdate, $searchfields, $page);
 		$albumobj = new AlbumBase(NULL, false);
 		$albumobj->setTitle(gettext('Search'));
-		$albumobj->images = $search->getImage(0);
+		$albumobj->images = $search->getImages(0);
 	} else {
 		if (isset($_POST['favorites_page'])) {
 			$albumobj = $_myFavorites;

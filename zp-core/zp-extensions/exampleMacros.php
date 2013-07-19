@@ -1,6 +1,10 @@
 <?php
 /*
  * Declares example macros
+ *
+ * @package plugins
+ * @subpackage development
+
  */
 $plugin_is_filter = 5 | THEME_PLUGIN | ADMIN_PLUGIN;
 $plugin_description = gettext("Adds example macros.");
@@ -28,6 +32,11 @@ class exampleMacros {
 										'value'	 => ZENPHOTO_VERSION,
 										'owner'	 => 'exampleMacros',
 										'desc'	 => gettext('Prints the version of the Zenphoto installation.')),
+						'CURRENT_SCRIPT'	 => array('class'	 => 'expression',
+										'params' => array(),
+										'value'	 => '"current script: ".stripSuffix($GLOBALS["_zp_gallery_page"]);',
+										'owner'	 => 'exampleMacros',
+										'desc'	 => gettext('An example of how to reference global variables. In this case to dump the current gallery page variable.')),
 						'PARAM_DUMP'			 => array('class'	 => 'procedure',
 										'params' => array('array'),
 										'value'	 => 'exampleMacros::arrayTest',

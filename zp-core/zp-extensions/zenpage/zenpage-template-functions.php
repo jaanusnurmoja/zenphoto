@@ -492,7 +492,7 @@ function getNewsContent($shorten = false, $shortenindicator = NULL, $readmore = 
 								$imagesource = $_zp_current_zenpage_news->getFullImage();
 								break;
 						}
-						$articlecontent .= '<img src="' . pathurlencode($imagesource) . '" alt="' . html_encode($_zp_current_zenpage_news->getTitle()) . '" />';
+						$articlecontent .= '<img src="' . html_encode(pathurlencode($imagesource)) . '" alt="' . html_encode($_zp_current_zenpage_news->getTitle()) . '" />';
 						$articlecontent .= '</a>';
 					} else if (isImageVideo($_zp_current_zenpage_news)) {
 						$articlecontent .= $_zp_current_zenpage_news->getSizedImage($size);
@@ -584,11 +584,11 @@ function getNewsContent($shorten = false, $shortenindicator = NULL, $readmore = 
 								if (getOption('combinews-latestimagesbyalbum-imgtitle'))
 									$headline = '<h4>' . html_encode($imageobj->getTitle()) . '</h4>';
 								if (isImagePhoto($imageobj)) {
-									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . pathurlencode($imageobj->getCustomImage(NULL, $width, $height, $cropwidth, $cropheight, $cropx, $cropy)) . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
+									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . html_encode(pathurlencode($imageobj->getCustomImage(NULL, $width, $height, $cropwidth, $cropheight, $cropx, $cropy))) . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
 								} else if (isImageVideo($imageobj)) {
 									$articlecontent .= getNewsVideoContent($imageobj) . $imagedesc;
 								} else {
-									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . pathurlencode($imageobj->getCustomImage(NULL, $width, $height, $cropwidth, $cropheight, $cropx, $cropy, true)) . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
+									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . html_encode(pathurlencode($imageobj->getCustomImage(NULL, $width, $height, $cropwidth, $cropheight, $cropx, $cropy, true))) . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
 								}
 								break;
 							case 'latestimagesbyalbum-sizedimage':
@@ -609,11 +609,11 @@ function getNewsContent($shorten = false, $shortenindicator = NULL, $readmore = 
 											$imagesource = pathurlencode($imageobj->getFullImage());
 											break;
 									}
-									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . $imagesource . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
+									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . html_encode($imagesource) . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
 								} else if (isImageVideo($imageobj)) {
 									$articlecontent .= getNewsVideoContent($imageobj) . $headline . $imagedesc;
 								} else {
-									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . pathurlencode($imageobj->getCustomImage($size, NULL, NULL, NULL, NULL, NULL, NULL, true)) . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
+									$articlecontent .= '<a href="' . html_encode($imageobj->getImageLink()) . '" title="' . html_encode($imageobj->getTitle()) . '"><img src="' . html_encode(pathurlencode($imageobj->getCustomImage($size, NULL, NULL, NULL, NULL, NULL, NULL, true))) . '" alt="' . html_encode($imageobj->getTitle()) . '" /></a>' . $headline . $imagedesc;
 								}
 								break;
 						} // switch "latest images by album end"
@@ -1171,11 +1171,11 @@ function getLatestNews($number = 2, $option = 'none', $category = '', $sticky = 
 	$latest = '';
 	switch ($option) {
 		case 'none':
-			if (!empty($category)) {
-				$catobj = new ZenpageCategory($category);
-				$latest = $catobj->getArticles($number, NULL, true, 'date', 'desc', $sticky, $sortdirection);
+			if (empty($category)) {
+				$latest = $_zp_zenpage->getArticles($number, NULL, true, 'date', 'desc', $sortdirection, $sticky);
 			} else {
-				$latest = $_zp_zenpage->getArticles($number, NULL, true, 'date', 'desc', $sticky, $sortdirection);
+				$catobj = new ZenpageCategory($category);
+				$latest = $catobj->getArticles($number, NULL, true, 'date', 'desc', $sortdirection, $sticky);
 			}
 			$counter = '';
 			$latestnews = array();
@@ -1293,7 +1293,7 @@ function printLatestNews($number = 5, $option = 'with_latest_images', $category 
 				} else {
 					$date = zpFormattedDate(DATE_FORMAT, strtotime($item['date']));
 				}
-				$thumb = "<a href=\"" . $link . "\" title=\"" . html_encode(strip_tags($title)) . "\"><img src=\"" . pathurlencode($obj->getThumb()) . "\" alt=\"" . html_encode(strip_tags($title)) . "\" /></a>\n";
+				$thumb = "<a href=\"" . $link . "\" title=\"" . html_encode(strip_tags($title)) . "\"><img src=\"" . html_encode(pathurlencode($obj->getThumb())) . "\" alt=\"" . html_encode(strip_tags($title)) . "\" /></a>\n";
 				$type = "image";
 				break;
 			case 'albums':
@@ -1301,7 +1301,7 @@ function printLatestNews($number = 5, $option = 'with_latest_images', $category 
 				$title = $obj->getTitle();
 				$categories = "";
 				$link = html_encode($obj->getAlbumLink());
-				$thumb = "<a href=\"" . $link . "\" title=\"" . $title . "\"><img src=\"" . pathurlencode($obj->getAlbumThumb()) . "\" alt=\"" . strip_tags($title) . "\" /></a>\n";
+				$thumb = "<a href=\"" . $link . "\" title=\"" . $title . "\"><img src=\"" . html_encode(pathurlencode($obj->getAlbumThumb())) . "\" alt=\"" . strip_tags($title) . "\" /></a>\n";
 				$content = $obj->getDesc();
 				$date = zpFormattedDate(DATE_FORMAT, strtotime($item['date']));
 				$type = "album";
@@ -2338,10 +2338,10 @@ function next_page($sorttype = NULL, $sortdirection = NULL) {
 	global $_zp_zenpage, $_zp_next_pagelist, $_zp_current_search, $_zp_current_zenpage_page, $_zp_current_page_restore;
 	if (is_null($_zp_next_pagelist)) {
 		if (in_context(ZP_SEARCH)) {
-			$_zp_next_pagelist = $_zp_current_search->getPages(NULL, NULL, $sorttype, $sortdirection);
+			$_zp_next_pagelist = $_zp_current_search->getPages(NULL, false, NULL, $sorttype, $sortdirection);
 		} else if (in_context(ZP_ZENPAGE_PAGE)) {
 			if (!is_null($_zp_current_zenpage_page)) {
-				$_zp_next_pagelist = $_zp_current_zenpage_page->getPages(NULL, NULL, $sorttype, $sortdirection);
+				$_zp_next_pagelist = $_zp_current_zenpage_page->getPages(NULL, false, NULL, $sorttype, $sortdirection);
 			}
 		} else {
 			$_zp_next_pagelist = $_zp_zenpage->getPages(NULL, true, NULL, $sorttype, $sortdirection);

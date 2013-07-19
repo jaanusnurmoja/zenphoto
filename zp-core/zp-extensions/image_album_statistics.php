@@ -205,13 +205,13 @@ function printAlbumStatisticItem($album, $option, $showtitle = false, $showdate 
 	$thumb = newImage($tempalbum, $albumthumb->filename);
 	switch ($crop) {
 		case 0:
-			echo "<img src=\"" . pathurlencode($albumthumb->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE)) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
+			echo "<img src=\"" . html_encode(pathurlencode($albumthumb->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE))) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
 			break;
 		case 1;
-			echo "<img src=\"" . pathurlencode($albumthumb->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE)) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
+			echo "<img src=\"" . html_encode(pathurlencode($albumthumb->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
 			break;
 		case 2:
-			echo "<img src=\"" . pathurlencode($albumthumb->getThumb()) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
+			echo "<img src=\"" . html_encode(pathurlencode($albumthumb->getThumb())) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
 			break;
 	}
 	if ($showtitle) {
@@ -522,20 +522,20 @@ function printImageStatistic($number, $option, $albumfolder = '', $showtitle = f
 		} else {
 			$imagelink = $image->getImageLink();
 		}
-		echo "<li><a href=\"" . html_encode($imagelink) . "\" title=\"" . html_encode($image->getTitle()) . "\">\n";
+		echo '<li><a href="' . html_encode($imagelink) . '" title="' . html_encode($image->getTitle()) . "\">\n";
 		switch ($crop) {
 			case 0:
-				echo "<img src=\"" . pathurlencode($image->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE)) . "\" alt=\"" . html_encode($image->getTitle()) . "\" /></a>\n";
+				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE))) . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n";
 				break;
 			case 1:
-				echo "<img src=\"" . pathurlencode($image->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE)) . "\" alt=\"" . html_encode($image->getTitle()) . "\" /></a>\n";
+				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n";
 				break;
 			case 2:
-				echo "<img src=\"" . pathurlencode($image->getThumb()) . "\" alt=\"" . html_encode($image->getTitle()) . "\" /></a>\n<br />";
+				echo '<img src="' . html_encode(pathurlencode($image->getThumb())) . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n<br />";
 				break;
 		}
 		if ($showtitle) {
-			echo "<h3><a href=\"" . pathurlencode($image->getImageLink()) . "\" title=\"" . html_encode($image->getTitle()) . "\">\n";
+			echo '<h3><a href="' . html_encode(pathurlencode($image->getImageLink())) . '" title="' . html_encode($image->getTitle()) . "\">\n";
 			echo $image->getTitle() . "</a></h3>\n";
 		}
 		if ($showdate) {

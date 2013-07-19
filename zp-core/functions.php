@@ -648,6 +648,23 @@ function getEnabledPlugins() {
 }
 
 /**
+ * Returns if a plugin is enabled
+ * @param string $extension
+ * @return bool
+ */
+function extensionEnabled($extension) {
+	return getOption('zp_plugin_' . $extension);
+}
+
+/**
+ * Enables a plugin
+ * @param string $extension
+ */
+function enableExtension($extension) {
+	setOption('zp_plugin_' . $extension, 1);
+}
+
+/**
  * Gets an array of comments for the current admin
  *
  * @param int $number how many comments desired
@@ -2219,15 +2236,25 @@ function applyMacros($text) {
 				case 'expression':
 					$expression = '$data = ' . $macro['value'];
 					$parms = array_reverse($parms, true);
-					foreach ($parms as $key => $value) {
-						$key++;
-						$expression = preg_replace('/\$' . $key . '/', db_quote($value), $expression);
+					preg_match_all('/\$\d+/', $macro['value'], $replacements);
+					foreach ($replacements as $rkey => $v) {
+						if (empty($v))
+							unset($replacements[$rkey]);
 					}
-					eval($expression);
-					if (!isset($data) || is_null($data)) {
-						$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> retuned no data'), trim($macro_instance, '[]')) . '</span>';
+					if (count($parms) == count($replacements)) {
+
+						foreach ($parms as $key => $value) {
+							$key++;
+							$expression = preg_replace('/\$' . $key . '/', db_quote($value), $expression);
+						}
+						eval($expression);
+						if (!isset($data) || is_null($data)) {
+							$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> retuned no data'), trim($macro_instance, '[]')) . '</span>';
+						} else {
+							$data = "\n<!--Begin " . $macroname . "-->\n" . $data . "\n<!--End " . $macroname . "-->\n";
+						}
 					} else {
-						$data = "\n<!--Begin " . $macroname . "-->\n" . $data . "\n<!--End " . $macroname . "-->\n";
+						$data = '<span class="error">' . sprintf(ngettext('<em>[%1$s]</em> takes %2$d parameter', '<em>[%1$s]</em> takes %2$d parameters', count($replacements)), trim($macro_instance, '[]'), count($replacements)) . '</span>';
 					}
 					break;
 			}

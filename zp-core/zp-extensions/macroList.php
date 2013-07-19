@@ -78,28 +78,45 @@ function macro_admin_tabs($tabs) {
 }
 
 function MacroList_show($macro, $detail) {
+	$warned = array();
 	echo '<dl>';
 	echo "<dt><code>[$macro";
-	$warn = $required = $array = false;
+	$required = $array = false;
+	$warn = array();
+	if ($detail['class'] == 'expression') {
+		preg_match_all('/\$\d+/', $detail['value'], $replacements);
+		foreach ($replacements as $rkey => $v) {
+			if (empty($v))
+				unset($replacements[$rkey]);
+		}
+		if (count($detail['params']) != count($replacements)) {
+			$warn['paremeters'] = gettext('The number of macro parameters must match the number of replacement tokens in the expression.');
+		}
+	}
 	if (!empty($detail['params'])) {
 		$params = '';
 		$brace = '{';
 		for ($i = 1; $i <= count($detail['params']); $i++) {
 			$type = rtrim($rawtype = $detail['params'][$i - 1], '*');
 			if ($array) {
-				$params .= ' <em><span class="error">' . $type . ' %' . $i . '</span></em> ';
-				$warn .= gettext('<strong>Warning:</strong> an array parameter must be the last parameter.');
+				$params .= ' <em><span class="error">' . $type . ' %' . $i . '</span></em>';
+				$warn['array'] = gettext('An array parameter must be the last parameter.');
 			} else if ($type == $rawtype) {
 				if ($required) {
-					$params .= ' <em><span class="error">' . $type . ' %' . $i . '</span></em> ';
-					$warn .= gettext('<strong>Warning:</strong> required parameters should not follow optional ones.');
+					$params .= ' <em><span class="error">' . $type . ' %' . $i . '</span></em>';
+					$warn['required'] = gettext('Required parameters should not follow optional ones.');
 				} else {
-					$params = $params . ' <em>' . $type . '</em> %' . $i;
+					$params = $params . ' <em>' . $type . " %$i</em>";
 				}
 			} else {
-				$params = $params . " <em>$brace" . $type . "</em> %$i";
-				$brace = '';
+				if ($detail['class'] == 'expression') {
+					$params = $params . " <em>$brace" . '<span class="error">' . $type . " %$i</span></em>";
+					$warn['expression'] = gettext('Expressions may not have optional parameters.');
+				} else {
+					$params = $params . " <em>$brace" . $type . " %$i</em>";
+				}
 				$required = true;
+				$brace = '';
 			}
 			$array = $array || $type == 'array';
 		}
@@ -108,8 +125,12 @@ function MacroList_show($macro, $detail) {
 		echo $params;
 	}
 	echo ']</code> <em>(' . @$detail['owner'] . ')</em></dt><dd>' . $detail['desc'] . '</dd>';
-	if ($warn) {
-		echo '<p class="notebox">' . $warn . '</p>';
+	if (count($warn)) {
+		echo '<div class="notebox"><strong>Warning:</strong>';
+		foreach ($warn as $warning) {
+			echo '<p>' . $warning . '</p>';
+		}
+		echo'</div>';
 	}
 	echo '</dl>';
 }
