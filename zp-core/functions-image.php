@@ -89,26 +89,26 @@ function propSizes($size, $width, $height, $w, $h, $thumb, $image_use_side, $dim
 	$wprop = round(($w / $h) * $dim);
 	if ($size) {
 		if ((($thumb || ($image_use_side == 'longest')) && $h > $w) || ($image_use_side == 'height') || ($image_use_side == 'shortest' && $h < $w)) {
-			$newh = $dim;	// height is the size and width is proportional
+			$newh = $dim; // height is the size and width is proportional
 			$neww = $wprop;
 		} else {
-			$neww = $dim;	// width is the size and height is proportional
+			$neww = $dim; // width is the size and height is proportional
 			$newh = $hprop;
 		}
 	} else { // length and/or width is set, size is NULL (Thumbs work the same as image in this case)
 		if ($height) {
-			$newh = $height;	// height is supplied, use it
+			$newh = $height; // height is supplied, use it
 		} else {
-			$newh = $hprop;	// height not supplied, use the proprotional
+			$newh = $hprop; // height not supplied, use the proprotional
 		}
 		if ($width) {
-			$neww = $width;	 // width is supplied, use it
+			$neww = $width; // width is supplied, use it
 		} else {
-			$neww = $wprop;	 // width is not supplied, use the proportional
+			$neww = $wprop; // width is not supplied, use the proportional
 		}
 	}
 	if (DEBUG_IMAGE)
-		debugLog("propSizes($size, $width, $height, $w, $h, $thumb, $image_use_side, $wprop, $hprop)::\$neww=$neww; \$newh=$newh");
+		debugLog("propSizes(\$size=$size, \$width=$width, \$height=$height, \$w=$w, \$h=$h, \$thumb=$thumb, \$image_use_side=$image_use_side, \$dim=$dim):: \$wprop=$wprop; \$hprop=$hprop; \$neww=$neww; \$newh=$newh");
 	return array($neww, $newh);
 }
 
@@ -215,13 +215,17 @@ function cacheImage($newfilename, $imgfile, $args, $allow_watermark = false, $th
 		$crop = ($crop || $cw != 0 || $ch != 0);
 		if (!empty($size)) {
 			$dim = $size;
-			$width = $height = false;
 			if ($crop) {
 				$dim = $size;
 				if (!$ch)
 					$ch = $size;
 				if (!$cw)
 					$cw = $size;
+				$width = $cw;
+				$height = $ch;
+				$size = false;
+			} else {
+				$width = $height = false;
 			}
 		} else if (!empty($width) && !empty($height)) {
 			$ratio_in = $h / $w;
@@ -435,47 +439,50 @@ function cacheImage($newfilename, $imgfile, $args, $allow_watermark = false, $th
 		// Create the cached file (with lots of compatibility)...
 		@chmod($newfile, 0666);
 		if (zp_imageOutput($newim, getSuffix($newfile), $newfile, $quality)) { //	successful save of cached image
-			if (getOption('ImbedIPTC') && getSuffix($newfilename) == 'jpg') { // the imbed function works only with JPEG images
+			if (getOption('ImbedIPTC') && getSuffix($newfilename) == 'jpg' && GRAPHICS_LIBRARY != 'Imagick') { // the imbed function works only with JPEG images
+				global $_zp_extra_filetypes; //	because we are doing the require in a function!
+				if (!$_zp_extra_filetypes)
+					$_zp_extra_filetypes = array();
+				require_once(dirname(__FILE__) . '/functions.php'); //	it is ok to increase memory footprint now since the image processing is complete
+				$iptc = array(
+								'1#090'	 => chr(0x1b) . chr(0x25) . chr(0x47), //	character set is UTF-8
+								'2#115'	 => $_zp_gallery->getTitle() //	source
+				);
 				$iptc_data = zp_imageIPTC($imgfile);
-				if (empty($iptc_data)) {
-					global $_zp_extra_filetypes; //	because we are doing the require in a function!
-					if (!$_zp_extra_filetypes)
-						$_zp_extra_filetypes = array();
-					require_once(dirname(__FILE__) . '/functions.php'); //	it is ok to increase memory footprint now since the image processing is complete
-					$iptc = array('1#090'	 => chr(0x1b) . chr(0x25) . chr(0x47), //	character set is UTF-8
-									'2#115'	 => $_zp_gallery->getTitle() //	source
-					);
-					$imgfile = str_replace(ALBUM_FOLDER_SERVERPATH, '', $imgfile);
-					$imagename = basename($imgfile);
-					$albumname = dirname($imgfile);
-					$image = newImage(newAlbum($albumname), $imagename);
-					$copyright = $image->getCopyright();
-					if (empty($copyright)) {
-						$copyright = getOption('default_copyright');
-					}
-					if (!empty($copyright)) {
-						$iptc['2#116'] = $copyright;
-					}
-					$credit = $image->getCredit();
-					if (!empty($credit)) {
-						$iptc['2#110'] = $credit;
-					}
-					foreach ($iptc as $tag => $string) {
-						$tag_parts = explode('#', $tag);
-						$iptc_data .= iptc_make_tag($tag_parts[0], $tag_parts[1], $string);
-					}
-				} else {
-					if (GRAPHICS_LIBRARY == 'Imagick') { //	Imagick has preserved the metadata
-						$iptc_data = false;
-					}
-				}
 				if ($iptc_data) {
-					$content = iptcembed($iptc_data, $newfile);
-					$fw = fopen($newfile, 'w');
-					fwrite($fw, $content);
-					fclose($fw);
-					clearstatcache();
+					$iptc = array_merge(iptcparse($iptc_data), $iptc);
 				}
+				$imgfile = str_replace(ALBUM_FOLDER_SERVERPATH, '', $imgfile);
+				$imagename = basename($imgfile);
+				$albumname = dirname($imgfile);
+				$image = newImage(newAlbum($albumname), $imagename);
+				$copyright = $image->getCopyright();
+				if (empty($copyright)) {
+					$copyright = getOption('default_copyright');
+				}
+				if (!empty($copyright)) {
+					$iptc['2#116'] = $copyright;
+				}
+				$credit = $image->getCredit();
+				if (!empty($credit)) {
+					$iptc['2#110'] = $credit;
+				}
+				$iptc_result = '';
+				foreach ($iptc as $tag => $string) {
+					$tag_parts = explode('#', $tag);
+					if (is_array($string)) {
+						foreach ($string as $element) {
+							$iptc_result .= iptc_make_tag($tag_parts[0], $tag_parts[1], $element);
+						}
+					} else {
+						$iptc_result .= iptc_make_tag($tag_parts[0], $tag_parts[1], $string);
+					}
+				}
+				$content = iptcembed($iptc_result, $newfile);
+				$fw = fopen($newfile, 'w');
+				fwrite($fw, $content);
+				fclose($fw);
+				clearstatcache();
 			}
 			@chmod($newfile, FILE_MOD);
 			if (DEBUG_IMAGE)
@@ -517,12 +524,12 @@ function getImageRotation($imgfile) {
 		switch ($rotation) {
 			case 1 : return false; // none
 			case 2 : return false; // mirrored
-			case 3 : return 180;	// upside-down (not 180 but close)
-			case 4 : return 180;	// upside-down mirrored
-			case 5 : return 270;	// 90 CW mirrored (not 270 but close)
-			case 6 : return 270;	// 90 CCW
-			case 7 : return 90;	 // 90 CCW mirrored (not 90 but close)
-			case 8 : return 90;	 // 90 CW
+			case 3 : return 180; // upside-down (not 180 but close)
+			case 4 : return 180; // upside-down mirrored
+			case 5 : return 270; // 90 CW mirrored (not 270 but close)
+			case 6 : return 270; // 90 CCW
+			case 7 : return 90; // 90 CCW mirrored (not 90 but close)
+			case 8 : return 90; // 90 CW
 		}
 	}
 	return false;

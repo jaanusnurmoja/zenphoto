@@ -4,6 +4,10 @@
 zp_register_filter('themeSwitcher_head', 'switcher_head');
 zp_register_filter('themeSwitcher_Controllink', 'switcher_controllink');
 zp_register_filter('theme_head', 'EF_head', 0);
+zp_register_filter('load_theme_script', 'fourOhFour');
+
+define('ALBUM_THMB_WIDTH', 170);
+define('ALBUM_THUMB_HEIGHT', 80);
 
 $cwd = getcwd();
 chdir(dirname(__FILE__));
@@ -28,6 +32,41 @@ foreach ($filelist as $file) {
 	$themecolors[basename($file)] = stripSuffix(filesystemToInternal($file));
 }
 chdir($cwd);
+
+if (!OFFSET_PATH) {
+	if (extensionEnabled('themeSwitcher')) {
+		$themeColor = getOption('themeSwitcher_effervescence_color');
+		if (isset($_GET['themeColor'])) {
+			$new = $_GET['themeColor'];
+			if (in_array($new, $themecolors)) {
+				setOption('themeSwitcher_effervescence_color', $new);
+				$themeColor = $new;
+			}
+		}
+		if (!$themeColor) {
+			list($personality, $themeColor) = getPersonality();
+		}
+
+		$personality = getOption('themeSwitcher_effervescence_personality');
+		if (isset($_GET['themePersonality'])) {
+			$new = $_GET['themePersonality'];
+			if (in_array($new, $personalities)) {
+				setOption('themeSwitcher_effervescence_personality', $new);
+				$personality = $new;
+			}
+		}
+		if ($personality) {
+			setOption('effervescence_personality', $personality, false);
+		}
+	}
+
+	if (($_ef_menu = getOption('effervescence_menu')) == 'effervescence' || $_ef_menu == 'zenpage') {
+		enableExtension('print_album_menu', 1 | THEME_PLUGIN, false);
+	}
+	require_once(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/' . $personality . '/functions.php');
+	$_oneImagePage = $handler->onePage();
+	$_zp_page_check = 'my_checkPageValidity';
+}
 
 function EF_head($ignore) {
 	global $themeColor;
@@ -62,30 +101,6 @@ function EF_head($ignore) {
 }
 
 function switcher_head($ignore) {
-	global $personalities, $personality, $themecolors, $themeColor;
-	$themeColor = getOption('themeSwitcher_effervescence_color');
-	if (isset($_GET['themeColor'])) {
-		$new = $_GET['themeColor'];
-		if (in_array($new, $themecolors)) {
-			setOption('themeSwitcher_effervescence_color', $new);
-			$themeColor = $new;
-		}
-	}
-	if (!$themeColor) {
-		list($personality, $themeColor) = getPersonality();
-	}
-
-	$personality = getOption('themeSwitcher_effervescence_personality');
-	if (isset($_GET['themePersonality'])) {
-		$new = $_GET['themePersonality'];
-		if (in_array($new, $personalities)) {
-			setOption('themeSwitcher_effervescence_personality', $new);
-			$personality = $new;
-		}
-	}
-	if ($personality) {
-		setOption('effervescence_personality', $personality, false);
-	}
 	?>
 	<script type="text/javascript">
 		// <!-- <![CDATA[
@@ -477,7 +492,24 @@ function commonComment() {
 	}
 }
 
-if (($_ef_menu = getOption('effervescence_menu')) == 'effervescence' || $_ef_menu == 'zenpage') {
-	enableExtension(')print_album_menu', 1 | THEME_PLUGIN, false);
+function my_checkPageValidity($request, $gallery_page, $page) {
+	switch ($gallery_page) {
+		case 'gallery.php';
+			$gallery_page = 'index.php'; //	same as an album gallery index
+			break;
+		case 'index.php':
+			if (!extensionEnabled('zenpage') || getOption('custom_index_page') == 'gallery') { // only one index page if zenpage plugin is enabled or custom index page is set
+				break;
+			}
+		default:
+			if ($page != 1) {
+				return false;
+			}
+		case 'news.php':
+		case 'album.php':
+		case 'search.php':
+			break;
+	}
+	return checkPageValidity($request, $gallery_page, $page);
 }
 ?>

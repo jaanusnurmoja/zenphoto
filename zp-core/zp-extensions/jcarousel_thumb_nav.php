@@ -75,15 +75,15 @@ class jcarousel {
 		?>
 		<script>
 			(function($) {
-		    var userAgent = navigator.userAgent.toLowerCase();
+				var userAgent = navigator.userAgent.toLowerCase();
 
-		    $.browser = {
-		        version: (userAgent.match( /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/ ) || [0,'0'])[1],
-		        safari: /webkit/.test( userAgent ),
-		        opera: /opera/.test( userAgent ),
-		        msie: /msie/.test( userAgent ) && !/opera/.test( userAgent ),
-		        mozilla: /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent )
-		    };
+				$.browser = {
+						version: (userAgent.match( /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/ ) || [0,'0'])[1],
+						safari: /webkit/.test( userAgent ),
+						opera: /opera/.test( userAgent ),
+						msie: /msie/.test( userAgent ) && !/opera/.test( userAgent ),
+						mozilla: /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent )
+				};
 
 			})(jQuery);
 		</script>
@@ -114,7 +114,7 @@ if (!OFFSET_PATH && getOption('jcarousel_'.$_zp_gallery->getCurrentTheme().'_'.s
 	//	Just incase the theme has not set the option, at least second try will work!
 	setOptionDefault('slideshow_'.$_zp_gallery->getCurrentTheme().'_'.stripSuffix($_zp_gallery_page),1);
 	$items = "";
-	if(is_object($_zp_current_album) && is_object($_zp_current_image) && $_zp_current_album->getNumImages() >= 2) {
+	if(is_object($_zp_current_album) && $_zp_current_album->getNumImages() >= 2) {
 		if(is_null($thumbscroll)) {
 			$thumbscroll = getOption('jcarousel_scroll');
 		} else {
@@ -181,18 +181,22 @@ if (!OFFSET_PATH && getOption('jcarousel_'.$_zp_gallery->getCurrentTheme().'_'.s
 				} else {
 					$link = $imgobj->getImageLink();
 				}
-				if($_zp_current_album->isDynamic()) {
-					if($_zp_current_image->filename == $imgobj->filename && $_zp_current_image->getAlbum()->name == $imgobj->getAlbum()->name) {
-						$active = 'active';
+				if(!is_null($_zp_current_image)) {
+					if($_zp_current_album->isDynamic()) {
+						if($_zp_current_image->filename == $imgobj->filename && $_zp_current_image->getAlbum()->name == $imgobj->getAlbum()->name) {
+							$active = 'active';
+						} else {
+							$active = '';
+						}
 					} else {
-						$active = '';
+						if($_zp_current_image->filename == $imgobj->filename) {
+							$active = 'active';
+						} else {
+							$active = '';
+						}
 					}
 				} else {
-					if($_zp_current_image->filename == $imgobj->filename) {
-						$active = 'active';
-					} else {
-						$active = '';
-					}
+					$active = '';
 				}
 				$imageurl = $imgobj->getCustomImage(NULL, $width, $height, $cropw, $croph, NULL, NULL,true);
 				$items .= ' {url: "'.html_encode($imageurl).'", title: "'.html_encode($imgobj->getTitle()).'", link: "'.html_encode($link).'", active: "'.$active.'"},';
@@ -204,7 +208,7 @@ if (!OFFSET_PATH && getOption('jcarousel_'.$_zp_gallery->getCurrentTheme().'_'.s
 		if(!is_null($_zp_current_image)) {
 			$imgnumber = imageNumber();
 		} else {
-			$imgnumber = "";
+			$imgnumber = 1;
 		}
 		?>
 		<script type="text/javascript">
@@ -223,7 +227,7 @@ if (!OFFSET_PATH && getOption('jcarousel_'.$_zp_gallery->getCurrentTheme().'_'.s
 							}
 							carousel.add(i, mycarousel_getItemHTML(mycarousel_itemList[i-1]));
 					}
-			};
+				}
 
 			function mycarousel_getItemHTML(item) {
 				if(item.active === "") {
@@ -232,7 +236,7 @@ if (!OFFSET_PATH && getOption('jcarousel_'.$_zp_gallery->getCurrentTheme().'_'.s
 					html = '<a href="' + item.link + '" title="' + item.title + '"><img class="activecarouselimage" src="' + item.url + '" width="<?php  echo $width; ?>" height="<?php echo $height; ?>" alt="' + item.url + '" /></a>';
 				}
 				return html;
-			};
+				}
 
 			jQuery(document).ready(function() {
 					jQuery("#mycarousel").jcarousel({

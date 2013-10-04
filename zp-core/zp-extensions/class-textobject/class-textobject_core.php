@@ -94,24 +94,24 @@ class TextObject extends Image {
 			$msg = gettext('Invalid Textobject instantiation: file does not exist');
 		}
 		if ($msg) {
-			if ($quiet) {
-				$this->exists = false;
-				return;
+			$this->exists = false;
+			if (!$quiet) {
+				trigger_error($msg, E_USER_ERROR);
 			}
-			trigger_error($msg, E_USER_ERROR);
-			exitZP();
+			return;
 		}
 		$this->sidecars = $_zp_supported_images;
 		$this->objectsThumb = checkObjectsThumb($this->localpath);
 		$this->updateDimensions();
-		if (parent::PersistentObject('images', array('filename' => $filename, 'albumid'	 => $this->album->getID()), 'filename')) {
-			$title = $this->displayname;
-			$this->set('title', $title);
+		$new = parent::PersistentObject('images', array('filename' => $filename, 'albumid'	 => $this->album->getID()), 'filename');
+		if ($new || $this->filemtime != $this->get('mtime')) {
+			if ($new)
+				$this->setTitle($this->displayname); $title = $this->displayname;
 			$this->updateMetaData();
-			$this->filemtime = @filemtime($this->localpath);
 			$this->set('mtime', $this->filemtime);
 			$this->save();
-			zp_apply_filter('new_image', $this);
+			if ($new)
+				zp_apply_filter('new_image', $this);
 		}
 	}
 

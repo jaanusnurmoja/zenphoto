@@ -18,13 +18,14 @@ $backgroundImagePath = "";
 	<head>
 		<?php
 		zp_apply_filter('theme_head');
-		list($personality, $themeColor) = getPersonality();
-		require_once(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/' . $personality . '/functions.php');
 		?>
-		<title><?php printBareGalleryTitle(); ?> | <?php echo gettext("Search");
-		if ($_zp_page > 1) echo "[$_zp_page]"; ?></title>
+		<title><?php printBareGalleryTitle(); ?> | <?php
+			echo gettext("Search");
+			if ($_zp_page > 1)
+				echo "[$_zp_page]";
+			?></title>
 		<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
-		<?php $oneImagePage = $personality->theme_head($_zp_themeroot); ?>
+		<?php $handler->theme_head($_zp_themeroot); ?>
 		<script type="text/javascript">
 			// <!-- <![CDATA[
 			function toggleExtraElements(category, show) {
@@ -45,7 +46,6 @@ $backgroundImagePath = "";
 	<body onload="blurAnchors()">
 		<?php
 		zp_apply_filter('theme_body_open');
-		$oneImagePage = $personality->theme_head($_zp_themeroot);
 		$numimages = getNumImages();
 		$numalbums = getNumAlbums();
 		$total = $numimages + $numalbums;
@@ -257,7 +257,7 @@ $backgroundImagePath = "";
 							<?php $annotate = annotateAlbum(); ?>
 							<div class="imagethumb">
 								<a href="<?php echo html_encode(getAlbumLinkURL()); ?>" title="<?php echo $annotate; ?>">
-									<?php printCustomAlbumThumbImage($annotate, null, 180, null, 180, 80); ?></a>
+									<?php printCustomAlbumThumbImage($annotate, null, ALBUM_THMB_WIDTH, null, ALBUM_THMB_WIDTH, ALBUM_THUMB_HEIGHT); ?></a>
 							</div>
 							<h4><a href="<?php echo html_encode(getAlbumLinkURL()); ?>" title="<?php echo $annotate; ?>"><?php printAlbumTitle(); ?></a></h4></li>
 						<?php
@@ -275,7 +275,7 @@ $backgroundImagePath = "";
 			<!-- Wrap Main Body -->
 			<?php
 			if ($numimages > 0) { /* Only print if we have images. */
-				$personality->theme_content(NULL);
+				$handler->theme_content(NULL);
 			}
 
 			if ($total == 0) {
@@ -302,8 +302,8 @@ $backgroundImagePath = "";
 
 			<div id="pagenumbers">
 				<?php
-				if ((getNumAlbums() != 0) || !$oneImagePage) {
-					printPageListWithNav("« " . gettext('prev'), gettext('next') . " »", $oneImagePage);
+				if ((getNumAlbums() != 0) || !$_oneImagePage) {
+					printPageListWithNav("« " . gettext('prev'), gettext('next') . " »", $_oneImagePage);
 				}
 				?>
 			</div> <!-- pagenumbers -->

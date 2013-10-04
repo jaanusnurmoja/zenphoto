@@ -107,11 +107,11 @@ require_once('normalizer.php');
 											if ($c++ < 6) {
 												echo "<li><table><tr><td>\n";
 												$imageURL = html_encode(getURL($image));
-												if ($image->getWidth() >= $image->getHeight()) {
-													$iw = 44;
-													$ih = NULL;
-													$cw = 44;
-													$ch = 33;
+												if ($image->getWidth() >= $image->getHeight()) { //Beware if adjusting these without expected results that you must also adjust the CSS container.
+													$iw = 44; //image width
+													$ih = NULL; //image height
+													$cw = 44; //cropped width
+													$ch = 33; //cropped height
 												} else {
 													$iw = NULL;
 													$ih = 44;
@@ -160,8 +160,11 @@ require_once('normalizer.php');
 					<h2><?php echo gettext("Gallery data"); ?></h2>
 					<table cellspacing="0" class="gallerydata">
 						<tr>
-							<th><a href="<?php echo $archivepageURL; ?>"><?php echo gettext('Galleries'); ?></a></th>
-							<td><?php echo $_zp_gallery->getNumAlbums(); ?></td>
+							<th><a href="<?php echo $archivepageURL; ?>"><?php echo gettext('Albums'); ?></a></th>
+							<td><?php
+									$t = $_zp_gallery->getNumAlbums(true);
+									$c = $t-$_zp_gallery->getNumAlbums(true,true);
+									printf(ngettext('%u', '%u',$t),$t);			?>
 							<td></td>
 						</tr>
 						<tr>

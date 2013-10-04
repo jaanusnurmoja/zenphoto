@@ -8,15 +8,13 @@ if (!defined('WEBPATH'))
 	<head>
 		<?php
 		zp_apply_filter('theme_head');
-		$personality = getOption('garland_personality');
-		require_once(SERVERPATH . '/' . THEMEFOLDER . '/garland/' . $personality . '/functions.php');
 		?>
 		<title><?php printGalleryTitle(); ?> | <?php
 			echo gettext('Search');
 			if ($_zp_page > 1)
 				echo "[$_zp_page]";
 			?></title>
-		<?php $oneImagePage = $personality->theme_head($_zp_themeroot); ?>
+		<?php $handler->theme_head($_zp_themeroot); ?>
 		<link rel="stylesheet" href="<?php echo $_zp_themeroot ?>/zen.css" type="text/css" />
 		<?php if (class_exists('RSS')) printRSSHeaderLink('Gallery', gettext('Gallery RSS')); ?>
 		<script type="text/javascript">
@@ -38,7 +36,6 @@ if (!defined('WEBPATH'))
 	<body class="sidebars">
 		<?php
 		zp_apply_filter('theme_body_open');
-		$oneImagePage = $personality->theme_head($_zp_themeroot);
 		$numimages = getNumImages();
 		$numalbums = getNumAlbums();
 		$total = $numimages + $numalbums;
@@ -223,10 +220,10 @@ if (!defined('WEBPATH'))
 										?>
 									</div>
 									<p style="clear: both; "></p>
-									<?php $personality->theme_content(NULL); ?>
+									<?php $handler->theme_content(NULL); ?>
 									<?php
-									if ((getNumAlbums() != 0) || !$oneImagePage) {
-										printPageListWithNav(gettext("« prev"), gettext("next »"), $oneImagePage);
+									if ((getNumAlbums() != 0) || !$_oneImagePage) {
+										printPageListWithNav(gettext("« prev"), gettext("next »"), $_oneImagePage);
 									}
 									footer();
 									?>

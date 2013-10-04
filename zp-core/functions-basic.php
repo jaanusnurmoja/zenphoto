@@ -70,11 +70,12 @@ define("ZP_SEARCH", 16);
 define("ZP_SEARCH_LINKED", 32);
 define("ZP_ALBUM_LINKED", 64);
 define('ZP_IMAGE_LINKED', 128);
-define('ZP_ZENPAGE_NEWS_ARTICLE', 256);
-define('ZP_ZENPAGE_NEWS_CATEGORY', 512);
-define('ZP_ZENPAGE_NEWS_DATE', 1024);
-define('ZP_ZENPAGE_PAGE', 2048);
-define('ZP_ZENPAGE_SINGLE', 4096);
+define('ZP_ZENPAGE_NEWS_PAGE', 256);
+define('ZP_ZENPAGE_NEWS_ARTICLE', 512);
+define('ZP_ZENPAGE_NEWS_CATEGORY', 1024);
+define('ZP_ZENPAGE_NEWS_DATE', 2048);
+define('ZP_ZENPAGE_PAGE', 4096);
+define('ZP_ZENPAGE_SINGLE', 8192);
 
 switch (PHP_MAJOR_VERSION) {
 	case 5:
@@ -109,7 +110,7 @@ if (OFFSET_PATH != 2 && !file_exists($const_serverpath . '/' . DATA_FOLDER . '/'
 	reconfigureAction(1);
 }
 // Including the config file more than once is OK, and avoids $conf missing.
-eval(file_get_contents($const_serverpath . '/' . DATA_FOLDER . '/' . CONFIGFILE));
+eval('?>' . file_get_contents($const_serverpath . '/' . DATA_FOLDER . '/' . CONFIGFILE));
 
 if (isset($_zp_conf_vars['special_pages'])) {
 	foreach ($_zp_conf_vars['special_pages'] as $definition) {
@@ -213,17 +214,15 @@ if (function_exists('mb_internal_encoding')) {
 // once a library has concented to load, all others will
 // abdicate.
 $_zp_graphics_optionhandlers = array();
+$try = array('lib-GD.php', 'lib-NoGraphics.php');
 if (getOption('use_imagick')) {
-	require_once(dirname(__FILE__) . '/lib-Imagick.php');
+	array_unshift($try, 'lib-Imagick.php');
 }
-if (!function_exists('zp_graphicsLibInfo')) {
-	require_once(dirname(__FILE__) . '/lib-GD.php');
+while (!function_exists('zp_graphicsLibInfo')) {
+	require_once(dirname(__FILE__) . '/' . array_shift($try));
 }
-if (function_exists('zp_graphicsLibInfo')) {
-	$_zp_cachefileSuffix = zp_graphicsLibInfo();
-} else {
-	$_zp_cachefileSuffix = array('Library'			 => gettext('none'), 'Library_desc' => NULL);
-}
+$_zp_cachefileSuffix = zp_graphicsLibInfo();
+
 
 define('GRAPHICS_LIBRARY', $_zp_cachefileSuffix['Library']);
 unset($_zp_cachefileSuffix['Library']);
@@ -269,6 +268,8 @@ define('FULLWEBPATH', PROTOCOL . "://" . $_SERVER['HTTP_HOST'] . WEBPATH);
 define('SAFE_MODE_ALBUM_SEP', '__');
 define('SERVERCACHE', SERVERPATH . '/' . CACHEFOLDER);
 define('MOD_REWRITE', getOption('mod_rewrite'));
+
+define('DEBUG_LOG_SIZE', getOption('debug_log_size'));
 
 define('ALBUM_FOLDER_WEBPATH', getAlbumFolder(WEBPATH));
 define('ALBUM_FOLDER_SERVERPATH', getAlbumFolder(SERVERPATH));
@@ -512,13 +513,15 @@ function rewrite_get_album_image($albumvar, $imagevar) {
 					$ralbum .= '.alb';
 				} else {
 					//	Perhaps a dynamicalbum/image
-					$rimage = basename($ralbum);
-					$ralbum = trim(dirname($ralbum), '/');
-					$path = internalToFilesystem(getAlbumFolder(SERVERPATH) . $ralbum);
-					if (!is_dir($path)) {
-						if (file_exists($path . '.alb')) {
-							//	it is a dynamic album sans suffix
-							$ralbum .= '.alb';
+					$path = trim(dirname($ralbum), '/');
+					if ($path != '.') {
+						$path = internalToFilesystem(getAlbumFolder(SERVERPATH) . $path);
+						if (!is_dir($path)) {
+							if (file_exists($path . '.alb')) {
+								//	it is a dynamic album sans suffix
+								$rimage = basename($ralbum);
+								$ralbum = trim(dirname($ralbum), '/') . '.alb';
+							}
 						}
 					}
 				}
@@ -846,7 +849,7 @@ function getImageProcessorURI($args, $album, $image) {
 	}
 	if ($adminrequest) {
 		$args[12] = true;
-		$uri .= '&admin';
+		$uri .= '&admin=1';
 	} else {
 		$args[12] = false;
 	}
@@ -1042,13 +1045,58 @@ function parse_query($str) {
 	$params = array();
 	foreach ($pairs as $pair) {
 		if (strpos($pair, '=') === false) {
-			$params[trim($pair)] = NULL;
+			$params[$pair] = NULL;
 		} else {
 			list($name, $value) = explode('=', $pair, 2);
-			$params[trim($name)] = trim($value);
+			$params[$name] = $value;
 		}
 	}
 	return $params;
+}
+
+/**
+ * createsa query string from the array passed
+ * @param array $parts
+ * @return string
+ */
+function build_query($parts) {
+	$q = '';
+	foreach ($parts as $name => $value) {
+		$q .= $name . '=' . $value . '&';
+	}
+	return substr($q, 0, -1);
+}
+
+/**
+ * Builds a url from parts
+ * @param array $parts
+ * @return string
+ */
+function build_url($parts) {
+	$u = '';
+	if (isset($parts['scheme'])) {
+		$u .= $parts['scheme'] . '://';
+	}
+	if (isset($parts['host'])) {
+		$u .= $parts['host'];
+	}
+	if (isset($parts['port'])) {
+		$u .= ':' . $parts['port'];
+	}
+	if (isset($parts['path'])) {
+		if (empty($u)) {
+			$u = $parts['path'];
+		} else {
+			$u .= '/' . ltrim($parts['path'], '/');
+		}
+	}
+	if (isset($parts['query'])) {
+		$u .= '?' . $parts['query'];
+	}
+	if (isset($parts['fragment '])) {
+		$u .= '#' . $parts['fragment '];
+	}
+	return $u;
 }
 
 /**
@@ -1058,25 +1106,40 @@ function parse_query($str) {
  * @return string
  */
 function pathurlencode($path) {
-	preg_match('|^(http[s]*\://[a-zA-Z0-9\-\.]+/?)*(.*)$|xis', $path, $matches);
-	$parts = explode('?', $matches[2]);
-	$link = implode("/", array_map("rawurlencode", explode("/", $parts[0])));
-	if (count($parts) == 2) {
+	$parts = parse_url($path);
+	if (isset($parts['query'])) {
 		//	some kind of query link
-		$pairs = parse_query($parts[1]);
-		$query = '?';
-		foreach ($pairs as $name => $value) {
-			$query .= $name;
-			if ($value) {
-				$query .= '=' . implode("/", array_map("rawurlencode", explode("/", $value)));
+		$pairs = parse_query($parts['query']);
+		if (preg_match('/^a=.*\&i=?/i', $parts['query'])) { //image URI, handle & in file/folder names
+			$index = 'a';
+			foreach ($pairs as $p => $q) {
+				switch ($p) {
+					case 'i':
+						$index = 'i';
+					case 'a':
+						break;
+					default:
+						if (is_null($q)) {
+							$pairs[$index] .= '&' . $p;
+						} else if (in_array($p, array('s', 'w', 'h', 'cw', 'ch', 'cx', 'cy', 'q', 'c', 't', 'wmk', 'admin', 'effects', 'z'))) { // image processor parameters
+							break 2;
+						} else {
+							$pairs[$index] .= '&' . $p . '=' . $q;
+						}
+						unset($pairs[$p]);
+						break;
+				}
 			}
-			$query .= '&';
 		}
-		$query = substr($query, 0, -1);
-	} else {
-		$query = '';
+		foreach ($pairs as $name => $value) {
+			if ($value) {
+				$pairs[$name] = implode("/", array_map("rawurlencode", explode("/", $value)));
+			}
+		}
+		$parts['query'] = build_query($pairs);
 	}
-	return $matches[1] . $link . $query;
+	$parts['path'] = implode("/", array_map("rawurlencode", explode("/", $parts['path'])));
+	return build_url($parts);
 }
 
 /**
@@ -1158,10 +1221,9 @@ function debugLog($message, $reset = false) {
 		global $_zp_mutex;
 		$path = SERVERPATH . '/' . DATA_FOLDER . '/debug.log';
 		$me = getmypid();
-		$max = getOption('debug_log_size');
 		if (is_object($_zp_mutex))
 			$_zp_mutex->lock();
-		if ($reset || ($size = @filesize($path)) == 0 || ($max && $size > $max)) {
+		if ($reset || ($size = @filesize($path)) == 0 || (defined('DEBUG_LOG_SIZE') && DEBUG_LOG_SIZE && $size > DEBUG_LOG_SIZE)) {
 			if (!$reset && $size > 0) {
 				switchLog('debug');
 			}

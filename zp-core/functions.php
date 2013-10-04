@@ -19,6 +19,7 @@ require_once(dirname(__FILE__) . '/functions-filter.php');
 require_once(SERVERPATH . '/' . ZENFOLDER . '/lib-kses.php');
 
 $_zp_captcha = new _zp_captcha(); // this will be overridden by the plugin if enabled.
+$_zp_HTML_cache = new _zp_HTML_cache(); // this will be overridden by the plugin if enabled.
 //setup session before checking for logon cookie
 require_once(dirname(__FILE__) . '/functions-i18n.php');
 
@@ -163,10 +164,7 @@ function cleanHTML($html) {
  */
 function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindicator = false) {
 	global $_user_tags;
-	if (!$shorten) {
-		return $articlecontent;
-	}
-	if ($forceindicator || (mb_strlen($articlecontent) > $shorten)) {
+	if ($shorten && ($forceindicator || (mb_strlen($articlecontent) > $shorten))) {
 		$allowed_tags = getAllowedTags('allowed_tags');
 		$short = mb_substr($articlecontent, 0, $shorten);
 		$short2 = kses($short . '</p>', $allowed_tags);
@@ -192,18 +190,20 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 			$shorten = $l1;
 		}
 		$short = truncate_string($articlecontent, $shorten, '');
-		// drop open tag strings
-		$open = mb_strrpos($short, '<');
-		if ($open > mb_strrpos($short, '>')) {
-			$short = mb_substr($short, 0, $open);
-		}
-		if (class_exists('tidy')) {
-			$tidy = new tidy();
-			$tidy->parseString($short . $shortenindicator, array('show-body-only' => true), 'utf8');
-			$tidy->cleanRepair();
-			$short = trim($tidy);
-		} else {
-			$short = trim(cleanHTML($short . $shortenindicator));
+		if ($short != $articlecontent) { //	we actually did remove some stuff
+			// drop open tag strings
+			$open = mb_strrpos($short, '<');
+			if ($open > mb_strrpos($short, '>')) {
+				$short = mb_substr($short, 0, $open);
+			}
+			if (class_exists('tidy')) {
+				$tidy = new tidy();
+				$tidy->parseString($short . $shortenindicator, array('show-body-only' => true), 'utf8');
+				$tidy->cleanRepair();
+				$short = trim($tidy);
+			} else {
+				$short = trim(cleanHTML($short . $shortenindicator));
+			}
 		}
 		return $short;
 	}
@@ -659,9 +659,11 @@ function extensionEnabled($extension) {
 /**
  * Enables a plugin
  * @param string $extension
+ * @param int $priority
+ * @param bool $persistent
  */
-function enableExtension($extension) {
-	setOption('zp_plugin_' . $extension, 1);
+function enableExtension($extension, $priority, $persistent = true) {
+	setOption('zp_plugin_' . $extension, $priority, $persistent);
 }
 
 /**
@@ -2130,20 +2132,28 @@ function reveal($content, $visible = false) {
  */
 function applyMacros($text) {
 	$content_macros = getMacros();
-	krsort($content_macros); //	in case some start with the same sequence, look for the longest first
-	$regex = '/\[(' . implode('|', array_keys($content_macros)) . ')(\]|\s+.*\])/i';
-	if (preg_match_all($regex, $text, $matches)) {
-		foreach ($matches[1] as $key => $macroname) {
-			$p = trim(utf8::sanitize(str_replace("\xC2\xA0", ' ', substr(strip_tags($matches[2][$key]), 0, -1)))); //	remove hard spaces, invalid characters, and trailing bracket
-			$p = preg_replace("~\s+=\s+(?=(?:[^\"]*+\"[^\"]*+\")*+[^\"]*+$)~", "=", $p); //	deblank assignment operator
-			preg_match_all("~'[^'\"]++'|\"[^\"]++\"|[^\s]++~", $p, $l); //	parse the parameter list
-			$parms = array();
-			foreach ($l[0] as $k => $s) {
-				$parms[$k] = trim($s, '\'"'); //	remove any quote marks
-			}
-			$macroname = strtoupper($macroname);
+	preg_match_all('/\[(\w+)(.*?)\]/i', $text, $instances);
+	foreach ($instances[0] as $instance => $macro_instance) {
+		$macroname = strtoupper($instances[1][$instance]);
+		if (array_key_exists($macroname, $content_macros)) {
 			$macro = $content_macros[$macroname];
-			$macro_instance = $matches[0][$key];
+			$p = $instances[2][$instance];
+			$data = NULL;
+			$class = $macro['class'];
+			if ($p) {
+				$p = trim(utf8::sanitize(str_replace("\xC2\xA0", ' ', strip_tags($p)))); //	remove hard spaces and invalid characters
+				$p = preg_replace("~\s+=\s+(?=(?:[^\"]*+\"[^\"]*+\")*+[^\"]*+$)~", "=", $p); //	deblank assignment operator
+				preg_match_all("~'[^'\"]++'|\"[^\"]++\"|[^\s]++~", $p, $l); //	parse the parameter list
+				$parms = array();
+				$k = 0;
+				foreach ($l[0] as $s) {
+					if ($s != ',') {
+						$parms[$k++] = trim($s, '\'"'); //	remove any quote marks
+					}
+				}
+			} else {
+				$parms = array();
+			}
 			$parameters = array();
 			if (!empty($macro['params'])) {
 				$err = false;
@@ -2156,7 +2166,7 @@ function applyMacros($text) {
 									continue 2;
 								}
 								$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be a number.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-								$macro['class'] = 'error';
+								$class = 'error';
 								break;
 							case 'string':
 								if (is_string($parms[$key])) {
@@ -2164,7 +2174,7 @@ function applyMacros($text) {
 									continue 2;
 								}
 								$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be a string.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-								$macro['class'] = 'error';
+								$class = 'error';
 								break;
 							case 'bool':
 								switch (strtolower($parms[$key])) {
@@ -2176,7 +2186,7 @@ function applyMacros($text) {
 										continue 2;
 								}
 								$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be <code>true</code> or <code>false</code>.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-								$macro['class'] = 'error';
+								$class = 'error';
 								break;
 							case 'array':
 								$l = array_slice($parms, $key);
@@ -2193,41 +2203,50 @@ function applyMacros($text) {
 								break;
 							default:
 								$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d is incorrectly defined.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-								$macro['class'] = 'error';
+								$class = 'error';
 								break;
 						}
 						break;
 					} else {
 						if (strpos($type, '*') === false) {
 							$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d is missing.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-							$macro['class'] = 'error';
+							$class = 'error';
 						}
 						break;
 					}
 				}
 			} else {
 				if (!empty($p)) {
-					$macro['class'] = 'error';
+					$class = 'error';
 					$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> macro does not take parameters'), trim($macro_instance, '[]')) . '</span>';
 				}
 			}
-			switch ($macro['class']) {
+			switch ($class) {
 				case 'error':
 					break;
 				case 'function';
 				case 'procedure':
-					if ($macro['class'] == 'function') {
-						$data = @call_user_func_array($macro['value'], $parameters);
+					if (is_callable($macro['value'])) {
+						if ($class == 'function') {
+							ob_start();
+							$data = call_user_func_array($macro['value'], $parameters);
+							if (empty($data)) {
+								$data = ob_get_contents();
+							}
+							ob_end_clean();
+						} else {
+							ob_start();
+							call_user_func_array($macro['value'], $parameters);
+							$data = ob_get_contents();
+							ob_end_clean();
+						}
+						if (empty($data)) {
+							$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> retuned no data'), trim($macro_instance, '[]')) . '</span>';
+						} else {
+							$data = "\n<!--Begin " . $macroname . "-->\n" . $data . "\n<!--End " . $macroname . "-->\n";
+						}
 					} else {
-						ob_start();
-						call_user_func_array($macro['value'], $parameters);
-						$data = ob_get_contents();
-						ob_end_clean();
-					}
-					if (empty($data)) {
-						$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> retuned no data'), trim($macro_instance, '[]')) . '</span>';
-					} else {
-						$data = "\n<!--Begin " . $macroname . "-->\n" . $data . "\n<!--End " . $macroname . "-->\n";
+						$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> <code>%2$s</code> is not callable'), trim($macro_instance, '[]'), $macro['value']) . '</span>';
 					}
 					break;
 				case 'constant':
@@ -2336,85 +2355,85 @@ class zpFunctions {
 		 * is displayed
 		 */
 		$_zp_exifvars = array(
-						// Database Field       		=> array('IFDX', 	 'Metadata Key',     			'ZP Display Text',        				 	 									Display?	size,		enabled)
-						'EXIFMake'									 => array('IFD0', 'Make', gettext('Camera Maker'), true, 52, true),
-						'EXIFModel'									 => array('IFD0', 'Model', gettext('Camera Model'), true, 52, true),
-						'EXIFDescription'						 => array('IFD0', 'ImageDescription', gettext('Image Title'), false, 52, true),
-						'IPTCObjectName'						 => array('IPTC', 'ObjectName', gettext('Object Name'), false, 256, true),
-						'IPTCImageHeadline'					 => array('IPTC', 'ImageHeadline', gettext('Image Headline'), false, 256, true),
-						'IPTCImageCaption'					 => array('IPTC', 'ImageCaption', gettext('Image Caption'), false, 2000, true),
-						'IPTCImageCaptionWriter'		 => array('IPTC', 'ImageCaptionWriter', gettext('Image Caption Writer'), false, 32, true),
-						'EXIFDateTime'							 => array('SubIFD', 'DateTime', gettext('Time Taken'), true, 52, true),
-						'EXIFDateTimeOriginal'			 => array('SubIFD', 'DateTimeOriginal', gettext('Original Time Taken'), true, 52, true),
-						'EXIFDateTimeDigitized'			 => array('SubIFD', 'DateTimeDigitized', gettext('Time Digitized'), true, 52, true),
-						'IPTCDateCreated'						 => array('IPTC', 'DateCreated', gettext('Date Created'), false, 8, true),
-						'IPTCTimeCreated'						 => array('IPTC', 'TimeCreated', gettext('Time Created'), false, 11, true),
-						'IPTCDigitizeDate'					 => array('IPTC', 'DigitizeDate', gettext('Digital Creation Date'), false, 8, true),
-						'IPTCDigitizeTime'					 => array('IPTC', 'DigitizeTime', gettext('Digital Creation Time'), false, 11, true),
-						'EXIFArtist'								 => array('IFD0', 'Artist', gettext('Artist'), false, 52, true),
-						'IPTCImageCredit'						 => array('IPTC', 'ImageCredit', gettext('Image Credit'), false, 32, true),
-						'IPTCByLine'								 => array('IPTC', 'ByLine', gettext('Byline'), false, 32, true),
-						'IPTCByLineTitle'						 => array('IPTC', 'ByLineTitle', gettext('Byline Title'), false, 32, true),
-						'IPTCSource'								 => array('IPTC', 'Source', gettext('Image Source'), false, 32, true),
-						'IPTCContact'								 => array('IPTC', 'Contact', gettext('Contact'), false, 128, true),
-						'EXIFCopyright'							 => array('IFD0', 'Copyright', gettext('Copyright Holder'), false, 128, true),
-						'IPTCCopyright'							 => array('IPTC', 'Copyright', gettext('Copyright Notice'), false, 128, true),
-						'IPTCKeywords'							 => array('IPTC', 'Keywords', gettext('Keywords'), false, 0, true),
-						'EXIFExposureTime'					 => array('SubIFD', 'ExposureTime', gettext('Shutter Speed'), true, 52, true),
-						'EXIFFNumber'								 => array('SubIFD', 'FNumber', gettext('Aperture'), true, 52, true),
-						'EXIFISOSpeedRatings'				 => array('SubIFD', 'ISOSpeedRatings', gettext('ISO Sensitivity'), true, 52, true),
-						'EXIFExposureBiasValue'			 => array('SubIFD', 'ExposureBiasValue', gettext('Exposure Compensation'), true, 52, true),
-						'EXIFMeteringMode'					 => array('SubIFD', 'MeteringMode', gettext('Metering Mode'), true, 52, true),
-						'EXIFFlash'									 => array('SubIFD', 'Flash', gettext('Flash Fired'), true, 52, true),
-						'EXIFImageWidth'						 => array('SubIFD', 'ExifImageWidth', gettext('Original Width'), false, 52, true),
-						'EXIFImageHeight'						 => array('SubIFD', 'ExifImageHeight', gettext('Original Height'), false, 52, true),
-						'EXIFOrientation'						 => array('IFD0', 'Orientation', gettext('Orientation'), false, 52, true),
-						'EXIFSoftware'							 => array('IFD0', 'Software', gettext('Software'), false, 999, true),
-						'EXIFContrast'							 => array('SubIFD', 'Contrast', gettext('Contrast Setting'), false, 52, true),
-						'EXIFSharpness'							 => array('SubIFD', 'Sharpness', gettext('Sharpness Setting'), false, 52, true),
-						'EXIFSaturation'						 => array('SubIFD', 'Saturation', gettext('Saturation Setting'), false, 52, true),
-						'EXIFWhiteBalance'					 => array('SubIFD', 'WhiteBalance', gettext('White Balance'), false, 52, true),
-						'EXIFSubjectDistance'				 => array('SubIFD', 'SubjectDistance', gettext('Subject Distance'), false, 52, true),
-						'EXIFFocalLength'						 => array('SubIFD', 'FocalLength', gettext('Focal Length'), true, 52, true),
-						'EXIFLensType'							 => array('SubIFD', 'LensType', gettext('Lens Type'), false, 52, true),
-						'EXIFLensInfo'							 => array('SubIFD', 'LensInfo', gettext('Lens Info'), false, 52, true),
-						'EXIFFocalLengthIn35mmFilm'	 => array('SubIFD', 'FocalLengthIn35mmFilm', gettext('35mm Focal Length Equivalent'), false, 52, true),
-						'IPTCCity'									 => array('IPTC', 'City', gettext('City'), false, 32, true),
-						'IPTCSubLocation'						 => array('IPTC', 'SubLocation', gettext('Sub-location'), false, 32, true),
-						'IPTCState'									 => array('IPTC', 'State', gettext('Province/State'), false, 32, true),
-						'IPTCLocationCode'					 => array('IPTC', 'LocationCode', gettext('Country/Primary Location Code'), false, 3, true),
-						'IPTCLocationName'					 => array('IPTC', 'LocationName', gettext('Country/Primary Location Name'), false, 64, true),
-						'IPTCContentLocationCode'		 => array('IPTC', 'ContentLocationCode', gettext('Content Location Code'), false, 3, true),
-						'IPTCContentLocationName'		 => array('IPTC', 'ContentLocationName', gettext('Content Location Name'), false, 64, true),
-						'EXIFGPSLatitude'						 => array('GPS', 'Latitude', gettext('Latitude'), false, 52, true),
-						'EXIFGPSLatitudeRef'				 => array('GPS', 'Latitude Reference', gettext('Latitude Reference'), false, 52, true),
-						'EXIFGPSLongitude'					 => array('GPS', 'Longitude', gettext('Longitude'), false, 52, true),
-						'EXIFGPSLongitudeRef'				 => array('GPS', 'Longitude Reference', gettext('Longitude Reference'), false, 52, true),
-						'EXIFGPSAltitude'						 => array('GPS', 'Altitude', gettext('Altitude'), false, 52, true),
-						'EXIFGPSAltitudeRef'				 => array('GPS', 'Altitude Reference', gettext('Altitude Reference'), false, 52, true),
-						'IPTCOriginatingProgram'		 => array('IPTC', 'OriginatingProgram', gettext('Originating Program '), false, 32, true),
-						'IPTCProgramVersion'				 => array('IPTC', 'ProgramVersion', gettext('Program Version'), false, 10, true),
-						'VideoFormat'								 => array('VIDEO', 'fileformat', gettext('Video File Format'), false, 32, true),
-						'VideoSize'									 => array('VIDEO', 'filesize', gettext('Video File Size'), false, 32, true),
-						'VideoArtist'								 => array('VIDEO', 'artist', gettext('Video Artist'), false, 256, true),
-						'VideoTitle'								 => array('VIDEO', 'title', gettext('Video Title'), false, 256, true),
-						'VideoBitrate'							 => array('VIDEO', 'bitrate', gettext('Bitrate'), false, 32, true),
-						'VideoBitrate_mode'					 => array('VIDEO', 'bitrate_mode', gettext('Bitrate_Mode'), false, 32, true),
-						'VideoBits_per_sample'			 => array('VIDEO', 'bits_per_sample', gettext('Bits per sample'), false, 32, true),
-						'VideoCodec'								 => array('VIDEO', 'codec', gettext('Codec'), false, 32, true),
-						'VideoCompression_ratio'		 => array('VIDEO', 'compression_ratio', gettext('Compression Ratio'), false, 32, true),
-						'VideoDataformat'						 => array('VIDEO', 'dataformat', gettext('Video Dataformat'), false, 32, true),
-						'VideoEncoder'							 => array('VIDEO', 'encoder', gettext('File Encoder'), false, 10, true),
-						'VideoSamplerate'						 => array('VIDEO', 'Samplerate', gettext('Sample rate'), false, 32, true),
-						'VideoChannelmode'					 => array('VIDEO', 'channelmode', gettext('Channel mode'), false, 32, true),
-						'VideoFormat'								 => array('VIDEO', 'format', gettext('Format'), false, 10, true),
-						'VideoChannels'							 => array('VIDEO', 'channels', gettext('Channels'), false, 10, true),
-						'VideoFramerate'						 => array('VIDEO', 'framerate', gettext('Frame rate'), false, 32, true),
-						'VideoResolution_x'					 => array('VIDEO', 'resolution_x', gettext('X Resolution'), false, 32, true),
-						'VideoResolution_y'					 => array('VIDEO', 'resolution_y', gettext('Y Resolution'), false, 32, true),
-						'VideoAspect_ratio'					 => array('VIDEO', 'pixel_aspect_ratio', gettext('Aspect ratio'), false, 32, true),
-						'VideoPlaytime'							 => array('VIDEO', 'playtime_string', gettext('Play Time'), false, 10, true),
-						'XMPrating'									 => array('XMP', 'rating', gettext('XMP Rating'), false, 10, true),
+						// Database Field       		 => array('source', 'Metadata Key', 'ZP Display Text', Display?	size,	enabled, type)
+						'EXIFMake'									 => array('IFD0', 'Make', gettext('Camera Maker'), true, 52, true, 'string'),
+						'EXIFModel'									 => array('IFD0', 'Model', gettext('Camera Model'), true, 52, true, 'string'),
+						'EXIFDescription'						 => array('IFD0', 'ImageDescription', gettext('Image Title'), false, 52, true, 'string'),
+						'IPTCObjectName'						 => array('IPTC', 'ObjectName', gettext('Object Name'), false, 256, true, 'string'),
+						'IPTCImageHeadline'					 => array('IPTC', 'ImageHeadline', gettext('Image Headline'), false, 256, true, 'string'),
+						'IPTCImageCaption'					 => array('IPTC', 'ImageCaption', gettext('Image Caption'), false, 2000, true, 'string'),
+						'IPTCImageCaptionWriter'		 => array('IPTC', 'ImageCaptionWriter', gettext('Image Caption Writer'), false, 32, true, 'string'),
+						'EXIFDateTime'							 => array('SubIFD', 'DateTime', gettext('Time Taken'), true, 52, true, 'time'),
+						'EXIFDateTimeOriginal'			 => array('SubIFD', 'DateTimeOriginal', gettext('Original Time Taken'), true, 52, true, 'time'),
+						'EXIFDateTimeDigitized'			 => array('SubIFD', 'DateTimeDigitized', gettext('Time Digitized'), true, 52, true, 'time'),
+						'IPTCDateCreated'						 => array('IPTC', 'DateCreated', gettext('Date Created'), false, 8, true, 'time'),
+						'IPTCTimeCreated'						 => array('IPTC', 'TimeCreated', gettext('Time Created'), false, 11, true, 'time'),
+						'IPTCDigitizeDate'					 => array('IPTC', 'DigitizeDate', gettext('Digital Creation Date'), false, 8, true, 'time'),
+						'IPTCDigitizeTime'					 => array('IPTC', 'DigitizeTime', gettext('Digital Creation Time'), false, 11, true, 'time'),
+						'EXIFArtist'								 => array('IFD0', 'Artist', gettext('Artist'), false, 52, true, 'string'),
+						'IPTCImageCredit'						 => array('IPTC', 'ImageCredit', gettext('Image Credit'), false, 32, true, 'string'),
+						'IPTCByLine'								 => array('IPTC', 'ByLine', gettext('Byline'), false, 32, true, 'string'),
+						'IPTCByLineTitle'						 => array('IPTC', 'ByLineTitle', gettext('Byline Title'), false, 32, true, 'string'),
+						'IPTCSource'								 => array('IPTC', 'Source', gettext('Image Source'), false, 32, true, 'string'),
+						'IPTCContact'								 => array('IPTC', 'Contact', gettext('Contact'), false, 128, true, 'string'),
+						'EXIFCopyright'							 => array('IFD0', 'Copyright', gettext('Copyright Holder'), false, 128, true, 'string'),
+						'IPTCCopyright'							 => array('IPTC', 'Copyright', gettext('Copyright Notice'), false, 128, true, 'string'),
+						'IPTCKeywords'							 => array('IPTC', 'Keywords', gettext('Keywords'), false, 0, true, 'string'),
+						'EXIFExposureTime'					 => array('SubIFD', 'ExposureTime', gettext('Shutter Speed'), true, 52, true, 'string'),
+						'EXIFFNumber'								 => array('SubIFD', 'FNumber', gettext('Aperture'), true, 52, true, 'number'),
+						'EXIFISOSpeedRatings'				 => array('SubIFD', 'ISOSpeedRatings', gettext('ISO Sensitivity'), true, 52, true, 'number'),
+						'EXIFExposureBiasValue'			 => array('SubIFD', 'ExposureBiasValue', gettext('Exposure Compensation'), true, 52, true, 'string'),
+						'EXIFMeteringMode'					 => array('SubIFD', 'MeteringMode', gettext('Metering Mode'), true, 52, true, 'string'),
+						'EXIFFlash'									 => array('SubIFD', 'Flash', gettext('Flash Fired'), true, 52, true, 'string'),
+						'EXIFImageWidth'						 => array('SubIFD', 'ExifImageWidth', gettext('Original Width'), false, 52, true, 'number'),
+						'EXIFImageHeight'						 => array('SubIFD', 'ExifImageHeight', gettext('Original Height'), false, 52, true, 'number'),
+						'EXIFOrientation'						 => array('IFD0', 'Orientation', gettext('Orientation'), false, 52, true, 'string'),
+						'EXIFSoftware'							 => array('IFD0', 'Software', gettext('Software'), false, 999, true, 'string'),
+						'EXIFContrast'							 => array('SubIFD', 'Contrast', gettext('Contrast Setting'), false, 52, true, 'string'),
+						'EXIFSharpness'							 => array('SubIFD', 'Sharpness', gettext('Sharpness Setting'), false, 52, true, 'string'),
+						'EXIFSaturation'						 => array('SubIFD', 'Saturation', gettext('Saturation Setting'), false, 52, true, 'string'),
+						'EXIFWhiteBalance'					 => array('SubIFD', 'WhiteBalance', gettext('White Balance'), false, 52, true, 'string'),
+						'EXIFSubjectDistance'				 => array('SubIFD', 'SubjectDistance', gettext('Subject Distance'), false, 52, true, 'number'),
+						'EXIFFocalLength'						 => array('SubIFD', 'FocalLength', gettext('Focal Length'), true, 52, true, 'number'),
+						'EXIFLensType'							 => array('SubIFD', 'LensType', gettext('Lens Type'), false, 52, true, 'string'),
+						'EXIFLensInfo'							 => array('SubIFD', 'LensInfo', gettext('Lens Info'), false, 52, true, 'string'),
+						'EXIFFocalLengthIn35mmFilm'	 => array('SubIFD', 'FocalLengthIn35mmFilm', gettext('35mm Focal Length Equivalent'), false, 52, true, 'string'),
+						'IPTCCity'									 => array('IPTC', 'City', gettext('City'), false, 32, true, 'string'),
+						'IPTCSubLocation'						 => array('IPTC', 'SubLocation', gettext('Sub-location'), false, 32, true, 'string'),
+						'IPTCState'									 => array('IPTC', 'State', gettext('Province/State'), false, 32, true, 'string'),
+						'IPTCLocationCode'					 => array('IPTC', 'LocationCode', gettext('Country/Primary Location Code'), false, 3, true, 'string'),
+						'IPTCLocationName'					 => array('IPTC', 'LocationName', gettext('Country/Primary Location Name'), false, 64, true, 'string'),
+						'IPTCContentLocationCode'		 => array('IPTC', 'ContentLocationCode', gettext('Content Location Code'), false, 3, true, 'string'),
+						'IPTCContentLocationName'		 => array('IPTC', 'ContentLocationName', gettext('Content Location Name'), false, 64, true, 'string'),
+						'EXIFGPSLatitude'						 => array('GPS', 'Latitude', gettext('Latitude'), false, 52, true, 'number'),
+						'EXIFGPSLatitudeRef'				 => array('GPS', 'Latitude Reference', gettext('Latitude Reference'), false, 52, true, 'string'),
+						'EXIFGPSLongitude'					 => array('GPS', 'Longitude', gettext('Longitude'), false, 52, true, 'number'),
+						'EXIFGPSLongitudeRef'				 => array('GPS', 'Longitude Reference', gettext('Longitude Reference'), false, 52, true, 'string'),
+						'EXIFGPSAltitude'						 => array('GPS', 'Altitude', gettext('Altitude'), false, 52, true, 'number'),
+						'EXIFGPSAltitudeRef'				 => array('GPS', 'Altitude Reference', gettext('Altitude Reference'), false, 52, true, 'string'),
+						'IPTCOriginatingProgram'		 => array('IPTC', 'OriginatingProgram', gettext('Originating Program '), false, 32, true, 'string'),
+						'IPTCProgramVersion'				 => array('IPTC', 'ProgramVersion', gettext('Program Version'), false, 10, true, 'string'),
+						'VideoFormat'								 => array('VIDEO', 'fileformat', gettext('Video File Format'), false, 32, true, 'string'),
+						'VideoSize'									 => array('VIDEO', 'filesize', gettext('Video File Size'), false, 32, true, 'number'),
+						'VideoArtist'								 => array('VIDEO', 'artist', gettext('Video Artist'), false, 256, true, 'string'),
+						'VideoTitle'								 => array('VIDEO', 'title', gettext('Video Title'), false, 256, true, 'string'),
+						'VideoBitrate'							 => array('VIDEO', 'bitrate', gettext('Bitrate'), false, 32, true, 'number'),
+						'VideoBitrate_mode'					 => array('VIDEO', 'bitrate_mode', gettext('Bitrate_Mode'), false, 32, true, 'string'),
+						'VideoBits_per_sample'			 => array('VIDEO', 'bits_per_sample', gettext('Bits per sample'), false, 32, true, 'number'),
+						'VideoCodec'								 => array('VIDEO', 'codec', gettext('Codec'), false, 32, true, 'string'),
+						'VideoCompression_ratio'		 => array('VIDEO', 'compression_ratio', gettext('Compression Ratio'), false, 32, true, 'number'),
+						'VideoDataformat'						 => array('VIDEO', 'dataformat', gettext('Video Dataformat'), false, 32, true, 'string'),
+						'VideoEncoder'							 => array('VIDEO', 'encoder', gettext('File Encoder'), false, 10, true, 'string'),
+						'VideoSamplerate'						 => array('VIDEO', 'Samplerate', gettext('Sample rate'), false, 32, true, 'number'),
+						'VideoChannelmode'					 => array('VIDEO', 'channelmode', gettext('Channel mode'), false, 32, true, 'string'),
+						'VideoFormat'								 => array('VIDEO', 'format', gettext('Format'), false, 10, true, 'string'),
+						'VideoChannels'							 => array('VIDEO', 'channels', gettext('Channels'), false, 10, true, 'number'),
+						'VideoFramerate'						 => array('VIDEO', 'framerate', gettext('Frame rate'), false, 32, true, 'number'),
+						'VideoResolution_x'					 => array('VIDEO', 'resolution_x', gettext('X Resolution'), false, 32, true, 'number'),
+						'VideoResolution_y'					 => array('VIDEO', 'resolution_y', gettext('Y Resolution'), false, 32, true, 'number'),
+						'VideoAspect_ratio'					 => array('VIDEO', 'pixel_aspect_ratio', gettext('Aspect ratio'), false, 32, true, 'number'),
+						'VideoPlaytime'							 => array('VIDEO', 'playtime_string', gettext('Play Time'), false, 10, true, 'number'),
+						'XMPrating'									 => array('XMP', 'rating', gettext('XMP Rating'), false, 10, true, 'string'),
 		);
 		foreach ($_zp_exifvars as $key => $item) {
 			if (!is_null($disable = getOption($key . '-disabled'))) {
@@ -2549,9 +2568,9 @@ class zpFunctions {
 					$set[$s[0]] = $s[1];
 				}
 				$args = getImageArgs($set);
-				$imageuri = getImageURI($args, $set['a'], $set['i'], NULL);
+				$imageuri = getImageURI($args, urldecode($set['a']), urldecode($set['i']), NULL);
 				if (strpos($imageuri, 'i.php') === false) {
-					$text = str_replace($matches[1], $imageuri, $text);
+					$text = str_replace($matches[1][$key], $imageuri, $text);
 				}
 			}
 		}
@@ -2568,15 +2587,38 @@ class _zp_captcha {
 	var $name = NULL; // "captcha" name if no captcha plugin loaded
 
 	function getCaptcha($prompt) {
-		global $_zp_HTML_cache;
-		if (is_object($_zp_HTML_cache)) { //	don't cache captch
-			$_zp_HTML_cache->disable();
-		}
 		return array('input'	 => NULL, 'html'	 => '<p class="errorbox">' . gettext('No captcha handler is enabled.') . '</p>', 'hidden' => '');
 	}
 
 	function checkCaptcha($s1, $s2) {
 		return false;
+	}
+
+}
+
+/**
+ * stand-in for when there is no HTML cache plugin enabled
+ */
+class _zp_HTML_cache {
+
+	function disable() {
+
+	}
+
+	function startHTMLCache() {
+
+	}
+
+	function abortHTMLCache() {
+
+	}
+
+	function endHTMLCache() {
+
+	}
+
+	function clearHtmlCache() {
+
 	}
 
 }

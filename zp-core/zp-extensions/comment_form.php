@@ -20,6 +20,8 @@ $plugin_author = "Stephen Billard (sbillard)";
 
 $option_interface = 'comment_form';
 
+zp_register_filter('admin_toolbox_global', 'comment_form::toolbox');
+
 if (getOption('Allow_comments') || getOption('zenpage_comments_allowed')) {
 	setOptionDefault('zp_plugin_comment_form', $plugin_is_filter);
 	if (!is_null($default = getOption('Allow_comments'))) {
@@ -36,14 +38,11 @@ setOptionDefault('comment_body_requiired', 1);
 require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/functions.php');
 
 if (OFFSET_PATH) {
-	zp_register_filter('options_comments', 'comment_form_options');
-	zp_register_filter('save_comment_custom_data', 'comment_form_save_comment');
-	zp_register_filter('edit_comment_custom_data', 'comment_form_edit_comment');
 	zp_register_filter('admin_overview', 'comment_form_print10Most');
 	zp_register_filter('save_admin_custom_data', 'comment_form_save_admin');
 	zp_register_filter('edit_admin_custom_data', 'comment_form_edit_admin');
+	zp_register_filter('admin_tabs', 'comment_form::admin_tabs');
 } else {
-	zp_register_filter('comment_post', 'comment_form_comment_post');
 	zp_register_filter('handle_comment', 'comment_form_postcomment');
 	zp_register_filter('object_addComment', 'comment_form_addCcomment');
 	if (getOption('comment_form_pagination')) {
@@ -60,7 +59,6 @@ class comment_form {
 	/**
 	 * class instantiation function
 	 *
-	 * @return admin_login
 	 */
 	function comment_form() {
 		setOptionDefault('email_new_comments', 1);
@@ -146,7 +144,7 @@ class comment_form {
 										'desc'	 => gettext('If checked, an RSS link will be included at the bottom of the comment section.')),
 						gettext('Comments per page')						 => array('key'		 => 'comment_form_comments_per_page', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 9,
-										'desc'	 => gettext('The comments that should show per page using the jQuery pagination')),
+										'desc'	 => gettext('The comments that should show per page on the admin tab and when using the jQuery pagination')),
 						gettext('Comment editor configuration')	 => array('key'						 => 'tinymce_comments', 'type'					 => OPTION_TYPE_SELECTOR,
 										'order'					 => 1,
 										'selections'		 => $configarray,
@@ -163,6 +161,34 @@ class comment_form {
 
 	}
 
+	static function admin_tabs($tabs) {
+		if (zp_loggedin(COMMENT_RIGHTS)) {
+			$add = true;
+			$newtabs = array();
+			foreach ($tabs as $key => $tab) {
+				if ($add && !in_array($key, array('overview', 'edit', 'upload', 'pages', 'news', 'tags', 'menu'))) {
+					$newtabs['comments'] = array('text'		 => gettext("comments"),
+									'link'		 => WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&amp;tab=' . gettext('comments'),
+									'subtabs'	 => NULL);
+					$add = false;
+				}
+				$newtabs[$key] = $tab;
+			}
+			return $newtabs;
+		}
+		return $tabs;
+	}
+
+	static function toolbox() {
+		if (zp_loggedin(COMMENT_RIGHTS)) {
+			?>
+			<li>
+				<?php printLink(WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&amp;tab=' . gettext('comments'), gettext("Comments"), NULL, NULL, NULL); ?>
+			</li>
+			<?php
+		}
+	}
+
 }
 
 /**
@@ -175,7 +201,7 @@ class comment_form {
  * @param bool $desc_order default false, set to true to change the comment order to descending ( = newest to oldest)
  */
 function printCommentForm($showcomments = true, $addcommenttext = NULL, $addheader = true, $comment_commententry_mod = '', $desc_order = false) {
-	global $_zp_gallery_page, $_zp_current_admin_obj, $_zp_current_comment, $_zp_captcha, $_zp_authority;
+	global $_zp_gallery_page, $_zp_current_admin_obj, $_zp_current_comment, $_zp_captcha, $_zp_authority, $_zp_HTML_cache;
 	if (getOption('email_new_comments')) {
 		$email_list = $_zp_authority->getAdminEmail();
 		if (empty($email_list)) {
@@ -254,10 +280,10 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 				}
 			}
 			$hideoriginalcomments = '';
-			if (getOption('comment_form_pagination') && getOption('comment_form_comments_per_page') < $num) {
+			if (getOption('comment_form_pagination') && COMMENTS_PER_PAGE < $num) {
 				$hideoriginalcomments = ' style="display:none"'; // hide original comment display to be replaced by jQuery pagination
 			}
-			if (getOption('comment_form_pagination') && getOption('comment_form_comments_per_page') < $num) {
+			if (getOption('comment_form_pagination') && COMMENTS_PER_PAGE < $num) {
 				?>
 				<div class="Pagination"></div><!-- this is the jquery pagination nav placeholder -->
 				<div id="Commentresult"></div>
@@ -273,9 +299,10 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 					?>
 					<div class="comment" <?php echo $display; ?>>
 						<div class="commentinfo">
-							<h4 id="zp_comment_id_<?php echo $_zp_current_comment['id']; ?>"><?php printCommentAuthorLink(); ?>: <?php echo gettext('on'); ?> <?php echo getCommentDateTime();
-			printEditCommentLink(gettext('Edit'), ', ', '');
-					?></h4>
+							<h4 id="zp_comment_id_<?php echo $_zp_current_comment['id']; ?>"><?php printCommentAuthorLink(); ?>: <?php echo gettext('on'); ?> <?php
+								echo getCommentDateTime();
+								printEditCommentLink(gettext('Edit'), ', ', '');
+								?></h4>
 						</div><!-- class "commentinfo" -->
 						<div class="commenttext"><?php echo html_encodeTagged(getCommentBody(), false); ?></div><!-- class "commenttext" -->
 					</div><!-- class "comment" -->
@@ -285,7 +312,7 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 			</div><!-- id "comments" -->
 			<?php
 		}
-		if (getOption('comment_form_pagination') && getOption('comment_form_comments_per_page') < $num) {
+		if (getOption('comment_form_pagination') && COMMENTS_PER_PAGE < $num) {
 			?>
 			<div class="Pagination"></div><!-- this is the jquery pagination nav placeholder -->
 			<?php
@@ -343,6 +370,15 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 				$data = zp_apply_filter('comment_form_data', array('data'		 => $stored, 'disabled' => $disabled));
 				$disabled = $data['disabled'];
 				$stored = $data['data'];
+
+				foreach ($data as $check) {
+					foreach ($check as $v) {
+						if ($v) {
+							$_zp_HTML_cache->disable(); //	shouldn't cache partially filled in pages
+							break 2;
+						}
+					}
+				}
 
 				if (!empty($addcommenttext)) {
 					echo $addcommenttext;

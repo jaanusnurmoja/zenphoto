@@ -29,8 +29,6 @@ echo "\n" . '<div id="content">';
 ?>
 <?php printSubtabs('Cache'); ?>
 <div class="tabbox">
-
-
 	<?php
 	zp_apply_filter('admin_note', 'cache', '');
 	?>
@@ -49,9 +47,10 @@ echo "\n" . '<div id="content">';
 	?>
 	<form name="size_selections" action="?select" method="post">
 		<?php
-		$refresh = $imageprocessor = $found = $fixed = 0;
+		$refresh = $imageprocessor = $found = $fixed = $fixedFolder = 0;
 		XSRFToken('cacheDBImages');
 		$watermarks = getWatermarks();
+		$missingImages = NULL;
 		foreach ($tables as $table => $fields) {
 			foreach ($fields as $field) {
 				$sql = 'SELECT * FROM ' . prefix($table) . ' WHERE `' . $field . '` REGEXP "<img.*src\s*=\s*\".*i.php((\\.|[^\"])*)"';
@@ -61,21 +60,27 @@ echo "\n" . '<div id="content">';
 						$imageprocessor++;
 						preg_match_all('|\<\s*img.*?\ssrc\s*=\s*"(.*i\.php\?([^"]*)).*/\>|', $row[$field], $matches);
 						foreach ($matches[2] as $uri) {
-							$url = '<img src="'.html_encode(pathurlencode(WEBPATH.'/'.ZENFOLDER.'/i.php?'.$uri).'" height="20" width="20" alt="X" />';
-							$text = zpFunctions::updateImageProcessorLink($url);
-							if ($text == $url) {
-								?>
-								<a href="<?php echo $uri; ?>&amp;debug" title="<?php echo gettext('image processor reference'); ?>">
-									<?php echo $url . "\n"; ?>
-								</a>
-								<?php
-							}
-							$text = zpFunctions::updateImageProcessorLink($row[$field]);
-							if ($text != $row[$field]) {
-								$sql = 'UPDATE ' . prefix($table) . ' SET `' . $field . '`=' . db_quote($text) . ' WHERE `id`=' . $row['id'];
-								query($sql);
+							$params = parse_url($uri);
+							parse_str($params['query'], $query);
+							if (!file_exists(getAlbumFolder() . $query['a'] . '/' . $query['i'])) {
+								recordMissing($table, $row);
 							} else {
-								$refresh++;
+								$url = '<img src="' . WEBPATH . '/' . ZENFOLDER . '/i.php?' . $uri . '" height="20" width="20" alt="X" />';
+								$text = zpFunctions::updateImageProcessorLink($url);
+								if ($text == $url) {
+									?>
+									<a href="<?php echo $uri; ?>&amp;debug" title="<?php echo gettext('image processor reference'); ?>">
+										<?php echo $url . "\n"; ?>
+									</a>
+									<?php
+								}
+								$text = zpFunctions::updateImageProcessorLink($row[$field]);
+								if ($text != $row[$field]) {
+									$sql = 'UPDATE ' . prefix($table) . ' SET `' . $field . '`=' . db_quote($text) . ' WHERE `id`=' . $row['id'];
+									query($sql);
+								} else {
+									$refresh++;
+								}
 							}
 						}
 					}
@@ -86,12 +91,13 @@ echo "\n" . '<div id="content">';
 				if ($result) {
 					while ($row = db_fetch_assoc($result)) {
 						preg_match_all('~\<img.*src\s*=\s*"((\\.|[^"])*)~', $row[$field], $matches);
-						foreach ($matches[0] as $key => $match) {
+						foreach ($matches[1] as $key => $match) {
 							$found++;
+
 							$args = array(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 							$set = array();
 							$done = false;
-							$params = explode('_', stripSuffix($matches[1][$key]));
+							$params = explode('_', stripSuffix($match));
 							while (!$done && count($params) > 1) {
 								$check = array_pop($params);
 								if (is_numeric($check)) {
@@ -129,40 +135,74 @@ echo "\n" . '<div id="content">';
 								}
 							}
 							$args = getImageArgs($set);
-							$image = preg_replace('~.*/' . CACHEFOLDER . '/~', '', implode('_', $params)) . '.' . getSuffix($matches[1][$key]);
-							$uri = getImageURI($args, dirname($image), basename($image), NULL);
-							if (strpos($uri, 'i.php?') !== false) {
-								$fixed++;
-								switch ($table) {
-									case 'images':
-										$album = query_single_row('SELECT `folder` FROM ' . prefix('albums') . ' WHERE `id`=' . $row[albumid]);
-										$title = sprintf(gettext('%1$s: image %2$s'), $album['folder'], $row[$filename]);
-										break;
-									case 'albums':
-										$title = sprintf(gettext('album %s'), $row[$folder]);
-										break;
-									case 'news':
-									case 'pages':
-										$title = sprintf(gettext('%1$s: %2$s'), $table, $row['titlelink']);
-										break;
-								}
-								?>
-								<a href="<?php echo html_encode($uri); ?>&amp;debug" title="<?php echo $title; ?>">
-									<?php
-									if (isset($set['t'])) {
-										echo '<img src="' . html_encode(pathurlencode($uri)) . '" height="8" width="8" alt="x" />' . "\n";
-									} else {
-										echo '<img src="' . html_encode(pathurlencode($uri) . '" height="20" width="20" alt="X" />' . "\n";
+							$image = preg_replace('~.*/' . CACHEFOLDER . '/~', '', implode('_', $params)) . '.' . getSuffix($match);
+							if (!file_exists(getAlbumFolder() . $image)) {
+								recordMissing($table, $row);
+							} else {
+								$uri = getImageURI($args, dirname($image), basename($image), NULL);
+								if (strpos($uri, 'i.php?') !== false) {
+									$fixed++;
+									switch ($table) {
+										case 'images':
+											$album = query_single_row('SELECT `folder` FROM ' . prefix('albums') . ' WHERE `id`=' . $row[albumid]);
+											$title = sprintf(gettext('%1$s: image %2$s'), $album['folder'], $row[$filename]);
+											break;
+										case 'albums':
+											$title = sprintf(gettext('album %s'), $row[$folder]);
+											break;
+										case 'news':
+										case 'pages':
+											$title = sprintf(gettext('%1$s: %2$s'), $table, $row['titlelink']);
+											break;
 									}
 									?>
-								</a>
-								<?php
+									<a href="<?php echo html_encode($uri); ?>&amp;debug" title="<?php echo $title; ?>">
+										<?php
+										if (isset($set['t'])) {
+											echo '<img src="' . html_encode(pathurlencode($uri)) . '" height="8" width="8" alt="x" />' . "\n";
+										} else {
+											echo '<img src="' . html_encode(pathurlencode($uri)) . '" height="20" width="20" alt="X" />' . "\n";
+										}
+										?>
+									</a>
+									<?php
+								}
+
+								//Check for cache folder having moved (Site relocated?)
+								preg_match('~(.*/)' . CACHEFOLDER . '~', $match, $foldermatches);
+								if ($foldermatches[1] != WEBPATH . '/') {
+									$fixedFolder++;
+									$target = $foldermatches[1] . CACHEFOLDER . '/' . stripSuffix($image);
+									$update = WEBPATH . '/' . CACHEFOLDER . '/' . stripSuffix($image);
+									$row[$field] = updateCacheFolder($row[$field], $target, $update);
+									$sql = 'UPDATE ' . prefix($table) . ' SET `' . $field . '`=' . db_quote($row[$field]) . ' WHERE `id`=' . $row['id'];
+									query($sql);
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+		if (!empty($missingImages)) {
+			?>
+			<div class="errorbox">
+				<p>
+					<?php
+					echo gettext('<strong>Note:</strong> the following objects have images that appear to no longer exist.');
+					?>
+				</p>
+				<?php
+				foreach ($missingImages as $link => $missing) {
+					?>
+					<a href="<?php echo $link; ?>"><?php echo $missing; ?></a><br />
+					<?php
+				}
+				?>
+			</div>
+			<?php
+		}
+
 		$button = array('text'	 => gettext("Refresh"), 'title'	 => gettext('Refresh the caching of the images stored in the database if some images did not render.'));
 		?>
 		<p>
@@ -179,6 +219,12 @@ echo "\n" . '<div id="content">';
 			<br />
 			<?php
 			printf(ngettext('%s reference re-cached.', '%s references re-cached.', $fixed), $fixed);
+			?>
+			<br />
+			<?php
+			if ($fixedFolder) {
+				printf(ngettext('%s cache folder reference fixed.', '%s cache folder references fixed.', $fixedFolder), $fixedFolder);
+			}
 			?>
 		</p>
 		<p class="buttons">
@@ -210,4 +256,51 @@ echo "\n" . '<div id="content">';
 
 	echo "\n</body>";
 	echo "\n</head>";
+
+	/**
+	 * Updates the path to the cache folder
+	 * @param mixed $text
+	 * @param string $target
+	 * @param string $update
+	 * @return mixed
+	 */
+	function updateCacheFolder($text, $target, $update) {
+		if ($serial = preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+			$text = getSerializedArray($text);
+		}
+		if (is_array($text)) {
+			foreach ($text as $key => $textelement) {
+				$text[$key] = updateCacheFolder($textelement, $target, $update);
+			}
+			if ($serial) {
+				$text = serialize($text);
+			}
+		} else {
+			$text = str_replace($target, $update, $text);
+		}
+		return $text;
+	}
+
+	function recordMissing($table, $row) {
+		global $missingImages;
+		$obj = getItemByID($table, $row['id']);
+		switch ($table) {
+			case 'news':
+				$obj_link = $obj->getNewsLink();
+				break;
+			case 'pages':
+				$obj_link = $obj->getPageLink();
+				break;
+			case 'news_categories':
+				$obj_link = $obj->getCategoryLink();
+				break;
+			case 'images':
+				$obj_link = $obj->getImageLink();
+				break;
+			case 'albums':
+				$obj_link = $obj->getAlbumLink();
+				break;
+		}
+		$missingImages[$obj_link] = $obj->getTitle();
+	}
 	?>

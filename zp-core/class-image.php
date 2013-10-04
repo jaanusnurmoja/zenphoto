@@ -139,26 +139,25 @@ class Image extends MediaObject {
 			}
 		}
 		if ($msg) {
-			if ($quiet) {
-				$this->exists = false;
-				return;
+			$this->exists = false;
+			if (!$quiet) {
+				trigger_error($msg, E_USER_ERROR);
 			}
-			trigger_error($msg, E_USER_ERROR);
-			exitZP();
+			return;
 		}
 
 		// This is where the magic happens...
 		$album_name = $album->name;
 		$new = parent::PersistentObject('images', array('filename' => $filename, 'albumid'	 => $this->album->getID()), 'filename', false, empty($album_name));
 		if ($new || $this->filemtime != $this->get('mtime')) {
+			if ($new)
+				$this->setTitle($this->displayname);
 			$this->updateMetaData(); // extract info from image
 			$this->updateDimensions(); // deal with rotation issues
-			$this->filemtime = @filemtime($this->localpath);
 			$this->set('mtime', $this->filemtime);
 			$this->save();
-			if ($new) {
+			if ($new)
 				zp_apply_filter('new_image', $this);
-			}
 		}
 	}
 
@@ -252,12 +251,14 @@ class Image extends MediaObject {
 	 * @return array
 	 */
 	function getMetaData() {
-		require_once(dirname(__FILE__) . '/exif/exif.php');
 		global $_zp_exifvars;
 		$exif = array();
 		// Put together an array of EXIF data to return
 		foreach ($_zp_exifvars as $field => $exifvar) {
-			$exif[$field] = $this->get($field);
+			//	only enabled image metadata
+			if ($_zp_exifvars[$field][5]) {
+				$exif[$field] = $this->get($field);
+			}
 		}
 		return $exif;
 	}
@@ -334,15 +335,15 @@ class Image extends MediaObject {
 			if (isset($exifraw['ValidEXIFData'])) {
 				$this->set('hasMetadata', 1);
 				foreach ($_zp_exifvars as $field => $exifvar) {
+					$exif = NULL;
 					if ($exifvar[5]) { // enabled field
 						if (isset($exifraw[$exifvar[0]][$exifvar[1]])) {
 							$exif = trim(sanitize($exifraw[$exifvar[0]][$exifvar[1]], 1));
-							$this->set($field, $exif);
 						} else if (isset($exifraw[$exifvar[0]]['MakerNote'][$exifvar[1]])) {
 							$exif = trim(sanitize($exifraw[$exifvar[0]]['MakerNote'][$exifvar[1]], 1));
-							$this->set($field, $exif);
 						}
 					}
+					$this->set($field, $exif);
 				}
 			}
 			/* check IPTC data */
@@ -366,10 +367,12 @@ class Image extends MediaObject {
 					}
 					// Extract IPTC fields of interest
 					foreach ($_zp_exifvars as $field => $exifvar) {
-						if ($exifvar[5]) { // enabled field
-							if ($exifvar[0] == 'IPTC') {
+						if ($exifvar[0] == 'IPTC') {
+							if ($exifvar[5]) { // enabled field
 								$datum = $this->getIPTCTag($IPTCtags[$exifvar[1]], $iptc);
 								$this->set($field, $this->prepIPTCString($datum, $characterset));
+							} else {
+								$this->set($field, NULL);
 							}
 						}
 					}
@@ -472,10 +475,6 @@ class Image extends MediaObject {
 		/* iptc copyright */
 		$this->setCopyright($this->get('IPTCCopyright'));
 
-		$x = $this->getTitle();
-		if (empty($x)) {
-			$this->setTitle($this->displayname);
-		}
 		if (empty($xdate)) {
 			$this->setDateTime(strftime('%Y-%m-%d %H:%M:%S', $this->filemtime));
 		}

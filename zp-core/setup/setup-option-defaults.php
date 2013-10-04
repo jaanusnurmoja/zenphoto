@@ -7,7 +7,7 @@
  */
 setupLog(gettext('Set Zenphoto default options'), true);
 
-eval(file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE));
+require(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 require_once(dirname(dirname(__FILE__)) . '/' . PLUGIN_FOLDER . '/security-logger.php');
 zp_apply_filter('log_setup', true, 'install', '');
 
@@ -76,6 +76,14 @@ setOptionDefault('time_offset', 0);
 setOption('mod_rewrite_detected', 0);
 if (isset($_GET['mod_rewrite'])) {
 	?>
+	<script type="text/javascript">
+		$(function() {
+			$('img').error(function() {
+				$(this).attr('src', '../images/fail.png');
+				imageErr = true;
+			});
+		});
+	</script>
 	<p>
 		<?php echo gettext('Mod_Rewrite check:'); ?>
 		<br />
@@ -205,7 +213,7 @@ foreach ($_zp_exifvars as $key => $item) {
 setOptionDefault('IPTC_encoding', 'ISO-8859-1');
 
 setOptionDefault('UTF8_image_URI', 0);
-setOptionDefault('zenphoto_plugun_zpCaptcha', 5 | CLASS_PLUGIN);
+setOptionDefault('zp_plugin_zpCaptcha', 5 | CLASS_PLUGIN);
 
 setOptionDefault('sharpen_amount', 40);
 setOptionDefault('sharpen_radius', 0.5);
@@ -516,7 +524,6 @@ if (!is_null($autoRotate)) {
 
 purgeOption('zp_plugin_failed_access_blocker');
 setOptionDefault('plugins_per_page', 20);
-setOptionDefault('comments_per_page', 15);
 setOptionDefault('users_per_page', 10);
 setOptionDefault('articles_per_page', 15);
 setOptionDefault('combinews-customtitle', getOption('combinews-customtitle-plural'));

@@ -23,7 +23,7 @@ $plugin_notice = gettext("This plugin is <strong>NOT</strong> required for the Z
 $option_interface = 'deprecated_functions';
 $plugin_is_filter = 9 | CLASS_PLUGIN;
 
-enableExtension(')deprecated-functions', $plugin_is_filter); //	Yes, I know some people will be annoyed that this keeps coming back,
+enableExtension('deprecated-functions', $plugin_is_filter); //	Yes, I know some people will be annoyed that this keeps coming back,
 //	but each release may deprecated new functions which would then just give
 //	(perhaps unseen) errors. Better the user should disable this once he knows
 //	his site is working.
@@ -774,13 +774,12 @@ function countArticles($category = '', $published = 'published', $count_subcat_a
 		}
 		// date archive query addition
 		if (in_context(ZP_ZENPAGE_NEWS_DATE)) {
-			$postdate = $_zp_post_date;
 			if (empty($show)) {
 				$and = " WHERE ";
 			} else {
 				$and = " AND ";
 			}
-			$datesearch = $and . "date LIKE '$postdate%'";
+			$datesearch = $and . "date LIKE '$_zp_post_date%'";
 		} else {
 			$datesearch = "";
 		}
@@ -1014,7 +1013,7 @@ function generateCaptcha(&$img) {
 function printAlbumZip() {
 	deprecated_functions::notify(gettext('Use downloadList plugin <code>printDownloadLinkAlbumZip()</code>.'));
 	global $_zp_current_album;
-	enableExtension(')downloadList', 20 | ADMIN_PLUGIN | THEME_PLUGIN);
+	enableExtension('downloadList', 20 | ADMIN_PLUGIN | THEME_PLUGIN, false);
 	require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/downloadList.php');
 	printDownloadLinkAlbumZip(gettext('Download a zip file of this album'), $_zp_current_album);
 }
@@ -1272,9 +1271,9 @@ function getZenpageRSSLink($option = 'News', $categorylink = '', $lang = NULL) {
  * @since 1.4.5
  */
 function printZenpageRSSLink($option = 'News', $categorylink = '', $prev = '', $linktext = '', $next = '', $printIcon = true, $class = null, $lang = NULL) {
-	deprecated_functions::notify(gettext('use printRSSLink($option, $prev, $linktext, $next, $printIcon, $class, $lang, categoryLink).'));
+	deprecated_functions::notify(gettext('use printRSSLink($option, $prev, $linktext, $next, $printIcon, $class, $lang, $categoryLink).'));
 	if (class_exists('RSS'))
-		printRSSLink($option, $prev, $linktext, $next, $printIcon, $class, $lang, categoryLink);
+		printRSSLink($option, $prev, $linktext, $next, $printIcon, $class, $lang, $categoryLink);
 }
 
 /**

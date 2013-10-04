@@ -224,6 +224,9 @@ function next_news($sortorder = "date", $sortdirection = "desc") {
 			} else {
 				$_zp_zenpage_articles = $_zp_zenpage->getArticles(ZP_ARTICLES_PER_PAGE, NULL, false, $sortorder, $sortdirection);
 			}
+			if (empty($_zp_zenpage_articles)) {
+				return NULL;
+			}
 		}
 		while (!empty($_zp_zenpage_articles)) {
 			$news = array_shift($_zp_zenpage_articles);
@@ -685,7 +688,10 @@ function getContentShorten($text, $shorten, $shortenindicator = NULL, $readmore 
 			}
 		} else {
 			if (!is_bool($shorten)) {
-				$text = shortenContent($text, $shorten, $shortenindicator) . $readmorelink;
+				$newtext = shortenContent($text, $shorten, $shortenindicator);
+				if ($newtext != $text) {
+					$text = $newtext . $readmorelink;
+				}
 			}
 		}
 	}
@@ -1168,27 +1174,29 @@ function printAllNewsCategories($newsindex = 'All news', $counter = TRUE, $css_i
  */
 function getLatestNews($number = 2, $option = 'none', $category = '', $sticky = true, $sortdirection = 'desc') {
 	global $_zp_zenpage, $_zp_current_zenpage_news;
-	$latest = '';
+	$latest = array();
 	switch ($option) {
 		case 'none':
 			if (empty($category)) {
-				$latest = $_zp_zenpage->getArticles($number, NULL, true, 'date', 'desc', $sortdirection, $sticky);
+				$latest = $_zp_zenpage->getArticles($number, NULL, true, NULL, $sortdirection, $sticky, NULL);
 			} else {
 				$catobj = new ZenpageCategory($category);
-				$latest = $catobj->getArticles($number, NULL, true, 'date', 'desc', $sortdirection, $sticky);
+				$latest = $catobj->getArticles($number, NULL, true, NULL, $sortdirection, $sticky);
 			}
 			$counter = '';
 			$latestnews = array();
-			foreach ($latest as $item) {
-				$article = new ZenpageNews($item['titlelink']);
-				$counter++;
-				$latestnews[$counter] = array(
-								"albumname"	 => $article->getTitle(),
-								"titlelink"	 => $article->getTitlelink(),
-								"date"			 => $article->getDateTime(),
-								"type"			 => "news"
-				);
-				$latest = $latestnews;
+			if (is_array($latest)) {
+				foreach ($latest as $item) {
+					$article = new ZenpageNews($item['titlelink']);
+					$counter++;
+					$latestnews[$counter] = array(
+									"albumname"	 => $article->getTitle(),
+									"titlelink"	 => $article->getTitlelink(),
+									"date"			 => $article->getDateTime(),
+									"type"			 => "news"
+					);
+					$latest = $latestnews;
+				}
 			}
 			break;
 		case 'with_latest_images':
@@ -1492,7 +1500,7 @@ function getNewsPathNav($page) {
  */
 function getPrevNewsPageURL() {
 	global $_zp_page;
-	if ($_zp_page != 1) {
+	if ($_zp_page > 1) {
 		if ($_zp_page == 2) {
 			if (is_NewsCategory()) {
 				return getNewsPathNav(1);
@@ -1532,7 +1540,7 @@ function printPrevNewsPageLink($prev = '« prev', $class = 'disabledlink') {
 function getNextNewsPageURL() {
 	global $_zp_zenpage, $_zp_page;
 	$total_pages = ceil($_zp_zenpage->getTotalArticles() / ZP_ARTICLES_PER_PAGE);
-	if ($_zp_page != $total_pages) {
+	if ($_zp_page < $total_pages) {
 		return getNewsPathNav($_zp_page + 1);
 	} else {
 		return false;
@@ -1653,11 +1661,7 @@ function printNewsPageListWithNav($next, $prev, $nextprev = true, $class = 'page
 
 function getTotalNewsPages() {
 	global $_zp_zenpage;
-	if (ZP_COMBINEWS AND !is_NewsCategory() AND !is_NewsArchive()) {
-		$articlecount = $_zp_zenpage->countCombiNews();
-	} else {
-		$articlecount = count($_zp_zenpage->getArticles(0, 'all'));
-	}
+	return ceil($_zp_zenpage->getTotalArticles() / ZP_ARTICLES_PER_PAGE);
 }
 
 /* * ********************************************************************* */

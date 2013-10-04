@@ -13,27 +13,7 @@
 $plugin_description = gettext("Functions that provide various statistics about images and albums in the gallery.");
 $plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard)";
 
-/**
- *
- * used to get a list of albums to be further processed
- * @param object $obj from whence to get the albums
- * @param array $albumlist collects the list
- * @param bool $scan force scan for new images in the album folder
- */
-function getImageAlbumAlbumList($obj, &$albumlist, $scan) {
-	global $_zp_gallery;
-	$hint = $show = false;
-	$locallist = $obj->getAlbums();
-	foreach ($locallist as $folder) {
-		$album = newAlbum($folder);
-		If (!$album->isDynamic() && $album->checkAccess($hint, $show)) {
-			if ($scan)
-				$album->getImages();
-			$albumlist[] = $album->getID();
-			getImageAlbumAlbumList($album, $albumlist, $scan);
-		}
-	}
-}
+require_once(dirname(dirname(__FILE__)) . '/template-functions.php');
 
 /**
  * Returns a list of album statistic accordingly to $option
@@ -61,7 +41,7 @@ function getAlbumStatistic($number = 5, $option, $albumfolder = '', $sortdirecti
 	} else {
 		$obj = $_zp_gallery;
 	}
-	getImageAlbumAlbumList($obj, $albumlist, false);
+	getAllAccessibleAlbums($obj, $albumlist, false);
 	switch ($sortdirection) {
 		case 'desc':
 		default:
@@ -71,10 +51,10 @@ function getAlbumStatistic($number = 5, $option, $albumfolder = '', $sortdirecti
 			$sortdir = 'ASC';
 			break;
 	}
-	if (!empty($albumlist)) {
-		$albumWhere = ' WHERE `id` in (' . implode(',', $albumlist) . ')';
+	if (empty($albumlist)) {
+		return array();
 	} else {
-		$albumWhere = '';
+		$albumWhere = ' WHERE `id` in (' . implode(',', $albumlist) . ')';
 	}
 	switch ($option) {
 		case "popular":
@@ -388,11 +368,11 @@ function getImageStatistic($number, $option, $albumfolder = '', $collection = fa
 	} else {
 		$obj = $_zp_gallery;
 	}
-	getImageAlbumAlbumList($obj, $albumlist, true);
+	getAllAccessibleAlbums($obj, $albumlist, true);
 	if (empty($albumlist)) {
 		return array();
 	}
-	$albumWhere = ' AND (albums.`id`=' . implode(' OR albums.`id`=', $albumlist) . ')';
+	$albumWhere = ' AND albums.`id` in (' . implode(',', $albumlist) . ')';
 	if ($threshold > 0) {
 		$albumWhere .= ' AND images.total_votes >= ' . $threshold;
 	}
@@ -435,13 +415,12 @@ function getImageStatistic($number, $option, $albumfolder = '', $collection = fa
 			break;
 	}
 	$imageArray = array();
-	$hint = $show = NULL;
 	if (!empty($albumfolder) && $obj->isDynamic()) {
 		$sorttype = str_replace('images.', '', $sortorder);
 		$images = $obj->getImages(0, 0, $sorttype, $sortdir);
 		foreach ($images as $image) {
 			$image = newImage($obj, $image);
-			if ($image->checkAccess($hint, $show)) {
+			if ($image->checkAccess()) {
 				$imageArray[] = $image;
 				if (count($imageArray) >= $number) { // got enough
 					break;
@@ -449,14 +428,10 @@ function getImageStatistic($number, $option, $albumfolder = '', $collection = fa
 			}
 		}
 	} else {
-		$result = query("SELECT images.albumid, images.filename AS filename, images.mtime as mtime, images.title AS title, " .
-						"albums.folder AS folder, images.show, albums.show, albums.password FROM " .
-						prefix('images') . " AS images, " . prefix('albums') . " AS albums " .
-						"WHERE (images.albumid = albums.id) " . $albumWhere .
-						" ORDER BY " . $sortorder . " " . $sortdir);
+		$result = query("SELECT images.filename AS filename, albums.folder AS folder FROM " . prefix('images') . " AS images, " . prefix('albums') . " AS albums " . "WHERE (images.albumid = albums.id) " . $albumWhere . " ORDER BY " . $sortorder . " " . $sortdir);
 		while ($row = db_fetch_assoc($result)) {
 			$image = newImage(NULL, $row, true);
-			if ($image->exists && $image->checkAccess($hint, $show)) {
+			if ($image->exists && $image->checkAccess()) {
 				$imageArray[] = $image;
 				if (count($imageArray) >= $number) { // got enough
 					break;
@@ -522,7 +497,7 @@ function printImageStatistic($number, $option, $albumfolder = '', $showtitle = f
 		} else {
 			$imagelink = $image->getImageLink();
 		}
-		echo '<li><a href="' . html_encode($imagelink) . '" title="' . html_encode($image->getTitle()) . "\">\n";
+		echo '<li><a href="' . html_encode(pathurlencode($imagelink)) . '" title="' . html_encode($image->getTitle()) . "\">\n";
 		switch ($crop) {
 			case 0:
 				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE))) . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n";

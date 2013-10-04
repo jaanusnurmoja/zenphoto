@@ -60,33 +60,41 @@ if (!file_exists($en_US)) {
 	@mkdir($en_US, $chmod | 0311);
 }
 
-if (file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
-	$newconfig = false;
-	$zptime = filemtime(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
-} else {
-	$zptime = time();
-	if (!file_exists($serverpath . '/' . DATA_FOLDER)) {
-		@mkdir($serverpath . '/' . DATA_FOLDER, $chmod | 0311);
-	}
-	if (file_exists(dirname(dirname(dirname(__FILE__))) . '/' . ZENFOLDER . '/zp-config.php')) {
-		// copy old file from zp-core
-		@copy(dirname(dirname(dirname(__FILE__))) . '/' . ZENFOLDER . '/zp-config.php', SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
-		@unlink(dirname(dirname(dirname(__FILE__))) . '/' . ZENFOLDER . '/zp-config.php');
-	}
-	if (file_exists($serverpath . '/' . DATA_FOLDER . '/zp-config.php')) {
-		//migrate old file.
-		$zpconfig = file_get_contents($serverpath . '/' . DATA_FOLDER . '/zp-config.php');
-		$i = strpos($zpconfig, '/** Do not edit above this line. **/');
-		$j = strpos($zpconfig, '?>');
-		$zpconfig = 'global $_zp_conf_vars;' . "\n" . '$conf = array();' . "\n" . substr($zpconfig, $i, $j - $i);
-		file_put_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE, $zpconfig);
-		$result = unlink($serverpath . '/' . DATA_FOLDER . '/zp-config.php');
-		$newconfig = false;
-	} else {
-		$newconfig = true;
-		@copy(dirname(dirname(__FILE__)) . '/zenphoto_cfg.txt', SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
-	}
+$zptime = time();
+if (!file_exists($serverpath . '/' . DATA_FOLDER)) {
+	@mkdir($serverpath . '/' . DATA_FOLDER, $chmod | 0311);
 }
+@unlink(SERVERPATH . '/' . DATA_FOLDER . '/zenphoto.cfg.bak'); //	remove any old backup file
+
+if (file_exists($oldconfig = SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
+	$zpconfig = file_get_contents($oldconfig);
+	if (strpos($zpconfig, '<?php') === false) {
+		$zpconfig = "<?php\n" . $zpconfig . "\n?>";
+		file_put_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE, $zpconfig);
+		configMod();
+	}
+	$newconfig = false;
+} else if (file_exists($oldconfig = dirname(dirname(dirname(__FILE__))) . '/' . ZENFOLDER . '/zp-config.php')) {
+	//migrate old root configuration file.
+	$zpconfig = file_get_contents($oldconfig);
+	$i = strpos($zpconfig, '/** Do not edit above this line. **/');
+	$zpconfig = "<?php\nglobal \$_zp_conf_vars;\n\$conf = array()\n" . substr($zpconfig, $i);
+	file_put_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE, $zpconfig);
+	$result = @unlink(dirname(dirname(dirname(__FILE__))) . '/' . ZENFOLDER . '/zp-config.php');
+	$newconfig = false;
+	configMod();
+} else if (file_exists($oldconfig = SERVERPATH . '/' . DATA_FOLDER . '/zenphoto.cfg')) {
+	$zpconfig = "<?php\n" . file_get_contents($oldconfig) . "\n?>";
+	file_put_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE, $zpconfig);
+	@unlink(SERVERPATH . '/' . DATA_FOLDER . '/zenphoto.cfg');
+	$newconfig = false;
+	configMod();
+} else {
+	$newconfig = true;
+	@copy(dirname(dirname(__FILE__)) . '/zenphoto_cfg.txt', SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
+}
+
+$zptime = filemtime($oldconfig = SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 @copy(dirname(dirname(__FILE__)) . '/dataaccess', $serverpath . '/' . DATA_FOLDER . '/.htaccess');
 @chmod($serverpath . '/' . DATA_FOLDER . '/.htaccess', 0444);
 
@@ -226,32 +234,45 @@ ksort($engines);
 chdir($curdir);
 
 if (file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
-	eval(file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE));
-	if (isset($_zp_conf_vars['db_software'])) {
-		$confDB = $_zp_conf_vars['db_software'];
-		if (empty($_POST) && empty($_GET) && ($confDB === 'MySQL' || $preferred != 'MySQL')) {
+	unset($_zp_conf_vars);
+	require(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
+	if (isset($_zp_conf_vars) && !isset($conf)) {
+		if (isset($_zp_conf_vars['db_software'])) {
+			$confDB = $_zp_conf_vars['db_software'];
+			if (empty($_POST) && empty($_GET) && ($confDB === 'MySQL' || $preferred != 'MySQL')) {
+				$confDB = NULL;
+			}
+			if (extension_loaded(strtolower($confDB)) && file_exists(dirname(dirname(__FILE__)) . '/functions-db-' . $confDB . '.php')) {
+				$selected_database = $_zp_conf_vars['db_software'];
+			} else {
+				$selected_database = $preferred;
+				if ($preferred) {
+					$_zp_conf_vars['db_software'] = $preferred;
+					$zp_cfg = updateConfigItem('db_software', $preferred, $zp_cfg);
+					$updatezp_config = true;
+				}
+			}
+		} else {
+			$_zp_conf_vars['db_software'] = $selected_database = $preferred;
+			$zp_cfg = updateConfigItem('db_software', $zp_cfg, $preferred);
+			$updatezp_config = true;
 			$confDB = NULL;
 		}
-		if (extension_loaded(strtolower($confDB)) && file_exists(dirname(dirname(__FILE__)) . '/functions-db-' . $confDB . '.php')) {
-			$selected_database = $_zp_conf_vars['db_software'];
+		if ($selected_database) {
+			require_once(dirname(dirname(__FILE__)) . '/functions-db-' . $selected_database . '.php');
 		} else {
-			$selected_database = $preferred;
-			if ($preferred) {
-				$_zp_conf_vars['db_software'] = $preferred;
-				$zp_cfg = updateConfigItem('db_software', $preferred, $zp_cfg);
-				$updatezp_config = true;
-			}
+			require_once(dirname(dirname(__FILE__)) . '/functions-db_NULL.php');
 		}
 	} else {
-		$_zp_conf_vars['db_software'] = $selected_database = $preferred;
-		$zp_cfg = updateConfigItem('db_software', $zp_cfg, $preferred);
-		$updatezp_config = true;
-		$confDB = NULL;
-	}
-	if ($selected_database) {
-		require_once(dirname(dirname(__FILE__)) . '/functions-db-' . $selected_database . '.php');
-	} else {
-		require_once(dirname(dirname(__FILE__)) . '/functions-db_NULL.php');
+		// There is a problem with the configuration file
+		?>
+		<div style="background-color: red;font-size: xx-large;">
+			<p>
+				<?php echo gettext('A corrupt configuration file was detected. You should remove or repair the file and re-run setup.'); ?>
+			</p>
+		</div>
+		<?php
+		exit();
 	}
 }
 
@@ -466,6 +487,7 @@ if ($c <= 0) {
 		<script src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/js/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/js/zenphoto.js" type="text/javascript" ></script>
 		<script type="text/javascript">
+			var imageErr = false;
 			function toggle_visibility(id) {
 				var e = document.getElementById(id);
 				if (e.style.display == 'block')
@@ -715,7 +737,7 @@ if ($c <= 0) {
 								}
 							}
 							if (file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
-								eval(file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE));
+								require( SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 								$cfg = true;
 							} else {
 								$cfg = false;
@@ -1602,7 +1624,7 @@ if ($c <= 0) {
 					} // system check
 					if (file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
 
-						eval(file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE));
+						require(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 						require_once(dirname(dirname(__FILE__)) . '/functions.php');
 						$task = '';
 						if (isset($_GET['create'])) {
@@ -1880,6 +1902,7 @@ if ($c <= 0) {
 		`password` varchar(64) DEFAULT NULL,
 		`password_hint` text,
 		PRIMARY KEY (`id`),
+		KEY (`albumid`),
 		KEY `filename` (`filename`,`albumid`)
 		)	$collation;";
 						}
@@ -2319,6 +2342,7 @@ if ($c <= 0) {
 						//v1.4.5
 						$sql_statements[] = "ALTER TABLE $tbl_news ADD COLUMN `truncation` int(1) unsigned NOT NULL default '0'";
 						$sql_statements[] = "ALTER TABLE $tbl_pages ADD COLUMN `truncation` int(1) unsigned NOT NULL default '0'";
+						$sql_statements[] = "CREATE INDEX `albumid` ON $tbl_images (`albumid`)";
 
 						// do this last incase there are any field changes of like names!
 						foreach ($_zp_exifvars as $key => $exifvar) {
@@ -2402,6 +2426,7 @@ if ($c <= 0) {
 									}
 								}
 								if (!empty($unique)) {
+									$autorun = false;
 									?>
 									<p class="notebox">
 										<?php
@@ -2532,8 +2557,10 @@ if ($c <= 0) {
 			<?php
 			if ($autorun) {
 				?>
-											$('#golink').hide();
-											window.location = '<?php echo $autorun; ?>';
+											if (!imageErr) {
+												$('#golink').hide();
+												window.location = '<?php echo $autorun; ?>';
+											}
 				<?php
 			}
 			?>

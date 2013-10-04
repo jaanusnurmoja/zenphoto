@@ -119,13 +119,6 @@ function adminToolbox() {
 					</li>
 					<?php
 				}
-				if (zp_loggedin(COMMENT_RIGHTS)) {
-					?>
-					<li>
-						<?php printLink($zf . '/admin-comments.php', gettext("Comments"), NULL, NULL, NULL); ?>
-					</li>
-					<?php
-				}
 				if (zp_loggedin(USER_RIGHTS)) {
 					?>
 					<li>
@@ -361,6 +354,119 @@ function printBareGalleryTitle() {
 }
 
 /**
+ * Function to create the page title to be used within the html <head> <title></title> element.
+ * Usefull if you use one header.php for the header of all theme pages instead of individual ones on the theme pages
+ * It returns the title and site name in reversed breadcrumb order:
+ * <title of current page> | <parent item if present> | <gallery title>
+ * It supports standard gallery pages as well a custom and Zenpage news articles, categories and pages.
+ *
+ * @param string $separator How you wish the parts to be separated
+ * @param bool $listparentalbums If the parent albums should be printed in reversed order before the current
+ * @param bool $listparentpage If the parent Zenpage pages should be printed in reversed order before the current page
+ */
+function getHeadTitle($separator = ' | ', $listparentalbums = true, $listparentpages = true) {
+	global $_zp_gallery, $_zp_galley_page, $_zp_current_album, $_zp_current_image, $_zp_current_zenpage_news,
+	$_zp_current_zenpage_page, $_zp_gallery_page, $_zp_current_category, $_zp_page;
+	$mainsitetitle = html_encode(strip_tags(getMainSiteName()));
+	$separator = html_encode($separator);
+	if ($mainsitetitle) {
+		$mainsitetitle = $separator . $mainsitetitle;
+	}
+	$gallerytitle = html_encode(getBareGalleryTitle());
+	if ($_zp_page > 1) {
+		$pagenumber = ' (' . $_zp_page . ')';
+	} else {
+		$pagenumber = '';
+	}
+	switch ($_zp_gallery_page) {
+		case 'index.php':
+			return $gallerytitle . $mainsitetitle;
+			break;
+		case 'album.php':
+		case 'image.php':
+			if ($listparentalbums) {
+				$parents = getParentAlbums();
+				$parentalbums = '';
+				if (count($parents) != 0) {
+					$parents = array_reverse($parents);
+					foreach ($parents as $parent) {
+						$parentalbums .= html_encode(strip_tags($parent->getTitle())) . $separator;
+					}
+				}
+			} else {
+				$parentalbums = '';
+			}
+			$albumtitle = html_encode(getBareAlbumTitle()) . $pagenumber . $separator . $parentalbums . $gallerytitle . $mainsitetitle;
+			switch ($_zp_gallery_page) {
+				case 'album.php':
+					return $albumtitle;
+					break;
+				case 'image.php':
+					return html_encode(getBareImageTitle()) . $separator . $albumtitle;
+					break;
+			}
+			break;
+		case 'news.php':
+			if (function_exists("is_NewsArticle")) {
+				if (is_NewsArticle()) {
+					return html_encode(getBareNewsTitle()) . $pagenumber . $separator . gettext('News') . $separator . $gallerytitle . $mainsitetitle;
+				} else if (is_NewsCategory()) {
+					return html_encode(strip_tags($_zp_current_category->getTitle())) . $pagenumber . $separator . gettext('News') . $separator . $gallerytitle . $mainsitetitle;
+				} else {
+					return gettext('News') . $pagenumber . $separator . $gallerytitle . $mainsitetitle;
+				}
+			}
+			break;
+		case 'pages.php':
+			if ($listparentpages) {
+				$parents = $_zp_current_zenpage_page->getParents();
+				$parentpages = '';
+				if (count($parents) != 0) {
+					$parents = array_reverse($parents);
+					foreach ($parents as $parent) {
+						$obj = new ZenpagePage($parent);
+						$parentpages .= html_encode(strip_tags($obj->getTitle())) . $separator;
+					}
+				}
+			} else {
+				$parentpages = '';
+			}
+			return html_encode(getBarePageTitle()) . $pagenumber . $separator . $parentpages . $gallerytitle . $mainsitetitle;
+			break;
+		case '404.php':
+			return gettext('Object not found') . $separator . $gallerytitle . $mainsitetitle;
+			break;
+		default: // for all other possible static custom pages
+			$custompage = stripSuffix($_zp_gallery_page);
+			$standard = array('contact'	 => gettext('Contact'), 'register' => gettext('Register'), 'search'	 => gettext('Search'), 'archive'	 => gettext('Archive view'), 'password' => gettext('Password required'));
+			if (class_exists('favorites')) {
+				$standard[str_replace(_PAGE_ . '/', '', favorites::getFavorites_link())] = gettext('My favorites');
+			}
+			if (array_key_exists($custompage, $standard)) {
+				return $standard[$custompage] . $pagenumber . $separator . $gallerytitle . $mainsitetitle;
+			} else {
+				return $custompage . $pagenumber . $separator . $gallerytitle . $mainsitetitle;
+			}
+			break;
+	}
+}
+
+/**
+ * Function to print the html <title>title</title> within the <head> of a html page based on the current theme page
+ * Usefull if you use one header.php for the header of all theme pages instead of individual ones on the theme pages
+ * It prints the title and site name including the <title> tag in reversed breadcrumb order:
+ * <title><title of current page> | <parent item if present> | <gallery title></title>
+ * It supports standard gallery pages as well a custom and Zenpage news articles, categories and pages.
+ *
+ * @param string $separator How you wish the parts to be separated
+ * @param bool $listparentalbums If the parent albums should be printed in reversed order before the current
+ * @param bool $listparentpage If the parent Zenpage pages should be printed in reversed order before the current page
+ */
+function printHeadTitle($separator = ' | ', $listparentalbums = true, $listparentpages = true) {
+	echo '<title>' . getHeadTitle($separator, $listparentalbums, $listparentpages) . '</title>';
+}
+
+/**
  * Returns the raw description of the gallery.
  *
  * @return string
@@ -502,7 +608,7 @@ function next_album($all = false, $sorttype = NULL, $sortdirection = NULL, $mine
 			$_zp_albums = $_zp_gallery->getAlbums($all ? 0 : $_zp_page, $sorttype, $sortdirection, true, $mine);
 		}
 		if (empty($_zp_albums)) {
-			return false;
+			return NULL;
 		}
 		$_zp_current_album_restore = $_zp_current_album;
 		$_zp_current_album = newAlbum(array_shift($_zp_albums), true, true);
@@ -555,21 +661,42 @@ function getAllAlbums($album = NULL) {
 }
 
 /**
+ * Gets an array of the album ids of all accessible albums (publich or user dependend)
+ *
+ * @param object $obj from whence to get the albums
+ * @param array $albumlist collects the list
+ * @param bool $scan force scan for new images in the album folder
+ */
+function getAllAccessibleAlbums($obj, &$albumlist, $scan) {
+	global $_zp_gallery;
+	$locallist = $obj->getAlbums();
+	foreach ($locallist as $folder) {
+		$album = newAlbum($folder);
+		If (!$album->isDynamic() && $album->checkAccess()) {
+			if ($scan)
+				$album->getImages();
+			$albumlist[] = $album->getID();
+			getAllAccessibleAlbums($album, $albumlist, $scan);
+		}
+	}
+}
+
+/**
  * Returns the number of pages for the current object
  *
- * @param bool $oneImagePage set to true if your theme collapses all image thumbs
+ * @param bool $_oneImagePage set to true if your theme collapses all image thumbs
  * or their equivalent to one page. This is typical with flash viewer themes
  *
  * @return int
  */
-function getTotalPages($oneImagePage = false) {
-	global $_zp_gallery, $_zp_current_album, $_firstPageImages;
+function getTotalPages($_oneImagePage = false) {
+	global $_zp_gallery, $_zp_current_album, $_firstPageImages, $_zp_zenpage, $_zp_current_category;
 	if (in_context(ZP_ALBUM | ZP_SEARCH)) {
 		$albums_per_page = max(1, getOption('albums_per_page'));
-		$pageCount = ceil(getNumAlbums() / $albums_per_page);
+		$pageCount = (int) ceil(getNumAlbums() / $albums_per_page);
 		$imageCount = getNumImages();
-		if ($oneImagePage) {
-			if ($oneImagePage === true) {
+		if ($_oneImagePage) {
+			if ($_oneImagePage === true) {
 				$imageCount = min(1, $imageCount);
 			} else {
 				$imageCount = 0;
@@ -578,14 +705,20 @@ function getTotalPages($oneImagePage = false) {
 		$images_per_page = max(1, getOption('images_per_page'));
 		$pageCount = ($pageCount + ceil(($imageCount - $_firstPageImages) / $images_per_page));
 		return $pageCount;
-	} else if (in_context(ZP_INDEX)) {
+	} else if (get_context() == ZP_INDEX) {
 		if (galleryAlbumsPerPage() != 0) {
-			return ceil($_zp_gallery->getNumAlbums() / galleryAlbumsPerPage());
+			return (int) ceil($_zp_gallery->getNumAlbums() / galleryAlbumsPerPage());
 		} else {
 			return NULL;
 		}
-	} else {
 		return NULL;
+	} else if (isset($_zp_zenpage)) {
+		if (in_context(ZP_ZENPAGE_NEWS_CATEGORY)) {
+			$cat = $_zp_current_category;
+		} else {
+			$cat = NULL;
+		}
+		return (int) ceil(count($_zp_zenpage->getArticles(0, NULL, true, NULL, NULL, NULL, $cat)) / ZP_ARTICLES_PER_PAGE);
 	}
 }
 
@@ -612,7 +745,7 @@ function getPageURL($page, $total = null) {
 		return $searchpagepath;
 	} else {
 		if (!in_array($_zp_gallery_page, array('index.php', 'album.php', 'image.php'))) {
-			// handle custom page
+// handle custom page
 			$pg = stripSuffix($_zp_gallery_page);
 			$pagination1 = '/' . _PAGE_ . '/' . $pg;
 			$pagination2 = 'index.php?p=' . $pg;
@@ -744,14 +877,14 @@ function printPageList($class = 'pagelist', $id = NULL, $navlen = 9) {
 /**
  * returns a page nav list.
  *
- * @param bool $oneImagePage set to true if there is only one image page as, for instance, in flash themes
+ * @param bool $_oneImagePage set to true if there is only one image page as, for instance, in flash themes
  * @param int $navlen Number of navigation links to show (0 for all pages). Works best if the number is odd.
  * @param bool $firstlast Add links to the first and last pages of you gallery
  * @param int $current the current page
  * @param int $total total number of pages
  *
  */
-function getPageNavList($oneImagePage, $navlen, $firstlast, $current, $total) {
+function getPageNavList($_oneImagePage, $navlen, $firstlast, $current, $total) {
 	$result = array();
 	if (hasPrevPage()) {
 		$result['prev'] = getPrevPageURL();
@@ -793,17 +926,17 @@ function getPageNavList($oneImagePage, $navlen, $firstlast, $current, $total) {
  *
  * @param string $prevtext Insert here the linktext like 'previous page'
  * @param string $nexttext Insert here the linktext like 'next page'
- * @param bool $oneImagePage set to true if there is only one image page as, for instance, in flash themes
+ * @param bool $_oneImagePage set to true if there is only one image page as, for instance, in flash themes
  * @param string $nextprev set to true to get the 'next' and 'prev' links printed
  * @param string $class Insert here the CSS-class name you want to style the link with (default is "pagelist")
  * @param string $id Insert here the CSS-ID name if you want to style the link with this
  * @param bool $firstlast Add links to the first and last pages of you gallery
  * @param int $navlen Number of navigation links to show (0 for all pages). Works best if the number is odd.
  */
-function printPageListWithNav($prevtext, $nexttext, $oneImagePage = false, $nextprev = true, $class = 'pagelist', $id = NULL, $firstlast = true, $navlen = 9) {
+function printPageListWithNav($prevtext, $nexttext, $_oneImagePage = false, $nextprev = true, $class = 'pagelist', $id = NULL, $firstlast = true, $navlen = 9) {
 	$current = getCurrentPage();
-	$total = max(1, getTotalPages($oneImagePage));
-	$nav = getPageNavList($oneImagePage, $navlen, $firstlast, $current, $total);
+	$total = max(1, getTotalPages($_oneImagePage));
+	$nav = getPageNavList($_oneImagePage, $navlen, $firstlast, $current, $total);
 	if (count($nav) < 4) {
 		$class .= ' disabled_nav';
 	}
@@ -1215,7 +1348,7 @@ function getParentBreadcrumb() {
 				array_push($parents, $album);
 			}
 		}
-		// remove parent links that are not in the search path
+// remove parent links that are not in the search path
 		foreach ($parents as $key => $analbum) {
 			$target = $analbum->name;
 			if ($target !== $dynamic_album && !in_array($target, $search_album_list)) {
@@ -1229,7 +1362,7 @@ function getParentBreadcrumb() {
 	if ($n > 0) {
 		foreach ($parents as $parent) {
 			$url = rewrite_path("/" . pathurlencode($parent->name) . "/", "/index.php?album=" . pathurlencode($parent->name));
-			//cleanup things in description for use as attribute tag
+//cleanup things in description for use as attribute tag
 			$desc = strip_tags(preg_replace('|</p\s*>|i', '</p> ', preg_replace('|<br\s*/>|i', ' ', $parent->getDesc())));
 			$output[] = array('link'	 => html_encode($url), 'title'	 => $desc, 'text'	 => $parent->getTitle());
 		}
@@ -1271,7 +1404,7 @@ function printParentBreadcrumb($before = NULL, $between = NULL, $after = NULL, $
 			if ($i > 0) {
 				$output .= $between;
 			}
-			//cleanup things in description for use as attribute tag
+//cleanup things in description for use as attribute tag
 			$desc = $crumb['title'];
 			if (!empty($desc) && $truncate) {
 				$desc = truncate_string($desc, $truncate, $elipsis);
@@ -1425,7 +1558,7 @@ function getAlbumCustomData() {
  * @author Ozh
  */
 function printAlbumCustomData() {
-	echo html_encodeTagged(getAlbumCustomData);
+	echo html_encodeTagged(getAlbumCustomData());
 }
 
 /**
@@ -1921,7 +2054,7 @@ function next_image($all = false, $firstPageCount = NULL, $sorttype = null, $sor
 			$_zp_images = $_zp_current_album->getImages($all ? 0 : ($imagePage), $firstPageCount, $sorttype, $sortdirection, true, $mine);
 		}
 		if (empty($_zp_images)) {
-			return false;
+			return NULL;
 		}
 		$_zp_current_image_restore = $_zp_current_image;
 		$img = array_shift($_zp_images);
@@ -2393,7 +2526,14 @@ function printImageMetadata($title = NULL, $toggle = true, $id = 'imagemetadata'
 				foreach ($exif as $field => $value) {
 					$label = $_zp_exifvars[$field][2];
 					echo "<tr><td class=\"label\">$label:</td><td class=\"value\">";
-					echo html_encode($value);
+					switch ($_zp_exifvars[$field][6]) {
+						case 'time':
+							echo zpFormattedDate(DATE_FORMAT, strtotime($value));
+							break;
+						default:
+							echo html_encode($value);
+							break;
+					}
 					echo "</td></tr>\n";
 				}
 				?>
@@ -2458,11 +2598,11 @@ function getSizeCustomImage($size, $width = NULL, $height = NULL, $cw = NULL, $c
 	}
 
 	if (($size && ($side == 'longest' && $h > $w) || ($side == 'height') || ($side == 'shortest' && $h < $w)) || $height) {
-		// Scale the height
+// Scale the height
 		$newh = $dim;
 		$neww = $wprop;
 	} else {
-		// Scale the width
+// Scale the width
 		$neww = $dim;
 		$newh = $hprop;
 	}
@@ -2643,10 +2783,12 @@ function printImageThumb($alt, $class = NULL, $id = NULL) {
 		$w = getOption('thumb_crop_width');
 		$h = getOption('thumb_crop_height');
 		if ($w > $h) {
+//landscape
 			$h = round($h * $s / $w);
 			$w = $s;
 		} else {
-			$w = round($w * $s / $w);
+//portrait
+			$w = round($w * $s / $h);
 			$h = $s;
 		}
 	} else {
@@ -2654,7 +2796,6 @@ function printImageThumb($alt, $class = NULL, $id = NULL) {
 		getMaxSpaceContainer($w, $h, $_zp_current_image, true);
 	}
 	$size = ' width="' . $w . '" height="' . $h . '"';
-
 	$class = trim($class);
 	if ($class) {
 		$class = ' class="' . $class . '"';
@@ -2732,11 +2873,13 @@ function getProtectedImageURL($image = NULL, $disposal = NULL) {
 		$image = $_zp_current_image;
 	}
 	$album = $image->getAlbum();
-	$wmt = $image->getWatermark();
-	if (!empty($wmt) || !($image->getWMUse() & WATERMARK_FULL)) {
-		$wmt = NULL;
+	$watermark_use_image = getWatermarkParam($image, WATERMARK_FULL);
+	if (!empty($watermark_use_image)) {
+		$wmt = $watermark_use_image;
+	} else {
+		$wmt = false;
 	}
-	$args = array('FULL', NULL, NULL, NULL, NULL, NULL, NULL, getOption('full_image_quality'), NULL, NULL, NULL, NULL, $wmt, NULL);
+	$args = array('FULL', NULL, NULL, NULL, NULL, NULL, NULL, (int) getOption('full_image_quality'), NULL, NULL, NULL, $wmt, false, NULL, NULL);
 	$cache_file = getImageCacheFilename($album->name, $image->filename, $args);
 	$cache_path = SERVERCACHE . $cache_file;
 	if ($disposal != 'Download' && OPEN_IMAGE_CACHE && file_exists($cache_path)) {
@@ -2745,7 +2888,6 @@ function getProtectedImageURL($image = NULL, $disposal = NULL) {
 		return getImageURI($args, $album->name, $image->filename, $image->filemtime);
 	} else {
 		$params = '&q=' . getOption('full_image_quality');
-		$watermark_use_image = getWatermarkParam($image, WATERMARK_FULL);
 		if (!empty($watermark_use_image)) {
 			$params .= '&wmk=' . $watermark_use_image;
 		}
@@ -2757,10 +2899,10 @@ function getProtectedImageURL($image = NULL, $disposal = NULL) {
 			$album = dirname($image->filename['source']);
 			$image = basename($image->filename['source']);
 		} else {
-			$album = $image->albumlink;
+			$album = $album->name;
 			$image = $image->filename;
 		}
-		return WEBPATH . '/' . ZENFOLDER . '/full-image.php?a=' . urlencode($album) . '&i=' . urlencode($image) . $params;
+		return WEBPATH . '/' . ZENFOLDER . '/full-image.php?a=' . $album . '&i=' . $image . $params;
 	}
 }
 
@@ -3018,10 +3160,12 @@ function getRandomImages($daily = false) {
 	if ($daily) {
 		$potd = unserialize(getOption('picture_of_the_day'));
 		if (date('Y-m-d', $potd['day']) == date('Y-m-d')) {
-			$album = newAlbum($potd['folder']);
-			$image = newImage($album, $potd['filename']);
-			if ($image->exists) {
-				return $image;
+			$album = newAlbum($potd['folder'], true, true);
+			if ($album->exists) {
+				$image = newImage($album, $potd['filename'], true);
+				if ($image->exists) {
+					return $image;
+				}
 			}
 		}
 	}
@@ -3553,7 +3697,7 @@ function getSearchURL($words, $dates, $fields, $page, $object_list = NULL) {
 	if (!is_null($object_list)) {
 		if (array_key_exists(0, $object_list)) { // handle old form albums list
 			require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/deprecated-functions.php');
-			deprecated_function::notify(gettext('getSearchURL $album_list parameter is deprecated. Pass array("albums"=>array(album, album, ...)) instead.'));
+			deprecated_functions::notify(gettext('getSearchURL $album_list parameter is deprecated. Pass array("albums"=>array(album, album, ...)) instead.'));
 			$object_list = array('albums' => $object_list);
 		}
 	}
@@ -3805,11 +3949,11 @@ function printSearchForm($prevtext = NULL, $id = 'search', $buttonSource = NULL,
 						if ($searchwords) {
 							?>
 							<label>
-								<input type="radio" name="search_within" id="search_within-1" value="1"<?php if ($within) echo ' checked="checked"'; ?> onclick="search_(1)"; />
+								<input type="radio" name="search_within" id="search_within-1" value="1"<?php if ($within) echo ' checked="checked"'; ?> onclick="search_(1);" />
 								<?php echo gettext('Within'); ?>
 							</label>
 							<label>
-								<input type="radio" name="search_within" id="search_within-0" value="1"<?php if (!$within) echo ' checked="checked"'; ?> onclick="search_(0)"; />
+								<input type="radio" name="search_within" id="search_within-0" value="1"<?php if (!$within) echo ' checked="checked"'; ?> onclick="search_(0);" />
 								<?php echo gettext('New'); ?>
 							</label>
 							<?php
@@ -3914,7 +4058,7 @@ function openedForComments($what = 3) {
  * index.php script before the theme script is loaded.
  */
 function setThemeColumns() {
-	global $_zp_current_album, $_firstPageImages, $oneImagePage;
+	global $_zp_current_album, $_firstPageImages, $_oneImagePage;
 	$_firstPageImages = false;
 	if (($albumColumns = getOption('albums_per_row')) <= 1)
 		$albumColumns = false;
@@ -3928,7 +4072,7 @@ function setThemeColumns() {
 	if (($imageColumns) && (($imgcount % $imageColumns) != 0)) {
 		setOption('images_per_page', $imgcount = ((floor($imgcount / $imageColumns) + 1) * $imageColumns), false);
 	}
-	if ((getOption('thumb_transition') && !$oneImagePage) && in_context(ZP_ALBUM | ZP_SEARCH) && $albumColumns && $imageColumns) {
+	if ((getOption('thumb_transition') && !$_oneImagePage) && in_context(ZP_ALBUM | ZP_SEARCH) && $albumColumns && $imageColumns) {
 		$count = getNumAlbums();
 		if ($count == 0) {
 			$_firstPageImages = 0;
@@ -4256,6 +4400,67 @@ function printCodeblock($number = 1, $what = NULL) {
 		eval('?>' . $codeblock);
 		set_context($context);
 	}
+}
+
+/**
+ * Checks for URL page out-of-bounds for "standard" themes
+ * Note: This function assumes that an "index" page will display albums
+ * and the pagination be determined by them. Any other "index" page strategy needs to be
+ * handled by the theme itself.
+ *
+ * @param boolean $request
+ * @param string $gallery_page
+ * @param int $page
+ * @return boolean will be true if all is well, false if a 404 error should occur
+ */
+function checkPageValidity($request, $gallery_page, $page) {
+	global $_zp_gallery, $_firstPageImages, $_oneImagePage, $_zp_zenpage, $_zp_current_category;
+	$count = NULL;
+	switch ($gallery_page) {
+		case 'album.php':
+		case 'search.php':
+			$albums_per_page = max(1, getOption('albums_per_page'));
+			$pageCount = (int) ceil(getNumAlbums() / $albums_per_page);
+			$imageCount = getNumImages();
+			if ($_oneImagePage) {
+				if ($_oneImagePage === true) {
+					$imageCount = min(1, $imageCount);
+				} else {
+					$imageCount = 0;
+				}
+			}
+			$images_per_page = max(1, getOption('images_per_page'));
+			$count = ($pageCount + (int) ceil(($imageCount - $_firstPageImages) / $images_per_page));
+			break;
+		case 'index.php':
+			if (galleryAlbumsPerPage() != 0) {
+				$count = (int) ceil($_zp_gallery->getNumAlbums() / galleryAlbumsPerPage());
+			}
+			break;
+		case 'news.php':
+			if (in_context(ZP_ZENPAGE_NEWS_CATEGORY)) {
+				$cat = $_zp_current_category;
+			} else {
+				$cat = NULL;
+			}
+			$count = (int) ceil(count($_zp_zenpage->getArticles(0, NULL, true, NULL, NULL, NULL, $cat)) / ZP_ARTICLES_PER_PAGE);
+			break;
+	}
+	if ($page > $count) {
+		$request = false; //	page is out of range
+	}
+
+	return $request;
+}
+
+/**
+ * Used as the default page url checker. Page url checking is an Opt-in for now at least.
+ * It simply returns the parameter
+ * @param bool $request
+ * @return bool
+ */
+function checkPageValidityDummy($request) {
+	return $request;
 }
 
 zp_register_filter('theme_head', 'printZenJavascripts', 9999);

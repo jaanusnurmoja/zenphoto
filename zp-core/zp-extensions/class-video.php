@@ -89,12 +89,11 @@ class Video extends Image {
 			$msg = gettext('Invalid video instantiation: file does not exist.');
 		}
 		if ($msg) {
-			if ($quiet) {
-				$this->exists = false;
-				return;
+			$this->exists = false;
+			if (!$quiet) {
+				trigger_error($msg, E_USER_ERROR);
 			}
-			trigger_error($msg, E_USER_ERROR);
-			exitZP();
+			return;
 		}
 		$alts = explode(',', extensionEnabled('class-video_videoalt'));
 		foreach ($alts as $alt) {
@@ -107,12 +106,16 @@ class Video extends Image {
 		// This is where the magic happens...
 		$album_name = $album->name;
 		$this->updateDimensions();
-		if (parent::PersistentObject('images', array('filename' => $filename, 'albumid'	 => $this->album->getID()), 'filename', true, empty($album_name))) {
+
+		$new = parent::PersistentObject('images', array('filename' => $filename, 'albumid'	 => $this->album->getID()), 'filename', true, empty($album_name));
+		if ($new || $this->filemtime != $this->get('mtime')) {
+			if ($new)
+				$this->setTitle($this->displayname);
 			$this->updateMetaData();
-			$this->filemtime = @filemtime($this->localpath);
 			$this->set('mtime', $this->filemtime);
 			$this->save();
-			zp_apply_filter('new_image', $this);
+			if ($new)
+				zp_apply_filter('new_image', $this);
 		}
 	}
 
@@ -322,7 +325,7 @@ class Video extends Image {
 		$ext = getSuffix($this->getFullImage());
 		switch ($ext) {
 			default:
-				return $_zp_multimedia_extension->getPlayerConfig($this->getFullImage(FULLWEBPATH), $this->getTitle(), '', $w, $h);
+				return $_zp_multimedia_extension->getPlayerConfig($this, NULL, NULL, $w, $h);
 				break;
 			case '3gp':
 			case 'mov':
@@ -424,7 +427,7 @@ class pseudoPlayer {
 		return $this->height;
 	}
 
-	function getPlayerConfig($moviepath, $imagefilename, $count = '', $width = '', $height = '') {
+	function getPlayerConfig($moviepath, $imagefilename) {
 		return '<img src="' . WEBPATH . '/' . ZENFOLDER . '/images/err-noflashplayer.png" alt="' . gettext('No multimeida extension installed.') . '" />';
 	}
 

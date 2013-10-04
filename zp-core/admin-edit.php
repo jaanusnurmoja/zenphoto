@@ -743,11 +743,6 @@ echo "\n</head>";
 				?>
 				<h1><?php printf(gettext('Edit Album: <em>%1$s%2$s</em>'), $link, $alb); ?></h1>
 				<?php
-				if (strpos($album->getfolder(), '&') !== false) {
-					?>
-					<p class="error"><?php echo gettext('&amp; is not allowed in filenames'); ?></p>
-					<?php
-				}
 				$subtab = printSubtabs();
 				if ($subtab == 'albuminfo') {
 					?>
@@ -758,7 +753,7 @@ echo "\n</head>";
 							<?php XSRFToken('albumedit'); ?>
 							<input type="hidden" name="album"	value="<?php echo $album->name; ?>" />
 							<input type="hidden"	name="savealbuminfo" value="1" />
-							<?php printAlbumEditForm(0, $album, true); ?>
+							<?php printAlbumEditForm(0, $album); ?>
 						</form>
 						<br class="clearall" />
 						<hr />
@@ -1038,11 +1033,6 @@ echo "\n</head>";
 															<br />
 															<?php
 															echo $image->filename;
-															if (strpos($image->filename, '&') !== false) {
-																?>
-																<span class="error"><?php echo '<br />' . gettext('&amp; is not allowed in filenames'); ?></span>
-																<?php
-															}
 															?>
 														</p>
 														<p><?php echo gettext('<strong>Image id:</strong>'); ?> <?php echo $image->getID(); ?></p>
@@ -1116,7 +1106,7 @@ echo "\n</head>";
 															$expirationdate = $image->getExpireDate();
 															?>
 															<script type="text/javascript">
-					// <!-- <![CDATA[
+				// <!-- <![CDATA[
 					$(function() {
 						$("#publishdate-<?php echo $currentimage; ?>,#expirationdate-<?php echo $currentimage; ?>").datepicker({
 							showOn: 'button',
@@ -1143,7 +1133,7 @@ echo "\n</head>";
 							}
 						});
 					});
-					// ]]> -->
+				// ]]> -->
 															</script>
 															<br class="clearall" />
 															<hr />
@@ -1341,7 +1331,7 @@ echo "\n</head>";
 													<td valign="top"><?php echo gettext("Date:"); ?></td>
 													<td>
 														<script type="text/javascript">
-					// <!-- <![CDATA[
+				// <!-- <![CDATA[
 					$(function() {
 						$("#datepicker_<?php echo $currentimage; ?>").datepicker({
 							showOn: 'button',
@@ -1350,7 +1340,7 @@ echo "\n</head>";
 							buttonImageOnly: true
 						});
 					});
-					// ]]> -->
+				// ]]> -->
 														</script>
 														<input type="text" id="datepicker_<?php echo $currentimage; ?>" size="20" name="<?php echo $currentimage; ?>-date"
 																	 value="<?php
@@ -1383,9 +1373,9 @@ echo "\n</head>";
 															echo 'inline';
 														?>">
 																		<?php $wmuse = $image->getWMUse(); ?>
-															<label><input type="checkbox" value="1" id="wm_image-<?php echo $currentimage; ?>" name="wm_image-<?php echo $currentimage; ?>" <?php if ($wmuse & WATERMARK_IMAGE) echo 'checked="checeked"'; ?> /><?php echo gettext('image'); ?></label>
-															<label><input type="checkbox" value="1" id="wm_thumb-<?php echo $currentimage; ?>" name="wm_thumb-<?php echo $currentimage; ?>" <?php if ($wmuse & WATERMARK_THUMB) echo 'checked="checeked"'; ?> /><?php echo gettext('thumb'); ?></label>
-															<label><input type="checkbox" value="1" id="wm_full-<?php echo $currentimage; ?>"name="wm_full-<?php echo $currentimage; ?>" <?php if ($wmuse & WATERMARK_FULL) echo 'checked="checeked"'; ?> /><?php echo gettext('full image'); ?></label>
+															<label><input type="checkbox" value="1" id="wm_image-<?php echo $currentimage; ?>" name="wm_image-<?php echo $currentimage; ?>" <?php if ($wmuse & WATERMARK_IMAGE) echo 'checked="checked"'; ?> /><?php echo gettext('image'); ?></label>
+															<label><input type="checkbox" value="1" id="wm_thumb-<?php echo $currentimage; ?>" name="wm_thumb-<?php echo $currentimage; ?>" <?php if ($wmuse & WATERMARK_THUMB) echo 'checked="checked"'; ?> /><?php echo gettext('thumb'); ?></label>
+															<label><input type="checkbox" value="1" id="wm_full-<?php echo $currentimage; ?>" name="wm_full-<?php echo $currentimage; ?>" <?php if ($wmuse & WATERMARK_FULL) echo 'checked="checked"'; ?> /><?php echo gettext('full image'); ?></label>
 														</span>
 													</td>
 												</tr>
@@ -1532,9 +1522,9 @@ echo "\n</head>";
 								if (!empty($target_image)) {
 									?>
 									<script type="text/javascript" >
-					// <!-- <![CDATA[
+				// <!-- <![CDATA[
 					toggleExtraInfo('<?php echo $target_image_nr; ?>', 'image', true);
-					// ]]> -->
+				// ]]> -->
 									</script>
 									<?php
 								}
@@ -1618,7 +1608,7 @@ echo "\n</head>";
 						?>
 						<div class="innerbox<?php if ($currentalbum % 2) echo '_dark'; ?>" style="padding: 15px;">
 							<?php
-							printAlbumEditForm($currentalbum, $album, true, false);
+							printAlbumEditForm($currentalbum, $album, false);
 							$currentalbum++;
 							?>
 						</div>
