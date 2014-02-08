@@ -160,13 +160,22 @@ class AlbumBase extends MediaObject {
 	 * @return string
 	 */
 	function getSortType($what = 'image') {
-		$type = $this->get('sort_type');
+		global $_zp_gallery;
+		if ($what == 'image') {
+			$type = $this->get('sort_type');
+		} else {
+			$type = $this->get('subalbum_sort_type');
+		}
 		if (empty($type)) {
 			$parentalbum = $this->getParent();
 			if (is_null($parentalbum)) {
-				$type = IMAGE_SORT_TYPE;
+				if ($what == 'image') {
+					$type = IMAGE_SORT_TYPE;
+				} else {
+					$type = $_zp_gallery->getSortType();
+				}
 			} else {
-				$type = $parentalbum->getSortType();
+				$type = $parentalbum->getSortType($what);
 			}
 		}
 		return $type;
@@ -203,7 +212,7 @@ class AlbumBase extends MediaObject {
 		if ($what == 'image') {
 			$this->set('sort_type', $sorttype);
 		} else {
-			$type = $this->get('subalbum_sort_type');
+			$this->set('subalbum_sort_type', $sorttype);
 		}
 	}
 
@@ -216,17 +225,7 @@ class AlbumBase extends MediaObject {
 	 * @deprecated since version 1.4.5
 	 */
 	function getAlbumSortType() {
-		global $_zp_gallery;
-		$type = $this->get('subalbum_sort_type');
-		if (empty($type)) {
-			$parentalbum = $this->getParent();
-			if (is_null($parentalbum)) {
-				$type = $_zp_gallery->getSortType();
-			} else {
-				$type = $parentalbum->getAlbumSortType();
-			}
-		}
-		return $type;
+		return $this->getSortType('album');
 	}
 
 	/**
@@ -236,7 +235,7 @@ class AlbumBase extends MediaObject {
 	 * @deprecated since version 1.4.5
 	 */
 	function setSubalbumSortType($sorttype) {
-		$this->set('subalbum_sort_type', $sorttype);
+		$this->setSortType($sorttype, 'album');
 	}
 
 	/**
@@ -260,7 +259,7 @@ class AlbumBase extends MediaObject {
 	 */
 	function getAlbumSortKey($sorttype = null) {
 		if (empty($sorttype)) {
-			$sorttype = $this->getAlbumSortType();
+			$sorttype = $this->getSortType('album');
 		}
 		return lookupSortKey($sorttype, 'sort_order', 'albums');
 	}
@@ -698,7 +697,7 @@ class Album extends AlbumBase {
 	function __construct($deprecated, $folder8, $cache = true, $quiet = false) {
 		global $_zp_gallery;
 
-		$folder8 = trim($folder8);
+		$folder8 = trim($folder8, '/');
 		$folderFS = internalToFilesystem($folder8);
 		$this->gallery = $_zp_gallery;
 		$localpath = ALBUM_FOLDER_SERVERPATH . $folderFS . "/";
@@ -716,7 +715,7 @@ class Album extends AlbumBase {
 		} else if (filesystemToInternal($folderFS) != $folder8) {
 // an attempt to spoof the album name.
 			$msg = sprintf(gettext('Invalid album instantiation: %1$s!=%2$s'), html_encode(filesystemToInternal($folderFS)), html_encode($folder8));
-		} else if (!file_exists($localpath) || !($dynamic || is_dir($localpath)) || $folder8{0} == '.') {
+		} else if (!file_exists($localpath) || !($dynamic || is_dir($localpath)) || $folder8{0} == '.' || preg_match('~/\.*/~', $folder8)) {
 			$msg = sprintf(gettext('Invalid album instantiation: %s does not exist.'), html_encode($folder8));
 		}
 
@@ -852,7 +851,7 @@ class Album extends AlbumBase {
 		global $_zp_gallery;
 		if (is_null($this->subalbums) || $care && $sorttype . $sortdirection !== $this->lastsubalbumsort) {
 			if (is_null($sorttype)) {
-				$sorttype = $this->getAlbumSortType();
+				$sorttype = $this->getSortType('album');
 			}
 			if (is_null($sortdirection)) {
 				if ($this->getSortDirection('album')) {
@@ -1154,7 +1153,7 @@ class Album extends AlbumBase {
 			$page = $_zp_page;
 		}
 		$rewrite = pathurlencode($this->linkname) . '/';
-		$plain = '/index.php?album=' . pathurlencode($this->name) . '/';
+		$plain = '/index.php?album=' . pathurlencode($this->name);
 		if ($page > 1) {
 			$rewrite .= _PAGE_ . '/' . $page;
 			$plain .= "&page=$page";
@@ -1254,7 +1253,7 @@ class Album extends AlbumBase {
 				$filelist = safe_glob('*');
 				foreach ($filelist as $file) {
 					if (($file != '.') && ($file != '..')) {
-						@chmod($file, 0666);
+						@chmod($file, 0777);
 						unlink($this->localpath . $file); // clean out any other files in the folder
 					}
 				}
@@ -1271,11 +1270,11 @@ class Album extends AlbumBase {
 			}
 			foreach ($filestoremove as $file) {
 				if (in_array(strtolower(getSuffix($file)), $this->sidecars)) {
-					@chmod($file, 0666);
+					@chmod($file, 0777);
 					$success = $success && unlink($file);
 				}
 			}
-			@chmod($this->localpath, 0666);
+			@chmod($this->localpath, 0777);
 			if ($this->isDynamic()) {
 				$rslt = @unlink($this->localpath) && $success;
 			} else {
@@ -1324,7 +1323,7 @@ class Album extends AlbumBase {
 			$filemask = substr($this->localpath, 0, -1) . '.*';
 			$perms = FOLDER_MOD;
 		}
-		@chmod($this->localpath, 0666);
+		@chmod($this->localpath, 0777);
 		$success = @rename($this->localpath, $dest);
 		@chmod($dest, $perms);
 		if ($success) {
@@ -1332,7 +1331,7 @@ class Album extends AlbumBase {
 			foreach ($filestomove as $file) {
 				if (in_array(strtolower(getSuffix($file)), $this->sidecars)) {
 					$d = dirname($dest) . '/' . basename($file);
-					@chmod($file, 0666);
+					@chmod($file, 0777);
 					$success = $success && @rename($file, $d);
 					@chmod($d, FILE_MOD);
 				}
@@ -1558,17 +1557,16 @@ class Album extends AlbumBase {
 	 * @return array
 	 */
 	protected function loadFileNames($dirs = false) {
+		if ($this->isDynamic()) { // there are no 'real' files
+			return array();
+		}
 		$albumdir = $this->localpath;
 		$dir = @opendir($albumdir);
 		if (!$dir) {
-			if ($this->isDynamic()) {
-// there are no 'real' files
-				return array();
-			}
-			if (!is_dir($albumdir)) {
-				$msg = sprintf(gettext("Error: The album named %s cannot be found."), html_encode($this->name));
-			} else {
+			if (is_dir($albumdir)) {
 				$msg = sprintf(gettext("Error: The album %s is not readable."), html_encode($this->name));
+			} else {
+				$msg = sprintf(gettext("Error: The album named %s cannot be found."), html_encode($this->name));
 			}
 			trigger_error($msg, E_USER_NOTICE);
 			return array();
@@ -1766,7 +1764,8 @@ class Album extends AlbumBase {
 			if (is_object($p)) {
 				$owner = $p->getOwner();
 			} else {
-				$owner = $_zp_authority->master_user;
+				$admin = $_zp_authority->getMasterUser();
+				$owner = $admin->getUser();
 			}
 		}
 		return $owner;

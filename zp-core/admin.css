@@ -897,7 +897,7 @@ input.tags {
 
 .overview-utility {
 	width: 500px;
-	margin: 0 0 15px 15px;
+	margin: 0 0 15px 0px;
 	padding: 0px;
 	float: left;
 }
@@ -1385,11 +1385,7 @@ button.positive,.buttons a.positive {
 	float: left;
 }
 .new_tag {
-	padding: 0 0.2em 0 25px;
-	border-top:none;
-	border-left:none;
-	border-right:none;
-	border-bottom: 1px dotted #BAC9CF;
+	border:none;
 	text-decoration: none;
 	outline: none;
 	margin: 0;
@@ -2587,3 +2583,38 @@ Tooltip styling
   bottom: -20px;
   top: auto;
 }
+
+
+#form_editcomment label {
+width: 30% !important;
+float: left;
+display: block;
+}
+
+#form_editcomment input,
+#form_editcomment textarea {
+width: 350px !important;
+display: block;
+float: left;
+}
+
+.commentformedit_fields {
+width: 60%;
+float: left;
+}
+
+.commentformedit_box {
+width:260px; 
+float:right;
+}
+
+/* prevent jumping toolbar buttons of TinyMCE4 in some browsers */
+.mce-container .mce-toolbar button { 
+border: 0 !Important;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+-o-box-sizing: border-box;
+-ms-box-sizing: border-box; 
+box-sizing: border-box;
+}
+

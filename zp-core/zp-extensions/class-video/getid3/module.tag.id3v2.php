@@ -51,8 +51,8 @@ class getid3_id3v2 extends getid3_handler
 		$thisfile_id3v2_flags            = &$thisfile_id3v2['flags'];
 
 
-		fseek($this->getid3->fp, $this->StartingOffset, SEEK_SET);
-		$header = fread($this->getid3->fp, 10);
+		$this->fseek($this->StartingOffset);
+		$header = $this->fread(10);
 		if (substr($header, 0, 3) == 'ID3'  &&  strlen($header) == 10) {
 
 			$thisfile_id3v2['majorversion'] = ord($header{3});
@@ -131,7 +131,7 @@ class getid3_id3v2 extends getid3_handler
 		}
 		if ($sizeofframes > 0) {
 
-			$framedata = fread($this->getid3->fp, $sizeofframes); // read all frames from file into $framedata variable
+			$framedata = $this->fread($sizeofframes); // read all frames from file into $framedata variable
 
 			//    if entire frame data is unsynched, de-unsynch it now (ID3v2.3.x)
 			if (!empty($thisfile_id3v2_flags['unsynch']) && ($id3v2_majorversion <= 3)) {
@@ -423,14 +423,14 @@ class getid3_id3v2 extends getid3_handler
 	//        ID3v2 size             4 * %0xxxxxxx
 
 		if (isset($thisfile_id3v2_flags['isfooter']) && $thisfile_id3v2_flags['isfooter']) {
-			$footer = fread($this->getid3->fp, 10);
+			$footer = $this->fread(10);
 			if (substr($footer, 0, 3) == '3DI') {
 				$thisfile_id3v2['footer'] = true;
 				$thisfile_id3v2['majorversion_footer'] = ord($footer{3});
 				$thisfile_id3v2['minorversion_footer'] = ord($footer{4});
 			}
 			if ($thisfile_id3v2['majorversion_footer'] <= 4) {
-				$id3_flags = ord($footer[5]); // doublecheck that the flags are in the 6th byte here
+				$id3_flags = ord(substr($footer{5}));
 				$thisfile_id3v2_flags['unsynch_footer']  = (bool) ($id3_flags & 0x80);
 				$thisfile_id3v2_flags['extfoot_footer']  = (bool) ($id3_flags & 0x40);
 				$thisfile_id3v2_flags['experim_footer']  = (bool) ($id3_flags & 0x20);
@@ -642,7 +642,12 @@ class getid3_id3v2 extends getid3_handler
 			$parsedFrame['description'] = $frame_description;
 			$parsedFrame['data'] = substr($parsedFrame['data'], $frame_terminatorpos + strlen($this->TextEncodingTerminatorLookup($frame_textencoding)));
 			if (!empty($parsedFrame['framenameshort']) && !empty($parsedFrame['data'])) {
-				$info['id3v2']['comments'][$parsedFrame['framenameshort']][] = trim(getid3_lib::iconv_fallback($parsedFrame['encoding'], $info['id3v2']['encoding'], $parsedFrame['data']));
+				$commentkey = ($parsedFrame['description'] ? $parsedFrame['description'] : count($info['id3v2']['comments'][$parsedFrame['framenameshort']]));
+				if (!isset($info['id3v2']['comments'][$parsedFrame['framenameshort']]) || !array_key_exists($commentkey, $info['id3v2']['comments'][$parsedFrame['framenameshort']])) {
+					$info['id3v2']['comments'][$parsedFrame['framenameshort']][$commentkey] = trim(getid3_lib::iconv_fallback($parsedFrame['encoding'], $info['id3v2']['encoding'], $parsedFrame['data']));
+				} else {
+					$info['id3v2']['comments'][$parsedFrame['framenameshort']][]            = trim(getid3_lib::iconv_fallback($parsedFrame['encoding'], $info['id3v2']['encoding'], $parsedFrame['data']));
+				}
 			}
 			//unset($parsedFrame['data']); do not unset, may be needed elsewhere, e.g. for replaygain
 
@@ -667,7 +672,7 @@ class getid3_id3v2 extends getid3_handler
 
 			if (!empty($parsedFrame['framenameshort']) && !empty($parsedFrame['data'])) {
 				// ID3v2.3 specs say that TPE1 (and others) can contain multiple artist values separated with /
-				// This of course breaks when an aritst name contains slash character, e.g. "AC/DC"
+				// This of course breaks when an artist name contains slash character, e.g. "AC/DC"
 				// MP3tag (maybe others) implement alternative system where multiple artists are null-separated, which makes more sense
 				// getID3 will split null-separated artists into multiple artists and leave slash-separated ones to the user
 				switch ($parsedFrame['encoding']) {
@@ -1077,7 +1082,12 @@ class getid3_id3v2 extends getid3_handler
 				$parsedFrame['description']  = $frame_description;
 				$parsedFrame['data']         = $frame_text;
 				if (!empty($parsedFrame['framenameshort']) && !empty($parsedFrame['data'])) {
-					$info['id3v2']['comments'][$parsedFrame['framenameshort']][] = getid3_lib::iconv_fallback($parsedFrame['encoding'], $info['id3v2']['encoding'], $parsedFrame['data']);
+					$commentkey = ($parsedFrame['description'] ? $parsedFrame['description'] : (!empty($info['id3v2']['comments'][$parsedFrame['framenameshort']]) ? count($info['id3v2']['comments'][$parsedFrame['framenameshort']]) : 0));
+					if (!isset($info['id3v2']['comments'][$parsedFrame['framenameshort']]) || !array_key_exists($commentkey, $info['id3v2']['comments'][$parsedFrame['framenameshort']])) {
+						$info['id3v2']['comments'][$parsedFrame['framenameshort']][$commentkey] = getid3_lib::iconv_fallback($parsedFrame['encoding'], $info['id3v2']['encoding'], $parsedFrame['data']);
+					} else {
+						$info['id3v2']['comments'][$parsedFrame['framenameshort']][]            = getid3_lib::iconv_fallback($parsedFrame['encoding'], $info['id3v2']['encoding'], $parsedFrame['data']);
+					}
 				}
 
 			}
@@ -1327,7 +1337,7 @@ class getid3_id3v2 extends getid3_handler
 				$frame_imagetype = substr($parsedFrame['data'], $frame_offset, 3);
 				if (strtolower($frame_imagetype) == 'ima') {
 					// complete hack for mp3Rage (www.chaoticsoftware.com) that puts ID3v2.3-formatted
-					// MIME type instead of 3-char ID3v2.2-format image type  (thanks xbhoffÿpacbell*net)
+					// MIME type instead of 3-char ID3v2.2-format image type  (thanks xbhoff√òpacbell*net)
 					$frame_terminatorpos = strpos($parsedFrame['data'], "\x00", $frame_offset);
 					$frame_mimetype = substr($parsedFrame['data'], $frame_offset, $frame_terminatorpos - $frame_offset);
 					if (ord($frame_mimetype) === 0) {
@@ -1583,7 +1593,7 @@ class getid3_id3v2 extends getid3_handler
 			$frame_terminatorpos = strpos($parsedFrame['data'], "\x00", $frame_offset);
 			$frame_ownerid = substr($parsedFrame['data'], $frame_offset, $frame_terminatorpos - $frame_offset);
 			if (ord($frame_ownerid) === 0) {
-				$frame_ownerid = '';
+				$frame_ownerid == '';
 			}
 			$frame_offset = $frame_terminatorpos + strlen("\x00");
 			$parsedFrame['ownerid'] = $frame_ownerid;
@@ -2338,7 +2348,7 @@ class getid3_id3v2 extends getid3_handler
 			SOS	Somalia
 			SPL	Seborga
 			SRG	Suriname
-			STD	S„o Tome and Principe
+			STD	S√£o Tome and Principe
 			SVC	El Salvador
 			SYP	Syria
 			SZL	Swaziland
@@ -2362,13 +2372,13 @@ class getid3_id3v2 extends getid3_handler
 			VND	Viet Nam
 			VUV	Vanuatu
 			WST	Samoa
-			XAF	CommunautÈ FinanciËre Africaine
+			XAF	Communaut√© Financi√®re Africaine
 			XAG	Silver
 			XAU	Gold
 			XCD	East Caribbean
 			XDR	International Monetary Fund
 			XPD	Palladium
-			XPF	Comptoirs FranÁais du Pacifique
+			XPF	Comptoirs Fran√ßais du Pacifique
 			XPT	Platinum
 			YER	Yemen
 			YUM	Yugoslavia
@@ -2812,7 +2822,7 @@ class getid3_id3v2 extends getid3_handler
 			vai	Vai
 			ven	Venda
 			vie	Vietnamese
-			vol	Volap¸k
+			vol	Volap√ºk
 			vot	Votic
 			wak	Wakashan Languages
 			wal	Walamo

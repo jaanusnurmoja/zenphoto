@@ -134,7 +134,7 @@ class feed {
 				exitZP();
 			} else {
 				if (file_exists($cachefilepath)) {
-					@chmod($cachefilepath, 0666);
+					@chmod($cachefilepath, 0777);
 					@unlink($cachefilepath);
 				}
 				ob_start();
@@ -486,30 +486,21 @@ class feed {
 		switch ($item['type']) {
 			case 'images':
 				$title = get_language_string($item['title']);
-				$obj = newImage(NULL, array('folder'	 => $item['folder'], 'filename' => $item['filename']));
+				$obj = newImage(NULL, array('folder' => $item['folder'], 'filename' => $item['filename']));
 				$link = $obj->getImagelink();
 				$feeditem['pubdate'] = date("r", strtotime($item['date']));
 				$category = $item['albumtitle'];
 				$website = $item['website'];
-				if ($item['type'] == 'albums') {
-					$title = $category;
-				} else {
-					$title = $category . ": " . $title;
-				}
-				$commentpath = PROTOCOL . '://' . $this->host . html_encode($link) . "#" . $item['id'];
+				$title = $category . ": " . $title;
+				$commentpath = PROTOCOL . '://' . $this->host . $link . "#" . $item['id'];
 				break;
 			case 'albums':
 				$obj = newAlbum($item['folder']);
 				$link = rtrim($obj->getAlbumlink(), '/');
 				$feeditem['pubdate'] = date("r", strtotime($item['date']));
-				$category = $item['albumtitle'];
+				$title = get_language_string($item['albumtitle']);
 				$website = $item['website'];
-				if ($item['type'] == 'albums') {
-					$title = $category;
-				} else {
-					$title = $category . ": " . $title;
-				}
-				$commentpath = PROTOCOL . '://' . $this->host . html_encode($link) . "#" . $item['id'];
+				$commentpath = PROTOCOL . '://' . $this->host . $link . "#" . $item['id'];
 				break;
 			case 'news':
 			case 'pages':

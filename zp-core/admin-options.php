@@ -410,10 +410,15 @@ if (isset($_GET['action'])) {
 				// force https if required to be sure it works, otherwise the "save" will be the last thing we do
 				httpsRedirect();
 			}
-			setOption('server_protocol', $protocol);
-			$zp_cfg = @file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
-			$zp_cfg = updateConfigItem('server_protocol', $protocol, $zp_cfg);
-			storeConfig($zp_cfg);
+			if (getOption('server_protocol') != $protocol) {
+				setOption('server_protocol', $protocol);
+				$_configMutex->lock();
+				$zp_cfg = @file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
+				$zp_cfg = updateConfigItem('server_protocol', $protocol, $zp_cfg);
+				storeConfig($zp_cfg);
+				$_configMutex->unlock();
+			}
+
 			$_zp_gallery->setUserLogonField(isset($_POST['login_user_field']));
 			if ($protocol == 'http') {
 				zp_clearCookie("zenphoto_ssl");
@@ -460,14 +465,14 @@ if ($_zp_admin_subtab == 'gallery' || $_zp_admin_subtab == 'image') {
 	<script type="text/javascript" src="js/encoder.js"></script>
 	<script type="text/javascript" src="js/tag.js"></script>
 	<script type="text/javascript">
-		// <!-- <![CDATA[
-		$(function () {
-		$('#<?php echo $targetid; ?>').tagSuggest({
-		tags: [
+						// <!-- <![CDATA[
+						$(function () {
+						$('#<?php echo $targetid; ?>').tagSuggest({
+						tags: [
 	<?php echo implode(',', $dbfields); ?>
-		]
-		});
-		});
+						]
+						});
+						});
 						// ]]> -->
 	</script>
 	<?php
@@ -547,7 +552,7 @@ Zenphoto_Authority::printPasswordFormJS();
 					?>
 					<div id="tab_gallery" class="tabbox">
 						<?php zp_apply_filter('admin_note', 'options', $subtab); ?>
-						<form action="?action=saveoptions" method="post" autocomplete="off">
+						<form id="form_options" action="?action=saveoptions" method="post" autocomplete="off">
 							<?php XSRFToken('saveoptions'); ?>
 							<input	type="hidden" name="savegeneraloptions" value="yes" />
 							<table class="options">
@@ -716,24 +721,24 @@ Zenphoto_Authority::printPasswordFormJS();
 											?>
 										</ul>
 										<script type="text/javascript">
-										var oldselect = '<?php echo $currentValue; ?>';
-										function radio_click(id) {
-										if ($('#r_' + id).prop('checked')) {
-										$('#language_allow_' + oldselect).removeAttr('disabled');
-														oldselect = id;
-														$('#language_allow_' + id).attr('disabled', 'disabled');
-										}
-										}
-						function enable_click(id) {
-						if ($('#language_allow_' + id).prop('checked')) {
-						$('#r_' + id).removeAttr('disabled');
-						} else {
-						$('#r_' + id).attr('disabled', 'disabled');
-						}
-						}
-						$(document).ready(function(){
-						$('ul.languagelist').scrollTo('li:eq(<?php echo ($ci - 2); ?>)');
-						});</script>
+																			var oldselect = '<?php echo $currentValue; ?>';
+																			function radio_click(id) {
+																			if ($('#r_' + id).prop('checked')) {
+																			$('#language_allow_' + oldselect).removeAttr('disabled');
+																							oldselect = id;
+																							$('#language_allow_' + id).attr('disabled', 'disabled');
+																			}
+																			}
+															function enable_click(id) {
+															if ($('#language_allow_' + id).prop('checked')) {
+															$('#r_' + id).removeAttr('disabled');
+															} else {
+															$('#r_' + id).attr('disabled', 'disabled');
+															}
+															}
+															$(document).ready(function(){
+															$('ul.languagelist').scrollTo('li:eq(<?php echo ($ci - 2); ?>)');
+															});</script>
 										<br class="clearall" />
 										<p class="notebox"><?php printf(gettext('Highlighted languages are not current with Zenphoto Version %1$s. (The version Zenphoto of the out-of-date language is shown in braces.) Please check the <a href="%2$s">translation repository</a> for new and updated language translations.'), $zpversion, 'https://github.com/zenphoto/zenphoto/tree/master/zp-core/locale'); ?></p>
 										<label class="checkboxlabel">
@@ -744,7 +749,7 @@ Zenphoto_Authority::printPasswordFormJS();
 										<p><?php echo gettext("You can disable languages by unchecking their checkboxes. Only checked languages will be available to the installation."); ?></p>
 										<p><?php echo gettext("Select the preferred language to display text in. (Set to <em>HTTP_Accept_Language</em> to use the language preference specified by the viewer's browser.)"); ?></p>
 										<p><?php echo gettext("Set <em>Multi-lingual</em> to enable multiple language input for options that provide theme text."); ?></p>
-										<p class="notebox"><?php echo gettext("<strong>Note:</strong> if you have created multi-language strings, uncheck this option, then save anything, you will lose your strings."); ?></p>
+
 									</td>
 								</tr>
 								<tr>
@@ -843,9 +848,9 @@ Zenphoto_Authority::printPasswordFormJS();
 									</td>
 									<td>
 										<script type="text/javascript">
-										// <!-- <![CDATA[
-														function resetallowedtags() {
-														$('#allowed_tags').val(<?php
+																			// <!-- <![CDATA[
+																							function resetallowedtags() {
+																							$('#allowed_tags').val(<?php
 									$t = getOption('allowed_tags_default');
 									$tags = explode("\n", $t);
 									$c = 0;
@@ -863,8 +868,8 @@ Zenphoto_Authority::printPasswordFormJS();
 		}
 	}
 	?>);
-														}
-										// ]]> -->
+																							}
+																			// ]]> -->
 										</script>
 										<p><?php echo gettext("Tags and attributes allowed in comments, descriptions, and other fields."); ?></p>
 										<p><?php echo gettext("Follow the form <em>tag</em> =&gt; (<em>attribute</em> =&gt; (<em>attribute</em>=&gt; (), <em>attribute</em> =&gt; ()...)))"); ?></p>
@@ -951,7 +956,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td><?php echo gettext('These options control the number of items displayed on their tabs. If you have problems using these tabs, reduce the number shown here.'); ?></td>
 								</tr>
 								<?php
-								$subtabs = array('security' => gettext('security'), 'debug'		 => gettext('debug'));
+								$subtabs = array('security' => gettext('security'), 'debug' => gettext('debug'));
 								?>
 								<tr>
 									<td width="175">
@@ -999,7 +1004,7 @@ Zenphoto_Authority::printPasswordFormJS();
 					?>
 					<div id="tab_gallery" class="tabbox">
 						<?php zp_apply_filter('admin_note', 'options', $subtab); ?>
-						<form action="?action=saveoptions" method="post" autocomplete="off">
+						<form id="form_options" action="?action=saveoptions" method="post" autocomplete="off">
 							<?php XSRFToken('saveoptions'); ?>
 							<input	type="hidden" name="savegalleryoptions" value="yes" />
 							<input	type="hidden" name="password_enabled" id="password_enabled" value="0" />
@@ -1080,7 +1085,7 @@ Zenphoto_Authority::printPasswordFormJS();
 														 id="user_name"  name="user"
 														 value="<?php echo html_encode($_zp_gallery->getUser()); ?>" />
 											<br />
-											<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');"><?php echo gettext('Show password'); ?></label>
+											<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');" /><?php echo gettext('Show password'); ?></label>
 										</td>
 										<td>
 											<?php echo gettext("User ID for the gallery guest user") ?>
@@ -1241,7 +1246,7 @@ Zenphoto_Authority::printPasswordFormJS();
 												<td colspan="2">
 													<span id="customTextBox2" class="customText" style="display:<?php echo $dspc; ?>">
 														<?php echo gettext('custom fields:') ?>
-														<input id="customalbumsort" name="customalbumsort" type="text" value="<?php echo html_encode($cvt); ?>"></input>
+														<input id="customalbumsort" name="customalbumsort" type="text" value="<?php echo html_encode($cvt); ?>" />
 													</span>
 												</td>
 											</tr>
@@ -1349,7 +1354,7 @@ Zenphoto_Authority::printPasswordFormJS();
 					?>
 					<div id="tab_search" class="tabbox">
 						<?php zp_apply_filter('admin_note', 'options', $subtab); ?>
-						<form action="?action=saveoptions" method="post" autocomplete="off">
+						<form id="form_options" action="?action=saveoptions" method="post" autocomplete="off">
 							<?php XSRFToken('saveoptions'); ?>
 							<input	type="hidden" name="savesearchoptions" value="yes" />
 							<input	type="hidden" name="password_enabled" id="password_enabled" value="0" />
@@ -1404,7 +1409,7 @@ Zenphoto_Authority::printPasswordFormJS();
 														 id="user_name"  name="user"
 														 value="<?php echo html_encode(getOption('search_user')); ?>" />
 											<br />
-											<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');"><?php echo gettext('Show password'); ?></label>
+											<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');" /><?php echo gettext('Show password'); ?></label>
 										</td>
 										<td>
 											<?php echo gettext("User ID for the search guest user") ?>
@@ -1458,23 +1463,23 @@ Zenphoto_Authority::printPasswordFormJS();
 									<?php
 									$engine = new SearchEngine();
 									$fields = $engine->getSearchFieldList();
-									$extra = array('tags' => array(array('type'		 => 'radio', 'display'	 => gettext('partial'), 'name'		 => 'tag_match', 'value'		 => 0, 'checked'	 => 0),
-																	array('type'		 => 'radio', 'display'	 => gettext('exact'), 'name'		 => 'tag_match', 'value'		 => 1, 'checked'	 => 0))
+									$extra = array('tags' => array(array('type' => 'radio', 'display' => gettext('partial'), 'name' => 'tag_match', 'value' => 0, 'checked' => 0),
+																	array('type' => 'radio', 'display' => gettext('exact'), 'name' => 'tag_match', 'value' => 1, 'checked' => 0))
 									);
 									$extra['tags'][(int) (getOption('exact_tag_match') && true)]['checked'] = 1;
 									$set_fields = $engine->allowedSearchFields();
 									$fields = array_diff($fields, $set_fields);
 									?>
 								<script>
-														$(function() {
-										$("#resizable").resizable({
-										maxWidth: 350,
-														minWidth: 350, minHeight: 120,
-														resize: function(event, ui) {
-										$('#searchchecklist').height($('#resizable').height());
-										}
-										});
-										});</script>
+																					$(function() {
+																					$("#resizable").resizable({
+																					maxWidth: 350,
+																									minWidth: 350, minHeight: 120,
+																									resize: function(event, ui) {
+																									$('#searchchecklist').height($('#resizable').height());
+																									}
+																					});
+																					});</script>
 								<td>
 									<?php echo gettext('Fields list:'); ?>
 									<div id="resizable">
@@ -1493,10 +1498,10 @@ Zenphoto_Authority::printPasswordFormJS();
 									</div>
 									<br />
 									<?php echo gettext('Treat spaces as'); ?>
-									<?php generateRadiobuttonsFromArray(getOption('search_space_is'), array(gettext('<em>space</em>')	 => '', gettext('<em>OR</em>')		 => 'OR', gettext('<em>AND</em>')		 => 'AND'), 'search_space_is', false, false); ?>
+									<?php generateRadiobuttonsFromArray(getOption('search_space_is'), array(gettext('<em>space</em>') => '', gettext('<em>OR</em>') => 'OR', gettext('<em>AND</em>') => 'AND'), 'search_space_is', false, false); ?>
 									<p>
 										<?php echo gettext('Default search'); ?>
-										<?php generateRadiobuttonsFromArray(getOption('search_within'), array(gettext('<em>New</em>')		 => '0', gettext('<em>Within</em>') => '1'), 'search_within', false, false); ?>
+										<?php generateRadiobuttonsFromArray(getOption('search_within'), array(gettext('<em>New</em>') => '0', gettext('<em>Within</em>') => '1'), 'search_within', false, false); ?>
 									</p>
 									<p>
 										<label>
@@ -1567,7 +1572,7 @@ Zenphoto_Authority::printPasswordFormJS();
 					?>
 					<div id="tab_image" class="tabbox">
 						<?php zp_apply_filter('admin_note', 'options', $subtab); ?>
-						<form action="?action=saveoptions" method="post" autocomplete="off">
+						<form id="form_options" action="?action=saveoptions" method="post" autocomplete="off">
 							<?php XSRFToken('saveoptions'); ?>
 							<input type="hidden" name="saveimageoptions" value="yes" />
 							<p align="center">
@@ -1629,7 +1634,7 @@ Zenphoto_Authority::printPasswordFormJS();
 										<span id="customTextBox3" class="customText" style="display:<?php echo $dspc; ?>">
 											<br />
 											<?php echo gettext('custom fields:') ?>
-											<input id="customimagesort" name="customimagesort" type="text" value="<?php echo html_encode($cvt); ?>"></input>
+											<input id="customimagesort" name="customimagesort" type="text" value="<?php echo html_encode($cvt); ?>" />
 										</span>
 
 									</td>
@@ -1644,21 +1649,21 @@ Zenphoto_Authority::printPasswordFormJS();
 										<p class="nowrap">
 											<?php echo gettext('Normal Image'); ?>&nbsp;<input type="text" size="3" id="imagequality" name="image_quality" value="<?php echo getOption('image_quality'); ?>" />
 											<script type="text/javascript">
-														// <!-- <![CDATA[
-														$(function() {
-										$("#slider-imagequality").slider({
+																								// <!-- <![CDATA[
+																								$(function() {
+																								$("#slider-imagequality").slider({
 	<?php $v = getOption('image_quality'); ?>
-										startValue: <?php echo $v; ?>,
-														value: <?php echo $v; ?>,
-														min: 0,
-														max: 100,
-														slide: function(event, ui) {
-										$("#imagequality").val(ui.value);
-										}
-										});
-														$("#imagequality").val($("#slider-imagequality").slider("value"));
-										});
-														// ]]> -->
+																								startValue: <?php echo $v; ?>,
+																												value: <?php echo $v; ?>,
+																												min: 0,
+																												max: 100,
+																												slide: function(event, ui) {
+																												$("#imagequality").val(ui.value);
+																												}
+																								});
+																												$("#imagequality").val($("#slider-imagequality").slider("value"));
+																								});
+																								// ]]> -->
 											</script>
 										<div id="slider-imagequality"></div>
 										</p>
@@ -1667,18 +1672,18 @@ Zenphoto_Authority::printPasswordFormJS();
 											<script type="text/javascript">
 																								// <!-- <![CDATA[
 																								$(function() {
-																				$("#slider-fullimagequality").slider({
+																								$("#slider-fullimagequality").slider({
 	<?php $v = getOption('full_image_quality'); ?>
-																				startValue: <?php echo $v; ?>,
-																								value: <?php echo $v; ?>,
-																								min: 0,
-																								max: 100,
-																								slide: function(event, ui) {
-																				$("#fullimagequality").val(ui.value);
-																				}
-																				});
-																								$("#fullimagequality").val($("#slider-fullimagequality").slider("value"));
-																				});
+																								startValue: <?php echo $v; ?>,
+																												value: <?php echo $v; ?>,
+																												min: 0,
+																												max: 100,
+																												slide: function(event, ui) {
+																												$("#fullimagequality").val(ui.value);
+																												}
+																								});
+																												$("#fullimagequality").val($("#slider-fullimagequality").slider("value"));
+																								});
 																								// ]]> -->
 											</script>
 										<div id="slider-fullimagequality"></div>
@@ -1688,18 +1693,18 @@ Zenphoto_Authority::printPasswordFormJS();
 											<script type="text/javascript">
 																								// <!-- <![CDATA[
 																								$(function() {
-																				$("#slider-thumbquality").slider({
+																								$("#slider-thumbquality").slider({
 	<?php $v = getOption('thumb_quality'); ?>
-																				startValue: <?php echo $v; ?>,
-																								value: <?php echo $v; ?>,
-																								min: 0,
-																								max: 100,
-																								slide: function(event, ui) {
-																				$("#thumbquality").val(ui.value);
-																				}
-																				});
-																								$("#thumbquality").val($("#slider-thumbquality").slider("value"));
-																				});
+																								startValue: <?php echo $v; ?>,
+																												value: <?php echo $v; ?>,
+																												min: 0,
+																												max: 100,
+																												slide: function(event, ui) {
+																												$("#thumbquality").val(ui.value);
+																												}
+																								});
+																												$("#thumbquality").val($("#slider-thumbquality").slider("value"));
+																								});
 																								// ]]> -->
 											</script>
 										<div id="slider-thumbquality"></div>
@@ -1760,18 +1765,18 @@ Zenphoto_Authority::printPasswordFormJS();
 											<script type="text/javascript">
 																								// <!-- <![CDATA[
 																								$(function() {
-																				$("#slider-sharpenamount").slider({
+																								$("#slider-sharpenamount").slider({
 	<?php $v = getOption('sharpen_amount'); ?>
-																				startValue: <?php echo $v; ?>,
-																								value: <?php echo $v; ?>,
-																								min: 0,
-																								max: 100,
-																								slide: function(event, ui) {
-																				$("#sharpenamount").val(ui.value);
-																				}
-																				});
-																								$("#sharpenamount").val($("#slider-sharpenamount").slider("value"));
-																				});
+																								startValue: <?php echo $v; ?>,
+																												value: <?php echo $v; ?>,
+																												min: 0,
+																												max: 100,
+																												slide: function(event, ui) {
+																												$("#sharpenamount").val(ui.value);
+																												}
+																								});
+																												$("#sharpenamount").val($("#slider-sharpenamount").slider("value"));
+																								});
 																								// ]]> -->
 											</script>
 										<div id="slider-sharpenamount"></div>
@@ -1899,20 +1904,20 @@ Zenphoto_Authority::printPasswordFormJS();
 										<script type="text/javascript">
 																							// <!-- <![CDATA[
 																							$(function() {
-																			$("#slider-workers").slider({
+																							$("#slider-workers").slider({
 	<?php $v = getOption('imageProcessorConcurrency'); ?>
-																			startValue: <?php echo $v; ?>,
-																							value: <?php echo $v; ?>,
-																							min: 1,
-																							max:60,
-																							slide: function(event, ui) {
-																			$("#cache-workers").val(ui.value);
-																							$("#cache_processes").html($("#cache-workers").val());
-																			}
-																			});
-																							$("#cache-workers").val($("#slider-workers").slider("value"));
-																							$("#cache_processes").html($("#cache-workers").val());
-																			});
+																							startValue: <?php echo $v; ?>,
+																											value: <?php echo $v; ?>,
+																											min: 1,
+																											max:60,
+																											slide: function(event, ui) {
+																											$("#cache-workers").val(ui.value);
+																															$("#cache_processes").html($("#cache-workers").val());
+																											}
+																							});
+																											$("#cache-workers").val($("#slider-workers").slider("value"));
+																											$("#cache_processes").html($("#cache-workers").val());
+																							});
 																							// ]]> -->
 										</script>
 										<div id="slider-workers"></div>
@@ -1945,7 +1950,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td><?php echo gettext("Protect image cache"); ?></td>
 									<td>
 										<input type="checkbox" name="protected_image_cache" value="1"
-													 <?php checked('1', getOption('protected_image_cache')); ?> />&nbsp;<?php echo gettext("Enabled"); ?>
+													 <?php checked('1', getOption('protected_image_cache')); ?> />
 									</td>
 									<td><?php
 										echo gettext('If checked all image URIs will link to the image processor and the image cache will be disabled to browsers via an <em>.htaccess</em> file. Images are still cached but the image processor is used to serve the image rather than allowing the browser to fetch the file.') .
@@ -1956,7 +1961,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td><?php echo gettext("Secure image processor"); ?></td>
 									<td>
 										<input type="checkbox" name="secure_image_processor" value="1"
-													 <?php checked('1', getOption('secure_image_processor')); ?> />&nbsp;<?php echo gettext("Enabled"); ?>
+													 <?php checked('1', getOption('secure_image_processor')); ?> />
 									</td>
 									<td><?php
 										echo gettext('When enabled, the image processor will check album access credentials.') .
@@ -2018,7 +2023,7 @@ Zenphoto_Authority::printPasswordFormJS();
 																	 id="user_name"  name="user"
 																	 value="<?php echo html_encode(getOption('protected_image_user')); ?>" />
 														<br />
-														<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');"><?php echo gettext('Show password'); ?></label>
+														<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');" /><?php echo gettext('Show password'); ?></label>
 													</td>
 												</tr>
 												<tr class="passwordextrahide" style="display:none" >
@@ -2063,7 +2068,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<?php
 											echo "<select id=\"protect_full_image\" name=\"protect_full_image\">\n";
 											$protection = getOption('protect_full_image');
-											$list = array(gettext('Protected view')	 => 'Protected view', gettext('Download')				 => 'Download', gettext('No access')			 => 'No access');
+											$list = array(gettext('Protected view') => 'Protected view', gettext('Download') => 'Download', gettext('No access') => 'No access');
 											if ($_zp_conf_vars['album_folder_class'] != 'external') {
 												$list[gettext('Unprotected')] = 'Unprotected';
 											}
@@ -2083,20 +2088,20 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td><?php echo gettext("Use lock image"); ?></td>
 									<td>
 										<input type="checkbox" name="use_lock_image" value="1"
-													 <?php checked('1', getOption('use_lock_image')); ?> />&nbsp;<?php echo gettext("Enabled"); ?>
+													 <?php checked('1', getOption('use_lock_image')); ?> />
 									</td>
 									<td><?php echo gettext("Substitute a <em>lock</em> image for thumbnails of password protected albums when the viewer has not supplied the password. If your theme supplies an <code>images/err-passwordprotected.png</code> image, it will be shown. Otherwise the zenphoto default lock image is displayed."); ?></td>
 								</tr>
 								<script>
-																											$(function() {
-																							$("#resizable").resizable({
-																							maxWidth: 350,
-																											minWidth: 350, minHeight: 120,
-																											resize: function(event, ui) {
-																							$('#metadatalist').height($('#resizable').height());
-																							}
-																							});
-																							});</script>
+																									$(function() {
+																									$("#resizable").resizable({
+																									maxWidth: 350,
+																													minWidth: 350, minHeight: 120,
+																													resize: function(event, ui) {
+																													$('#metadatalist').height($('#resizable').height());
+																													}
+																									});
+																									});</script>
 								<tr>
 									<td><?php echo gettext("Metadata"); ?></td>
 									<td>
@@ -2261,7 +2266,7 @@ Zenphoto_Authority::printPasswordFormJS();
 						}
 						standardThemeOptions($themename, $album);
 						?>
-						<form action="?action=saveoptions" method="post" id="themeoptionsform" autocomplete="off">
+						<form id="form_options" action="?action=saveoptions" method="post" id="themeoptionsform" autocomplete="off">
 							<?php XSRFToken('saveoptions'); ?>
 							<input type="hidden" id="savethemeoptions" name="savethemeoptions" value="yes" />
 							<input type="hidden" name="optiontheme" value="<?php echo html_encode($themename); ?>" />
@@ -2424,8 +2429,8 @@ Zenphoto_Authority::printPasswordFormJS();
 													$combined = $separate = ' disabled="disabled"';
 												}
 												?>
-												<label><input type="radio" name="thumb_transition" value="1"<?php echo $separate; ?>><?php echo gettext('separate'); ?></input></label>
-												<label><input type="radio" name="thumb_transition" value="2"<?php echo $combined; ?>><?php echo gettext('combined'); ?></input></label>
+												<label><input type="radio" name="thumb_transition" value="1"<?php echo $separate; ?> /><?php echo gettext('separate'); ?></label>
+												<label><input type="radio" name="thumb_transition" value="2"<?php echo $combined; ?> /><?php echo gettext('combined'); ?></label>
 											</span>
 										</td>
 										<td><?php echo gettext('if both album and image <em>thumbnails per row</em> are greater than 1 you can choose if album thumbnails and image thumbnails are placed together on the page that transitions from only album thumbnails to only image thumbnails.'); ?></td>
@@ -2466,7 +2471,7 @@ Zenphoto_Authority::printPasswordFormJS();
 												?>
 											</span>&nbsp;
 											<span class="nowrap">
-												<?php printf(gettext('%s%% top &amp; bottom'), '<input type="text" size="3" name="thumb_crop_height" id="thumb_crop_height"	value="' . $ct . '"' . $disable . '" />');
+												<?php printf(gettext('%s%% top &amp; bottom'), '<input type="text" size="3" name="thumb_crop_height" id="thumb_crop_height"	value="' . $ct . '"' . $disable . ' />');
 												?>
 											</span>
 										</td>
@@ -2639,8 +2644,8 @@ Zenphoto_Authority::printPasswordFormJS();
 					<div id="tab_plugin" class="tabbox">
 						<?php zp_apply_filter('admin_note', 'options', $subtab); ?>
 						<script type="text/javascript">
-																											var optionholder = new array();</script>
-						<form action="?action=saveoptions<?php if (isset($_GET['single'])) echo '&amp;single=' . $showExtension; ?>" method="post" autocomplete="off">
+																							var optionholder = new array();</script>
+						<form id="form_options" action="?action=saveoptions<?php if (isset($_GET['single'])) echo '&amp;single=' . $showExtension; ?>" method="post" autocomplete="off">
 							<?php XSRFToken('saveoptions'); ?>
 							<input type="hidden" name="savepluginoptions" value="yes" />
 							<input type="hidden" name="subpage" value="<?php echo $subpage; ?>" />
@@ -2662,7 +2667,7 @@ Zenphoto_Authority::printPasswordFormJS();
 										</span>
 									</th>
 									<th style="text-align:right; padding-right: 10px;">
-										<?php printPageSelector($subpage, $rangeset, 'admin-options.php', array('page' => 'options', 'tab'	 => 'plugin')); ?>
+										<?php printPageSelector($subpage, $rangeset, 'admin-options.php', array('page' => 'options', 'tab' => 'plugin')); ?>
 									</th>
 									<th></th>
 								</tr>
@@ -2745,39 +2750,39 @@ Zenphoto_Authority::printPasswordFormJS();
 														customOptions($option_interface, '', NULL, 'plugin', $supportedOptions, NULL, 'none', $extension);
 													}
 													?>
+												</table>
 											</td>
-									</table>
+										</tr>
+										<?php
+									}
+								}
+								if ($_zp_plugin_count == 0) {
+									?>
+									<tr>
+										<td style="padding: 0;margin:0" colspan="3">
+											<?php
+											echo gettext("There are no plugin options to administer.");
+											?>
+										</td>
 									</tr>
 									<?php
-								}
-							}
-							if ($_zp_plugin_count == 0) {
-								?>
-								<tr>
-									<td style="padding: 0;margin:0" colspan="3">
-										<?php
-										echo gettext("There are no plugin options to administer.");
-										?>
-									</td>
-								</tr>
-								<?php
-							} else {
-								?>
-								<tr>
-									<th></th>
-									<th style="text-align:right; padding-right: 10px;">
-										<?php printPageSelector($subpage, $rangeset, 'admin-options.php', array('page' => 'options', 'tab'	 => 'plugin')); ?>
-									</th>
-									<th></th>
-								</tr>
-								<tr>
-									<td colspan="3">
-										<p class="buttons">
-											<button type="submit" value="<?php echo gettext('save') ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
-											<button type="reset" value="<?php echo gettext('reset') ?>"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
-										</p>
-									</td>
-								</tr>
+								} else {
+									?>
+									<tr>
+										<th></th>
+										<th style="text-align:right; padding-right: 10px;">
+											<?php printPageSelector($subpage, $rangeset, 'admin-options.php', array('page' => 'options', 'tab' => 'plugin')); ?>
+										</th>
+										<th></th>
+									</tr>
+									<tr>
+										<td colspan="3">
+											<p class="buttons">
+												<button type="submit" value="<?php echo gettext('save') ?>"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
+												<button type="reset" value="<?php echo gettext('reset') ?>"><img src="images/reset.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong></button>
+											</p>
+										</td>
+									</tr>
 								</table> <!-- single plugin page table -->
 								<input type="hidden" name="checkForPostTruncation" value="1" />
 								<?php
@@ -2814,7 +2819,7 @@ Zenphoto_Authority::printPasswordFormJS();
 					?>
 					<div id="tab_security" class="tabbox">
 						<?php zp_apply_filter('admin_note', 'options', $subtab); ?>
-						<form action="?action=saveoptions" method="post" autocomplete="off">
+						<form id="form_options" action="?action=saveoptions" method="post" autocomplete="off">
 							<?php XSRFToken('saveoptions'); ?>
 							<input type="hidden" name="savesecurityoptions" value="yes" />
 							<table class="options">
@@ -2851,7 +2856,7 @@ Zenphoto_Authority::printPasswordFormJS();
 								<tr>
 									<td><?php echo gettext('Cookie security') ?></td>
 									<td>
-										<label><input type="checkbox" name="IP_tied_cookies" value="1" <?php checked(1, getOption('IP_tied_cookies')); ?> /><?php echo gettext('enable'); ?></label>
+										<label><input type="checkbox" name="IP_tied_cookies" value="1" <?php checked(1, getOption('IP_tied_cookies')); ?> /></label>
 									</td>
 									<td>
 										<?php echo gettext('Tie cookies to the IP address of the browser.'); ?>
@@ -2871,14 +2876,14 @@ Zenphoto_Authority::printPasswordFormJS();
 								<tr>
 									<td width="175"><?php echo gettext('Obscure cache filenames'); ?></td>
 									<td width="350">
-										<label><input type="checkbox" name="obfuscate_cache" id="obfuscate_cache" value="1" <?php checked(1, getOption('obfuscate_cache')); ?> /><?php echo gettext('enable'); ?></label>
+										<label><input type="checkbox" name="obfuscate_cache" id="obfuscate_cache" value="1" <?php checked(1, getOption('obfuscate_cache')); ?> /></label>
 									</td>
 									<td><?php echo gettext('Cause the filename of cached items to be obscured. This makes it difficult for someone to "guess" the name in a URL.'); ?></td>
 								</tr>
 								<tr>
 									<td><?php echo gettext('Image Processor security') ?></td>
 									<td>
-										<label><input type="checkbox" name="image_processor_flooding_protection" value="1" <?php checked(1, getOption('image_processor_flooding_protection')); ?> /><?php echo gettext('enable'); ?></label>
+										<label><input type="checkbox" name="image_processor_flooding_protection" value="1" <?php checked(1, getOption('image_processor_flooding_protection')); ?> /></label>
 									</td>
 									<td>
 										<?php echo gettext('Add a security parameter to image processor URIs to prevent denial of service attacks requesting arbitrary sized images.'); ?>
@@ -2906,7 +2911,6 @@ Zenphoto_Authority::printPasswordFormJS();
 																	 value="1" <?php checked('1', $_zp_gallery->getUserLogonField()); ?> />
 																	 <?php
 																 }
-																 echo gettext("enable");
 																 ?>
 												</label>
 											</td>

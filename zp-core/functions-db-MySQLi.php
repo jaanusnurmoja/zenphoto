@@ -43,7 +43,7 @@ function db_connect($config, $errorstop = true) {
 	}
 	$_zp_DB_details = $config;
 	if (array_key_exists('UTF-8', $config) && $config['UTF-8']) {
-		@$_zp_DB_connection->query("SET NAMES 'utf8'");
+		$_zp_DB_connection->set_charset("utf8");
 	}
 	// set the sql_mode to relaxed (if possible)
 	@$_zp_DB_connection->query('SET SESSION sql_mode="";');
@@ -73,7 +73,7 @@ function query($sql, $errorstop = true) {
 		return $result;
 	}
 	if ($errorstop) {
-		$sql = str_replace($_zp_DB_details['mysql_prefix'], '[' . gettext('prefix') . ']', $sql);
+		$sql = str_replace('`' . $_zp_DB_details['mysql_prefix'], '`[' . gettext('prefix') . ']', $sql);
 		$sql = str_replace($_zp_DB_details['mysql_database'], '[' . gettext('DB') . ']', $sql);
 		trigger_error(sprintf(gettext('%1$s Error: ( %2$s ) failed. %1$s returned the error %3$s'), DATABASE_SOFTWARE, $sql, db_error()), E_USER_ERROR);
 	}
@@ -169,7 +169,9 @@ function db_error() {
 	if (is_object($_zp_DB_connection)) {
 		return mysqli_error($_zp_DB_connection);
 	}
-	return sprintf(gettext('%s not connected'), DATABASE_SOFTWARE);
+	if (!$msg = mysqli_connect_error())
+		$msg = sprintf(gettext('%s not connected'), DATABASE_SOFTWARE);
+	return $msg;
 }
 
 /*
@@ -222,7 +224,7 @@ function db_software() {
 	global $_zp_DB_connection;
 	$dbversion = trim(@$_zp_DB_connection->get_server_info());
 	preg_match('/[0-9,\.]*/', $dbversion, $matches);
-	return array('application'	 => DATABASE_SOFTWARE, 'required'		 => DATABASE_MIN_VERSION, 'desired'			 => DATABASE_DESIRED_VERSION, 'version'			 => $matches[0]);
+	return array('application' => DATABASE_SOFTWARE, 'required' => DATABASE_MIN_VERSION, 'desired' => DATABASE_DESIRED_VERSION, 'version' => $matches[0]);
 }
 
 /**
@@ -325,7 +327,7 @@ function db_truncate_table($table) {
 }
 
 function db_LIKE_escape($str) {
-	return strtr($str, array('_'	 => '\\_', '%'	 => '\\%'));
+	return strtr($str, array('_' => '\\_', '%' => '\\%'));
 }
 
 function db_free_result($result) {

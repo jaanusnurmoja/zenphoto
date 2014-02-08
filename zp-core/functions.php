@@ -34,11 +34,11 @@ require_once(dirname(__FILE__) . '/load_objectClasses.php');
 
 $_zp_current_context_stack = array();
 
-$_zp_albumthumb_selector = array(array('field'			 => '', 'direction'	 => '', 'desc'			 => 'random'),
-				array('field'			 => 'id', 'direction'	 => 'DESC', 'desc'			 => gettext('most recent')),
-				array('field'			 => 'mtime', 'direction'	 => '', 'desc'			 => gettext('oldest')),
-				array('field'			 => 'title', 'direction'	 => '', 'desc'			 => gettext('first alphabetically')),
-				array('field'			 => 'hitcounter', 'direction'	 => 'DESC', 'desc'			 => gettext('most viewed'))
+$_zp_albumthumb_selector = array(array('field' => '', 'direction' => '', 'desc' => 'random'),
+				array('field' => 'id', 'direction' => 'DESC', 'desc' => gettext('most recent')),
+				array('field' => 'mtime', 'direction' => '', 'desc' => gettext('oldest')),
+				array('field' => 'title', 'direction' => '', 'desc' => gettext('first alphabetically')),
+				array('field' => 'hitcounter', 'direction' => 'DESC', 'desc' => gettext('most viewed'))
 );
 
 $_zp_missing_album = new AlbumBase(gettext('missing'), false);
@@ -111,7 +111,7 @@ function checkObjectsThumb($localpath) {
 function truncate_string($string, $length, $elipsis = '...') {
 	if (mb_strlen($string) > $length) {
 		$string = mb_substr($string, 0, $length);
-		$pos = mb_strrpos(strtr($string, array('~'	 => ' ', '!'	 => ' ', '@'	 => ' ', '#'	 => ' ', '$'	 => ' ', '%'	 => ' ', '^'	 => ' ', '&'	 => ' ', '*'	 => ' ', '('	 => ' ', ')'	 => ' ', '+'	 => ' ', '='	 => ' ', '-'	 => ' ', '{'	 => ' ', '}'	 => ' ', '['	 => ' ', ']'	 => ' ', '|'	 => ' ', ':'	 => ' ', ';'	 => ' ', '<'	 => ' ', '>'	 => ' ', '.'	 => ' ', '?'	 => ' ', '/'	 => ' ', '\\', '\\' => ' ', "'"	 => ' ', "`"	 => ' ', '"'	 => ' ')), ' ');
+		$pos = mb_strrpos(strtr($string, array('~' => ' ', '!' => ' ', '@' => ' ', '#' => ' ', '$' => ' ', '%' => ' ', '^' => ' ', '&' => ' ', '*' => ' ', '(' => ' ', ')' => ' ', '+' => ' ', '=' => ' ', '-' => ' ', '{' => ' ', '}' => ' ', '[' => ' ', ']' => ' ', '|' => ' ', ':' => ' ', ';' => ' ', '<' => ' ', '>' => ' ', '.' => ' ', '?' => ' ', '/' => ' ', '\\', '\\' => ' ', "'" => ' ', "`" => ' ', '"' => ' ')), ' ');
 		if ($pos === FALSE) {
 			$string .= $elipsis;
 		} else {
@@ -166,8 +166,13 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 	global $_user_tags;
 	if ($shorten && ($forceindicator || (mb_strlen($articlecontent) > $shorten))) {
 		$allowed_tags = getAllowedTags('allowed_tags');
+		//remove script to be replaced later
+		preg_match_all('~(<script.*</script>)~is', $articlecontent, $matches);
+		$articlecontent = preg_replace('~<script.*/script>~is', '', $articlecontent);
+
 		$short = mb_substr($articlecontent, 0, $shorten);
 		$short2 = kses($short . '</p>', $allowed_tags);
+
 		if (($l2 = mb_strlen($short2)) < $shorten) {
 			$c = 0;
 			$l1 = $shorten;
@@ -205,7 +210,13 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 				$short = trim(cleanHTML($short . $shortenindicator));
 			}
 		}
-		return $short;
+		$articlecontent = $short;
+	}
+	if (isset($matches)) {
+		//replace the script text
+		foreach ($matches[0] as $script) {
+			$articlecontent = $script . $articlecontent;
+		}
 	}
 	return $articlecontent;
 }
@@ -640,7 +651,7 @@ function getEnabledPlugins() {
 	foreach ($sortlist as $extension => $path) {
 		$opt = 'zp_plugin_' . $extension;
 		if ($option = getOption($opt)) {
-			$_EnabledPlugins[$extension] = array('priority' => $option, 'path'		 => $path);
+			$_EnabledPlugins[$extension] = array('priority' => $option, 'path' => $path);
 		}
 	}
 	$_EnabledPlugins = sortMultiArray($_EnabledPlugins, 'priority', true);
@@ -1095,39 +1106,41 @@ function getAllTagsCount() {
  * @param string $tbl database table of the object
  */
 function storeTags($tags, $id, $tbl) {
-	$tagsLC = array();
-	foreach ($tags as $key => $tag) {
-		$tag = trim($tag);
-		if (!empty($tag)) {
-			$lc_tag = mb_strtolower($tag);
-			if (!in_array($lc_tag, $tagsLC)) {
-				$tagsLC[$tag] = $lc_tag;
+	if ($id) {
+		$tagsLC = array();
+		foreach ($tags as $key => $tag) {
+			$tag = trim($tag);
+			if (!empty($tag)) {
+				$lc_tag = mb_strtolower($tag);
+				if (!in_array($lc_tag, $tagsLC)) {
+					$tagsLC[$tag] = $lc_tag;
+				}
 			}
 		}
-	}
-	$sql = "SELECT `id`, `tagid` from " . prefix('obj_to_tag') . " WHERE `objectid`='" . $id . "' AND `type`='" . $tbl . "'";
-	$result = query($sql);
-	$existing = array();
-	if ($result) {
-		while ($row = db_fetch_assoc($result)) {
-			$dbtag = query_single_row("SELECT `name` FROM " . prefix('tags') . " WHERE `id`='" . $row['tagid'] . "'");
-			$existingLC = mb_strtolower($dbtag['name']);
-			if (in_array($existingLC, $tagsLC)) { // tag already set no action needed
-				$existing[] = $existingLC;
-			} else { // tag no longer set, remove it
-				query("DELETE FROM " . prefix('obj_to_tag') . " WHERE `id`='" . $row['id'] . "'");
+		$sql = "SELECT `id`, `tagid` from " . prefix('obj_to_tag') . " WHERE `objectid`='" . $id . "' AND `type`='" . $tbl . "'";
+		$result = query($sql);
+		$existing = array();
+		if ($result) {
+			while ($row = db_fetch_assoc($result)) {
+				$dbtag = query_single_row("SELECT `name` FROM " . prefix('tags') . " WHERE `id`='" . $row['tagid'] . "'");
+				$existingLC = mb_strtolower($dbtag['name']);
+				if (in_array($existingLC, $tagsLC)) { // tag already set no action needed
+					$existing[] = $existingLC;
+				} else { // tag no longer set, remove it
+					query("DELETE FROM " . prefix('obj_to_tag') . " WHERE `id`='" . $row['id'] . "'");
+				}
 			}
+			db_free_result($result);
 		}
-		db_free_result($result);
-	}
-	$tags = array_diff($tagsLC, $existing); // new tags for the object
-	foreach ($tags as $key => $tag) {
-		$dbtag = query_single_row("SELECT `id` FROM " . prefix('tags') . " WHERE `name`=" . db_quote($key));
-		if (!is_array($dbtag)) { // tag does not exist
-			query("INSERT INTO " . prefix('tags') . " (name) VALUES (" . db_quote($key) . ")", false);
-			$dbtag = array('id' => db_insert_id());
+		$tags = array_diff($tagsLC, $existing); // new tags for the object
+		foreach ($tags as $key => $tag) {
+			$dbtag = query_single_row("SELECT `id` FROM " . prefix('tags') . " WHERE `name`=" . db_quote($key));
+			if (!is_array($dbtag)) { // tag does not exist
+				query("INSERT INTO " . prefix('tags') . " (name) VALUES (" . db_quote($key) . ")", false);
+				$dbtag = array('id' => db_insert_id());
+			}
+			query("INSERT INTO " . prefix('obj_to_tag') . "(`objectid`, `tagid`, `type`) VALUES (" . $id . "," . $dbtag['id'] . ",'" . $tbl . "')");
 		}
-		query("INSERT INTO " . prefix('obj_to_tag') . "(`objectid`, `tagid`, `type`) VALUES (" . $id . "," . $dbtag['id'] . ",'" . $tbl . "')");
 	}
 }
 
@@ -1406,7 +1419,7 @@ function isValidURL($url) {
  * @return bool
  */
 function safe_fnmatch($pattern, $string) {
-	return @preg_match('/^' . strtr(addcslashes($pattern, '\\.+^$(){}=!<>|'), array('*'	 => '.*', '?'	 => '.?')) . '$/i', $string);
+	return @preg_match('/^' . strtr(addcslashes($pattern, '\\.+^$(){}=!<>|'), array('*' => '.*', '?' => '.?')) . '$/i', $string);
 }
 
 /**
@@ -1956,7 +1969,7 @@ function XSRFToken($action) {
  */
 function cron_starter($script, $params, $offsetPath, $inline = false) {
 	global $_zp_authority, $_zp_loggedin, $_zp_current_admin_obj;
-	$admin = Zenphoto_Authority::getAnAdmin(array('`user`='	 => $_zp_authority->master_user, '`valid`=' => 1));
+	$admin = $_zp_authority->getMasterUser();
 
 	if ($inline) {
 		$_zp_current_admin_obj = $admin;
@@ -2010,7 +2023,7 @@ function zp_loggedin($rights = ALL_RIGHTS) {
  * Produces the # to table association array
  */
 function getTableAsoc() {
-	return array('1'	 => 'albums', '2'	 => 'images', '3'	 => 'news', '4'	 => 'pages', '5'	 => 'comments');
+	return array('1' => 'albums', '2' => 'images', '3' => 'news', '4' => 'pages', '5' => 'comments');
 }
 
 /**
@@ -2158,35 +2171,38 @@ function applyMacros($text) {
 			if (!empty($macro['params'])) {
 				$err = false;
 				foreach ($macro['params'] as $key => $type) {
+					$data = false;
 					if (array_key_exists($key, $parms)) {
 						switch (trim($type, '*')) {
 							case 'int':
 								if (is_numeric($parms[$key])) {
 									$parameters[] = (int) $parms[$key];
-									continue 2;
+								} else {
+									$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be a number.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
+									$class = 'error';
 								}
-								$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be a number.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-								$class = 'error';
 								break;
 							case 'string':
 								if (is_string($parms[$key])) {
 									$parameters[] = $parms[$key];
-									continue 2;
+								} else {
+									$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be a string.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
+									$class = 'error';
 								}
-								$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be a string.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-								$class = 'error';
 								break;
 							case 'bool':
 								switch (strtolower($parms[$key])) {
 									case ("true"):
 										$parameters[] = true;
-										continue 2;
+										break;
 									case ("false"):
 										$parameters[] = false;
-										continue 2;
+										break;
+									default:
+										$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be <code>true</code> or <code>false</code>.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
+										$class = 'error';
+										break;
 								}
-								$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d should be <code>true</code> or <code>false</code>.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
-								$class = 'error';
 								break;
 							case 'array':
 								$l = array_slice($parms, $key);
@@ -2206,7 +2222,6 @@ function applyMacros($text) {
 								$class = 'error';
 								break;
 						}
-						break;
 					} else {
 						if (strpos($type, '*') === false) {
 							$data = '<span class="error">' . sprintf(gettext('<em>[%1$s]</em> parameter %2$d is missing.'), trim($macro_instance, '[]'), $key + 1) . '</span>';
@@ -2504,8 +2519,11 @@ class zpFunctions {
 	 * @param string $text
 	 */
 	static function tagURLs($text) {
-		if ($serial = preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
-			$text = unserialize($text);
+		if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+			$text = getSerializedArray($text);
+			$serial = true;
+		} else {
+			$serial = false;
 		}
 		if (is_array($text)) {
 			foreach ($text as $key => $textelement) {
@@ -2526,8 +2544,11 @@ class zpFunctions {
 	 * @return string
 	 */
 	static function unTagURLs($text) {
-		if ($serial = preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+		if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
 			$text = getSerializedArray($text);
+			$serial = true;
+		} else {
+			$serial = false;
 		}
 		if (is_array($text)) {
 			foreach ($text as $key => $textelement) {
@@ -2548,8 +2569,11 @@ class zpFunctions {
 	 * @return string
 	 */
 	static function updateImageProcessorLink($text) {
-		if ($serial = preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+		if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
 			$text = getSerializedArray($text);
+			$serial = true;
+		} else {
+			$serial = false;
 		}
 		if (is_array($text)) {
 			foreach ($text as $key => $textelement) {
@@ -2559,18 +2583,21 @@ class zpFunctions {
 				$text = serialize($text);
 			}
 		} else {
-			preg_match_all('|\<\s*img.*?\ssrc\s*=\s*"(.*i\.php\?([^"]*)).*/\>|', $text, $matches);
-			foreach ($matches[2] as $key => $match) {
-				$match = explode('&amp;', $match);
-				$set = array();
-				foreach ($match as $v) {
-					$s = explode('=', $v);
-					$set[$s[0]] = $s[1];
-				}
-				$args = getImageArgs($set);
-				$imageuri = getImageURI($args, urldecode($set['a']), urldecode($set['i']), NULL);
-				if (strpos($imageuri, 'i.php') === false) {
-					$text = str_replace($matches[1][$key], $imageuri, $text);
+			preg_match_all('|<\s*img.*?\ssrc\s*=\s*"([^"]*)?|', $text, $matches);
+			foreach ($matches[1] as $key => $match) {
+				preg_match('|.*i\.php\?(.*)|', $match, $imgproc);
+				if ($imgproc) {
+					$match = explode('&amp;', $imgproc[1]);
+					$set = array();
+					foreach ($match as $v) {
+						$s = explode('=', $v);
+						$set[$s[0]] = $s[1];
+					}
+					$args = getImageArgs($set);
+					$imageuri = getImageURI($args, urldecode($set['a']), urldecode($set['i']), NULL);
+					if (strpos($imageuri, 'i.php') === false) {
+						$text = str_replace($matches[1][$key], $imageuri, $text);
+					}
 				}
 			}
 		}
@@ -2587,7 +2614,7 @@ class _zp_captcha {
 	var $name = NULL; // "captcha" name if no captcha plugin loaded
 
 	function getCaptcha($prompt) {
-		return array('input'	 => NULL, 'html'	 => '<p class="errorbox">' . gettext('No captcha handler is enabled.') . '</p>', 'hidden' => '');
+		return array('input' => NULL, 'html' => '<p class="errorbox">' . gettext('No captcha handler is enabled.') . '</p>', 'hidden' => '');
 	}
 
 	function checkCaptcha($s1, $s2) {

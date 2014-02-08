@@ -201,24 +201,23 @@ function getGeoCoord($image) {
 		$exif = $_zp_current_image->getMetaData();
 		if ((!empty($exif['EXIFGPSLatitude'])) && (!empty($exif['EXIFGPSLongitude']))) {
 			$lat_c = explode('.', str_replace(',', '.', $exif['EXIFGPSLatitude']) . '.0');
-			$lat_f = round((float) abs($lat_c[0]) + ($lat_c[1] / pow(10, strlen($lat_c[1]))), 5);
+			$lat_f = round((float) abs($lat_c[0]) + ($lat_c[1] / pow(10, strlen($lat_c[1]))), 12);
 			if (strtoupper(@$exif['EXIFGPSLatitudeRef']{0}) == 'S') {
 				$lat_f = -$lat_f;
 			}
-			$lat_s = str_replace(',', '.', (string) $lat_f);
 
 			$long_c = explode('.', str_replace(',', '.', $exif['EXIFGPSLongitude']) . '.0');
-			$long_f = round((float) abs($long_c[0]) + ($long_c[1] / pow(10, strlen($long_c[1]))), 5);
+			$long_f = round((float) abs($long_c[0]) + ($long_c[1] / pow(10, strlen($long_c[1]))), 12);
 			if (strtoupper(@$exif['EXIFGPSLongitudeRef']{0}) == 'W') {
 				$long_f = -$long_f;
 			}
-			$long_s = str_replace(',', '.', (string) $long_f);
 
 			$thumb = '<a href="javascript:image(\'' . $_zp_current_image->albumname . '\',\'' . $_zp_current_image->filename . '\');"><img src="' . getCustomImageURL(150) . '" /></a>';
 
-			$result = array('lat'		 => $lat_s, 'long'	 => $long_s, 'title'	 => $_zp_current_image->getTitle(), 'desc'	 => $_zp_current_image->getDesc(), 'thumb'	 => $thumb);
+			$result = array('lat' => $lat_f, 'long' => $long_f, 'title' => $_zp_current_image->getTitle(), 'desc' => $_zp_current_image->getDesc(), 'thumb' => $thumb);
 		}
 	}
+
 	return $result;
 }
 
@@ -228,6 +227,7 @@ function getGeoCoord($image) {
  * @param $coord		coordinates array
  */
 function addGeoCoord($map, $coord) {
+	global $_x, $_y, $_z, $_n;
 	if ($coord) {
 		$marker = array();
 
@@ -244,10 +244,16 @@ function addGeoCoord($map, $coord) {
 			$thumb = '<p class="map_img">' . $coord['thumb'] . '</p>';
 		}
 
-		$marker['position'] = $coord['lat'] . ", " . $coord['long'];
+		$marker['position'] = number_format($coord['lat'], 12, '.', '') . ", " . number_format($coord['long'], 12, '.', '');
 		$marker['title'] = $coord['title'];
 		$marker['infowindow_content'] = $title . $thumb . $desc;
 		$map->add_marker($marker);
+		$lat_f = $coord['lat'] * M_PI / 180;
+		$long_f = $coord['long'] * M_PI / 180;
+		$_x = $_x + cos($lat_f) * cos($long_f);
+		$_y = $_y + cos($lat_f) * sin($long_f);
+		$_z = $_z + sin($lat_f);
+		$_n++;
 	}
 }
 
@@ -293,7 +299,7 @@ function getAlbumGeodata($album, $map) {
  * @param function $callback optional callback function to set map options.
  */
 function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $callback = NULL) {
-	global $_zp_current_album, $_zp_current_image;
+	global $_zp_current_album, $_zp_current_image, $_x, $_y, $_z, $_n;
 
 	/* controls of parameters */
 	if (is_null($obj)) {
@@ -388,6 +394,19 @@ function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $ca
 			break;
 	}
 
+	if ($_n == 1)
+		$map->zoom = 13;
+
+	if ($_n) {
+		$_x = $_x / $_n;
+		$_y = $_y / $_n;
+		$_z = $_z / $_n;
+		$lon = number_format(atan2($_y, $_x) * 180 / M_PI, 12, '.', '');
+		$hyp = sqrt($_x * $_x + $_y * $_y);
+		$lat = number_format(atan2($_z, $hyp) * 180 / M_PI, 12, '.', '');
+		$map->center = $lat . ', ' . $lon;
+	}
+
 	if (!is_null($callback)) {
 		call_user_func($callback, $map);
 	}
@@ -404,7 +423,7 @@ function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $ca
 			$map->create_map();
 			?>
 			<script type="text/javascript">
-			//<![CDATA[
+				//<![CDATA[
 			<?php
 			echo $map->output_js_contents;
 			echo omsAdditions();
@@ -413,7 +432,7 @@ function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $ca
 				function image(album, image) {
 					window.location = '<?php echo WEBPATH ?>/index.php?album=' + album + '&image=' + image;
 				}
-			//]]>
+				//]]>
 			</script>
 			<div id="<?php echo $id_data; ?>">
 				<?php echo $map->output_html; ?>
@@ -424,7 +443,7 @@ function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $ca
 			$map->create_map();
 			?>
 			<script type="text/javascript">
-			//<![CDATA[
+				//<![CDATA[
 			<?php
 			echo $map->output_js_contents;
 			echo omsAdditions();
@@ -441,7 +460,7 @@ function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $ca
 						$('#<?php echo $id_data; ?>').addClass('hidden_map');
 					}
 				}
-			//]]>
+				//]]>
 			</script>
 			<a id="<?php echo $id_toggle; ?>" href="javascript:toggle_<?php echo $id_data; ?>();" title="<?php echo gettext('Display or hide the Google Map.'); ?>">
 				<?php echo $text; ?>
@@ -474,7 +493,7 @@ function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $ca
 					<?php echo $text; ?>
 				</a>
 				<script type="text/javascript">
-				//<![CDATA[
+					//<![CDATA[
 					$(document).ready(function() {
 						$(".google_map").colorbox({
 							iframe: true,
@@ -483,7 +502,7 @@ function printGoogleMap($text = NULL, $id = NULL, $hide = NULL, $obj = NULL, $ca
 							close: '<?php echo gettext("close"); ?>'
 						});
 					});
-				//]]>
+					//]]>
 				</script>
 				<?php
 			}

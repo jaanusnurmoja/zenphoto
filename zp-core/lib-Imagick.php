@@ -49,9 +49,9 @@ class lib_Imagick_Options {
 	 */
 	function getOptionsSupported() {
 		global $_zp_imagick_present, $_zp_graphics_optionhandlers;
-
-		$disabled = $this->canLoadMsg();
-
+		if ($disabled = $this->canLoadMsg()) {
+			setOption('use_imagick', 0, true);
+		}
 		$imagickOptions = array(
 						gettext('Enable Imagick') => array(
 										'key'			 => 'use_imagick',
@@ -373,7 +373,7 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 		$ping = new Imagick();
 
 		if ($ping->pingImage(filesystemToInternal($filename))) {
-			return array('width'	 => $ping->getImageWidth(), 'height' => $ping->getImageHeight());
+			return array('width' => $ping->getImageWidth(), 'height' => $ping->getImageHeight());
 		}
 
 		return false;
@@ -390,9 +390,9 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 
 		if ($ping->pingImage(filesystemToInternal($filename))) {
 			try {
-				return $ping->getImageProfile('exif');
+				return $ping->getImageProfile('iptc');
 			} catch (ImagickException $e) {
-				// EXIF profile does not exist
+				// IPTC profile does not exist
 			}
 		}
 

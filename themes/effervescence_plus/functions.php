@@ -13,10 +13,10 @@ $cwd = getcwd();
 chdir(dirname(__FILE__));
 $persona = safe_glob('*', GLOB_ONLYDIR);
 chdir($cwd);
-$persona = array_diff($persona, array('images', 'styles'));
 $personalities = array();
 foreach ($persona as $personality) {
-	$personalities[ucfirst(str_replace('_', ' ', $personality))] = $personality;
+	if (file_exists(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/' . $personality . '/functions.php'))
+		$personalities[ucfirst(str_replace('_', ' ', $personality))] = $personality;
 }
 
 $personality = strtolower(getOption('effervescence_personality'));
@@ -44,7 +44,7 @@ if (!OFFSET_PATH) {
 			}
 		}
 		if (!$themeColor) {
-			list($personality, $themeColor) = getPersonality();
+			$themeColor = getThemeOption('Theme_colors');
 		}
 
 		$personality = getOption('themeSwitcher_effervescence_personality');
@@ -57,6 +57,8 @@ if (!OFFSET_PATH) {
 		}
 		if ($personality) {
 			setOption('effervescence_personality', $personality, false);
+		} else {
+			$personality = strtolower(getOption('effervescence_personality'));
 		}
 	}
 
@@ -183,7 +185,7 @@ function printHeadingImage($randomImage) {
 				$randomAlbum = $randomAlbum->getParent();
 			}
 		}
-		$randomImageURL = html_encode(getURL($randomImage));
+		$randomImageURL = html_encode($randomImage->getImageLink());
 		if (getOption('allow_upscale')) {
 			$wide = 620;
 			$high = 180;
@@ -422,7 +424,7 @@ function printFooter($admin = true) {
 }
 
 function commonNewsLoop($paged) {
-	$newstypes = array('album'	 => gettext('album'), 'image'	 => gettext('image'), 'video'	 => gettext('video'), 'news'	 => gettext('news'));
+	$newstypes = array('album' => gettext('album'), 'image' => gettext('image'), 'video' => gettext('video'), 'news' => gettext('news'));
 	while (next_news()) {
 		$newstype = getNewsType();
 		$newstypedisplay = $newstypes[$newstype];

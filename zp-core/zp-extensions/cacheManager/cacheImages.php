@@ -63,16 +63,22 @@ function loadAlbum($album) {
 						<?php
 					}
 				}
+
 				foreach ($custom as $key => $cacheimage) {
 					if (in_array($key, $enabled)) {
 						$size = isset($cacheimage['image_size']) ? $cacheimage['image_size'] : NULL;
 						$width = isset($cacheimage['image_width']) ? $cacheimage['image_width'] : NULL;
 						$height = isset($cacheimage['image_height']) ? $cacheimage['image_height'] : NULL;
-						$cw = isset($cacheimage['crop_width']) ? $cacheimage['crop_width'] : NULL;
-						$ch = isset($cacheimage['crop_height']) ? $cacheimage['crop_height'] : NULL;
-						$cx = isset($cacheimage['crop_x']) ? $cacheimage['crop_x'] : NULL;
-						$cy = isset($cacheimage['crop_y']) ? $cacheimage['crop_y'] : NULL;
 						$thumbstandin = isset($cacheimage['thumb']) ? $cacheimage['thumb'] : NULL;
+						if ($special = ($thumbstandin === true)) {
+							list($special, $cw, $ch, $cx, $cy) = $_zp_current_image->getThumbCropping($size, $width, $height);
+						}
+						if (!$special) {
+							$cw = isset($cacheimage['crop_width']) ? $cacheimage['crop_width'] : NULL;
+							$ch = isset($cacheimage['crop_height']) ? $cacheimage['crop_height'] : NULL;
+							$cx = isset($cacheimage['crop_x']) ? $cacheimage['crop_x'] : NULL;
+							$cy = isset($cacheimage['crop_y']) ? $cacheimage['crop_y'] : NULL;
+						}
 						$effects = isset($cacheimage['gray']) ? $cacheimage['gray'] : NULL;
 						$passedWM = isset($cacheimage['wmk']) ? $cacheimage['wmk'] : NULL;
 						if (isset($cacheimage['maxspace'])) {
@@ -133,9 +139,11 @@ if ($alb) {
 	}
 } else {
 	$object = '<em>' . gettext('Gallery') . '</em>';
-	$tab = gettext('overview');
+	$zenphoto_tabs['overview']['subtabs'] = array(gettext('Cache images')				 => PLUGIN_FOLDER . '/cacheManager/cacheImages.php?page=overview&amp;tab=images',
+					gettext('Cache stored images') => PLUGIN_FOLDER . '/cacheManager/cacheDBImages.php?page=overview&amp;tab=DB&amp;XSRFToken=' . getXSRFToken('cacheDBImages'));
 }
 $custom = array();
+
 $result = query('SELECT * FROM ' . prefix('plugin_storage') . ' WHERE `type`="cacheManager" ORDER BY `aux`');
 while ($row = db_fetch_assoc($result)) {
 	$row = unserialize($row['data']);
@@ -150,11 +158,7 @@ if (isset($_GET['select'])) {
 	$enabled = false;
 }
 
-if (!$alb) {
-	$zenphoto_tabs['overview']['subtabs'] = array(gettext('Cache images')				 => PLUGIN_FOLDER . '/cacheManager/cacheImages.php?page=overview&amp;tab=images',
-					gettext('Cache stored images') => PLUGIN_FOLDER . '/cacheManager/cacheDBImages.php?page=overview&amp;tab=DB&amp;XSRFToken=' . getXSRFToken('cacheDBImages'));
-}
-printAdminHeader($tab, gettext('Cache images'));
+printAdminHeader('overview', 'images');
 echo "\n</head>";
 echo "\n<body>";
 
@@ -209,7 +213,7 @@ echo "\n" . '<div id="content">';
 		//]]> -->
 	</script>
 	<form name="size_selections" action="?select&album=<?php echo $alb; ?>" method="post">
-			<?php XSRFToken('cacheImages') ?>
+		<?php XSRFToken('cacheImages') ?>
 		<ol class="no_bullets">
 			<?php
 			if (getOption('cache_full_image') && (!is_array($enabled) || in_array('*', $enabled))) {
@@ -232,7 +236,7 @@ echo "\n" . '<div id="content">';
 					?>
 					<label>
 						<input type="checkbox" name="enable[]" value="*" <?php echo $checked; ?> />
-				<?php echo gettext('Apply'); ?> <code><?php echo gettext('Full Image'); ?></code>
+						<?php echo gettext('Apply'); ?> <code><?php echo gettext('Full Image'); ?></code>
 					</label>
 				</li>
 				<?php
@@ -318,7 +322,7 @@ echo "\n" . '<div id="content">';
 									?>
 									<label>
 										<input type="checkbox" name="enable[]" class="<?php echo $theme; ?>" value="<?php echo $key; ?>" <?php echo $checked; ?> />
-								<?php echo gettext('Apply'); ?> <code><?php echo ltrim($postfix, '_'); ?></code>
+										<?php echo gettext('Apply'); ?> <code><?php echo ltrim($postfix, '_'); ?></code>
 									</label>
 								</li>
 								<?php
@@ -356,7 +360,7 @@ echo "\n" . '<div id="content">';
 				$partb = sprintf(ngettext('%u cache size requested', '%u cache sizes requested', $count * $cachesizes), $count * $cachesizes);
 				echo "\n" . "<br />" . sprintf(ngettext('Finished processing %1$u image (%2$s).', 'Finished processing %1$u images (%2$s).', $count), $count, $partb);
 				if ($count) {
-					$button = array('text'	 => gettext("Refresh"), 'title'	 => gettext('Refresh the caching of the selected image sizes if some images did not render.'));
+					$button = array('text' => gettext("Refresh"), 'title' => gettext('Refresh the caching of the selected image sizes if some images did not render.'));
 				} else {
 					$button = false;
 				}
@@ -367,7 +371,7 @@ echo "\n" . '<div id="content">';
 				<?php
 			}
 		} else {
-			$button = array('text'	 => gettext("Cache the images"), 'title'	 => gettext('Executes the caching of the selected image sizes.'));
+			$button = array('text' => gettext("Cache the images"), 'title' => gettext('Executes the caching of the selected image sizes.'));
 		}
 		?>
 		<p class="buttons">
@@ -381,7 +385,7 @@ echo "\n" . '<div id="content">';
 			<p class="buttons">
 				<button class="tooltip" type="submit" title="<?php echo $button['title']; ?>" >
 					<img src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/redo.png" alt="" />
-			<?php echo $button['text']; ?>
+					<?php echo $button['text']; ?>
 				</button>
 			</p>
 			<?php

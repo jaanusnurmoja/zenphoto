@@ -515,10 +515,10 @@ class ThemeObject extends PersistentObject {
 	 * @param string $tags the tag list
 	 */
 	function setTags($tags) {
-		if (!is_array($tags)) {
-			$tags = explode(',', $tags);
+		if (!$this->getID()) { //	requires a valid id to link tags to the object
+			$this->save();
 		}
-		storeTags($tags, $this->getID(), $this->table);
+		storeTags(array_unique($tags), $this->getID(), $this->table);
 	}
 
 	/**

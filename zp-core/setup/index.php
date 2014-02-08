@@ -7,8 +7,6 @@
 Define('PHP_MIN_VERSION', '5.2');
 Define('PHP_DESIRED_VERSION', '5.4');
 
-$session = session_start();
-
 // leave this as the first executable statement to avoid problems with PHP not having gettext support.
 if (!function_exists("gettext")) {
 	require_once(dirname(dirname(__FILE__)) . '/lib-gettext/gettext.inc');
@@ -24,6 +22,15 @@ if (version_compare(PHP_VERSION, '5.0.0', '<')) {
 	die(sprintf(gettext('Zenphoto requires PHP version %s or greater'), PHP_MIN_VERSION));
 }
 require_once(dirname(dirname(__FILE__)) . '/global-definitions.php');
+
+$session_path = session_save_path();
+if (!file_exists($session_path) || !is_writable($session_path)) {
+	@mkdir(dirname(dirname(dirname(__FILE__))) . '/' . DATA_FOLDER . '/PHP_sessions', $chmod | 0311);
+	session_save_path(dirname(dirname(dirname(__FILE__))) . '/' . DATA_FOLDER . '/PHP_sessions');
+}
+
+$session = session_start();
+
 header('Last-Modified: ' . ZP_LAST_MODIFIED);
 header('Content-Type: text/html; charset=UTF-8');
 header("Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0");
@@ -64,6 +71,7 @@ $zptime = time();
 if (!file_exists($serverpath . '/' . DATA_FOLDER)) {
 	@mkdir($serverpath . '/' . DATA_FOLDER, $chmod | 0311);
 }
+
 @unlink(SERVERPATH . '/' . DATA_FOLDER . '/zenphoto.cfg.bak'); //	remove any old backup file
 
 if (file_exists($oldconfig = SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
@@ -107,7 +115,6 @@ if (isset($_GET['mod_rewrite'])) {
 	$mod = '';
 }
 
-
 $zp_cfg = @file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 $xsrftoken = sha1(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE . $zp_cfg . session_id());
 
@@ -118,11 +125,12 @@ if (strpos($zp_cfg, "\$conf['special_pages']") === false) {
 	$i = strpos($template, "\$conf['special_pages']");
 	$j = strpos($template, '//', $i);
 	$k = strpos($zp_cfg, '/** Do not edit below this line. **/');
-
-	$zp_cfg = substr($zp_cfg, 0, $k) . str_pad('', 80, '/') . "\n" .
-					substr($template, $i, $j - $i) . str_pad('', 5, '/') . "\n" .
-					substr($zp_cfg, $k);
-	$updatezp_config = true;
+	if ($k !== false) {
+		$zp_cfg = substr($zp_cfg, 0, $k) . str_pad('', 80, '/') . "\n" .
+						substr($template, $i, $j - $i) . str_pad('', 5, '/') . "\n" .
+						substr($zp_cfg, $k);
+		$updatezp_config = true;
+	}
 }
 
 $i = strpos($zp_cfg, 'define("DEBUG", false);');
@@ -214,7 +222,7 @@ $curdir = getcwd();
 chdir(dirname(dirname(__FILE__)));
 // Important. when adding new database support this switch may need to be extended,
 $engines = array();
-$preferences = array('mysqli'		 => 1, 'pdo_mysql'	 => 2, 'mysql'			 => 3);
+$preferences = array('mysqli' => 1, 'pdo_mysql' => 2, 'mysql' => 3);
 $cur = 999999;
 $preferred = NULL;
 foreach (setup_glob('functions-db-*.php') as $key => $engineMC) {
@@ -227,7 +235,7 @@ foreach (setup_glob('functions-db-*.php') as $key => $engineMC) {
 			$preferred = $engineMC;
 			$cur = $order;
 		}
-		$engines[$order] = array('user'		 => true, 'pass'		 => true, 'host'		 => true, 'database' => true, 'prefix'	 => true, 'engine'	 => $engineMC, 'enabled'	 => $enabled);
+		$engines[$order] = array('user' => true, 'pass' => true, 'host' => true, 'database' => true, 'prefix' => true, 'engine' => $engineMC, 'enabled' => $enabled);
 	}
 }
 ksort($engines);
@@ -236,7 +244,7 @@ chdir($curdir);
 if (file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
 	unset($_zp_conf_vars);
 	require(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
-	if (isset($_zp_conf_vars) && !isset($conf)) {
+	if (isset($_zp_conf_vars) && !isset($conf) && isset($_zp_conf_vars['special_pages'])) {
 		if (isset($_zp_conf_vars['db_software'])) {
 			$confDB = $_zp_conf_vars['db_software'];
 			if (empty($_POST) && empty($_GET) && ($confDB === 'MySQL' || $preferred != 'MySQL')) {
@@ -336,7 +344,7 @@ if (defined('CHMOD_VALUE')) {
 }
 
 if (function_exists('setOption')) {
-	setOptionDefault('zp_plugin_security-logger', 9);
+	setOptionDefault('zp_plugin_security-logger', 9 | CLASS_PLUGIN);
 } else { // setup a primitive environment
 	$environ = false;
 	require_once(dirname(__FILE__) . '/setup-primitive.php');
@@ -515,11 +523,10 @@ if ($c <= 0) {
 				if ($connection && !isset($_zp_options)) {
 					$sql = "SELECT `name`, `value` FROM " . prefix('options');
 					$optionlist = query_full_array($sql, false);
-					$_zp_options = array();
-					foreach ($optionlist as $option) {
-						$_zp_options[$option['name']] = $option['value'];
-						if ($option['name'] == $key) {
-							$v = $option['value'];
+					if ($optionlist) {
+						$_zp_options = array();
+						foreach ($optionlist as $option) {
+							$_zp_options[$option['name']] = $option['value'];
 						}
 					}
 				}
@@ -577,7 +584,16 @@ if ($c <= 0) {
 
 							$err = versionCheck(PHP_MIN_VERSION, PHP_DESIRED_VERSION, PHP_VERSION);
 							$good = checkMark($err, sprintf(gettext("PHP version %s"), PHP_VERSION), "", sprintf(gettext('PHP Version %1$s or greater is required. Version %2$s or greater is strongly recommended. Use earlier versions at your own risk.'), PHP_MIN_VERSION, PHP_DESIRED_VERSION), false) && $good;
-							checkmark($session && session_id(), gettext('PHP <code>Sessions</code>.'), gettext('PHP <code>Sessions</code> [appear to not be working].'), gettext('PHP Sessions are required for Zenphoto administrative functions.'), true);
+
+							if ($session && session_id() && $session_path == session_save_path()) {
+								checkmark(true, gettext('PHP <code>Sessions</code>.'), gettext('PHP <code>Sessions</code> [appear to not be working].'), '', true);
+							} else {
+								if ($session && session_id() && $session_path != session_save_path()) {
+									checkmark(-1, '', gettext('PHP <code>Sessions</code> [problems with <em>save_save_path</em>].'), sprintf(gettext('The configured PHP session path could not be used. Zenphoto has set the path to the %s folder.'), DATA_FOLDER), true);
+								} else {
+									checkmark(0, '', gettext('PHP <code>Sessions</code> [appear to not be working].'), gettext('PHP Sessions are required for Zenphoto administrative functions.'), true);
+								}
+							}
 
 							if (preg_match('#(1|ON)#i', @ini_get('register_globals'))) {
 								if ((isset($_zp_conf_vars['security_ack']) ? $_zp_conf_vars['security_ack'] : NULL) & ACK_REGISTER_GLOBALS) {
@@ -1165,7 +1181,7 @@ if ($c <= 0) {
 							}
 
 							primeMark(gettext('Zenphoto files'));
-							set_time_limit(120);
+							@set_time_limit(120);
 							$lcFilesystem = file_exists(strtoupper(__FILE__));
 							$base = $serverpath . '/';
 							getResidentZPFiles(SERVERPATH . '/' . ZENFOLDER, $lcFilesystem);
@@ -1344,8 +1360,8 @@ if ($c <= 0) {
 									if (!empty($filelist)) {
 										if (isset($_GET['delete_extra'])) {
 											foreach ($systemlist as $key => $file) {
-												@chmod($file, 0666);
 												if (!is_dir($file)) {
+													@chmod($file, 0777);
 													if (@unlink($file)) {
 														unset($filelist[$key]);
 														unset($systemlist[$key]);
@@ -1354,6 +1370,7 @@ if ($c <= 0) {
 											}
 											rsort($systemlist);
 											foreach ($systemlist as $key => $file) {
+												@chmod($file, 0777);
 												if (@rmdir($file)) {
 													unset($filelist[$key]);
 												}
@@ -1427,7 +1444,7 @@ if ($c <= 0) {
 											$ht = close_site($ht);
 										}
 										$htu = strtoupper($ht);
-										@chmod($htfile, 0666);
+										@chmod($htfile, 0777);
 										@unlink($htfile);
 										$ch = file_put_contents($htfile, trim($ht));
 										@chmod($htfile, 0444);
@@ -1499,7 +1516,7 @@ if ($c <= 0) {
 								}
 								if ($save) {
 									// try and fix it
-									@chmod($htfile, 0666);
+									@chmod($htfile, 0777);
 									if (is_writeable($htfile)) {
 										if (@file_put_contents($htfile, $ht)) {
 											$err = '';
@@ -1835,7 +1852,7 @@ if ($c <= 0) {
 		`owner` varchar(64) DEFAULT NULL,
 		`codeblock` text,
 		PRIMARY KEY (`id`),
-		KEY `folder` (`folder`)
+		UNIQUE `folder` (`folder`)
 		)	$collation;";
 						}
 
@@ -1903,7 +1920,7 @@ if ($c <= 0) {
 		`password_hint` text,
 		PRIMARY KEY (`id`),
 		KEY (`albumid`),
-		KEY `filename` (`filename`,`albumid`)
+		UNIQUE `filename` (`filename`,`albumid`)
 		)	$collation;";
 						}
 
@@ -2343,6 +2360,10 @@ if ($c <= 0) {
 						$sql_statements[] = "ALTER TABLE $tbl_news ADD COLUMN `truncation` int(1) unsigned NOT NULL default '0'";
 						$sql_statements[] = "ALTER TABLE $tbl_pages ADD COLUMN `truncation` int(1) unsigned NOT NULL default '0'";
 						$sql_statements[] = "CREATE INDEX `albumid` ON $tbl_images (`albumid`)";
+						$sql_statements[] = "ALTER TABLE $tbl_albums DROP INDEX `folder`";
+						$sql_statements[] = "ALTER TABLE $tbl_albums ADD UNIQUE `folder` (`folder`)";
+						$sql_statements[] = "ALTER TABLE $tbl_images DROP INDEX `filename`";
+						$sql_statements[] = "ALTER TABLE $tbl_images ADD UNIQUE `filename` (`filename`, `albumid`)";
 
 						// do this last incase there are any field changes of like names!
 						foreach ($_zp_exifvars as $key => $exifvar) {
@@ -2375,7 +2396,7 @@ if ($c <= 0) {
 								}
 								setupLog(gettext("Begin table creation"));
 								foreach ($db_schema as $sql) {
-									set_time_limit(60);
+									@set_time_limit(60);
 									$result = db_create_table($sql);
 									echo ' '; // keep alive
 									if (!$result) {
@@ -2391,7 +2412,7 @@ if ($c <= 0) {
 								// always run the update queries to insure the tables are up to current level
 								setupLog(gettext("Begin table updates"));
 								foreach ($sql_statements as $sql) {
-									set_time_limit(60);
+									@set_time_limit(60);
 									echo ' '; // keep alive
 									$result = db_table_update($sql);
 									if (!$result) {
@@ -2417,26 +2438,15 @@ if ($c <= 0) {
 									}
 								}
 								echo "</h3>";
-								$sql = 'SHOW KEYS FROM ' . $tbl_options;
-								$result = query_full_array($sql);
-								$unique = array('name'		 => 0, 'ownerid'	 => 0, 'theme'		 => 0);
-								foreach ($result as $key) {
-									if (!$key['Non_unique']) {
-										unset($unique[$key['Column_name']]);
-									}
-								}
-								if (!empty($unique)) {
-									$autorun = false;
-									?>
-									<p class="notebox">
-										<?php
-										printf(gettext('<strong>Warning:</strong> the <code>%s</code> table appears not to have a proper <em>unique_options</em> key. There are probably duplicate options in the table. There should be a unique index key on <em>name</em>, <em>ownerid</em>, and <em>theme</em>.'), trim($tbl_options, '`'));
-										$autorun = false;
-										?>
-									</p>
-									<?php
-								}
 
+								checkUnique($tbl_administrators, array('valid' => 0, 'user' => 0));
+								checkUnique($tbl_albums, array('folder' => 0));
+								checkUnique($tbl_images, array('albumid' => 0, 'filename' => 0));
+								checkUnique($tbl_options, array('name' => 0, 'ownerid' => 0, 'theme' => 0));
+								checkUnique($tbl_news_categories, array('titlelink' => 0));
+								checkUnique($tbl_news, array('titlelink' => 0));
+								checkUnique($tbl_pages, array('titlelink' => 0));
+								checkUnique($tbl_tags, array('name' => 0));
 
 								// set defaults on any options that need it
 								setupLog(gettext("Done with database creation and update"));
@@ -2485,7 +2495,7 @@ if ($c <= 0) {
 									chdir($curdir);
 									$rslt = array();
 									foreach ($list as $component) {
-										@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, 0666);
+										@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, 0777);
 										if (@rename(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component . '.xxx')) {
 											@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component . '.xxx', FILE_MOD);
 											setupLog(sprintf(gettext('%s protected.'), $component), true);

@@ -17,7 +17,6 @@ $plugin_is_filter = 9 | CLASS_PLUGIN;
 $plugin_description = gettext('The Zenphoto <em>audio-video</em> handler.');
 $plugin_notice = gettext('This plugin must always be enabled to use multimedia content. Note that you should also enable a multimedia player. See the info of the player you use to see how it is configured.');
 $plugin_author = "Stephen Billard (sbillard)";
-setOptionDefault('zp_plugin_class-video', $plugin_is_filter);
 
 addPluginType('3gp', 'Video');
 addPluginType('mov', 'Video');
@@ -107,7 +106,7 @@ class Video extends Image {
 		$album_name = $album->name;
 		$this->updateDimensions();
 
-		$new = parent::PersistentObject('images', array('filename' => $filename, 'albumid'	 => $this->album->getID()), 'filename', true, empty($album_name));
+		$new = parent::PersistentObject('images', array('filename' => $filename, 'albumid' => $this->album->getID()), 'filename', true, empty($album_name));
 		if ($new || $this->filemtime != $this->get('mtime')) {
 			if ($new)
 				$this->setTitle($this->displayname);
@@ -204,7 +203,10 @@ class Video extends Image {
 	 * @return string
 	 */
 	function getThumb($type = 'image') {
-		list($custom, $sw, $sh, $cw, $ch, $cx, $cy) = $this->getThumbCropping($type);
+		$ts = getOption('thumb_size');
+		$sw = getOption('thumb_crop_width');
+		$sh = getOption('thumb_crop_height');
+		list($custom, $cw, $ch, $cx, $cy) = $this->getThumbCropping($ts, $sw, $sh);
 		$wmt = getOption('Video_watermark');
 		if (empty($wmt)) {
 			$wmt = getWatermarkParam($this, WATERMARK_THUMB);
@@ -219,7 +221,7 @@ class Video extends Image {
 			$filename = filesystemToInternal($this->objectsThumb);
 			$mtime = filemtime(ALBUM_FOLDER_SERVERPATH . '/' . internalToFilesystem($this->imagefolder) . '/' . $this->objectsThumb);
 		}
-		$args = getImageParameters(array(getOption('thumb_size'), $sw, $sh, $cw, $ch, $cx, $cy, NULL, true, true, true, $wmt, NULL, NULL), $this->album->name);
+		$args = getImageParameters(array($ts, $sw, $sh, $cw, $ch, $cx, $cy, NULL, true, true, true, $wmt, NULL, NULL), $this->album->name);
 		return getImageURI($args, $this->album->name, $filename, $mtime);
 	}
 
@@ -350,7 +352,7 @@ class Video extends Image {
 		$suffix = getSuffix($this->localpath);
 		if (in_array($suffix, array('m4a', 'm4v', 'mp3', 'mp4', 'flv', 'fla', 'mov', '3gp'))) {
 			$getID3 = new getID3;
-			set_time_limit(30);
+			@set_time_limit(30);
 			$ThisFileInfo = $getID3->analyze($this->localpath);
 			getid3_lib::CopyTagsToComments($ThisFileInfo);
 			// output desired information in whatever format you want
@@ -368,6 +370,7 @@ class Video extends Image {
 	 */
 	function updateMetaData() {
 		global $_zp_exifvars;
+		parent::updateMetaData();
 		if (!SAFE_MODE) {
 			$ThisFileInfo = $this->getMetaDataID3();
 			if (is_array($ThisFileInfo)) {
@@ -385,6 +388,13 @@ class Video extends Image {
 									$ThisFileInfo[$key1] = $data;
 								}
 								break;
+							case 'error':
+								$msg = sprintf(gettext('getid3 exceptions for %1$s::%2$s'), $this->album->name, $this->filename);
+								foreach ($info as $data) {
+									$msg .= "\n" . $data;
+								}
+								debugLog($msg);
+								break;
 							default:
 								//discard, not used
 								break;
@@ -398,6 +408,7 @@ class Video extends Image {
 							$data = $ThisFileInfo[$exifvar[1]];
 							if (!empty($data)) {
 								$this->set($field, $data);
+								$this->set('hasMetadata', 1);
 							}
 						}
 					}
@@ -408,7 +419,6 @@ class Video extends Image {
 				}
 			}
 		}
-		parent::updateMetaData();
 	}
 
 }

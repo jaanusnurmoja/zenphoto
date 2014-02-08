@@ -194,7 +194,7 @@ setOptionDefault('albumimagesort', 'ID');
 setOptionDefault('albumimagedirection', 'DESC');
 setOptionDefault('cache_full_image', 0);
 setOptionDefault('custom_index_page', '');
-setOptionDefault('picture_of_the_day', serialize(array('day'			 => NULL, 'folder'	 => NULL, 'filename' => NULL)));
+setOptionDefault('picture_of_the_day', serialize(array('day' => NULL, 'folder' => NULL, 'filename' => NULL)));
 setOptionDefault('exact_tag_match', 0);
 
 setOptionDefault('EXIFMake', 1);
@@ -354,10 +354,20 @@ setOptionDefault('fullsizeimage_watermark', getOption('fullimage_watermark'));
 
 $data = getOption('gallery_data');
 if ($data) {
-	$data = unserialize($data);
+	$data = getSerializedArray($data);
+	if (isset($data['Gallery_description'])) {
+		$data['Gallery_description'] = getSerializedArray($data['Gallery_description']);
+	}
+	if (isset($data['gallery_title'])) {
+		$data['gallery_title'] = getSerializedArray($data['gallery_title']);
+	}
+	if (isset($data['unprotected_pages'])) {
+		$data['unprotected_pages'] = getSerializedArray($data['unprotected_pages']);
+	}
 } else {
 	$data = array();
 }
+
 if (!isset($data['gallery_sortdirection'])) {
 	$data['gallery_sortdirection'] = (int) getOption('gallery_sortdirection');
 }
@@ -371,14 +381,13 @@ if (!isset($data['gallery_title'])) {
 	$data['gallery_title'] = getOption('gallery_title');
 	if (is_null($data['gallery_title'])) {
 		gettext($str = "Gallery");
-		$data['gallery_title'] = getAllTranslations($str);
+		$data['gallery_title'] = gettext("Gallery");
 	}
 }
 if (!isset($data['Gallery_description'])) {
 	$data['Gallery_description'] = getOption('Gallery_description');
 	if (is_null($data['Gallery_description'])) {
-		gettext($str = 'You can insert your Gallery description on the Admin Options Gallery tab.');
-		$data['Gallery_description'] = getAllTranslations($str);
+		$data['Gallery_description'] = gettext('You can insert your Gallery description on the Admin Options Gallery tab.');
 	}
 }
 if (!isset($data['gallery_password']))
@@ -414,7 +423,7 @@ if (!isset($data['thumb_select_images']))
 if (!isset($data['unprotected_pages']))
 	$data['unprotected_pages'] = getOption('unprotected_pages');
 if ($data['unprotected_pages']) {
-	$unprotected = unserialize($data['unprotected_pages']);
+	$unprotected = $data['unprotected_pages'];
 } else {
 	setOptionDefault('gallery_page_unprotected_register', 1);
 	setOptionDefault('gallery_page_unprotected_contact', 1);
@@ -439,8 +448,9 @@ if (!isset($data['image_publish'])) {
 		$set = 1;
 	$data['image_publish'] = $set;
 }
-$data['unprotected_pages'] = serialize($unprotected);
+$data['unprotected_pages'] = $unprotected;
 setOption('gallery_data', serialize($data));
+
 $_zp_gallery = new Gallery(); // insure we have the proper options instantiated
 
 /* TODO:enable on the 1.5 release
@@ -549,6 +559,7 @@ query('UPDATE ' . prefix('administrators') . ' SET `passupdate`=' . db_quote(dat
 setOptionDefault('image_processor_flooding_protection', 1);
 setOptionDefault('codeblock_first_tab', 1);
 setOptionDefault('zp_plugin_rss', 9 | FEATURE_PLUGIN | ADMIN_PLUGIN);
+setOptionDefault('GD_FreeType_Path', SERVERPATH . '/' . USER_PLUGIN_FOLDER . '/gd_fonts');
 
 //The following should be done LAST so it catches anything done above
 //set plugin default options by instantiating the options interface

@@ -258,7 +258,7 @@ class static_html_cache {
 					$title = "-" . $_zp_current_zenpage_news->getTitlelink();
 				}
 				if (is_object($_zp_current_category)) {
-					$category = "-" . $_zp_current_category->getTitlelink();
+					$category = "_cat-" . $_zp_current_category->getTitlelink();
 				}
 				$cachefilepath .= 'news' . $category . $title;
 				break;
@@ -286,7 +286,7 @@ class static_html_cache {
 	 */
 	function deletestatic_html_cacheFile($cachefilepath) {
 		if (file_exists($cachefilepath)) {
-			@chmod($cachefilepath, 0666);
+			@chmod($cachefilepath, 0777);
 			@unlink($cachefilepath);
 		}
 	}

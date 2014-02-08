@@ -10,7 +10,6 @@ $plugin_is_filter = 5 | THEME_PLUGIN | ADMIN_PLUGIN;
 $plugin_description = gettext("Adds example macros.");
 $plugin_author = "Stephen Billard (sbillard)";
 
-setOptionDefault('zp_plugin_exampleMacros', $plugin_is_filter);
 zp_register_filter('content_macro', 'exampleMacros::macro');
 
 class exampleMacros {
@@ -42,11 +41,11 @@ class exampleMacros {
 										'value'	 => 'exampleMacros::arrayTest',
 										'owner'	 => 'exampleMacros',
 										'desc'	 => gettext('Dump the contents of the array parameter list. The array is in the form <em>variable_1</em>=<code>value</code> <em>variable_2</em>=<code>value</code> <em>etc.</em>.')),
-						'PAGELINK'				 => array('class'	 => 'expression',
-										'params' => array('string'),
-										'value'	 => 'getCustomPageURL($1);',
+						'PAGELINK'				 => array('class'	 => 'function',
+										'params' => array('string', 'string'),
+										'value'	 => 'printCustomPageURL',
 										'owner'	 => 'exampleMacros',
-										'desc'	 => gettext('Provides text for a link to a "custom" script page indicated by <code>%1</code>.'))
+										'desc'	 => gettext('Provides text for a link to a "custom" script page indicated by a linktext (<code>%1</code>) and a custom page (<code>%2</code>).'))
 		);
 		return array_merge($macros, $my_macros);
 	}

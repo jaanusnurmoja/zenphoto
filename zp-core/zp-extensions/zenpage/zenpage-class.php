@@ -43,31 +43,30 @@ class Zenpage {
 	 * Class instantiator
 	 */
 	function __construct() {
-		if (OFFSET_PATH !== 2) {
-			/**
-			 * Un-publishes pages/news whose expiration date has been reached
-			 *
-			 */
-			$sql = ' WHERE `date`<="' . date('Y-m-d H:i:s') . '" AND `show`="1"' .
-							' AND `expiredate`<="' . date('Y-m-d H:i:s') . '"' .
-							' AND `expiredate`!="0000-00-00 00:00:00"' .
-							' AND `expiredate` IS NOT NULL';
-			foreach (array('news', 'pages') as $table) {
-				$result = query_full_array('SELECT * FROM ' . prefix($table) . $sql);
-				if ($result) {
-					foreach ($result as $item) {
-						$class = 'Zenpage' . $table;
-						$obj = new $class($item['titlelink']);
-						$obj->setShow(0);
-						$obj->save();
-					}
-				}
-			}
+		$allcategories = query_full_array("SELECT * FROM " . prefix('news_categories') . " ORDER by sort_order");
+		$this->categoryStructure = array();
+		foreach ($allcategories as $cat) {
+			$this->categoryStructure[$cat['id']] = $cat;
+		}
+	}
 
-			$allcategories = query_full_array("SELECT * FROM " . prefix('news_categories') . " ORDER by sort_order");
-			$this->categoryStructure = array();
-			foreach ($allcategories as $cat) {
-				$this->categoryStructure[$cat['id']] = $cat;
+	static function expiry() {
+		/**
+		 * Un-publishes pages/news whose expiration date has been reached
+		 *
+		 */
+		$sql = ' WHERE `date`<="' . date('Y-m-d H:i:s') . '" AND `show`="1"' .
+						' AND `expiredate`<="' . date('Y-m-d H:i:s') . '"' .
+						' AND `expiredate`!="0000-00-00 00:00:00"' .
+						' AND `expiredate` IS NOT NULL';
+		foreach (array('news' => 'ZenpageNews', 'pages' => 'ZenpagePage') as $table => $class) {
+			$result = query_full_array('SELECT * FROM ' . prefix($table) . $sql);
+			if ($result) {
+				foreach ($result as $item) {
+					$obj = new $class($item['titlelink']);
+					$obj->setShow(0);
+					$obj->save();
+				}
 			}
 		}
 	}
@@ -99,17 +98,10 @@ class Zenpage {
 	 * @param int $number number of pages to get (NULL by default for all)
 	 * @param string $sorttype NULL for the standard order as sorted on the backend, "title", "date", "id", "popular", "mostrated", "toprated", "random"
 	 * @param string $sortdirection "asc" or "desc" for ascending or descending order
-	 * @param object $page set to the page object if this is a subpage request
 	 * @return array
 	 */
-	function getPages($published = NULL, $toplevel = false, $number = NULL, $sorttype = NULL, $sortdirection = NULL, $parent = NULL) {
+	function getPages($published = NULL, $toplevel = false, $number = NULL, $sorttype = NULL, $sortdirection = NULL) {
 		global $_zp_loggedin;
-		if ($parent) {
-			$sortObj = $parent;
-		} else {
-			$sortObj = $this;
-		}
-
 		if (is_null($published)) {
 			$published = !zp_loggedin();
 			$all = zp_loggedin(MANAGE_ALL_PAGES_RIGHTS);
@@ -127,7 +119,7 @@ class Zenpage {
 			$show = $gettop;
 		}
 		if (is_null($sortdirection)) {
-			$sortdirection = $sortObj->sortdirection;
+			$sortdirection = $this->sortdirection;
 		}
 		switch ($sortdirection) {
 			default:
@@ -140,7 +132,7 @@ class Zenpage {
 				break;
 		}
 		if (is_null($sorttype)) {
-			$sorttype = $sortObj->sortorder;
+			$sorttype = $this->sortorder;
 		}
 		switch ($sorttype) {
 			default:
@@ -236,7 +228,6 @@ class Zenpage {
 		} else {
 			$sortObj = $this;
 		}
-
 		if (empty($published)) {
 			if (zp_loggedin() || $category && $category->isMyItem(ZENPAGE_NEWS_RIGHTS)) {
 				$published = "all";

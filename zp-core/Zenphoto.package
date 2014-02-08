@@ -529,12 +529,6 @@ zp-core/locale/es_ES/LC_MESSAGES/zenphoto.mo
 zp-core/locale/es_ES/LC_MESSAGES/zenphoto.po
 zp-core/locale/es_ES/flag.png
 zp-core/locale/es_ES/select_files_button.png
-zp-core/locale/et_EE
-zp-core/locale/et_EE/LC_MESSAGES
-zp-core/locale/et_EE/LC_MESSAGES/zenphoto.mo
-zp-core/locale/et_EE/LC_MESSAGES/zenphoto.po
-zp-core/locale/et_EE/flag.png
-zp-core/locale/et_EE/select_files_button.png
 zp-core/locale/fr_FR
 zp-core/locale/fr_FR/LC_MESSAGES
 zp-core/locale/fr_FR/LC_MESSAGES/zenphoto.mo
@@ -655,6 +649,7 @@ zp-core/zp-extensions/cacheManager
 zp-core/zp-extensions/cacheManager.php
 zp-core/zp-extensions/cacheManager/cacheDBImages.php
 zp-core/zp-extensions/cacheManager/cacheImages.php
+zp-core/zp-extensions/cacheManager/functions.php
 zp-core/zp-extensions/check_for_update.php
 zp-core/zp-extensions/class-AnyFile
 zp-core/zp-extensions/class-AnyFile.php
@@ -684,6 +679,7 @@ zp-core/zp-extensions/class-video/getid3/module.audio-video.quicktime.php
 zp-core/zp-extensions/class-video/getid3/module.audio-video.swf.php
 zp-core/zp-extensions/class-video/getid3/module.audio.aac.php
 zp-core/zp-extensions/class-video/getid3/module.audio.mp3.php
+zp-core/zp-extensions/class-video/getid3/module.tag.apetag.php
 zp-core/zp-extensions/class-video/getid3/module.tag.id3v1.php
 zp-core/zp-extensions/class-video/getid3/module.tag.id3v2.php
 zp-core/zp-extensions/class-video/getid3/module.tag.lyrics3.php
@@ -1812,4 +1808,4 @@ zp-core/setup/setup_permissions_changer.php:*
 zp-core/setup/setup_pluginOptions.php:*
 zp-core/setup/setup_set-mod_rewrite.php:*
 zp-core/setup/setup_themeOptions.php:*
-1808
+1810

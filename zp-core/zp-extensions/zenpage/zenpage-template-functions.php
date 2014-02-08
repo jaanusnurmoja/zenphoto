@@ -149,21 +149,24 @@ function is_GalleryNewsType() {
  */
 function getAuthor($fullname = false) {
 	global $_zp_current_zenpage_page, $_zp_current_zenpage_news;
+
 	if (is_Pages()) {
 		$obj = $_zp_current_zenpage_page;
-	}
-	if (is_News()) {
+	} else if (is_News()) {
 		$obj = $_zp_current_zenpage_news;
+	} else {
+		$obj = false;
 	}
-	if (is_Pages() || is_News()) {
+	if ($obj) {
 		if ($fullname) {
-			$admin = Zenphoto_Authority::getAnAdmin(array('`user`='	 => $obj->getAuthor(), '`valid`=' => 1));
-			if (is_object($admin)) {
+			$admin = Zenphoto_Authority::getAnAdmin(array('`user`=' => $obj->getAuthor(), '`valid`=' => 1));
+			if (is_object($admin) && $admin->getName()) {
 				return $admin->getName();
 			}
 		}
 		return $obj->getAuthor();
 	}
+	return false;
 }
 
 /* * ********************************************* */
@@ -778,31 +781,25 @@ function printNewsCustomData() {
  * @return string
  */
 function getNewsAuthor($fullname = false) {
-	global $_zp_current_zenpage_news, $_zp_authority;
+	global $_zp_current_zenpage_news;
 	if (is_News()) {
 		if (is_NewsType("news")) {
 			return getAuthor($fullname);
 		} else {
+			//TODO: this is combi-news stuff!
 			$authorname = '';
 			$authorid = $_zp_current_zenpage_news->getOwner();
 			if ($fullname) {
-				$admins = $_zp_authority->getAdministrators();
-				foreach ($admins as $admin) {
-					if ($admin['user'] == $authorid) {
-						$authorname = $admin['name'];
-						break;
-					}
-				}
-				if (empty($authorname)) {
-					return $authorid;
-				} else {
+				$admin = Zenphoto_Authority::getAnAdmin(array('valid' => 1, 'user' => $autoroid));
+				$authorname = $admin->getName();
+				if (!empty($authorname)) {
 					return $authorname;
 				}
-			} else {
-				return $authorid;
 			}
+			return $authorid;
 		}
 	}
+	return false;
 }
 
 /**
@@ -1487,9 +1484,9 @@ function getNewsPathNav($page) {
 		return getNewsArchivePath($_zp_post_date, $page);
 	}
 	if ($page) {
-		return rewrite_path('/' . _NEWS_ . '/' . $page, '?index.php?p=news' . '&page=' . $page);
+		return rewrite_path('/' . _NEWS_ . '/' . $page, '?index.php&p=news' . '&page=' . $page);
 	} else {
-		return rewrite_path('/' . _NEWS_, '?index.php?p=news');
+		return rewrite_path('/' . _NEWS_, '?index.php&p=news');
 	}
 }
 
@@ -1682,27 +1679,23 @@ function getTotalNewsPages() {
  */
 function getNextPrevNews($option = '', $sortorder = 'date', $sortdirection = 'desc') {
 	global $_zp_zenpage, $_zp_current_zenpage_news;
-	if (ZP_COMBINEWS) {
-		return false;
-	} else {
+	if (!ZP_COMBINEWS) {
 		if (!empty($option)) {
 			switch ($option) {
 				case "prev":
 					$article = $_zp_current_zenpage_news->getPrevArticle($sortorder, $sortdirection);
 					if (!$article)
 						return false;
-					return array("link"	 => getNewsURL($article->getTitlelink()), "title"	 => $article->getTitle());
-					break;
+					return array("link" => getNewsURL($article->getTitlelink()), "title" => $article->getTitle());
 				case "next":
 					$article = $_zp_current_zenpage_news->getNextArticle($sortorder, $sortdirection);
 					if (!$article)
 						return false;
-					return array("link"	 => getNewsURL($article->getTitlelink()), "title"	 => $article->getTitle());
-					break;
+					return array("link" => getNewsURL($article->getTitlelink()), "title" => $article->getTitle());
 			}
-			return false;
 		}
 	}
+	return false;
 }
 
 /**
@@ -1745,7 +1738,7 @@ function getPrevNewsURL($sortorder = 'date', $sortdirection = 'desc') {
  */
 function printNextNewsLink($next = " »", $sortorder = 'date', $sortdirection = 'desc') {
 	$article_url = getNextPrevNews("next", $sortorder, $sortdirection);
-	if (array_key_exists('link', $article_url) && $article_url['link'] != "") {
+	if ($article_url && array_key_exists('link', $article_url) && $article_url['link'] != "") {
 		echo "<a href=\"" . html_encode($article_url['link']) . "\" title=\"" . html_encode(strip_tags($article_url['title'])) . "\">" . $article_url['title'] . "</a> " . html_encode($next);
 	}
 }
@@ -1762,7 +1755,7 @@ function printNextNewsLink($next = " »", $sortorder = 'date', $sortdirection = 
  */
 function printPrevNewsLink($prev = "« ", $sortorder = 'date', $sortdirection = 'desc') {
 	$article_url = getNextPrevNews("prev", $sortorder, $sortdirection);
-	if (array_key_exists('link', $article_url) && $article_url['link'] != "") {
+	if ($article_url && array_key_exists('link', $article_url) && $article_url['link'] != "") {
 		echo html_encode($prev) . " <a href=\"" . html_encode($article_url['link']) . "\" title=\"" . html_encode(strip_tags($article_url['title'])) . "\">" . $article_url['title'] . "</a>";
 	}
 }
@@ -2055,7 +2048,7 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 		case 'categories':
 		case 'allcategories':
 			$items = $_zp_zenpage->getAllCategories();
-			if (is_object($_zp_current_category)) {
+			if (is_object($_zp_current_category) && $mode == 'categories') {
 				$currentitem_sortorder = $_zp_current_category->getSortOrder();
 				$currentitem_id = $_zp_current_category->getID();
 				$currentitem_parentid = $_zp_current_category->getParentID();
@@ -2107,7 +2100,10 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 						if (in_context(ZP_ZENPAGE_NEWS_CATEGORY) && $mode == 'categories') {
 							$totalcount = count($_zp_current_category->getArticles(0));
 						} else {
+							save_context();
+							rem_context(ZP_ZENPAGE_NEWS_DATE);
 							$totalcount = count($_zp_zenpage->getArticles(0));
+							restore_context();
 						}
 					}
 					echo ' <span style="white-space:nowrap;"><small>(' . sprintf(ngettext('%u article', '%u articles', $totalcount), $totalcount) . ')</small></span>';
@@ -2179,7 +2175,7 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 					$parents[$indent] = NULL;
 					while ($indent > $level) {
 						if ($open[$indent]) {
-							$open[$indent]--;
+							$open[$indent] --;
 							echo "</li>\n";
 						}
 						$indent--;
@@ -2188,17 +2184,17 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 				} else { // level == indent, have not changed
 					if ($open[$indent]) { // level = indent
 						echo str_pad("\t", $indent, "\t") . "</li>\n";
-						$open[$indent]--;
+						$open[$indent] --;
 					} else {
 						echo "\n";
 					}
 				}
 				if ($open[$indent]) { // close an open LI if it exists
 					echo "</li>\n";
-					$open[$indent]--;
+					$open[$indent] --;
 				}
 				echo str_pad("\t", $indent - 1, "\t");
-				$open[$indent]++;
+				$open[$indent] ++;
 				$parents[$indent] = $itemid;
 				if ($level == 1) { // top level
 					$class = $css_class_topactive;
@@ -2242,14 +2238,14 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 	while ($indent > 1) {
 		if ($open[$indent]) {
 			echo "</li>\n";
-			$open[$indent]--;
+			$open[$indent] --;
 		}
 		$indent--;
 		echo str_pad("\t", $indent, "\t") . "</ul>";
 	}
 	if ($open[$indent]) {
 		echo "</li>\n";
-		$open[$indent]--;
+		$open[$indent] --;
 	} else {
 		echo "\n";
 	}
@@ -2929,4 +2925,6 @@ function zenpageAlbumImage($albumname, $imagename = NULL, $size = NULL, $linkalb
 		<?php
 	}
 }
+
+Zenpage::expiry();
 ?>

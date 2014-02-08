@@ -6,9 +6,15 @@
  */
 // force UTF-8 Ø
 
-define('OFFSET_PATH', 1);
+define('OFFSET_PATH', 2); //	 we don't want plugins loaded
 require_once(dirname(__FILE__) . '/admin-globals.php');
 require_once(dirname(__FILE__) . '/template-functions.php');
+
+// need the class plugins to handle video, etc.
+foreach (getEnabledPlugins() as $extension => $plugin) {
+	if ($plugin['priority'] & CLASS_PLUGIN)
+		require_once($plugin['path']);
+}
 
 if (isset($_REQUEST['album'])) {
 	$localrights = ALBUM_RIGHTS;
@@ -51,26 +57,50 @@ if (isset($_REQUEST['album'])) {
 $albumparm = $folder = $albumwhere = $imagewhere = $id = $r = '';
 if (isset($_REQUEST['return'])) {
 	$return = $_REQUEST['return'];
-	$r = '?page=edit&amp;album=' . html_encode(pathurlencode($ret = sanitize_path($return)));
-	if (strpos($return, '*') === 0) {
-		$r .= '&amp;tab=subalbuminfo';
-		$star = '*';
+	if ($return == '*') {
+		$backurl = 'admin-edit.php';
 	} else {
-		$star = '';
+		$r = '?page=edit&amp;album=' . html_encode(pathurlencode($ret = sanitize_path($return)));
+		if (strpos($return, '*') === 0) {
+			$r .= '&amp;tab=subalbuminfo';
+			$star = '*';
+		} else {
+			$star = '';
+		}
+		$backurl = 'admin-edit.php' . $r . '&amp;return=' . $star . html_encode(pathurlencode($ret));
 	}
-	$backurl = 'admin-edit.php' . $r . '&amp;return=' . $star . html_encode(pathurlencode($ret));
 } else {
 	$ret = '';
 	$backurl = 'admin.php';
 }
 
-if (db_connect($_zp_conf_vars)) {
-	if (isset($_REQUEST['album'])) {
-		if (isset($_POST['album'])) {
-			$folder = sanitize_path(urldecode($_POST['album']));
-		} else {
-			$folder = sanitize_path($_GET['album']);
+if (isset($_REQUEST['album'])) {
+	if (isset($_POST['album'])) {
+		$folder = sanitize_path(urldecode($_POST['album']));
+	} else {
+		$folder = sanitize_path($_GET['album']);
+	}
+	if (!empty($folder)) {
+		$album = newAlbum($folder);
+		if (!$album->isMyItem(ALBUM_RIGHTS)) {
+			if (!zp_apply_filter('admin_managed_albums_access', false, $return)) {
+				header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
+				exitZP();
+			}
 		}
+	}
+	$albumparm = '&amp;album=' . pathurlencode($folder);
+}
+if (isset($_GET['refresh'])) {
+	if (empty($imageid)) {
+		$metaURL = $backurl;
+	} else {
+		if (!empty($ret))
+			$ret = '&amp;return=' . $ret;
+		$metaURL = $redirecturl = '?' . $type . 'refresh=continue&amp;id=' . $imageid . $albumparm . $ret . '&XSRFToken=' . getXSRFToken('refresh');
+	}
+} else {
+	if ($type !== 'prune&amp;') {
 		if (!empty($folder)) {
 			$album = newAlbum($folder);
 			if (!$album->isMyItem(ALBUM_RIGHTS)) {
@@ -79,45 +109,24 @@ if (db_connect($_zp_conf_vars)) {
 					exitZP();
 				}
 			}
+			$sql = "SELECT `id` FROM " . prefix('albums') . " WHERE `folder`=" . db_quote($folder);
+			$row = query_single_row($sql);
+			$id = $row['id'];
 		}
-		$albumparm = '&amp;album=' . pathurlencode($folder);
-	}
-	if (isset($_GET['refresh'])) {
-		if (empty($imageid)) {
-			$metaURL = $backurl;
-		} else {
-			if (!empty($ret))
-				$ret = '&amp;return=' . $ret;
-			$metaURL = $redirecturl = '?' . $type . 'refresh=continue&amp;id=' . $imageid . $albumparm . $ret . '&XSRFToken=' . getXSRFToken('refresh');
-		}
-	} else {
-		if ($type !== 'prune&amp;') {
-			if (!empty($folder)) {
-				$album = newAlbum($folder);
-				if (!$album->isMyItem(ALBUM_RIGHTS)) {
-					if (!zp_apply_filter('admin_managed_albums_access', false, $return)) {
-						header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
-						exitZP();
-					}
-				}
-				$sql = "SELECT `id` FROM " . prefix('albums') . " WHERE `folder`=" . db_quote($folder);
-				$row = query_single_row($sql);
-				$id = $row['id'];
-			}
 
-			if (!empty($id)) {
-				$imagewhere = "WHERE `albumid`=$id";
-				$r = " $folder";
-				$albumwhere = "WHERE `parentid`=$id";
-			}
+		if (!empty($id)) {
+			$imagewhere = "WHERE `albumid`=$id";
+			$r = " $folder";
+			$albumwhere = "WHERE `parentid`=$id";
 		}
-		if (isset($_REQUEST['return']))
-			$ret = sanitize($_REQUEST['return']);
-		if (!empty($ret))
-			$ret = '&amp;return=' . $ret;
-		$metaURL = $starturl = '?' . $type . 'refresh=start' . $albumparm . '&amp;XSRFToken=' . getXSRFToken('refresh') . $ret;
 	}
+	if (isset($_REQUEST['return']))
+		$ret = sanitize($_REQUEST['return']);
+	if (!empty($ret))
+		$ret = '&amp;return=' . $ret;
+	$metaURL = $starturl = '?' . $type . 'refresh=start' . $albumparm . '&amp;XSRFToken=' . getXSRFToken('refresh') . $ret;
 }
+
 $zenphoto_tabs['overview']['subtabs'] = array(gettext('Refresh') => '');
 
 printAdminHeader($tab, 'Refresh');
@@ -133,11 +142,11 @@ echo "\n" . '<div id="main">';
 printTabs();
 ?>
 <div id="content">
-		<?php printSubtabs(); ?>
+	<?php printSubtabs(); ?>
 	<div class="tabbox">
 		<h1><?php echo $title; ?></h1>
 		<?php
-		if (isset($_GET['refresh']) && db_connect($_zp_conf_vars)) {
+		if (isset($_GET['refresh'])) {
 			if (empty($imageid)) {
 				?>
 				<h3><?php echo $finished; ?></h3>
@@ -149,11 +158,11 @@ printTabs();
 				<h3><?php echo $incomplete; ?></h3>
 				<p><?php echo gettext('This process should continue automatically. If not press: '); ?></p>
 				<p><a href="<?php echo $redirecturl; ?>" title="<?php echo $continue; ?>" style="font-size: 15pt; font-weight: bold;">
-				<?php echo gettext("Continue!"); ?></a>
+						<?php echo gettext("Continue!"); ?></a>
 				</p>
 				<?php
 			}
-		} else if (db_connect($_zp_conf_vars)) {
+		} else {
 			if ($type !== 'prune&amp;') {
 				if (!empty($id)) {
 					$sql = "UPDATE " . prefix('albums') . " SET `mtime`=0" . ($_zp_gallery->getAlbumUseImagedate() ? ", `date`=NULL" : '') . " WHERE `id`=$id";
@@ -176,14 +185,12 @@ printTabs();
 				?>
 				<p><a href="<?php echo $starturl . '&amp;XSRFToken=' . getXSRFToken('refresh'); ?>"
 							title="<?php echo gettext("Refresh image metadata."); ?>" style="font-size: 15pt; font-weight: bold;">
-				<?php echo gettext("Go!"); ?></a>
+						<?php echo gettext("Go!"); ?></a>
 				</p>
 				<?php
 			}
-		} else {
-			echo "<h3>" . gettext("database not connected") . "</h3>";
-			echo "<p>" . gettext("Check your configuration file to make sure you've got the right username, password, host, and database. If you haven't created the database yet, now would be a good time.");
 		}
+
 		echo "\n" . '</div>';
 		echo "\n" . '</div>';
 		echo "\n" . '</div>';

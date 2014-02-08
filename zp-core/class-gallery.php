@@ -24,14 +24,14 @@ class Gallery {
 	 * @return Gallery
 	 */
 	function __construct() {
-		// Set our album directory
+// Set our album directory
 		$this->albumdir = ALBUM_FOLDER_SERVERPATH;
 		$data = getOption('gallery_data');
 		if ($data) {
-			$this->data = unserialize($data);
+			$this->data = getSerializedArray($data);
 		}
 		if (isset($this->data['unprotected_pages'])) {
-			$pages = @unserialize($this->data['unprotected_pages']);
+			$pages = getSerializedArray($this->data['unprotected_pages']);
 			if (is_array($pages))
 				$this->unprotected_pages = $pages; //	protect against a failure
 		}
@@ -185,14 +185,14 @@ class Gallery {
 	 */
 	function getAlbums($page = 0, $sorttype = null, $direction = null, $care = true, $mine = NULL) {
 
-		// Have the albums been loaded yet?
+// Have the albums been loaded yet?
 		if (is_null($this->albums) || $care && $sorttype . $direction !== $this->lastalbumsort) {
 
 			$albumnames = $this->loadAlbumNames();
 			$key = $this->getAlbumSortKey($sorttype);
 			$albums = $this->sortAlbumArray(NULL, $albumnames, $key, $direction, $mine);
 
-			// Store the values
+// Store the values
 			$this->albums = $albums;
 			$this->lastalbumsort = $sorttype . $direction;
 		}
@@ -224,7 +224,7 @@ class Gallery {
 		$albums = array();
 
 		while ($dirname = readdir($dir)) {
-			if ((is_dir($albumdir . $dirname) && (substr($dirname, 0, 1) != '.')) || hasDynamicAlbumSuffix($dirname)) {
+			if ($dirname{0} != '.' && (is_dir($albumdir . $dirname) || hasDynamicAlbumSuffix($dirname))) {
 				$albums[] = filesystemToInternal($dirname);
 			}
 		}
@@ -288,7 +288,7 @@ class Gallery {
 							require($themefile);
 							$themes[$dir8] = $theme_description;
 						} else {
-							$themes[$dir8] = array('name'		 => gettext('Unknown'), 'author'	 => gettext('Unknown'), 'version'	 => gettext('Unknown'), 'desc'		 => gettext('<strong>Missing theme info file!</strong>'), 'date'		 => gettext('Unknown'));
+							$themes[$dir8] = array('name' => gettext('Unknown'), 'author' => gettext('Unknown'), 'version' => gettext('Unknown'), 'desc' => gettext('<strong>Missing theme info file!</strong>'), 'date' => gettext('Unknown'));
 						}
 					}
 				}
@@ -421,7 +421,7 @@ class Gallery {
 			$this->commentClean('albums');
 			$this->commentClean('news');
 			$this->commentClean('pages');
-			// clean up obj_to_tag
+// clean up obj_to_tag
 			$dead = array();
 			$result = query("SELECT * FROM " . prefix('obj_to_tag'));
 			if ($result) {
@@ -442,7 +442,7 @@ class Gallery {
 				$dead = array_unique($dead);
 				query('DELETE FROM ' . prefix('obj_to_tag') . ' WHERE `id`=' . implode(' OR `id`=', $dead));
 			}
-			// clean up admin_to_object
+// clean up admin_to_object
 			$dead = array();
 			$result = query("SELECT * FROM " . prefix('admin_to_object'));
 			if ($result) {
@@ -463,7 +463,7 @@ class Gallery {
 				$dead = array_unique($dead);
 				query('DELETE FROM ' . prefix('admin_to_object') . ' WHERE `id`=' . implode(' OR `id`=', $dead));
 			}
-			// clean up news2cat
+// clean up news2cat
 			$dead = array();
 			$result = query("SELECT * FROM " . prefix('news2cat'));
 			if ($result) {
@@ -484,14 +484,22 @@ class Gallery {
 				query('DELETE FROM ' . prefix('news2cat') . ' WHERE `id`=' . implode(' OR `id`=', $dead));
 			}
 
-			// Check for the existence albums
+// Check for the existence albums
 			$dead = array();
 			$live = array(''); // purge the root album if it exists
 			$deadalbumthemes = array();
-			// Load the albums from disk
+// Load the albums from disk
 			$result = query("SELECT * FROM " . prefix('albums'));
 			while ($row = db_fetch_assoc($result)) {
-				$valid = file_exists($albumpath = ALBUM_FOLDER_SERVERPATH . internalToFilesystem($row['folder'])) && (hasDynamicAlbumSuffix($albumpath) || (is_dir($albumpath) && strpos($albumpath, '/./') === false && strpos($albumpath, '/../') === false));
+				$albumpath = internalToFilesystem($row['folder']);
+				$albumpath_valid = preg_replace('~/\.*/~', '/', $albumpath);
+				$albumpath_valid = ltrim(trim($albumpath_valid, '/'), './');
+				$illegal = $albumpath != $albumpath_valid;
+				$valid = file_exists(ALBUM_FOLDER_SERVERPATH . $albumpath_valid) && (hasDynamicAlbumSuffix($albumpath_valid) || is_dir(ALBUM_FOLDER_SERVERPATH . $albumpath_valid));
+				if ($valid && $illegal) { // maybe there is only one record so we can fix it.
+					$valid = query('UPDATE ' . prefix('albums') . ' SET `folder`=' . db_quote($albumpath_valid) . ' WHERE `id`=' . $row['id'], false);
+					debugLog(sprintf(gettext('Invalid album folder: %1$s %2$s'), $albumpath, $valid ? gettext('fixed') : gettext('discarded')));
+				}
 				if (!$valid || in_array($row['folder'], $live)) {
 					$dead[] = $row['id'];
 					if ($row['album_theme'] !== '') { // orphaned album theme options table
@@ -539,7 +547,7 @@ class Gallery {
 				if ($albumids) {
 					while ($analbum = db_fetch_assoc($albumids)) {
 						if (($mtime = filemtime(ALBUM_FOLDER_SERVERPATH . internalToFilesystem($analbum['folder']))) > $analbum['mtime']) {
-							// refresh
+// refresh
 							$album = newAlbum($analbum['folder']);
 							$album->set('mtime', $mtime);
 							if ($this->getAlbumUseImagedate()) {
@@ -610,7 +618,7 @@ class Gallery {
 					}
 					query($sql);
 
-					// Then go into existing albums recursively to clean them... very invasive.
+// Then go into existing albums recursively to clean them... very invasive.
 					foreach ($this->getAlbums(0) as $folder) {
 						$album = newAlbum($folder);
 						if (!$album->isDynamic()) {
@@ -669,7 +677,7 @@ class Gallery {
 				}
 				db_free_result($images);
 			}
-			// cleanup the tables
+// cleanup the tables
 			$resource = db_show('tables');
 			if ($resource) {
 				while ($row = db_fetch_assoc($resource)) {
@@ -763,7 +771,7 @@ class Gallery {
 		$sql = 'SELECT * FROM ' . prefix("albums") . ' WHERE `parentid`' . $albumid . ' ORDER BY ' . $sortkey . ' ' . $sortdirection;
 		$result = query($sql);
 		$results = array();
-		//	check database aganist file system
+//	check database aganist file system
 		while ($row = db_fetch_assoc($result)) {
 			$folder = $row['folder'];
 			if (($key = array_search($folder, $albums)) !== false) { // album exists in filesystem
@@ -784,9 +792,9 @@ class Gallery {
 				$results[$folder] = $albumobj->getData();
 			}
 		}
-		//	now put the results in the right order
+//	now put the results in the right order
 		$results = sortByKey($results, $sortkey, $order);
-		//	albums are now in the correct order
+//	albums are now in the correct order
 		$albums_ordered = array();
 		foreach ($results as $row) { // check for visible
 			$folder = $row['folder'];
@@ -1009,9 +1017,11 @@ class Gallery {
 
 	function save() {
 		setOption('gallery_data', serialize($this->data));
-		//TODO: remove on Zenphoto 1.5
+//TODO: remove on Zenphoto 1.5
 		if (!TEST_RELEASE) {
 			foreach ($this->data as $option => $value) { //	for compatibility
+				if (is_array($value))
+					$value = serialize($value);
 				setOption($option, $value);
 			}
 		}

@@ -8,7 +8,7 @@ if (!defined('WEBPATH'))
 <html>
 	<head>
 		<?php zp_apply_filter('theme_head'); ?>
-		<title><?php printBareGalleryTitle(); ?> | <?php printBareAlbumTitle(); ?> | <?php printBareImageTitle(); ?></title>
+		<?php printHeadTitle(); ?>
 		<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
 		<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 		<link rel="stylesheet" href="<?php echo WEBPATH . '/' . THEMEFOLDER; ?>/default/common.css" type="text/css" />
@@ -32,11 +32,17 @@ if (!defined('WEBPATH'))
 		<div id="main">
 			<div id="gallerytitle">
 				<div class="imgnav">
-					<?php if (hasPrevImage()) { ?>
+					<?php
+					if (hasPrevImage()) {
+						?>
 						<div class="imgprevious"><a href="<?php echo html_encode(getPrevImageURL()); ?>" title="<?php echo gettext("Previous Image"); ?>">« <?php echo gettext("prev"); ?></a></div>
-					<?php } if (hasNextImage()) { ?>
+						<?php
+					} if (hasNextImage()) {
+						?>
 						<div class="imgnext"><a href="<?php echo html_encode(getNextImageURL()); ?>" title="<?php echo gettext("Next Image"); ?>"><?php echo gettext("next"); ?> »</a></div>
-					<?php } ?>
+						<?php
+					}
+					?>
 				</div>
 				<h2>
 					<span>

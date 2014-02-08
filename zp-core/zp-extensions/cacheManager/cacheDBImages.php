@@ -9,16 +9,15 @@
 define('OFFSET_PATH', 3);
 require_once("../../admin-globals.php");
 require_once(SERVERPATH . '/' . ZENFOLDER . '/template-functions.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/cacheManager/functions.php');
 
 admin_securityChecks(NULL, $return = currentRelativeURL());
-
-$tab = gettext('overview');
 
 XSRFdefender('cacheDBImages');
 
 $zenphoto_tabs['overview']['subtabs'] = array(gettext('Cache images')				 => PLUGIN_FOLDER . '/cacheManager/cacheImages.php?page=overview&amp;tab=images',
 				gettext('Cache stored images') => PLUGIN_FOLDER . '/cacheManager/cacheDBImages.php?page=overview&amp;tab=DB&amp;XSRFToken=' . getXSRFToken('cacheDBImages'));
-printAdminHeader($tab, gettext('Cache stored images'));
+printAdminHeader('overview', 'DB');
 echo "\n</head>";
 echo "\n<body>";
 
@@ -61,25 +60,27 @@ echo "\n" . '<div id="content">';
 						preg_match_all('|\<\s*img.*?\ssrc\s*=\s*"(.*i\.php\?([^"]*)).*/\>|', $row[$field], $matches);
 						foreach ($matches[2] as $uri) {
 							$params = parse_url($uri);
-							parse_str($params['query'], $query);
-							if (!file_exists(getAlbumFolder() . $query['a'] . '/' . $query['i'])) {
-								recordMissing($table, $row);
-							} else {
-								$url = '<img src="' . WEBPATH . '/' . ZENFOLDER . '/i.php?' . $uri . '" height="20" width="20" alt="X" />';
-								$text = zpFunctions::updateImageProcessorLink($url);
-								if ($text == $url) {
-									?>
-									<a href="<?php echo $uri; ?>&amp;debug" title="<?php echo gettext('image processor reference'); ?>">
-										<?php echo $url . "\n"; ?>
-									</a>
-									<?php
-								}
-								$text = zpFunctions::updateImageProcessorLink($row[$field]);
-								if ($text != $row[$field]) {
-									$sql = 'UPDATE ' . prefix($table) . ' SET `' . $field . '`=' . db_quote($text) . ' WHERE `id`=' . $row['id'];
-									query($sql);
+							if (array_key_exists('query', $params)) {
+								parse_str($params['query'], $query);
+								if (!file_exists(getAlbumFolder() . $query['a'] . '/' . $query['i'])) {
+									recordMissing($table, $row);
 								} else {
-									$refresh++;
+									$url = '<img src="' . WEBPATH . '/' . ZENFOLDER . '/i.php?' . $uri . '" height="20" width="20" alt="X" />';
+									$text = zpFunctions::updateImageProcessorLink($url);
+									if ($text == $url) {
+										?>
+										<a href="<?php echo $uri; ?>&amp;debug" title="<?php echo gettext('image processor reference'); ?>">
+											<?php echo $url . "\n"; ?>
+										</a>
+										<?php
+									}
+									$text = zpFunctions::updateImageProcessorLink($row[$field]);
+									if ($text != $row[$field]) {
+										$sql = 'UPDATE ' . prefix($table) . ' SET `' . $field . '`=' . db_quote($text) . ' WHERE `id`=' . $row['id'];
+										query($sql);
+									} else {
+										$refresh++;
+									}
 								}
 							}
 						}
@@ -93,49 +94,7 @@ echo "\n" . '<div id="content">';
 						preg_match_all('~\<img.*src\s*=\s*"((\\.|[^"])*)~', $row[$field], $matches);
 						foreach ($matches[1] as $key => $match) {
 							$found++;
-
-							$args = array(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-							$set = array();
-							$done = false;
-							$params = explode('_', stripSuffix($match));
-							while (!$done && count($params) > 1) {
-								$check = array_pop($params);
-								if (is_numeric($check)) {
-									$set['s'] = $check;
-									break;
-								} else {
-									$c = substr($check, 0, 1);
-									if ($c == 'w' || $c == 'h') {
-										$v = (int) substr($check, 1);
-										if ($v) {
-											$set[$c] = $v;
-											continue;
-										}
-									}
-									if ($c == 'c') {
-										$c = substr($check, 0, 2);
-										$v = (int) substr($check, 2);
-										if ($v) {
-											$set[$c] = $v;
-											continue;
-										}
-									}
-									if (!isset($set['w']) && !isset($set['h']) && !isset($set['s'])) {
-										if (!isset($set['wm']) && in_array($check, $watermarks)) {
-											$set['wm'] = $check;
-										} else if ($check == 'thumb') {
-											$set['t'] = true;
-										} else {
-											$set['effects'] = $check;
-										}
-									} else {
-										array_push($params, $check);
-										break;
-									}
-								}
-							}
-							$args = getImageArgs($set);
-							$image = preg_replace('~.*/' . CACHEFOLDER . '/~', '', implode('_', $params)) . '.' . getSuffix($match);
+							list($image, $args) = getImageProcessorURIFromCacheName($match, $watermarks);
 							if (!file_exists(getAlbumFolder() . $image)) {
 								recordMissing($table, $row);
 							} else {
@@ -203,7 +162,7 @@ echo "\n" . '<div id="content">';
 			<?php
 		}
 
-		$button = array('text'	 => gettext("Refresh"), 'title'	 => gettext('Refresh the caching of the images stored in the database if some images did not render.'));
+		$button = array('text' => gettext("Refresh"), 'title' => gettext('Refresh the caching of the images stored in the database if some images did not render.'));
 		?>
 		<p>
 			<?php
@@ -265,8 +224,11 @@ echo "\n" . '<div id="content">';
 	 * @return mixed
 	 */
 	function updateCacheFolder($text, $target, $update) {
-		if ($serial = preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+		if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
 			$text = getSerializedArray($text);
+			$serial = true;
+		} else {
+			$serial = false;
 		}
 		if (is_array($text)) {
 			foreach ($text as $key => $textelement) {

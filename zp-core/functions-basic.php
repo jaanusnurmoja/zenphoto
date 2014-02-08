@@ -105,6 +105,7 @@ if (TEST_RELEASE) {
 }
 set_error_handler("zpErrorHandler");
 set_exception_handler("zpErrorHandler");
+$_configMutex = new Mutex('cF');
 if (OFFSET_PATH != 2 && !file_exists($const_serverpath . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
 	require_once(dirname(__FILE__) . '/reconfigure.php');
 	reconfigureAction(1);
@@ -133,7 +134,6 @@ unset($const_webpath);
 if (!defined('SERVERPATH')) {
 	define('SERVERPATH', $const_serverpath);
 }
-
 unset($const_serverpath);
 $_zp_mutex = new Mutex();
 
@@ -152,11 +152,18 @@ if (!defined('FILESYSTEM_CHARSET')) {
 	}
 }
 if (!defined('CHMOD_VALUE')) {
-	define('CHMOD_VALUE', fileperms(dirname(dirname(__FILE__))) & 0666);
+	define('CHMOD_VALUE', fileperms(dirname(__FILE__)) & 0666);
 }
 define('FOLDER_MOD', CHMOD_VALUE | 0311);
 define('FILE_MOD', CHMOD_VALUE & 0666);
 define('DATA_MOD', fileperms(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE) & 0777);
+
+$_session_path = session_save_path();
+if (!file_exists($_session_path) || !is_writable($_session_path)) {
+	mkdir_recursive(SERVERPATH . '/' . DATA_FOLDER . '/PHP_sessions', FOLDER_MOD);
+	session_save_path(SERVERPATH . '/' . DATA_FOLDER . '/PHP_sessions');
+}
+unset($_session_path);
 
 // If the server protocol is not set, set it to the default.
 if (!isset($_zp_conf_vars['server_protocol'])) {
@@ -165,7 +172,7 @@ if (!isset($_zp_conf_vars['server_protocol'])) {
 
 if (!defined('DATABASE_SOFTWARE') && extension_loaded(strtolower(@$_zp_conf_vars['db_software']))) {
 	require_once(dirname(__FILE__) . '/functions-db-' . $_zp_conf_vars['db_software'] . '.php');
-	$data = db_connect($_zp_conf_vars, false);
+	$data = db_connect(array_intersect_key($_zp_conf_vars, array('db_software' => '', 'mysql_user' => '', 'mysql_pass' => '', 'mysql_host' => '', 'mysql_database' => '', 'mysql_prefix' => '', 'UTF-8' => '')), false);
 } else {
 	$data = false;
 }
@@ -182,7 +189,7 @@ define('LOCAL_CHARSET', $data);
 
 $data = getOption('gallery_data');
 if ($data) {
-	$data = unserialize($data);
+	$data = getSerializedArray($data);
 } else {
 	$data = array();
 }
@@ -515,12 +522,17 @@ function rewrite_get_album_image($albumvar, $imagevar) {
 					//	Perhaps a dynamicalbum/image
 					$path = trim(dirname($ralbum), '/');
 					if ($path != '.') {
+						if (getSuffix($path) == 'alb') {
+							$path = stripSuffix($path);
+						}
 						$path = internalToFilesystem(getAlbumFolder(SERVERPATH) . $path);
 						if (!is_dir($path)) {
 							if (file_exists($path . '.alb')) {
 								//	it is a dynamic album sans suffix
 								$rimage = basename($ralbum);
-								$ralbum = trim(dirname($ralbum), '/') . '.alb';
+								$ralbum = trim(dirname($ralbum), '/');
+								if (getSuffix($ralbum) != 'alb')
+									$ralbum .= '.alb';
 							}
 						}
 					}
@@ -528,16 +540,12 @@ function rewrite_get_album_image($albumvar, $imagevar) {
 			}
 		}
 		if (empty($ralbum)) {
-			if (isset($_GET[$albumvar])) {
-				unset($_GET[$albumvar]);
-			}
+			unset($_GET[$albumvar]);
 		} else {
 			$_GET[$albumvar] = $ralbum;
 		}
 		if (empty($rimage)) {
-			if (isset($_GET[$imagevar])) {
-				unset($_GET[$imagevar]);
-			}
+			unset($_GET[$imagevar]);
 		} else {
 			$_GET[$imagevar] = $rimage;
 		}
@@ -588,7 +596,7 @@ function getImageCacheFilename($album8, $image8, $args) {
 		}
 	}
 	if (getOption('obfuscate_cache')) {
-		$result = '/' . $album . $albumsep . sha1($image . HASH_SEED . $postfix) . '.' . $suffix;
+		$result = '/' . $album . $albumsep . sha1($image . HASH_SEED . $postfix) . '.' . $image . $postfix . '.' . $suffix;
 	} else {
 		$result = '/' . $album . $albumsep . $image . $postfix . '.' . $suffix;
 	}
@@ -603,21 +611,10 @@ function getImageCacheFilename($album8, $image8, $args) {
  */
 function makeSpecialImageName($image) {
 	$filename = basename($image);
-	$i = strpos($image, ZENFOLDER);
-	if ($i === false) {
-		$i = strpos($image, USER_PLUGIN_FOLDER);
-		if ($i === false) {
-			$sourceFolder = basename(dirname(dirname($image)));
-			$sourceSubfolder = basename(dirname($image));
-		} else {
-			$sourceFolder = USER_PLUGIN_FOLDER;
-			$sourceSubfolder = trim(substr($image, $i + strlen(USER_PLUGIN_FOLDER) + 1, - strlen($filename) - 1), '/');
-		}
-	} else {
-		$sourceFolder = ZENFOLDER;
-		$sourceSubfolder = trim(substr($image, $i + strlen(ZENFOLDER) + 1, - strlen($filename) - 1), '/');
-	}
-	return array('source' => $sourceFolder . '/' . $sourceSubfolder . '/' . $filename, 'name'	 => $sourceFolder . '_' . basename($sourceSubfolder) . '_' . $filename);
+	$base = explode('/', str_replace(SERVERPATH . '/', '', dirname($image)));
+	$sourceFolder = array_shift($base);
+	$sourceSubfolder = implode('/', $base);
+	return array('source' => $sourceFolder . '/' . $sourceSubfolder . '/' . $filename, 'name' => $sourceFolder . '_' . basename($sourceSubfolder) . '_' . $filename);
 }
 
 define('NO_WATERMARK', '!');
@@ -673,8 +670,7 @@ function getWatermarkParam($image, $use) {
  */
 function getImageCachePostfix($args) {
 	list($size, $width, $height, $cw, $ch, $cx, $cy, $quality, $thumb, $crop, $thumbStandin, $passedWM, $adminrequest, $effects) = $args;
-	$postfix_string =
-					($size ? "_$size" : "") .
+	$postfix_string = ($size ? "_$size" : "") .
 					($width ? "_w$width" : "") .
 					($height ? "_h$height" : "") .
 					($cw ? "_cw$cw" : "") .
@@ -708,14 +704,6 @@ function getImageParameters($args, $album = NULL) {
 	$thumb = $thumbstandin;
 
 	switch ($size) {
-		case 0:
-		default:
-			if (empty($size) || !is_numeric($size)) {
-				$size = false; // 0 isn't a valid size anyway, so this is OK.
-			} else {
-				$size = round($size);
-			}
-			break;
 		case 'thumb':
 			$thumb = true;
 			if ($thumb_crop) {
@@ -726,6 +714,14 @@ function getImageParameters($args, $album = NULL) {
 			break;
 		case 'default':
 			$size = $image_default_size;
+			break;
+		case 0:
+		default:
+			if (empty($size) || !is_numeric($size)) {
+				$size = false; // 0 isn't a valid size anyway, so this is OK.
+			} else {
+				$size = round($size);
+			}
 			break;
 	}
 
@@ -806,15 +802,15 @@ function getImageProcessorURI($args, $album, $image) {
 	} else {
 		$args[2] = NULL;
 	}
-	if ($cw) {
-		$uri .= '&cw=' . ($args[3] = (int) $cw);
-	} else {
+	if (is_null($cw)) {
 		$args[3] = NULL;
-	}
-	if ($ch) {
-		$uri .= '&ch=' . ($args[4] = (int) $ch);
 	} else {
+		$uri .= '&cw=' . ($args[3] = (int) $cw);
+	}
+	if (is_null($ch)) {
 		$args[4] = NULL;
+	} else {
+		$uri .= '&ch=' . ($args[4] = (int) $ch);
 	}
 	if (is_null($cx)) {
 		$args[5] = NULL;
@@ -1486,7 +1482,7 @@ function getRequestURI() {
  */
 function safe_glob($pattern, $flags = 0) {
 	$split = explode('/', $pattern);
-	$match = '/^' . strtr(addcslashes(array_pop($split), '\\.+^$(){}=!<>|'), array('*'	 => '.*', '?'	 => '.?')) . '$/i';
+	$match = '/^' . strtr(addcslashes(array_pop($split), '\\.+^$(){}=!<>|'), array('*' => '.*', '?' => '.?')) . '$/i';
 	$path_return = $path = implode('/', $split);
 	if (empty($path)) {
 		$path = '.';
