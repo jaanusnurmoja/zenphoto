@@ -41,11 +41,24 @@ function printItemsListTable($item, $flag) {
 			case "album":
 				$link = '<a href="../../admin-edit.php?page=edit&amp;album=' . html_encode($item['link']) . '">' . html_encode(truncate_string($item['link'], 40, '...')) . '</a>';
 				break;
+			case "zenpagenewsindex":
+				if(!class_exists('zenpage')) {
+					$link = '<span class="notebox">'.gettext('Zenpage CMS plugin required for this item type!').'</span>';
+				}
+				break;
 			case "zenpagepage":
-				$link = '<a href="../zenpage/admin-edit.php?page&amp;titlelink=' . html_encode($item['link']) . '">' . html_encode(truncate_string($item['link'], 40, '...')) . '</a>';
+				if(class_exists('zenpage')) {
+					$link = '<a href="../zenpage/admin-edit.php?page&amp;titlelink=' . html_encode($item['link']) . '">' . html_encode(truncate_string($item['link'], 40, '...')) . '</a>';
+				} else {
+					$link = '<span class="notebox">'.gettext('Zenpage CMS plugin required for this item type!').'</span>';
+				}
 				break;
 			case "zenpagecategory":
-				$link = '<a href="../zenpage/admin-edit.php?newscategory&amp;titlelink=' . html_encode($item['link']) . '">' . html_encode(truncate_string($item['link'], 40, '...')) . '</a>';
+				if(class_exists('zenpage')) {
+					$link = '<a href="../zenpage/admin-edit.php?newscategory&amp;titlelink=' . html_encode($item['link']) . '">' . html_encode(truncate_string($item['link'], 40, '...')) . '</a>';
+				} else {
+					$link = '<span class="notebox">'.gettext('Zenpage CMS plugin required for this item type!').'</span>';
+				}
 				break;
 			case 'customlink':
 				$link = '<a href="' . html_encode($item['link']) . '">' . html_encode(truncate_string($item['link'], 40, '...')) . '</a>';
@@ -221,7 +234,7 @@ function printItemStatusDropdown() {
 	$status = checkChosenItemStatus();
 	$menuset = checkChosenMenuset();
 	?>
-	<select name="ListBoxURL" id="ListBoxURL" size="1" onchange="window.location = '?menuset=<?php echo urlencode($menuset); ?>&amp;visible=' + $('#ListBoxURL').val()">
+	<select name="ListBoxURL" id="ListBoxURL" class="ays-ignore" size="1" onchange="window.location = '?menuset=<?php echo urlencode($menuset); ?>&amp;visible=' + $('#ListBoxURL').val()">
 		<?php
 		switch ($status) {
 			case "hidden":
@@ -261,7 +274,7 @@ function getMenuSetSelector($active) {
 	}
 
 	if ($active) {
-		$selector = '<select name="menuset" id="menuset" size="1" onchange="window.location=\'?menuset=\'+encodeURIComponent($(\'#menuset\').val())">' . "\n";
+		$selector = '<select name="menuset" id="menuset" class="ays-ignore" size="1" onchange="window.location=\'?menuset=\'+encodeURIComponent($(\'#menuset\').val())">' . "\n";
 	} else {
 		$selector = '<select name="menuset" size="1">' . "\n";
 	}
@@ -451,28 +464,28 @@ function addItem(&$reports) {
 			addAlbumsToDatabase($menuset);
 			if (extensionEnabled('zenpage')) {
 				query("INSERT INTO " . prefix('menu') . " (`title`,`link`,`type`,`show`,`menuset`,`sort_order`) " .
-								"VALUES ('" . gettext('News index') . "', '" . rewrite_path(_NEWS_, '?p=news') . "','zenpagenewsindex','1'," . db_quote($menuset) . ",'001')", true);
+								"VALUES ('" . gettext('News index') . "', '" . getNewsIndexURL() . "', 'zenpagenewsindex', '1', " . db_quote($menuset) . ", '001')", true);
 				addPagesToDatabase($menuset);
 				addCategoriesToDatabase($menuset);
 			}
-			$reports[] = "<p class='messagebox fade-message'>" . gettext("Menu items for all Zenphoto objects added.") . "</p>";
+			$reports[] = "<p class = 'messagebox fade-message'>" . gettext("Menu items for all Zenphoto objects added.") . " </p>";
 			return NULL;
 		case 'all_albums':
 			addAlbumsToDatabase($menuset);
-			$reports[] = "<p class='messagebox fade-message'>" . gettext("Menu items for all albums added.") . "</p>";
+			$reports[] = "<p class = 'messagebox fade-message'>" . gettext("Menu items for all albums added.") . " </p>";
 			return NULL;
 		case 'all_zenpagepages':
 			addPagesToDatabase($menuset);
-			$reports[] = "<p class='messagebox fade-message'>" . gettext("Menu items for all Zenpage pages added.") . "</p>";
+			$reports[] = "<p class = 'messagebox fade-message'>" . gettext("Menu items for all Zenpage pages added.") . " </p>";
 			return NULL;
 		case 'all_zenpagecategorys':
 			addCategoriesToDatabase($menuset);
-			$reports[] = "<p class='messagebox fade-message'>" . gettext("Menu items for all Zenpage categories added.") . "</p>";
+			$reports[] = "<p class = 'messagebox fade-message'>" . gettext("Menu items for all Zenpage categories added.") . " </p>";
 			return NULL;
 		case 'album':
 			$result['title'] = $result['link'] = sanitize($_POST['albumselect']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to select an album.") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to select an album.") . " </p>";
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Album menu item <em>%s</em> added"), $result['link']);
@@ -481,7 +494,7 @@ function addItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = NULL;
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Gallery index menu item <em>%s</em> added"), $result['link']);
@@ -490,7 +503,7 @@ function addItem(&$reports) {
 			$result['title'] = NULL;
 			$result['link'] = sanitize($_POST['pageselect']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Zenpage page menu item <em>%s</em> added"), $result['link']);
@@ -499,7 +512,7 @@ function addItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = NULL;
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Zenpage news index menu item <em>%s</em> added"), $result['link']);
@@ -508,7 +521,7 @@ function addItem(&$reports) {
 			$result['title'] = NULL;
 			$result['link'] = sanitize($_POST['categoryselect']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Zenpage news category menu item <em>%s</em> added"), $result['link']);
@@ -517,7 +530,7 @@ function addItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = sanitize($_POST['custompageselect']);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Custom page menu item <em>%s</em> added"), $result['link']);
@@ -525,12 +538,12 @@ function addItem(&$reports) {
 		case 'customlink':
 			$result['title'] = process_language_string_save("title", 2);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			$result['link'] = sanitize($_POST['link']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Custom page menu item <em>%s</em> added"), $result['link']);
@@ -539,7 +552,7 @@ function addItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = NULL;
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = gettext("Custom label added");
@@ -547,25 +560,25 @@ function addItem(&$reports) {
 		case 'menufunction':
 			$result['title'] = process_language_string_save("title", 2);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
-			$result['link'] = sanitize($_POST['link'], 0);
+			$result['link'] = sanitize($_POST['link'], 4);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . " </p>";
 				return $result;
 			}
-			$successmsg = sprintf(gettext("Function  menu item <em>%s</em> added"), $result['link']);
+			$successmsg = sprintf(gettext("Function menu item <em>%s</em> added"), $result['link']);
 			break;
 		case 'html':
 			$result['title'] = process_language_string_save("title", 2);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
-			$result['link'] = sanitize($_POST['link'], 0);
+			$result['link'] = sanitize($_POST['link'], 4);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . " </p>";
 				return $result;
 			}
 			$successmsg = gettext("<em>HTML</em> added");
@@ -575,23 +588,23 @@ function addItem(&$reports) {
 	}
 	$count = db_count('menu', 'WHERE menuset=' . db_quote($menuset));
 	$order = sprintf('%03u', $count);
-	$sql = "INSERT INTO " . prefix('menu') . " (`title`,`link`,`type`,`show`,`menuset`,`sort_order`,`include_li`,`span_id`,`span_class`) " .
+	$sql = "INSERT INTO " . prefix('menu') . " ( `title`, `link`, `type`, `show`, `menuset`, `sort_order`, `include_li`, `span_id`, `span_class`) " .
 					"VALUES (" . db_quote($result['title']) .
-					"," . db_quote($result['link']) .
-					"," . db_quote($result['type']) . "," . $result['show'] .
-					"," . db_quote($menuset) . "," . db_quote($order) . "," . $result['include_li'] .
-					"," . db_quote($result['span_id']) . "," . db_quote($result['span_class']) .
+					", " . db_quote($result['link']) .
+					", " . db_quote($result['type']) . ", " . $result['show'] .
+					", " . db_quote($menuset) . ", " . db_quote($order) . ", " . $result['include_li'] .
+					", " . db_quote($result['span_id']) . ", " . db_quote($result['span_class']) .
 					")";
 	if (query($sql, true)) {
-		$reports[] = "<p class='messagebox fade-message'>" . $successmsg . "</p>";
+		$reports[] = "<p class = 'messagebox fade-message'>" . $successmsg . "</p>";
 		//echo "<pre>"; print_r($result); echo "</pre>";
 		$result['id'] = db_insert_id();
 		return $result;
 	} else {
 		if (empty($result['link'])) {
-			$reports[] = "<p class='errorbox fade-message'>" . sprintf(gettext('A <em>%1$s</em> item already exists in <em>%2$s</em>!'), $result['type'], $menuset) . "</p>";
+			$reports[] = "<p class = 'errorbox fade-message'>" . sprintf(gettext('A <em>%1$s</em> item already exists in <em>%2$s </em>!'), $result['type'], $menuset) . "</p>";
 		} else {
-			$reports[] = "<p class='errorbox fade-message'>" . sprintf(gettext('A <em>%1$s</em> item with the link <em>%2$s</em> already exists in <em>%3$s</em>!'), $result['type'], $result['link'], $menuset) . "</p>";
+			$reports[] = "<p class = 'errorbox fade-message'>" . sprintf(gettext('A <em>%1$s</em> item with the link <em>%2$s</em> already exists in <em>%3$s </em>!'), $result['type'], $result['link'], $menuset) . "</p>";
 		}
 		return NULL;
 	}
@@ -601,7 +614,9 @@ function addItem(&$reports) {
  * Updates a menu item (custom link, custom page only) set via POST
  *
  */
-function updateMenuItem(&$reports) {
+function updateMenuItem(&
+
+$reports) {
 	$menuset = checkChosenMenuset();
 	$result = array();
 	$result['id'] = sanitize($_POST['id']);
@@ -620,7 +635,7 @@ function updateMenuItem(&$reports) {
 		case 'album':
 			$result['title'] = $result['link'] = sanitize($_POST['albumselect']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to select an album.") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to select an album.") . " </p>";
 				return $result;
 			}
 			break;
@@ -628,7 +643,7 @@ function updateMenuItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = NULL;
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			break;
@@ -636,7 +651,7 @@ function updateMenuItem(&$reports) {
 			$result['title'] = NULL;
 			$result['link'] = sanitize($_POST['pageselect']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . " </p>";
 				return $result;
 			}
 			break;
@@ -644,7 +659,7 @@ function updateMenuItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = NULL;
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			break;
@@ -652,7 +667,7 @@ function updateMenuItem(&$reports) {
 			$result['title'] = NULL;
 			$result['link'] = sanitize($_POST['categoryselect']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . " </p>";
 				return $result;
 			}
 			break;
@@ -660,19 +675,19 @@ function updateMenuItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = sanitize($_POST['custompageselect']);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			break;
 		case 'customlink':
 			$result['title'] = process_language_string_save("title", 2);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			$result['link'] = sanitize($_POST['link']);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . " </p>";
 				return $result;
 			}
 			break;
@@ -680,52 +695,52 @@ function updateMenuItem(&$reports) {
 			$result['title'] = process_language_string_save("title", 2);
 			$result['link'] = NULL;
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			break;
 		case 'menufunction':
 			$result['title'] = process_language_string_save("title", 2);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
-			$result['link'] = sanitize($_POST['link'], 0);
+			$result['link'] = sanitize($_POST['link'], 4);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . " </p>";
 				return $result;
 			}
 			break;
 		case 'html':
 			$result['title'] = process_language_string_save("title", 2);
 			if (empty($result['title'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
-			$result['link'] = sanitize($_POST['link'], 0);
+			$result['link'] = sanitize($_POST['link'], 4);
 			if (empty($result['link'])) {
-				$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . "</p>";
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to provide a <strong>function</strong>!") . " </p>";
 				return $result;
 			}
 			break;
 		default:
-			$result['link'] = sanitize($_POST['link'], 0);
+			$result['link'] = sanitize($_POST['link'], 4);
 			break;
 	}
 	// update the category in the category table
 	$sql = "UPDATE " . prefix('menu') . " SET title = " . db_quote($result['title']) .
-					",link=" . db_quote($result['link']) .
-					",type=" . db_quote($result['type']) . ", `show`=" . db_quote($result['show']) .
-					",menuset=" . db_quote($menuset) . ",include_li=" . $result['include_li'] .
-					",span_id=" . db_quote($result['span_id']) . ",span_class=" . db_quote($result['span_class']) .
-					" WHERE `id`=" . $result['id'];
+					", link = " . db_quote($result['link']) .
+					", type = " . db_quote($result['type']) . ", `show` = " . db_quote($result['show']) .
+					", menuset = " . db_quote($menuset) . ", include_li = " . $result['include_li'] .
+					", span_id = " . db_quote($result['span_id']) . ", span_class = " . db_quote($result['span_class']) .
+					" WHERE `id` = " . $result['id'];
 	if (query($sql)) {
 		if (isset($_POST['title']) && empty($result['title'])) {
-			$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . "</p>";
+			$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 		} else if (isset($_POST['link']) && empty($result['link'])) {
-			$reports[] = "<p class='errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . "</p>";
+			$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>link</strong>!") . " </p>";
 		} else {
-			$reports[] = "<p class='messagebox fade-message'>" . gettext("Menu item updated!") . "</p>";
+			$reports[] = "<p class = 'messagebox fade-message'>" . gettext("Menu item updated!") . " </p>";
 		}
 	}
 	return $result;
@@ -735,18 +750,22 @@ function updateMenuItem(&$reports) {
  * Deletes a menu item set via GET
  *
  */
-function deleteItem(&$reports) {
+function deleteItem(&
+
+$reports) {
 	if (isset($_GET['delete'])) {
 		$delete = sanitize_numeric($_GET['delete'], 3);
-		query("DELETE FROM " . prefix('menu') . " WHERE `id`=$delete");
-		$reports[] = "<p class='messagebox fade-message'>" . gettext("Custom menu item successfully deleted!") . "</p>";
+		query("DELETE FROM " . prefix('menu') . " WHERE `id` = $delete");
+		$reports[] = "<p class = 'messagebox fade-message'>" . gettext("Custom menu item successfully deleted!") . " </p>";
 	}
 }
 
 /**
  * Prints all albums of the Zenphoto gallery as a partial drop down menu (<option></option> parts).
  *
- * @param string $current set to the album name selected (if any)
+ * @param string $current
+
+  set to the album name selected (if any)
  *
  * @return string
  */
@@ -770,7 +789,7 @@ function printAlbumsSelector($current) {
 			for ($count = 1; $count <= $level; $count++) {
 				$arrow .= "» ";
 			}
-			echo "<option value='" . html_encode($albumobj->name) . "'" . $selected . '>';
+			echo "<option value = '" . html_encode($albumobj->name) . "'" . $selected . '>';
 			echo $arrow . $albumobj->getTitle() . unpublishedZenphotoItemCheck($albumobj) . "</option>";
 		}
 		?>
@@ -793,7 +812,9 @@ function printZenpagePagesSelector($current) {
 		$pages = $_zp_zenpage->getPages(false);
 		foreach ($pages as $key => $page) {
 			if ($page['titlelink'] == $current) {
-				$selected = ' selected="selected"';
+				$selected = ' selected= "selected
+
+			"';
 			} else {
 				$selected = '';
 			}
@@ -803,7 +824,7 @@ function printZenpagePagesSelector($current) {
 			for ($count = 1; $count <= $level; $count++) {
 				$arrow .= "» ";
 			}
-			echo "<option value='" . html_encode($pageobj->getTitlelink()) . "'" . $selected . '>';
+			echo "<option value = '" . html_encode($pageobj->getTitlelink()) . "'" . $selected . '>';
 			echo $arrow . $pageobj->getTitle() . unpublishedZenphotoItemCheck($pageobj) . "</option>";
 		}
 		?>
@@ -814,7 +835,9 @@ function printZenpagePagesSelector($current) {
 /**
  * Prints all available articles or categories in Zenpage
  *
- * @param string $current set to category selected (if any)
+ * @param string $current
+
+  set to category selected (if any)
  *
  * @return string
  */
@@ -837,8 +860,10 @@ function printZenpageNewsCategorySelector($current) {
 			foreach ($getparents as $parent) {
 				$levelmark .= '» ';
 			}
-			echo "<option value='" . html_encode($catobj->getTitlelink()) . "'" . $selected . '>';
-			echo $levelmark . $catobj->getTitle() . "</option>";
+			echo "<option value = '" . html_encode($catobj->getTitlelink()) . "'" . $selected . '>';
+			echo $levelmark . $catobj->getTitle() . "</option>"
+
+			;
 		}
 		?>
 	</select>
@@ -892,8 +917,10 @@ function unpublishedZenphotoItemCheck($obj, $dropdown = true) {
  */
 function processMenuBulkActions() {
 	$report = NULL;
-	if (isset($_POST['ids'])) {
-		$action = sanitize($_POST['checkallaction']);
+	if (isset($_POST[
+									'ids'])) {
+		$action = sanitize(
+						$_POST['checkallaction']);
 		$ids = $_POST['ids'];
 		$total = count($ids);
 		$message = NULL;
@@ -916,14 +943,14 @@ function processMenuBulkActions() {
 				}
 				foreach ($ids as $id) {
 					$n++;
-					$sql .= " id='" . sanitize_numeric($id) . "' ";
+					$sql .= " id = '" . sanitize_numeric($id) . "' ";
 					if ($n < $total)
 						$sql .= "OR ";
 				}
 				query($sql);
 			}
 			if (!is_null($message))
-				$report = "<p class='messagebox fade-message'>" . $message . "</p>";
+				$report = "<p class = 'messagebox fade-message'>" . $message . "</p>";
 		}
 	}
 	return $report;

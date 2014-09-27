@@ -6,7 +6,7 @@
  * By default the <var>%UPLOAD_FOLDER%</var> folder is chosen so you can use the file manager to manage those files.
  *
  * You can also override that folder by using the <var>printdownloadList()</var> function parameters directly. Additionally
- * you can set a downloadlink to a specific file directly as well using <code>printDownloadLink(<i>path-to-file</i>);<code>.
+ * you can set a downloadlink to a specific file directly as well using <code>printDownloadURL(<i>path-to-file</i>);<code>.
  *
  * The file names and the download path of the items are stored with the number of downloads in the database's plugin_storage table.
  *
@@ -22,7 +22,7 @@
  *
  * To protect the download directory from direct linking you need to set up a proper <var>.htaccess</var> for this folder.
  *
- * The <var>printDownloadLinkAlbumZip()</var> function will create a zipfile of the album <i>on the fly</i>.
+ * The <var>printDownloadAlbumZipURL()</var> function will create a zipfile of the album <i>on the fly</i>.
  * The source of the images may be the original
  * images from the album and its subalbums or they may be the <i>sized</i> images from the cache. Use the latter if you want
  * the images to be watermarked.
@@ -31,10 +31,10 @@
  *
  * @author Malte Müller (acrylian)
  * @package plugins
- * @subpackage tools
+ * @subpackage misc
  * @tags "file download", "download manager", download
  */
-$plugin_is_filter = 20 | ADMIN_PLUGIN | THEME_PLUGIN;
+$plugin_is_filter = 800 | ADMIN_PLUGIN | THEME_PLUGIN;
 $plugin_description = gettext("Plugin to generate file download lists.");
 $plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard)";
 
@@ -81,7 +81,7 @@ class DownloadList {
 										'desc'	 => gettext('Check if users are required to have <em>file</em> rights to download.'))
 		);
 		if (GALLERY_SECURITY == 'public') {
-			$options[gettext('credentials')] = array('key'		 => 'downloadlist_credentials', 'type'	 => OPTION_TYPE_CUSTOM,
+			$options[gettext('credentials')] = array('key'		 => 'downloadList_credentials', 'type'	 => OPTION_TYPE_CUSTOM,
 							'order'	 => 0,
 							'desc'	 => gettext('Provide credentials to password protect downloads'));
 		}
@@ -128,7 +128,7 @@ class DownloadList {
 						 onkeyup="passwordStrength('_downloadList');"
 						 value="<?php echo $x; ?>" />
 			<label><input type="checkbox" name="disclose_password_downloadList" id="disclose_password_downloadList" onclick="passwordClear('_downloadList');
-					togglePassword('_downloadList');"><?php echo gettext('Show password'); ?></label>
+							togglePassword('_downloadList');"><?php echo gettext('Show password'); ?></label>
 			<br />
 			<span class="password_field__downloadList">
 				<span id="match_downloadList"><?php echo gettext("(repeat)"); ?></span>
@@ -150,12 +150,11 @@ class DownloadList {
 	static function handleOptionSave($themename, $themealbum) {
 		$notify = processCredentials('downloadList', '_downloadList');
 		if ($notify == '?mismatch=user') {
-			return gettext('You must supply a password for the DownloadList user');
+			return '&custom=' . gettext('You must supply a password for the DownloadList user');
 		} else if ($notify) {
-			return gettext('Your DownloadList passwords were empty or did not match');
-		} else {
-			return '';
+			return '&custom=' . gettext('Your DownloadList passwords were empty or did not match');
 		}
+		return false;
 	}
 
 	/**
@@ -206,7 +205,6 @@ class DownloadList {
 	 * @return bool|string
 	 */
 	static function getItemID($path) {
-		$path = sanitize($path);
 		$downloaditem = query_single_row("SELECT id, `aux`, `data` FROM " . prefix('plugin_storage') . " WHERE `type` = 'downloadList' AND `aux` = " . db_quote($path));
 		if ($downloaditem) {
 			return $downloaditem['id'];
@@ -231,13 +229,11 @@ class DownloadList {
 				<?php
 				if (is_array($file)) { // for sub directories
 					echo $key;
-				} else {
-					printDownloadLink($file);
-				}
-				if (is_array($file)) {
 					echo '<' . $listtype . '>';
 					self::printListArray($file, $listtype);
 					echo '</' . $listtype . '>';
+				} else {
+					printDownloadURL($file);
 				}
 				?>
 			</li>
@@ -262,6 +258,24 @@ class DownloadList {
 						'rights'			 => ADMIN_RIGHTS,
 		);
 		return $buttons;
+	}
+
+	static function noFile() {
+		global $_downloadFile;
+		if (TEST_RELEASE) {
+			$file = $_downloadFile;
+		} else {
+			$file = basename($_downloadFile);
+		}
+		?>
+		<script type="text/javascript">
+			// <!-- <![CDATA[
+			window.onload = function() {
+				alert('<?php printf(gettext('File “%s” was not found.'), $file); ?>');
+			}
+			// ]]> -->
+		</script>
+		<?php
 	}
 
 }
@@ -388,14 +402,6 @@ class AlbumZip {
 
 }
 
-$request = getRequestURI();
-if (strpos($request, '?') === false) {
-	define('DOWNLOADLIST_LINKPATH', FULLWEBPATH . '/' . substr($request, strlen(WEBPATH) + 1) . '?download=');
-} else {
-	define('DOWNLOADLIST_LINKPATH', FULLWEBPATH . '/' . substr($request, strlen(WEBPATH) + 1) . '&download=');
-}
-unset($request);
-
 /**
  * Prints the actual download list included all subfolders and files
  * @param string $dir An optional different folder to generate the list that overrides the folder set on the option.
@@ -427,7 +433,7 @@ function printdownloadList($dir = '', $listtype = 'ol', $filters = array(), $exc
  * @return array
  */
 function getdownloadList($dir8, $filters8, $excludesuffixes, $sort) {
-	$filters = Array('.', '..', '.DS_Store', 'Thumbs.db', '.htaccess', '.svn');
+	$filters = Array('Thumbs.db');
 	foreach ($filters8 as $key => $file) {
 		$filters[$key] = internalToFilesystem($file);
 	}
@@ -459,12 +465,14 @@ function getdownloadList($dir8, $filters8, $excludesuffixes, $sort) {
 		natsort($dirs);
 	}
 	foreach ($dirs as $file) {
-		if (is_dir(internalToFilesystem($dir) . '/' . $file)) {
-			$dirN = filesystemToInternal($dir) . "/" . filesystemToInternal($file);
-			$dir_array[$file] = getdownloadList($dirN, $filters8, $excludesuffixes, $sort);
-		} else {
-			if (!in_array(getSuffix($file), $excludesuffixes)) {
-				$dir_array[$file] = $dir . '/' . filesystemToInternal($file);
+		if (@$file{0} != '.') { //	exclude "hidden" files
+			if (is_dir(internalToFilesystem($dir) . '/' . $file)) {
+				$dirN = filesystemToInternal($dir) . "/" . filesystemToInternal($file);
+				$dir_array[$file] = getdownloadList($dirN, $filters8, $excludesuffixes, $sort);
+			} else {
+				if (!in_array(getSuffix($file), $excludesuffixes)) {
+					$dir_array[$file] = $dir . '/' . filesystemToInternal($file);
+				}
 			}
 		}
 	}
@@ -475,11 +483,21 @@ function getdownloadList($dir8, $filters8, $excludesuffixes, $sort) {
  * Gets the download url for a file
  * @param string $file the path to a file to get a download link.
  */
-function getDownloadLink($file) {
+function getDownloadURL($file) {
+	if (substr($file, 0, 1) != '/' && strpos($file, ':') === false) {
+		$file = SERVERPATH . '/' . getOption('downloadList_directory') . '/' . $file;
+	}
+	$request = parse_url(getRequestURI());
+	if (isset($request['query'])) {
+		$query = parse_query($request['query']);
+	} else {
+		$query = array();
+	}
 	DownloadList::addListItem($file); // add item to db if not already exists without updating the counter
 	$link = '';
 	if ($id = DownloadList::getItemID($file)) {
-		$link = DOWNLOADLIST_LINKPATH . $id;
+		$query['download'] = $id;
+		$link = FULLWEBPATH . '/' . preg_replace('~^' . WEBPATH . '/~', '', $request['path']) . '?' . http_build_query($query);
 	}
 	return $link;
 }
@@ -489,14 +507,13 @@ function getDownloadLink($file) {
  * @param string $file the path to a file to print a download link.
  * @param string $linktext Optionally how you wish to call the link. Set/leave  to NULL to use the filename.
  */
-function printDownloadLink($file, $linktext = NULL) {
+function printDownloadURL($file, $linktext = NULL) {
 	if (substr($file, 0, 1) != '/' && strpos($file, ':') === false) {
 		$file = SERVERPATH . '/' . getOption('downloadList_directory') . '/' . $file;
 	}
-
 	$filesize = '';
 	if (getOption('downloadList_showfilesize')) {
-		$filesize = filesize(internalToFilesystem($file));
+		$filesize = @filesize(internalToFilesystem($file));
 		$filesize = ' (' . byteConvert($filesize) . ')';
 	}
 	if (getOption('downloadList_showdownloadcounter')) {
@@ -513,7 +530,7 @@ function printDownloadLink($file, $linktext = NULL) {
 	} else {
 		$filename = $linktext;
 	}
-	echo '<a href="' . html_encode(getDownloadLink($file)) . '" rel="nofollow">' . html_encode($filename) . '</a><small>' . $filesize . '</small>';
+	echo '<a href="' . html_encode(getDownloadURL($file)) . '" rel="nofollow">' . html_encode($filename) . '</a><small>' . $filesize . '</small>';
 }
 
 /**
@@ -525,8 +542,14 @@ function printDownloadLink($file, $linktext = NULL) {
  * @param object $albumobj
  * @param bool $fromcache if true get the images from the cache
  */
-function printDownloadLinkAlbumZip($linktext = NULL, $albumobj = NULL, $fromcache = NULL) {
+function printDownloadAlbumZipURL($linktext = NULL, $albumobj = NULL, $fromcache = NULL) {
 	global $_zp_current_album;
+	$request = parse_url(getRequestURI());
+	if (isset($request['query'])) {
+		$query = parse_query($request['query']);
+	} else {
+		$query = array();
+	}
 	if (is_null($albumobj)) {
 		$albumobj = $_zp_current_album;
 	}
@@ -547,10 +570,12 @@ function printDownloadLinkAlbumZip($linktext = NULL, $albumobj = NULL, $fromcach
 		if (!empty($linktext)) {
 			$file = $linktext;
 		}
-		$link = DOWNLOADLIST_LINKPATH . pathurlencode($albumobj->name) . '&albumzip';
+		$query['download'] = pathurlencode($albumobj->name);
+		$query['albumzip'] = 'true';
 		if ($fromcache) {
-			$link .= '&fromcache';
+			$query['fromcache'] = 'true';
 		}
+		$link = FULLWEBPATH . '/' . preg_replace('~^' . WEBPATH . '/~', '', $request['path']) . '?' . http_build_query($query);
 		echo '<a href="' . html_encode($link) . '" rel="nofollow">' . html_encode($file) . '</a>' . $filesize;
 	}
 }
@@ -561,11 +586,17 @@ function printDownloadLinkAlbumZip($linktext = NULL, $albumobj = NULL, $fromcach
 if (isset($_GET['download'])) {
 	$item = sanitize($_GET['download']);
 	if (empty($item) || !extensionEnabled('downloadList')) {
-		zp_error(gettext('Forbidden'));
+		if (TEST_RELEASE) {
+			zp_error(gettext('Forbidden'));
+		} else {
+			header("HTTP/1.0 403 " . gettext("Forbidden"));
+			header("Status: 403 " . gettext("Forbidden"));
+			exitZP(); //	terminate the script with no output
+		}
 	}
 	$hash = getOption('downloadList_password');
 	if (GALLERY_SECURITY != 'public' || $hash) {
-		//	credentials required to download
+//	credentials required to download
 		if (!zp_loggedin((getOption('downloadList_rights')) ? FILES_RIGHTS : ALL_RIGHTS)) {
 			$user = getOption('downloadList_user');
 			zp_handle_password('download_auth', $hash, $user);
@@ -589,25 +620,26 @@ if (isset($_GET['download'])) {
 		exitZP();
 	} else {
 		require_once(SERVERPATH . '/' . ZENFOLDER . '/lib-MimeTypes.php');
-		$cd = getcwd();
-		$item = sanitize_numeric($item);
+		$item = (int) $item;
 		$path = query_single_row("SELECT `aux` FROM " . prefix('plugin_storage') . " WHERE id=" . $item);
-		$file = internalToFilesystem($path['aux']);
-		if (file_exists($file)) {
-			DownloadList::updateListItemCount($file);
-			$ext = getSuffix($file);
+		$_downloadFile = internalToFilesystem($path['aux']);
+		if (file_exists($_downloadFile)) {
+			DownloadList::updateListItemCount($_downloadFile);
+			$ext = getSuffix($_downloadFile);
 			$mimetype = getMimeString($ext);
 			header('Content-Description: File Transfer');
 			header('Content-Type: ' . $mimetype);
-			header('Content-Disposition: attachment; filename=' . basename(urldecode($file)));
+			header('Content-Disposition: attachment; filename=' . basename(urldecode($_downloadFile)));
 			header('Content-Transfer-Encoding: binary');
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 			header('Pragma: public');
-			header('Content-Length: ' . filesize($file));
+			header('Content-Length: ' . filesize($_downloadFile));
 			flush();
-			readfile($file);
+			readfile($_downloadFile);
 			exitZP();
+		} else {
+			zp_register_filter('theme_body_open', 'DownloadList::noFile');
 		}
 	}
 }

@@ -38,14 +38,14 @@ if (isset($_GET['prune'])) {
 	$title = gettext('Refresh Database');
 	$finished = gettext('Finished refreshing the database');
 	$incomplete = gettext('Database refresh is incomplete');
-	$allset = gettext("We're all set to refresh the database");
+	$allset = gettext("We are all set to refresh the database");
 	$continue = gettext('Continue refreshing the database.');
 } else {
 	$type = '';
 	$title = gettext('Refresh Metadata');
 	$finished = gettext('Finished refreshing the metadata');
 	$incomplete = gettext('Metadata refresh is incomplete');
-	$allset = gettext("We're all set to refresh the metadata");
+	$allset = gettext("We are all set to refresh the metadata");
 	$continue = gettext('Continue refreshing the metadata.');
 }
 
@@ -55,6 +55,8 @@ if (isset($_REQUEST['album'])) {
 	$tab = 'overview';
 }
 $albumparm = $folder = $albumwhere = $imagewhere = $id = $r = '';
+$ret = '';
+$backurl = 'admin.php';
 if (isset($_REQUEST['return'])) {
 	$return = $_REQUEST['return'];
 	if ($return == '*') {
@@ -69,9 +71,6 @@ if (isset($_REQUEST['return'])) {
 		}
 		$backurl = 'admin-edit.php' . $r . '&amp;return=' . $star . html_encode(pathurlencode($ret));
 	}
-} else {
-	$ret = '';
-	$backurl = 'admin.php';
 }
 
 if (isset($_REQUEST['album'])) {
@@ -95,8 +94,9 @@ if (isset($_GET['refresh'])) {
 	if (empty($imageid)) {
 		$metaURL = $backurl;
 	} else {
-		if (!empty($ret))
+		if (!empty($ret)) {
 			$ret = '&amp;return=' . $ret;
+		}
 		$metaURL = $redirecturl = '?' . $type . 'refresh=continue&amp;id=' . $imageid . $albumparm . $ret . '&XSRFToken=' . getXSRFToken('refresh');
 	}
 } else {
@@ -179,7 +179,7 @@ printTabs();
 				if (empty($r)) {
 					echo "<p>" . $allset . "</p>";
 				} else {
-					echo "<p>" . sprintf(gettext("We're all set to refresh the metadata for <em>%s</em>"), $r) . "</p>";
+					echo "<p>" . sprintf(gettext("We are all set to refresh the metadata for <em>%s</em>"), $r) . "</p>";
 				}
 				echo '<p>' . gettext('This process should start automatically. If not press: ') . '</p>';
 				?>

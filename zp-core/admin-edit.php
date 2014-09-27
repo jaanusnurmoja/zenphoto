@@ -9,6 +9,7 @@
 define('OFFSET_PATH', 1);
 
 require_once(dirname(__FILE__) . '/admin-globals.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/tag_suggest.php');
 
 admin_securityChecks(ALBUM_RIGHTS, $return = currentRelativeURL());
 
@@ -25,19 +26,23 @@ $imagesTab_imageCount = 10;
 processEditSelection($subtab);
 
 //check for security incursions
+$album = NULL;
+$allow = true;
 if (isset($_GET['album'])) {
 	$folder = sanitize_path($_GET['album']);
-	$album = newAlbum($folder);
-	$allow = $album->isMyItem(ALBUM_RIGHTS);
-	if (!$allow) {
-		if (isset($_GET['uploaded'])) { // it was an upload to an album which we cannot edit->return to sender
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?uploaded=1');
-			exitZP();
+	$album = newAlbum($folder, false, true);
+	if ($album->exists) {
+		$allow = $album->isMyItem(ALBUM_RIGHTS);
+		if (!$allow) {
+			if (isset($_GET['uploaded'])) { // it was an upload to an album which we cannot edit->return to sender
+				header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?uploaded=1');
+				exitZP();
+			}
 		}
+	} else {
+		$album = NULL;
+		unset($_GET['album']);
 	}
-} else {
-	$album = NULL;
-	$allow = true;
 }
 if (!zp_apply_filter('admin_managed_albums_access', $allow, $return)) {
 	header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?from=' . $return);
@@ -95,8 +100,8 @@ if (isset($_GET['action'])) {
 						$notify = '&saved' . $notify;
 					}
 					$album = newAlbum($folder);
-					$album->setSubalbumSortType('manual');
-					$album->setSortDirection('album', 0);
+					$album->setSortType('manual', 'album');
+					$album->setSortDirection(false, 'album');
 					$album->save();
 				} else {
 					$notify = '&noaction';
@@ -155,293 +160,194 @@ if (isset($_GET['action'])) {
 
 		/** Publish album  *********************************************************** */
 		/*		 * *************************************************************************** */
-		case "publish":
-			XSRFdefender('albumedit');
-			$album = newAlbum($folder);
-			$album->setShow($_GET['value']);
-			$album->save();
-			$return = sanitize_path($r = $_GET['return']);
-			if (!empty($return)) {
-				$return = '&album=' . $return;
-				if (strpos($r, '*') === 0) {
-					$return .= '&tab=subalbuminfo';
-				}
-			}
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return);
-			exitZP();
-			break;
+    case "publish":
+      XSRFdefender('albumedit');
+      $album = newAlbum($folder);
+      $album->setShow($_GET['value']);
+      $album->save();
+      $return = sanitize_path($r = $_GET['return']);
+      if (!empty($return)) {
+        $return = '&album=' . $return;
+        if (strpos($r, '*') === 0) {
+          $return .= '&tab=subalbuminfo';
+        }
+      }
+      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return);
+      exitZP();
+      break;
 
-		/** Reset hitcounters ********************************************************** */
+    /** Reset hitcounters ********************************************************** */
 		/*		 * ***************************************************************************** */
-		case "reset_hitcounters":
-			XSRFdefender('hitcounter');
-			$id = sanitize_numeric($_REQUEST['albumid']);
-			$where = ' WHERE `id`=' . $id;
-			$imgwhere = ' WHERE `albumid`=' . $id;
-			$return = sanitize_path($r = $_GET['return']);
-			if (!empty($return)) {
-				$return = '&album=' . $return;
-				if (strpos($r, '*') === 0) {
-					$return .= '&tab=subalbuminfo';
-				}
-			}
-			query("UPDATE " . prefix('albums') . " SET `hitcounter`= 0" . $where);
-			query("UPDATE " . prefix('images') . " SET `hitcounter`= 0" . $imgwhere);
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return . '&counters_reset');
-			exitZP();
-			break;
+    case "reset_hitcounters":
+      XSRFdefender('hitcounter');
+      $id = sanitize_numeric($_REQUEST['albumid']);
+      $where = ' WHERE `id`=' . $id;
+      $imgwhere = ' WHERE `albumid`=' . $id;
+      $return = sanitize_path($r = $_GET['return']);
+      if (!empty($return)) {
+        $return = '&album=' . $return;
+        if (strpos($r, '*') === 0) {
+          $return .= '&tab=subalbuminfo';
+        }
+      }
+      query("UPDATE " . prefix('albums') . " SET `hitcounter`= 0" . $where);
+      query("UPDATE " . prefix('images') . " SET `hitcounter`= 0" . $imgwhere);
+      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return . '&counters_reset');
+      exitZP();
+      break;
 
-		//** DELETEIMAGE **************************************************************/
-		/*		 * *************************************************************************** */
-		case 'deleteimage':
-			XSRFdefender('delete');
-			$albumname = sanitize_path($_REQUEST['album']);
-			$imagename = sanitize_path($_REQUEST['image']);
-			$album = newAlbum($albumname);
-			$image = newImage($album, $imagename);
-			if ($image->remove()) {
-				$nd = 1;
-			} else {
-				$nd = 2;
-			}
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . pathurlencode($albumname) . '&ndeleted=' . $nd);
-			exitZP();
-			break;
+//** DELETEIMAGE **************************************************************/
+    /*     * *************************************************************************** */
+    case 'deleteimage':
+      XSRFdefender('delete');
+      $albumname = sanitize_path($_REQUEST['album']);
+      $imagename = sanitize_path($_REQUEST['image']);
+      $album = newAlbum($albumname);
+      $image = newImage($album, $imagename);
+      if ($image->remove()) {
+        $nd = 1;
+      } else {
+        $nd = 2;
+      }
+      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . pathurlencode($albumname) . '&ndeleted=' . $nd);
+      exitZP();
+      break;
 
-		/** REFRESH IMAGE METADATA */
-		case 'refresh':
-			XSRFdefender('imagemetadata');
-			$albumname = sanitize_path($_REQUEST['album']);
-			$imagename = sanitize_path($_REQUEST['image']);
-			$image = newImage(NULL, array('folder' => $albumname, 'filename' => $imagename));
-			$image->updateMetaData();
-			$image->save();
-			if (isset($_GET['album'])) {
-				$return = pathurlencode(sanitize_path($_GET['album']));
-			} else {
-				$return = pathurlencode(sanitize_path(urldecode($_POST['album'])));
-			}
+    /** REFRESH IMAGE METADATA */
+    case 'refresh':
+      XSRFdefender('imagemetadata');
+      $albumname = sanitize_path($_REQUEST['album']);
+      $imagename = sanitize_path($_REQUEST['image']);
+      $image = newImage(NULL, array('folder' => $albumname, 'filename' => $imagename));
+      $image->updateMetaData();
+      $image->save();
+      if (isset($_GET['album'])) {
+        $return = pathurlencode(sanitize_path($_GET['album']));
+      } else {
+        $return = pathurlencode(sanitize_path(urldecode($_POST['album'])));
+      }
 
-			$return = '?page=edit&tab=imageinfo&album=' . $return . '&metadata_refresh';
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php' . $return);
-			exitZP();
-			break;
+      $return = '?page=edit&tab=imageinfo&album=' . $return . '&metadata_refresh';
+      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php' . $return);
+      exitZP();
+      break;
 
-		/** SAVE ********************************************************************* */
-		/*		 * *************************************************************************** */
-		case "save":
-			unset($folder);
-			$returntab = '';
-			XSRFdefender('albumedit');
+    /** SAVE ********************************************************************* */
+    /*     * *************************************************************************** */
+    case "save":
+      unset($folder);
+      $returntab = '';
+      XSRFdefender('albumedit');
 
-			/** SAVE A SINGLE ALBUM ****************************************************** */
-			if (isset($_POST['album'])) {
-				$folder = sanitize_path($_POST['album']);
-				$album = newAlbum($folder);
-				$notify = '';
-				$returnalbum = NULL;
-				if (isset($_POST['savealbuminfo'])) {
-					$notify = processAlbumEdit(0, $album, $returnalbum);
-					$returntab = '&tagsort=' . $tagsort . '&tab=albuminfo';
-				}
+      /** SAVE A SINGLE ALBUM OR IMAGE ****************************************************** */
+      if (isset($_POST['album'])) {
+        $folder = sanitize_path($_POST['album']);
+        $album = newAlbum($folder);
+        $notify = '';
+        $returnalbum = NULL;
 
-				if (isset($_POST['totalimages'])) {
-					if (isset($_POST['checkForPostTruncation'])) {
-						$returntab = '&tagsort=' . $tagsort . '&tab=imageinfo';
-						if (isset($_POST['ids'])) { //	process bulk actions, not individual image actions.
-							$action = processImageBulkActions($album);
-							if (!empty($action))
-								$notify = '&bulkmessage=' . $action;
-						} else {
-							$oldsort = sanitize($_POST['oldalbumimagesort'], 3);
-							if (getOption('albumimagedirection'))
-								$oldsort = $oldsort . '_desc';
-							$newsort = sanitize($_POST['albumimagesort'], 3);
-							if ($oldsort == $newsort) {
-								for ($i = 0; $i < $_POST['totalimages']; $i++) {
-									$filename = sanitize($_POST["$i-filename"]);
-									// The file might no longer exist
-									$image = newImage($album, $filename);
-									if ($image->exists) {
-										if (isset($_POST[$i . '-MoveCopyRename'])) {
-											$movecopyrename_action = sanitize($_POST[$i . '-MoveCopyRename'], 3);
-										} else {
-											$movecopyrename_action = '';
-										}
-										if ($movecopyrename_action == 'delete') {
-											$image->remove();
-										} else {
-											if ($thumbnail = sanitize($_POST['album_thumb-' . $i])) { //selected as an album thumb
-												$talbum = newAlbum($thumbnail);
-												if ($image->imagefolder == $thumbnail) {
-													$talbum->setAlbumThumb($image->filename);
-												} else {
-													$talbum->setAlbumThumb('/' . $image->imagefolder . '/' . $image->filename);
-												}
-												$talbum->save();
-											}
-											if (isset($_POST[$i . '-reset_rating'])) {
-												$image->set('total_value', 0);
-												$image->set('total_votes', 0);
-												$image->set('used_ips', 0);
-											}
-											$image->setPublishDate(sanitize($_POST['publishdate-' . $i]));
-											$image->setExpireDate(sanitize($_POST['expirationdate-' . $i]));
-											$image->setTitle(process_language_string_save("$i-title", 2));
-											$image->setDesc(process_language_string_save("$i-desc", 0));
-											$image->setLocation(process_language_string_save("$i-location", 3));
-											$image->setCity(process_language_string_save("$i-city", 3));
-											$image->setState(process_language_string_save("$i-state", 3));
-											$image->setCountry(process_language_string_save("$i-country", 3));
-											$image->setCredit(process_language_string_save("$i-credit", 1));
-											$image->setCopyright(process_language_string_save("$i-copyright", 1));
-											if (isset($_POST[$i . '-oldrotation']) && isset($_POST[$i . '-rotation'])) {
-												$oldrotation = (int) $_POST[$i . '-oldrotation'];
-												$rotation = (int) $_POST[$i . '-rotation'];
-												if ($rotation != $oldrotation) {
-													$image->set('EXIFOrientation', $rotation);
-													$image->updateDimensions();
-													$album = $image->getAlbum();
-													Gallery::clearCache(SERVERCACHE . '/' . $album->name);
-												}
-											}
-											$tagsprefix = 'tags_' . $i . '-';
-											$tags = array();
-											$l = strlen($tagsprefix);
-											foreach ($_POST as $key => $value) {
-												$key = postIndexDecode($key);
-												if (substr($key, 0, $l) == $tagsprefix) {
-													if ($value) {
-														$tags[] = sanitize(substr($key, $l));
-													}
-												}
-											}
-											$tags = array_unique($tags);
-											$image->setTags($tags);
+        if (isset($_GET['singleimage'])) {
+          $filename = sanitize($_POST["0-filename"]);
+          // The file might no longer exist
+          $image = newImage($album, $filename);
+          if ($image->exists) {
+            $notify = processImageEdit($image, 0);
+            $qs_albumsuffix = '';
+            $returnalbum = html_encode(pathurlencode($album->name));
+            $returntab = '&tab=imageinfo&singleimage='.html_encode($image->filename);
+          } // if image exists
+        } else {
+          if (isset($_POST['savealbuminfo'])) {
+            $notify = processAlbumEdit(0, $album, $returnalbum);
+            $returntab = '&tagsort=' . $tagsort . '&tab=albuminfo';
+          }
+          if (isset($_POST['totalimages'])) {
+            if (isset($_POST['checkForPostTruncation'])) {
+              $returntab = '&tagsort=' . $tagsort . '&tab=imageinfo';
+              if (isset($_POST['ids'])) { //	process bulk actions, not individual image actions.
+                $action = processImageBulkActions($album);
+                if (!empty($action))
+                  $notify = '&bulkmessage=' . $action;
+              } else {
+                $oldsort = sanitize($_POST['oldalbumimagesort'], 3);
+                if (getOption('albumimagedirection'))
+                  $oldsort = $oldsort . '_desc';
+                $newsort = sanitize($_POST['albumimagesort'], 3);
+                if ($oldsort == $newsort) {
+                  for ($i = 0; $i < $_POST['totalimages']; $i++) {
+                    $filename = sanitize($_POST["$i-filename"]);
+                   // The file might no longer exist
+                    $image = newImage($album, $filename);
+                    if ($image->exists) {
+                      processImageEdit($image, $i);
+                    } // if image exists
+                  }
+                } else {
+                  if (strpos($newsort, '_desc')) {
+                    setOption('albumimagesort', substr($newsort, 0, -5));
+                    setOption('albumimagedirection', 'DESC');
+                  } else {
+                    setOption('albumimagesort', $newsort);
+                    setOption('albumimagedirection', '');
+                  }
+                  $notify = '&';
+                }
+              }
+            } else {
+              $notify = '&post_error';
+            }
+          }
+          if (!is_null($returnalbum)) {
+            $folder = $returnalbum;
+          }
+          $qs_albumsuffix = '';
+        }
+        /** SAVE MULTIPLE ALBUMS ***************************************************** */
+      } else if ($_POST['totalalbums']) {
+        $notify = '';
+        for ($i = 1; $i <= sanitize_numeric($_POST['totalalbums']); $i++) {
+          if ($i > 0) {
+            $prefix = $i . "-";
+          } else {
+            $prefix = '';
+          }
+          $f = sanitize_path(trim(sanitize($_POST[$prefix . 'folder'])));
+          $album = newAlbum($f);
+          $returnalbum = '';
+          $rslt = processAlbumEdit($i, $album, $returnalbum);
+          if (!empty($rslt)) {
+            $notify = $rslt;
+          }
+        }
+        $qs_albumsuffix = '&massedit';
+        if (isset($_GET['album'])) {
+          $qs_albumsuffix = '&album=' . sanitize($_GET['album']) . $qs_albumsuffix;
+        }
+      }
+      // Redirect to the same album we saved.
+      if (isset($folder) && !empty($folder)) {
+        $qs_albumsuffix .= '&album=' . pathurlencode($folder);
+      }
+      if (isset($_POST['subpage'])) {
+        $pg = '&subpage=' . sanitize($_POST['subpage']);
+      } else {
+        $pg = '';
+      }
+      $msg = zp_apply_filter('edit_error', '');
+      if ($msg) {
+        $notify .= '&edit_error=' . $msg;
+      }
+      if ($notify == '&') {
+        $notify = '';
+      } else {
+        if (empty($notify))
+          $notify = '&saved';
+      }
+      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $qs_albumsuffix . $notify . $pg . $returntab);
+      exitZP();
+      break;
 
-											$image->setDateTime(sanitize($_POST["$i-date"]));
-											$image->setShow(isset($_POST["$i-Visible"]));
-											$image->setCommentsAllowed(isset($_POST["$i-allowcomments"]));
-											if (isset($_POST["reset_hitcounter$i"])) {
-												$image->set('hitcounter', 0);
-											}
-											$wmt = sanitize($_POST["$i-image_watermark"], 3);
-											$image->setWatermark($wmt);
-											$wmuse = 0;
-											if (isset($_POST['wm_image-' . $i]))
-												$wmuse = $wmuse | WATERMARK_IMAGE;
-											if (isset($_POST['wm_thumb-' . $i]))
-												$wmuse = $wmuse | WATERMARK_THUMB;
-											if (isset($_POST['wm_full-' . $i]))
-												$wmuse = $wmuse | WATERMARK_FULL;
-											$image->setWMUse($wmuse);
-											$image->setCodeblock(processCodeblockSave($i));
-											if (isset($_POST[$i . '-owner']))
-												$image->setOwner(sanitize($_POST[$i . '-owner']));
-											$image->set('filesize', filesize($image->localpath));
-
-											$custom = process_language_string_save("$i-custom_data", 1);
-											$image->setCustomData(zp_apply_filter('save_image_custom_data', $custom, $i));
-											zp_apply_filter('save_image_utilities_data', $image, $i);
-											$image->save();
-
-											// Process move/copy/rename
-											if ($movecopyrename_action == 'move') {
-												$dest = sanitize_path($_POST[$i . '-albumselect']);
-												if ($dest && $dest != $folder) {
-													if ($e = $image->move($dest)) {
-														$notify = "&mcrerr=" . $e;
-													}
-												} else {
-													// Cannot move image to same album.
-													$notify = "&mcrerr=2";
-												}
-											} else if ($movecopyrename_action == 'copy') {
-												$dest = sanitize_path($_POST[$i . '-albumselect']);
-												if ($dest && $dest != $folder) {
-													if ($e = $image->copy($dest)) {
-														$notify = "&mcrerr=" . $e;
-													}
-												} else {
-													// Cannot copy image to existing album.
-													// Or, copy with rename?
-													$notify = "&mcrerr=2";
-												}
-											} else if ($movecopyrename_action == 'rename') {
-												$renameto = sanitize_path($_POST[$i . '-renameto']);
-												if ($e = $image->rename($renameto)) {
-													$notify = "&mcrerr=" . $e;
-												}
-											}
-										}
-									}
-								}
-							} else {
-								if (strpos($newsort, '_desc')) {
-									setOption('albumimagesort', substr($newsort, 0, -5));
-									setOption('albumimagedirection', 'DESC');
-								} else {
-									setOption('albumimagesort', $newsort);
-									setOption('albumimagedirection', '');
-								}
-								$notify = '&';
-							}
-						}
-					} else {
-						$notify = '&post_error';
-					}
-				}
-				if (!is_null($returnalbum)) {
-					$folder = $returnalbum;
-				}
-				$qs_albumsuffix = '';
-
-				/** SAVE MULTIPLE ALBUMS ***************************************************** */
-			} else if ($_POST['totalalbums']) {
-				$notify = '';
-				for ($i = 1; $i <= sanitize_numeric($_POST['totalalbums']); $i++) {
-					if ($i > 0) {
-						$prefix = $i . "-";
-					} else {
-						$prefix = '';
-					}
-					$f = sanitize_path(trim(sanitize($_POST[$prefix . 'folder'])));
-					$album = newAlbum($f);
-					$returnalbum = '';
-					$rslt = processAlbumEdit($i, $album, $returnalbum);
-					if (!empty($rslt)) {
-						$notify = $rslt;
-					}
-				}
-				$qs_albumsuffix = '&massedit';
-				if (isset($_GET['album'])) {
-					$qs_albumsuffix = '&album=' . sanitize($_GET['album']) . $qs_albumsuffix;
-				}
-			}
-			// Redirect to the same album we saved.
-			if (isset($folder) && !empty($folder)) {
-				$qs_albumsuffix .= '&album=' . pathurlencode($folder);
-			}
-			if (isset($_POST['subpage'])) {
-				$pg = '&subpage=' . sanitize($_POST['subpage']);
-			} else {
-				$pg = '';
-			}
-			$msg = zp_apply_filter('edit_error', '');
-			if ($msg) {
-				$notify .= '&edit_error=' . $msg;
-			}
-			if ($notify == '&') {
-				$notify = '';
-			} else {
-				if (empty($notify))
-					$notify = '&saved';
-			}
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $qs_albumsuffix . $notify . $pg . $returntab);
-			exitZP();
-			break;
-
-		/** DELETION ***************************************************************** */
+    /** DELETION ***************************************************************** */
 		/*		 * ************************************************************************** */
 		case "deletealbum":
 			XSRFdefender('delete');
@@ -453,17 +359,19 @@ if (isset($_GET['action'])) {
 					$nd = 4;
 				}
 				if (isset($_GET['return'])) {
-					$albumdir = pathurlencode(sanitize($_GET['return'], 3));
+					$albumdir = sanitize($_GET['return'], 3);
 				} else {
 					$albumdir = dirname($folder);
-
-					if ($albumdir != '/' && $albumdir != '.') {
-						$albumdir = "&album=" . pathurlencode($albumdir);
-					} else {
-						$albumdir = '';
-					}
 				}
+				if ($albumdir != '/' && $albumdir != '.') {
+					$albumdir = "&album=" . pathurlencode($albumdir);
+				} else {
+					$albumdir = '';
+				}
+			} else {
+				$albumdir = '';
 			}
+
 			header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-edit.php?page=edit" . $albumdir . "&ndeleted=" . $nd);
 			exitZP();
 			break;
@@ -507,7 +415,7 @@ if (isset($_GET['action'])) {
 				exitZP();
 			} else {
 				$AlbumDirName = str_replace(SERVERPATH, '', $_zp_gallery->albumdir);
-				zp_error(gettext("The album couldn't be created in the 'albums' folder. This is usually a permissions problem. Try setting the permissions on the albums and cache folders to be world-writable using a shell:") . " <code>chmod 777 " . $AlbumDirName . '/' . CACHEFOLDER . '/' . "</code>, "
+				zp_error(gettext("The album couldn’t be created in the “albums” folder. This is usually a permissions problem. Try setting the permissions on the albums and cache folders to be world-writable using a shell:") . " <code>chmod 777 " . $AlbumDirName . '/' . CACHEFOLDER . '/' . "</code>, "
 								. gettext("or use your FTP program to give everyone write permissions to those folders."));
 			}
 			break;
@@ -580,46 +488,52 @@ if (isset($_GET['album']) && (empty($subtab) || $subtab == 'albuminfo') || isset
 	<script type="text/javascript" src="js/encoder.js"></script>
 	<script type="text/javascript" src="js/tag.js"></script>
 	<script type="text/javascript">
-		//<!-- <![CDATA[
-		var albumdbfields = [<?php echo $albumdbfields; ?>];
-		$(function() {
-			$('.customalbumsort').tagSuggest({
-				tags: albumdbfields
-			});
-		});
-		var imagedbfields = [<?php echo $imagedbfields; ?>];
-		$(function() {
-			$('.customimagesort').tagSuggest({
-				tags: imagedbfields
-			});
-		});
-		// ]]> -->
+						//<!-- <![CDATA[
+						var albumdbfields = [<?php echo $albumdbfields; ?>];
+						$(function() {
+						$('.customalbumsort').tagSuggest({
+						tags: albumdbfields
+						});
+						});
+						var imagedbfields = [<?php echo $imagedbfields; ?>];
+						$(function() {
+						$('.customimagesort').tagSuggest({
+						tags: imagedbfields
+						});
+						});
+						// ]]> -->
 	</script>
 	<?php
 }
 ?>
 <script type="text/javascript">
-	//<!-- <![CDATA[
-	var deleteAlbum1 = "<?php echo gettext("Are you sure you want to delete this entire album?"); ?>";
-	var deleteAlbum2 = "<?php echo gettext("Are you Absolutely Positively sure you want to delete the album? THIS CANNOT BE UNDONE!"); ?>";
-	function newAlbum(folder, albumtab) {
-		var album = prompt('<?php echo gettext('New album name?'); ?>', '<?php echo gettext('new album'); ?>');
-		if (album) {
-			launchScript('', ['action=newalbum', 'folder=' + folder, 'name=' + encodeURIComponent(album), 'albumtab=' + albumtab, 'XSRFToken=<?php echo getXSRFToken('newalbum'); ?>']);
-		}
-	}
+					//<!-- <![CDATA[
+					var deleteAlbum1 = "<?php echo gettext("Are you sure you want to delete this entire album?"); ?>";
+					var deleteAlbum2 = "<?php echo gettext("Are you Absolutely Positively sure you want to delete the album? THIS CANNOT BE UNDONE!"); ?>";
+					function newAlbum(folder, albumtab) {
+					var album = prompt('<?php echo addslashes(gettext('New album name?')); ?>', '<?php echo addslashes(gettext('new album')); ?>');
+									if (album) {
+					launchScript('', ['action=newalbum', 'folder=' + folder, 'name=' + encodeURIComponent(album), 'albumtab=' + albumtab, 'XSRFToken=<?php echo getXSRFToken('newalbum'); ?>']);
+					}
+					}
 	function confirmAction() {
-		if ($('#checkallaction').val() == 'deleteall') {
-			return confirm('<?php echo js_encode(gettext("Are you sure you want to delete the checked items?")); ?>');
-		} else {
-			return true;
-		}
+	if ($('#checkallaction').val() == 'deleteall') {
+	return confirm('<?php echo js_encode(gettext("Are you sure you want to delete the checked items?")); ?>');
+	} else if ($('#checkallaction').val() == 'deleteallalbum') {
+	if (confirm(deleteAlbum1)) {
+	return confirm(deleteAlbum2);
+	} else {
+	return false;
+	}
+	} else {
+	return true;
+	}
 	}
 	// ]]> -->
 </script>
 
 <?php
-zp_apply_filter('texteditor_config', '', 'zenphoto');
+zp_apply_filter('texteditor_config', 'zenphoto');
 Zenphoto_Authority::printPasswordFormJS();
 
 echo "\n</head>";
@@ -654,18 +568,22 @@ echo "\n</head>";
 			if (extensionEnabled('hitcounter')) {
 				$checkarray['Reset hitcounter'] = 'resethitcounter';
 			}
-			$checkarray_albums = array_merge($checkarray_images, array(gettext('Add tags to images')		 => 'alltags',
-							gettext('Clear tags of images')	 => 'clearalltags')
-			);
-			$checkarray_images = array_merge($checkarray_images, array(gettext('Move')	 => 'moveimages',
-							gettext('Copy')	 => 'copyimages')
+			$checkarray_albums = array_merge($checkarray_images, array(
+							gettext('Delete')								 => 'deleteallalbum',
+							gettext('Add tags to images')		 => 'alltags',
+							gettext('Clear tags of images')	 => 'clearalltags'));
+			$checkarray_images = array_merge($checkarray_images, array(
+							gettext('Delete')	 => 'deleteall',
+							gettext('Move')		 => 'moveimages',
+							gettext('Copy')		 => 'copyimages')
 			);
 			$checkarray_images = zp_apply_filter('bulk_image_actions', $checkarray_images);
 			$checkarray_albums = zp_apply_filter('bulk_album_actions', $checkarray_albums);
 
-			/** EDIT *************************************************************************** */
-			/*			 * ********************************************************************************* */
-
+			/** EDIT ***************************************************************************
+			 *
+			 *  ********************************************************************************
+			 */
 			if (isset($_GET['album']) && !isset($_GET['massedit'])) {
 				/** SINGLE ALBUM ******************************************************************* */
 				// one time generation of this list.
@@ -718,8 +636,7 @@ echo "\n</head>";
 						$pagenum = 1;
 					}
 				}
-				$images = array_slice($allimages, ($pagenum - 1) * $imagesTab_imageCount, $imagesTab_imageCount);
-
+    $images = array_slice($allimages, ($pagenum - 1) * $imagesTab_imageCount, $imagesTab_imageCount);
 				$totalimages = count($images);
 
 				$parent = dirname($album->name);
@@ -749,7 +666,7 @@ echo "\n</head>";
 					<!-- Album info box -->
 					<div id="tab_albuminfo" class="tabbox">
 						<?php consolidatedEditMessages('albuminfo'); ?>
-						<form name="albumedit1" id="form_albumedit" autocomplete="off" action="?page=edit&amp;action=save<?php echo "&amp;album=" . pathurlencode($album->name); ?>"	method="post">
+						<form class="dirty-check" name="albumedit1" id="form_albumedit" autocomplete="off" action="?page=edit&amp;action=save<?php echo "&amp;album=" . pathurlencode($album->name); ?>"	method="post">
 							<?php XSRFToken('albumedit'); ?>
 							<input type="hidden" name="album"	value="<?php echo $album->name; ?>" />
 							<input type="hidden"	name="savealbuminfo" value="1" />
@@ -770,7 +687,7 @@ echo "\n</head>";
 							<?php
 							printEditDropdown('subalbuminfo', array('1', '2', '3', '4', '5'), $subalbum_nesting);
 							?>
-							<form action="?page=edit&amp;album=<?php echo pathurlencode($album->name); ?>&amp;action=savesubalbumorder&amp;tab=subalbuminfo" method="post" name="sortableListForm" id="sortableListForm" onsubmit="return confirmAction();">
+							<form class="dirty-check" action="?page=edit&amp;album=<?php echo pathurlencode($album->name); ?>&amp;action=savesubalbumorder&amp;tab=subalbuminfo" method="post" name="sortableListForm" id="sortableListForm" onsubmit="return confirmAction();">
 								<?php XSRFToken('savealbumorder'); ?>
 								<p>
 									<?php
@@ -818,7 +735,7 @@ echo "\n</head>";
 											<strong><?php echo gettext("Apply"); ?></strong>
 										</button>
 										<div class="floatright">
-											<button type="button" title="<?php echo gettext('New subalbum'); ?>" onclick="javascript:newAlbum('<?php echo pathurlencode($album->name); ?>', false);">
+											<button type="button" title="<?php echo addslashes(gettext('New subalbum')); ?>" onclick="javascript:newAlbum('<?php echo pathurlencode($album->name); ?>', false);">
 												<img src="images/folder.png" alt="" />
 												<strong><?php echo gettext('New subalbum'); ?></strong>
 											</button>
@@ -838,7 +755,7 @@ echo "\n</head>";
 									</div>
 									<div class="subhead">
 										<label class="buttons" style="float: left">
-											<a href="admin-edit.php?page=edit&amp;album=<?php echo html_encode(pathurlencode($album->name)); ?>&amp;tab=subalbuminfo&amp;showthumbs=<?php echo $thumbshow ?>" title="<?php echo gettext('Thumbnail generation may be time consuming on slow servers on when there are a lot of images.'); ?>">
+											<a href="admin-edit.php?page=edit&amp;album=<?php echo html_encode(pathurlencode($album->name)); ?>&amp;tab=subalbuminfo&amp;showthumbs=<?php echo $thumbshow ?>" title="<?php echo addslashes(gettext('Thumbnail generation may be time consuming on slow servers on when there are a lot of images.')); ?>">
 												<?php echo $thumbmsg; ?>
 											</a>
 										</label>
@@ -874,7 +791,7 @@ echo "\n</head>";
 										<strong><?php echo gettext("Apply"); ?></strong>
 									</button>
 									<div class="floatright">
-										<button type="button" title="<?php echo gettext('New subalbum'); ?>" onclick="javascript:newAlbum('<?php echo pathurlencode($album->name); ?>', false);">
+										<button type="button" title="<?php echo addslashes(gettext('New subalbum')); ?>" onclick="javascript:newAlbum('<?php echo pathurlencode($album->name); ?>', false);">
 											<img src="images/folder.png" alt="" />
 											<strong><?php echo gettext('New subalbum'); ?></strong>
 										</button>
@@ -888,6 +805,16 @@ echo "\n</head>";
 					?>
 					<?php
 				} else if ($subtab == 'imageinfo') {
+					$singleimage = NULL;
+					if (isset($_GET['singleimage'])) {
+
+						$simage = sanitize($_GET['singleimage']);
+						if (array_search($simage, $images) !== false) {
+							$allimagecount = 1;
+							$singleimage = $simage;
+							$images = array($simage);
+						}
+					}
 					?>
 					<!-- Images List -->
 					<div id="tab_imageinfo" class="tabbox">
@@ -900,62 +827,69 @@ echo "\n</head>";
 							$albumHeritage[' ' . str_repeat('» ', count($t)) . basename($name)] = $name;
 						}
 						consolidatedEditMessages('imageinfo');
-						$numsteps = ceil(max($allimagecount, $imagesTab_imageCount) / ADMIN_IMAGES_STEP);
-						if ($numsteps) {
-							$steps = array();
-							for ($i = 1; $i <= $numsteps; $i++) {
-								$steps[] = $i * ADMIN_IMAGES_STEP;
+						if (!$singleimage) {
+							$numsteps = ceil(max($allimagecount, $imagesTab_imageCount) / ADMIN_IMAGES_STEP);
+							if ($numsteps) {
+								$steps = array();
+								for ($i = 1; $i <= $numsteps; $i++) {
+									$steps[] = $i * ADMIN_IMAGES_STEP;
+								}
+								?>
+								<div style="padding-bottom:10px;">
+									<?php printEditDropdown('imageinfo', $steps, $imagesTab_imageCount); ?>
+								</div>
+								<br style='clear:both'/>
+								<?php
 							}
-							?>
-							<div style="padding-bottom:10px;">
-								<?php printEditDropdown('imageinfo', $steps, $imagesTab_imageCount); ?>
-							</div>
-							<br style='clear:both'/>
-							<?php
 						}
 						if ($allimagecount) {
-							?>
-							<form name="albumedit2"	id="form_imageedit" action="?page=edit&amp;action=save<?php echo "&amp;album=" . html_encode(pathurlencode($album->name)); ?>"	method="post" autocomplete="off">
-								<?php XSRFToken('albumedit'); ?>
+        if($singleimage) { ?>
+          <form class="dirty-check" name="albumedit2"	id="form_imageedit" action="?page=edit&amp;action=save<?php echo "&amp;album=" . html_encode(pathurlencode($album->name)); ?>&amp;singleimage=<?php html_encode($singleimage); ?>&amp;subpage=1"	method="post" autocomplete="off">
+        <?php } else {  ?>
+          <form class="dirty-check" name="albumedit2"	id="form_imageedit" action="?page=edit&amp;action=save<?php echo "&amp;album=" . html_encode(pathurlencode($album->name)); ?>"	method="post" autocomplete="off">
+        <?php } ?>
+        <?php XSRFToken('albumedit'); ?>
 								<input type="hidden" name="album"	value="<?php echo $album->name; ?>" />
 								<input type="hidden" name="totalimages" value="<?php echo $totalimages; ?>" />
 								<input type="hidden" name="subpage" value="<?php echo html_encode($pagenum); ?>" />
 								<input type="hidden" name="tagsort" value="<?php echo html_encode($tagsort); ?>" />
 								<input type="hidden" name="oldalbumimagesort" value="<?php echo html_encode($oldalbumimagesort); ?>" />
+        <input type="hidden" name="albumimagesort" value="" />
 
 								<?php $totalpages = ceil(($allimagecount / $imagesTab_imageCount)); ?>
 								<table class="bordered">
-									<tr>
-										<td><?php echo gettext("Click on the image to change the thumbnail cropping."); ?>	</td>
-										<td>
-											<a href="javascript:toggleExtraInfo('','image',true);"><?php echo gettext('expand all fields'); ?></a>
-											| <a href="javascript:toggleExtraInfo('','image',false);"><?php echo gettext('collapse all fields'); ?></a>
-										</td>
-										<td align="right">
-											<?php
-											$sort = $sortby;
-											foreach ($sort as $key => $value) {
-												$sort[sprintf(gettext('%s (descending)'), $key)] = $value . '_desc';
-											}
-											$sort[gettext('Manual')] = 'manual';
-											ksort($sort, SORT_LOCALE_STRING);
-											if ($direction)
-												$oldalbumimagesort = $oldalbumimagesort . '_desc';
-											echo gettext("Display images by:");
-											echo '<select id="albumimagesort" name="albumimagesort" onchange="this.form.submit()">';
-											generateListFromArray(array($oldalbumimagesort), $sort, false, true);
-											echo '</select>';
-											?>
-										</td>
-									</tr>
 									<?php
-									if ($allimagecount != $totalimages) { // need pagination links
+									if (!$singleimage) {
 										?>
 										<tr>
-											<td colspan="4" class="bordered" id="imagenav"><?php adminPageNav($pagenum, $totalpages, 'admin-edit.php', '?page=edit&amp;tagsort=' . html_encode($tagsort) . '&amp;album=' . html_encode(pathurlencode($album->name)), '&amp;tab=imageinfo'); ?>
+											<td><?php echo gettext("Click on the image to change the thumbnail cropping."); ?>	</td>
+
+											<td align="right">
+												<?php
+												$sort = $sortby;
+												foreach ($sort as $key => $value) {
+													$sort[sprintf(gettext('%s (descending)'), $key)] = $value . '_desc';
+												}
+												$sort[gettext('Manual')] = 'manual';
+												ksort($sort, SORT_LOCALE_STRING);
+												if ($direction)
+													$oldalbumimagesort = $oldalbumimagesort . '_desc';
+												echo gettext("Display images by:");
+												echo '<select id="albumimagesort" name="albumimagesort" onchange="this.form.submit()">';
+												generateListFromArray(array($oldalbumimagesort), $sort, false, true);
+												echo '</select>';
+												?>
 											</td>
 										</tr>
 										<?php
+										if ($allimagecount != $totalimages) { // need pagination links
+											?>
+											<tr>
+												<td colspan="4" class="bordered" id="imagenav"><?php adminPageNav($pagenum, $totalpages, 'admin-edit.php', '?page=edit&amp;tagsort=' . html_encode($tagsort) . '&amp;album=' . html_encode(pathurlencode($album->name)), '&amp;tab=imageinfo'); ?>
+												</td>
+											</tr>
+											<?php
+										}
 									}
 									?>
 									<tr>
@@ -975,7 +909,7 @@ echo "\n</head>";
 												</button>
 											</p>
 
-											<?php printBulkActions($checkarray_images, true); ?>
+											<?php if (!$singleimage) printBulkActions($checkarray_images, true); ?>
 
 
 										</td>
@@ -1023,10 +957,16 @@ echo "\n</head>";
 																	<img id="thumb_img-<?php echo $currentimage; ?>" src="<?php echo html_encode(pathurlencode(getAdminThumb($image, 'large'))); ?>" alt="<?php echo html_encode($image->filename); ?>"																	/>
 																</a>
 															</div>
-															<?php if (isImagePhoto($image)) { ?>
+															<?php
+															if (isImagePhoto($image)) {
+																?>
 																<p class="buttons"><a href="<?php echo html_encode(pathurlencode($image->getFullImageURL())); ?>" class="colorbox"><img src="images/magnify.png" alt="" /><strong><?php echo gettext('Zoom'); ?></strong></a></p><br style="clear: both" />
-															<?php } ?>
-															<p class="buttons"><a href="<?php echo $image->getImageLink(); ?>"><img src="images/view.png" alt="" /><strong><?php echo gettext('View'); ?></strong></a></p><br style="clear: both" />
+																<?php
+															}
+															?>
+															<p class="buttons">
+																<a href="<?php echo $image->getLink(); ?>"><img src="images/view.png" alt="" /><strong><?php echo gettext('View'); ?></strong></a>
+															</p><br style="clear: both" />
 															<p>
 																<?php echo gettext('<strong>Filename:</strong>'); ?>
 																<br />
@@ -1105,35 +1045,35 @@ echo "\n</head>";
 																$expirationdate = $image->getExpireDate();
 																?>
 																<script type="text/javascript">
-																	// <!-- <![CDATA[
-																	$(function() {
-																		$("#publishdate-<?php echo $currentimage; ?>,#expirationdate-<?php echo $currentimage; ?>").datepicker({
-																			dateFormat: 'yy-mm-dd',
-																			showOn: 'button',
-																			buttonImage: '../zp-core/images/calendar.png',
-																			buttonText: '<?php echo gettext("calendar"); ?>',
-																			buttonImageOnly: true
-																		});
-																		$('#publishdate-<?php echo $currentimage; ?>').change(function() {
-																			var today = new Date();
-																			var pub = $('#publishdate-<?php echo $currentimage; ?>').datepicker('getDate');
-																			if (pub.getTime() > today.getTime()) {
-																				$(".scheduledpublishing-<?php echo $currentimage; ?>").html('<br /><?php echo addslashes(gettext('Future publishing date.')); ?>');
-																			} else {
-																				$(".scheduledpublishing-<?php echo $currentimage; ?>").html('');
-																			}
-																		});
-																		$('#expirationdate-<?php echo $currentimage; ?>').change(function() {
-																			var today = new Date();
-																			var expiry = $('#expirationdate-<?php echo $currentimage; ?>').datepicker('getDate');
-																			if (expiry.getTime() > today.getTime()) {
-																				$(".expire<-<?php echo $currentimage; ?>").html('');
-																			} else {
-																				$(".expire-<?php echo $currentimage; ?>").html('<br /><?php echo addslashes(gettext('Expired!')); ?>');
-																			}
-																		});
-																	});
-																	// ]]> -->
+																					// <!-- <![CDATA[
+																					$(function() {
+																					$("#publishdate-<?php echo $currentimage; ?>,#expirationdate-<?php echo $currentimage; ?>").datepicker({
+																					dateFormat: 'yy-mm-dd',
+																									showOn: 'button',
+																									buttonImage: '../zp-core/images/calendar.png',
+																									buttonText: '<?php echo gettext("calendar"); ?>',
+																									buttonImageOnly: true
+																					});
+																									$('#publishdate-<?php echo $currentimage; ?>').change(function() {
+																					var today = new Date();
+																									var pub = $('#publishdate-<?php echo $currentimage; ?>').datepicker('getDate');
+																									if (pub.getTime() > today.getTime()) {
+																					$(".scheduledpublishing-<?php echo $currentimage; ?>").html('<br /><?php echo addslashes(gettext('Future publishing date.')); ?>');
+																					} else {
+																					$(".scheduledpublishing-<?php echo $currentimage; ?>").html('');
+																					}
+																					});
+																									$('#expirationdate-<?php echo $currentimage; ?>').change(function() {
+																					var today = new Date();
+																									var expiry = $('#expirationdate-<?php echo $currentimage; ?>').datepicker('getDate');
+																									if (expiry.getTime() > today.getTime()) {
+																					$(".expire<-<?php echo $currentimage; ?>").html('');
+																					} else {
+																					$(".expire-<?php echo $currentimage; ?>").html('<br /><?php echo addslashes(gettext('Expired!')); ?>');
+																					}
+																					});
+																					});
+																					// ]]> -->
 																</script>
 																<br class="clearall" />
 																<hr />
@@ -1165,20 +1105,23 @@ echo "\n</head>";
 																<!-- Move/Copy/Rename this image -->
 																<label class="checkboxlabel">
 																	<input type="radio" id="move-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-MoveCopyRename" value="move"
-																				 onclick="toggleMoveCopyRename('<?php echo $currentimage; ?>', 'move');"  /> <?php echo gettext("Move"); ?>
+																				 onclick="toggleMoveCopyRename('<?php echo $currentimage; ?>'
+																																					 , 'move');"  /> <?php echo gettext("Move"); ?>
 																</label>
 																<label class="checkboxlabel">
 																	<input type="radio" id="copy-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-MoveCopyRename" value="copy"
-																				 onclick="toggleMoveCopyRename('<?php echo $currentimage; ?>', 'copy');"  /> <?php echo gettext("Copy"); ?>
+																				 onclick="toggleMoveCopyRename('<?php echo $currentimage; ?>'
+																																					 , 'copy');"  /> <?php echo gettext("Copy"); ?>
 																</label>
 																<label class="checkboxlabel">
 																	<input type="radio" id="rename-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-MoveCopyRename" value="rename"
-																				 onclick="toggleMoveCopyRename('<?php echo $currentimage; ?>', 'rename');"  /> <?php echo gettext("Rename File"); ?>
+																				 onclick="toggleMoveCopyRename('<?php echo $currentimage; ?>',
+																																					 'rename');"  /> <?php echo gettext("Rename File"); ?>
 																</label>
 																<label class="checkboxlabel">
 																	<input type="radio" id="Delete-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-MoveCopyRename" value="delete"
 																				 onclick="toggleMoveCopyRename('<?php echo $currentimage; ?>', '');
-																						 deleteConfirm('Delete-<?php echo $currentimage; ?>', '<?php echo $currentimage; ?>', '<?php echo gettext("Are you sure you want to select this image for deletion?"); ?>')" /> <?php echo gettext("Delete image") ?>
+																																					 deleteConfirm('Delete-<?php echo $currentimage; ?>', '<?php echo $currentimage; ?>', '<?php echo addslashes(gettext("Are you sure you want to select this image for deletion?")); ?>')" /> <?php echo gettext("Delete image") ?>
 																</label>
 																<br class="clearall" />
 																<div id="movecopydiv-<?php echo $currentimage; ?>" style="padding-top: .5em; padding-left: .5em; display: none;">
@@ -1288,21 +1231,23 @@ echo "\n</head>";
 																?>
 																<span class="clearall" ></span>
 															</div>
-
-															<h2 class="h2_bordered_edit imageextrainfo" style="display: none"><?php echo gettext("Tags"); ?></h2>
-															<div class="box-edit-unpadded imageextrainfo" style="display: none;width: 19.6em;">
-																<?php tagSelector($image, 'tags_' . $currentimage . '-', false, $tagsort); ?>
-															</div>
-
 														</td>
-														<td class="bulk_checkbox">
-															<div class="page-list_icon">
-																<input class="checkbox" type="checkbox" name="ids[]" value="<?php echo $image->getFileName(); ?>" onclick="triggerAllBox(this.form, 'ids[]', this.form.allbox);" />
-															</div>
+														<td class = "bulk_checkbox">
+															<?php
+															if (!$singleimage) {
+																?>
+																<div class = "page-list_icon">
+																	<input class = "checkbox" type = "checkbox" name = "ids[]" value = "<?php echo $image->getFileName(); ?>" onclick = "triggerAllBox(this.form, 'ids[]', this.for
+																																			m.allbox);" />
+																</div>
+																<?php
+															}
+															?>
 														</td>
 													</tr>
 													<tr>
-														<td align="left" valign="top"><?php echo gettext("Title:"); ?></td>
+														<td align = "left" valign = "top"><?php echo gettext("Title:");
+															?></td>
 														<td><?php print_language_string_list($image->getTitle('all'), $currentimage . '-title', false, NULL, '', '100%'); ?>
 													</tr>
 
@@ -1331,17 +1276,17 @@ echo "\n</head>";
 														<td valign="top"><?php echo gettext("Date:"); ?></td>
 														<td>
 															<script type="text/javascript">
-																// <!-- <![CDATA[
-																$(function() {
-																	$("#datepicker_<?php echo $currentimage; ?>").datepicker({
-																		dateFormat: 'yy-mm-dd',
-																		showOn: 'button',
-																		buttonImage: 'images/calendar.png',
-																		buttonText: '<?php echo gettext('calendar'); ?>',
-																		buttonImageOnly: true
-																	});
-																});
-																// ]]> -->
+																								// <!-- <![CDATA[
+																								$(function() {
+																								$("#datepicker_<?php echo $currentimage; ?>").datepicker({
+																								dateFormat: 'yy-mm-dd',
+																												showOn: 'button',
+																												buttonImage: 'images/calendar.png',
+																												buttonText: '<?php echo gettext('calendar'); ?>',
+																												buttonImageOnly: true
+																								});
+																								});
+																								// ]]> -->
 															</script>
 															<input type="text" id="datepicker_<?php echo $currentimage; ?>" size="20" name="<?php echo $currentimage; ?>-date"
 																		 value="<?php
@@ -1380,59 +1325,84 @@ echo "\n</head>";
 															</span>
 														</td>
 													</tr>
-													<?php
-													$custom = zp_apply_filter('edit_image_custom_data', '', $image, $currentimage);
-													if (empty($custom)) {
+             <?php if (!$singleimage) { ?>
+             	<tr>
+														<td valign="top"><?php echo gettext("Tags:"); ?></td>
+														<td>
+                <?php
+                  $imagetags = $image->getTags();
+                  if(count($imagetags) != 0) {
+                    echo implode(', ',$imagetags);
+                  } else {
+                    echo gettext('No tags assigned');
+                  }
+                ?>
+														</td>
+													</tr>
+            	<?php
+             }
+													if ($singleimage) { ?>
+													<tr>
+														<td valign="top"><?php echo gettext("Tags:"); ?></td>
+														<td>
+															<div class="box-edit-unpadded">
+																<?php tagSelector($image, 'tags_' . $currentimage . '-', false, $tagsort, true, 1); ?>
+															</div>
+														</td>
+													</tr>
+              <?php
+														$custom = zp_apply_filter('edit_image_custom_data', '', $image, $currentimage);
+														if (empty($custom)) {
+															?>
+															<tr>
+																<td valign="top"><?php echo gettext("Custom data:"); ?></td>
+																<td><?php print_language_string_list($image->getCustomData('all'), $currentimage . '-custom_data', true, NULL, 'texteditor_imagecustomdata', '100%'); ?></td>
+															</tr>
+															<?php
+														} else {
+															echo $custom;
+														}
 														?>
 														<tr>
-															<td valign="top"><?php echo gettext("Custom data:"); ?></td>
-															<td><?php print_language_string_list($image->getCustomData('all'), $currentimage . '-custom_data', true, NULL, 'texteditor_imagecustomdata', '100%'); ?></td>
+															<td valign="top"><?php echo gettext("Location:"); ?></td>
+															<td><?php print_language_string_list($image->getLocation('all'), $currentimage . '-location', false, NULL, '', '100%'); ?>
+															</td>
+														</tr>
+
+														<tr>
+															<td valign="top"><?php echo gettext("City:"); ?></td>
+															<td><?php print_language_string_list($image->getCity('all'), $currentimage . '-city', false, NULL, '', '100%'); ?>
+															</td>
+														</tr>
+
+														<tr>
+															<td valign="top"><?php echo gettext("State:"); ?></td>
+															<td><?php print_language_string_list($image->getState('all'), $currentimage . '-state', false, NULL, '', '100%'); ?>
+															</td>
+														</tr>
+
+														<tr>
+															<td valign="top"><?php echo gettext("Country:"); ?></td>
+															<td><?php print_language_string_list($image->getCountry('all'), $currentimage . '-country', false, NULL, '', '100%'); ?>
+															</td>
+														</tr>
+
+														<tr>
+															<td valign="top"><?php echo gettext("Credit:"); ?></td>
+															<td><?php print_language_string_list($image->getCredit('all'), $currentimage . '-credit', false, NULL, '', '100%'); ?>
+															</td>
+														</tr>
+
+														<tr>
+															<td valign="top"><?php echo gettext("Copyright:"); ?></td>
+															<td><?php print_language_string_list($image->getCopyright('all'), $currentimage . '-copyright', false, NULL, '', '100%'); ?>
+															</td>
 														</tr>
 														<?php
-													} else {
-														echo $custom;
 													}
-													?>
-
-													<tr class="imageextrainfo" style="display: none">
-														<td valign="top"><?php echo gettext("Location:"); ?></td>
-														<td><?php print_language_string_list($image->getLocation('all'), $currentimage . '-location', false, NULL, '', '100%'); ?>
-														</td>
-													</tr>
-
-													<tr class="imageextrainfo" style="display: none">
-														<td valign="top"><?php echo gettext("City:"); ?></td>
-														<td><?php print_language_string_list($image->getCity('all'), $currentimage . '-city', false, NULL, '', '100%'); ?>
-														</td>
-													</tr>
-
-													<tr class="imageextrainfo" style="display: none">
-														<td valign="top"><?php echo gettext("State:"); ?></td>
-														<td><?php print_language_string_list($image->getState('all'), $currentimage . '-state', false, NULL, '', '100%'); ?>
-														</td>
-													</tr>
-
-													<tr class="imageextrainfo" style="display: none">
-														<td valign="top"><?php echo gettext("Country:"); ?></td>
-														<td><?php print_language_string_list($image->getCountry('all'), $currentimage . '-country', false, NULL, '', '100%'); ?>
-														</td>
-													</tr>
-
-													<tr class="imageextrainfo" style="display: none">
-														<td valign="top"><?php echo gettext("Credit:"); ?></td>
-														<td><?php print_language_string_list($image->getCredit('all'), $currentimage . '-credit', false, NULL, '', '100%'); ?>
-														</td>
-													</tr>
-
-													<tr class="imageextrainfo" style="display: none">
-														<td valign="top"><?php echo gettext("Copyright:"); ?></td>
-														<td><?php print_language_string_list($image->getCopyright('all'), $currentimage . '-copyright', false, NULL, '', '100%'); ?>
-														</td>
-													</tr>
-													<?php
 													if ($image->get('hasMetadata')) {
 														?>
-														<tr class="imageextrainfo" style="display: none">
+														<tr>
 															<td valign="top"><?php echo gettext("Metadata:"); ?></td>
 															<td>
 																<?php
@@ -1444,7 +1414,7 @@ echo "\n</head>";
 																			$display = $_zp_exifvars[$field][3];
 																			if ($display) {
 																				$label = $_zp_exifvars[$field][2];
-																				$data .= "<tr><td align=\"right\" >$label: </td> <td>" . html_encode($value) . "</td></tr>\n";
+																				$data .= "<tr><td class=\"medtadata_tag\">$label: </td> <td>" . html_encode($value) . "</td></tr>\n";
 																			}
 																		}
 																	}
@@ -1463,7 +1433,11 @@ echo "\n</head>";
 																?>
 															</td>
 														</tr>
-														<tr valign="top" class="imageextrainfo" style="display: none">
+														<?php
+													}
+													if ($singleimage) {
+														?>
+														<tr valign="top">
 															<td class="topalign-nopadding"><br /><?php echo gettext("Codeblocks:"); ?></td>
 															<td>
 																<br />
@@ -1471,18 +1445,16 @@ echo "\n</head>";
 															</td>
 														</tr>
 														<?php
+													} else {
+														?>
+														<tr>
+															<td colspan="2" style="border-bottom:none;">
+																<a href="<?php echo WEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&tab=imageinfo&album=' . $album->name . '&singleimage=' . $image->filename.'&subpage='.$pagenum; ?>"><img src="images/options.png" /> <?php echo gettext('Edit all image data'); ?></a>
+															</td>
+														</tr>
+														<?php
 													}
 													?>
-													<tr>
-														<td colspan="2" style="border-bottom:none;">
-															<span style="display: block" class="imageextrashow">
-																<a href="javascript:toggleExtraInfo('<?php echo $currentimage; ?>', 'image', true);"><?php echo gettext('show more fields'); ?></a></span>
-															<span style="display: none" class="imageextrahide">
-																<a href="javascript:toggleExtraInfo('<?php echo $currentimage; ?>', 'image', false);"><?php echo gettext('show fewer fields'); ?></a></span>
-														</td>
-													</tr>
-
-
 												</table>
 											</td>
 										</tr>
@@ -1512,7 +1484,7 @@ echo "\n</head>";
 										</td>
 									</tr>
 									<?php
-									if ($allimagecount != $totalimages) { // need pagination links
+									if ($allimagecount != $totalimages && !$singleimage) { // need pagination links
 										?>
 										<tr>
 											<td colspan="4" class="bordered" id="imagenavb"><?php adminPageNav($pagenum, $totalpages, 'admin-edit.php', '?page=edit&amp;album=' . html_encode(pathurlencode($album->name)), '&amp;tab=imageinfo'); ?>
@@ -1523,9 +1495,9 @@ echo "\n</head>";
 									if (!empty($target_image)) {
 										?>
 										<script type="text/javascript" >
-											// <!-- <![CDATA[
-											toggleExtraInfo('<?php echo $target_image_nr; ?>', 'image', true);
-											// ]]> -->
+																							// <!-- <![CDATA[
+																							toggleExtraInfo('<?php echo $target_image_nr; ?>', 'image', true);
+																							// ]]> -->
 										</script>
 										<?php
 									}
@@ -1585,7 +1557,7 @@ echo "\n</head>";
 					?>
 				</h1>
 				<?php consolidatedEditMessages('massedit'); ?>
-				<form name="albumedit" id="form_albumedit-multi" autocomplete="off"	action="?page=edit&amp;action=save<?php echo $albumdir ?>" method="POST">
+				<form class="dirty-check" name="albumedit" id="form_albumedit-multi" autocomplete="off"	action="?page=edit&amp;action=save<?php echo $albumdir ?>" method="POST">
 					<?php XSRFToken('albumedit'); ?>
 					<input type="hidden" name="totalalbums" value="<?php echo sizeof($albums); ?>" />
 					<span class="buttons">
@@ -1595,7 +1567,8 @@ echo "\n</head>";
 						<button type="submit">
 							<img	src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong>
 						</button>
-						<button type="reset" onclick="javascript:$('.deletemsg').hide();" >
+						<button type="reset" onclick="javascript:$('.deletemsg
+																												').hide();" >
 							<img	src="images/fail.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong>
 						</button>
 					</span>
@@ -1625,7 +1598,8 @@ echo "\n</head>";
 						<button type="submit">
 							<img	src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong>
 						</button>
-						<button type="reset" onclick="javascript:$('.deletemsg').hide();" >
+						<button type="reset" onclick="javascript:$('.deletemsg
+																																').hide();" >
 							<img	src="images/fail.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong>
 						</button>
 					</span>
@@ -1674,13 +1648,13 @@ echo "\n</head>";
 					consolidatedEditMessages('');
 					printEditDropdown('', array('1', '2', '3', '4', '5'), $album_nesting);
 					?>
-					<form action="?page=edit&amp;action=savealbumorder" method="post" name="sortableListForm" id="sortableListForm" onsubmit="return confirmAction();">
-						<?php XSRFToken('savealbumorder'); ?>
+					<form class="dirty-check" action="?page=edit&amp;action=savealbumorder" method="post" name="sortableListForm" id="sortableListForm" onsubmit="return confirmAction();">
+									<?php XSRFToken('savealbumorder'); ?>
 						<p class="buttons">
 							<?php
 							if ($album_nesting > 1 || zp_loggedin(MANAGE_ALL_ALBUM_RIGHTS)) {
 								?>
-								<button class="serialize" type="submit" class="buttons"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
+								<button class="serialize buttons" type="submit"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
 								<?php
 							}
 							if (zp_loggedin(MANAGE_ALL_ALBUM_RIGHTS)) {
@@ -1702,7 +1676,8 @@ echo "\n</head>";
 									</a>
 								</label>
 								<label style="float: right">
-									<?php echo gettext("Check All"); ?> <input type="checkbox" name="allbox" id="allbox" onclick="checkAll(this.form, 'ids[]', this.checked);" />
+									<?php echo gettext("Check All"); ?> <input type="checkbox" name="allbox" id="allbox" onclick="checkAll(this.form, 'ids[]', this
+																																								.checked);" />
 								</label>
 							</div>
 
@@ -1721,7 +1696,7 @@ echo "\n</head>";
 							<?php
 							if ($album_nesting > 1 || zp_loggedin(MANAGE_ALL_ALBUM_RIGHTS)) {
 								?>
-								<button class="serialize" type="submit" class="buttons"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
+								<button class="serialize buttons" type="submit"><img src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button>
 								<?php
 							}
 							if (zp_loggedin(MANAGE_ALL_ALBUM_RIGHTS)) {

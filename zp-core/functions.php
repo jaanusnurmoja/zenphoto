@@ -64,6 +64,10 @@ function parseAllowedTags(&$source) {
 			return false;
 		}
 		$tag = trim(substr($source, 0, $i));
+		//strip forbidden tags from list
+		if ($tag == 'script') {
+			return 0;
+		}
 		$source = trim(substr($source, $i + 2));
 		if (substr($source, 0, 1) != "(") {
 			return false;
@@ -167,9 +171,9 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 	if ($shorten && ($forceindicator || (mb_strlen($articlecontent) > $shorten))) {
 		$allowed_tags = getAllowedTags('allowed_tags');
 		//remove script to be replaced later
-		preg_match_all('~(<script.*</script>)~is', $articlecontent, $matches);
-		$articlecontent = preg_replace('~<script.*/script>~is', '', $articlecontent);
-
+		$articlecontent = preg_replace('~<script.*?/script>~is', '', $articlecontent);
+		//remove HTML comments
+		$articlecontent = preg_replace('~<!--.*?-->~is', '', $articlecontent);
 		$short = mb_substr($articlecontent, 0, $shorten);
 		$short2 = kses($short . '</p>', $allowed_tags);
 
@@ -378,7 +382,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 			if (empty($result)) {
 				$result = gettext('Mail send failed.');
 			}
-			$result .= sprintf(gettext('Invalid "reply-to" mail address %s.'), $m);
+			$result .= sprintf(gettext('Invalid “reply-to” mail address %s.'), $m);
 		}
 	}
 	if (is_null($email_list)) {
@@ -390,7 +394,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 				if (empty($result)) {
 					$result = gettext('Mail send failed.');
 				}
-				$result .= ' ' . sprintf(gettext('Invalid "to" mail address %s.'), $email);
+				$result .= ' ' . sprintf(gettext('Invalid “to” mail address %s.'), $email);
 			}
 		}
 	}
@@ -401,7 +405,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 			if (empty($result)) {
 				$result = gettext('Mail send failed.');
 			}
-			$result .= ' ' . gettext('"cc" list provided without "to" address list.');
+			$result .= ' ' . gettext('“cc” list provided without “to” address list.');
 			return $result;
 		}
 		foreach ($cc_addresses as $key => $email) {
@@ -410,7 +414,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 				if (empty($result)) {
 					$result = gettext('Mail send failed.');
 				}
-				$result = ' ' . sprintf(gettext('Invalid "cc" mail address %s.'), $email);
+				$result = ' ' . sprintf(gettext('Invalid “cc” mail address %s.'), $email);
 			}
 		}
 	}
@@ -421,9 +425,9 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 			if (!is_valid_email_zp($email)) {
 				unset($bcc_addresses[$key]);
 				if (empty($result)) {
-					$result = gettext('Mail send failed. ');
+					$result = gettext('Mail send failed.');
 				}
-				$result = ' ' . sprintf(gettext('Invalid "bcc" mail address %s.'), $email);
+				$result = ' ' . sprintf(gettext('Invalid “bcc” mail address %s.'), $email);
 			}
 		}
 	}
@@ -438,6 +442,19 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 				$subject = $_zp_UTF8->convert($subject, LOCAL_CHARSET);
 				$message = $_zp_UTF8->convert($message, LOCAL_CHARSET);
 			}
+
+			//	we do not support rich text
+			$message = preg_replace('~<p[^>]*>~', "\n", $message); // Replace the start <p> or <p attr="">
+			$message = preg_replace('~</p>~', "\n", $message); // Replace the end
+			$message = preg_replace('~<br[^>]*>~', "\n", $message); // Replace <br> or <br ...>
+			$message = preg_replace('~<ol[^>]*>~', "", $message); // Replace the start <ol> or <ol attr="">
+			$message = preg_replace('~</ol>~', "", $message); // Replace the end
+			$message = preg_replace('~<ul[^>]*>~', "", $message); // Replace the start <ul> or <ul attr="">
+			$message = preg_replace('~</ul>~', "", $message); // Replace the end
+			$message = preg_replace('~<li[^>]*>~', ".\t", $message); // Replace the start <li> or <li attr="">
+			$message = preg_replace('~</li>~', "", $message); // Replace the end
+			$message = getBare($message);
+			$message = preg_replace('~\n\n\n+~', "\n\n", $message);
 
 			// Send the mail
 			if (count($email_list) > 0) {
@@ -455,7 +472,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 		if (empty($result)) {
 			$result = gettext('Mail send failed.');
 		}
-		$result .= ' ' . gettext('No "to" address list provided.');
+		$result .= ' ' . gettext('No “to” address list provided.');
 	}
 	return $result;
 }
@@ -474,13 +491,12 @@ function sortByMultilingual($dbresult, $field, $descending) {
 		$temp[$key] = get_language_string($row[$field]);
 	}
 	natcasesort($temp);
+	if ($descending) {
+		$temp = array_reverse($temp, true);
+	}
 	$result = array();
-	foreach ($temp as $key => $title) {
-		if ($descending) {
-			array_unshift($result, $dbresult[$key]);
-		} else {
-			$result[] = $dbresult[$key];
-		}
+	foreach ($temp as $key => $v) {
+		$result[$key] = $dbresult[$key];
 	}
 	return $result;
 }
@@ -607,9 +623,10 @@ function getPluginFiles($pattern, $folder = '', $stripsuffix = true) {
  * @return string
  */
 function getPlugin($plugin, $inTheme = false, $webpath = false) {
+	global $_zp_gallery;
 	$pluginFile = NULL;
 	if ($inTheme === true) {
-		$inTheme = getCurrentTheme();
+		$inTheme = $_zp_gallery->getCurrentTheme();
 	}
 	if ($inTheme) {
 		$pluginFile = '/' . THEMEFOLDER . '/' . internalToFilesystem($inTheme . '/' . $plugin);
@@ -628,7 +645,11 @@ function getPlugin($plugin, $inTheme = false, $webpath = false) {
 	}
 	if ($pluginFile) {
 		if ($webpath) {
-			return WEBPATH . filesystemToInternal($pluginFile);
+			if (is_string($webpath)) {
+				return $webpath . filesystemToInternal($pluginFile);
+			} else {
+				return WEBPATH . filesystemToInternal($pluginFile);
+			}
 		} else {
 			return SERVERPATH . $pluginFile;
 		}
@@ -866,7 +887,7 @@ function getAllSubAlbumIDs($albumfolder = '') {
 	global $_zp_current_album;
 	if (empty($albumfolder)) {
 		if (isset($_zp_current_album)) {
-			$albumfolder = $_zp_current_album->getFolder();
+			$albumfolder = $_zp_current_album->getFileName();
 		} else {
 			return null;
 		}
@@ -908,8 +929,8 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 		if (!is_null($album)) {
 			$albumname = $album->name;
 			zp_setCookie('zenphoto_last_album', $albumname);
-			if (hasDynamicAlbumSuffix($albumname)) {
-				$albumname = stripSuffix($albumname); // strip off the .alb as it will not be reflected in the search path
+			if (hasDynamicAlbumSuffix($albumname) && !is_dir(ALBUM_FOLDER_SERVERPATH . $albumname)) {
+				$albumname = stripSuffix($albumname); // strip off the suffix as it will not be reflected in the search path
 			}
 			//	see if the album is within the search context. NB for these purposes we need to look at all albums!
 			$save_logon = $_zp_loggedin;
@@ -967,7 +988,7 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
  * @param array $row database row of the object
  */
 function checkPublishDates($row) {
-	if ($row['show']) {
+	if (@$row['show']) {
 		if (isset($row['expiredate']) && $row['expiredate'] && $row['expiredate'] != '0000-00-00 00:00:00') {
 			if ($row['expiredate'] <= date('Y-m-d H:i:s')) {
 				return 1;
@@ -1043,17 +1064,6 @@ function setupTheme($album = NULL) {
 		$_zp_themeroot = WEBPATH . "/" . THEMEFOLDER . "/$theme";
 	}
 	return $theme;
-}
-
-/**
- * Registers a plugin as handler for a file extension
- *
- * @param string $suffix the file extension
- * @param string $objectName the name of the object that handles this extension
- */
-function addPluginType($suffix, $objectName) {
-	global $_zp_extra_filetypes;
-	$_zp_extra_filetypes[strtolower($suffix)] = $objectName;
 }
 
 /**
@@ -1234,9 +1244,9 @@ function generateListFromFiles($currentValue, $root, $suffix, $descending = fals
  * @param string $class optional class
  * @param string $id optional id
  */
-function getLink($url, $text, $title = NULL, $class = NULL, $id = NULL) {
+function getLinkHTML($url, $text, $title = NULL, $class = NULL, $id = NULL) {
 	return "<a href=\"" . html_encode($url) . "\"" .
-					(($title) ? " title=\"" . html_encode(strip_tags($title)) . "\"" : "") .
+					(($title) ? " title=\"" . html_encode(getBare($title)) . "\"" : "") .
 					(($class) ? " class=\"$class\"" : "") .
 					(($id) ? " id=\"$id\"" : "") . ">" .
 					html_encode($text) . "</a>";
@@ -1250,8 +1260,8 @@ function getLink($url, $text, $title = NULL, $class = NULL, $id = NULL) {
  * @param string $class optional class
  * @param string $id optional id
  */
-function printLink($url, $text, $title = NULL, $class = NULL, $id = NULL) {
-	echo getlink($url, $text, $title, $class, $id);
+function printLinkHTML($url, $text, $title = NULL, $class = NULL, $id = NULL) {
+	echo getLinkHTML($url, $text, $title, $class, $id);
 }
 
 /**
@@ -1301,7 +1311,7 @@ function sortByKey($results, $sortkey, $order) {
 	foreach ($indicies as $key => $index) {
 		$indicies[$key] = trim($index);
 	}
-	$results = sortMultiArray($results, $indicies, $order);
+	$results = sortMultiArray($results, $indicies, $order, true, false, true);
 	return $results;
 }
 
@@ -1333,7 +1343,7 @@ function sortMultiArray($array, $index, $descending = false, $natsort = true, $c
 			$temp[$key] = '';
 			foreach ($indicies as $index) {
 				if (is_array($row) && array_key_exists($index, $row)) {
-					$temp[$key] .= $row[$index] . $separator;
+					$temp[$key] .= get_language_string($row[$index]) . $separator;
 					if (in_array($index, $remove_criteria)) {
 						unset($array[$key][$index]);
 					}
@@ -1357,7 +1367,6 @@ function sortMultiArray($array, $index, $descending = false, $natsort = true, $c
 				asort($temp);
 			}
 		}
-
 		foreach (array_keys($temp) as $key) {
 			if (!$preservekeys && is_numeric($key)) {
 				$sorted[] = $array[$key];
@@ -1595,7 +1604,7 @@ function sanitizeRedirect($redirectTo, $forceHost = false) {
 			$redirect .= $redir['scheme'] . '://' . sanitize($redir['host']);
 		} else {
 			if ($forceHost) {
-				$redirect .= SERVER_PROTOCOL . '://' . $_SERVER['HTTP_HOST'];
+				$redirect .= PROTOCOL . '://' . $_SERVER['HTTP_HOST'];
 				if (WEBPATH && strpos($redirectTo, WEBPATH) === false) {
 					$redirect .= WEBPATH;
 				}
@@ -1623,7 +1632,7 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 	global $_zp_loggedin, $_zp_login_error, $_zp_current_album, $_zp_current_zenpage_page, $_zp_gallery;
 	if (empty($authType)) { // not supplied by caller
 		$check_auth = '';
-		if (isset($_GET['z']) && $_GET['p'] == 'full-image' || isset($_GET['p']) && $_GET['p'] == '*full-image') {
+		if (isset($_GET['z']) && @$_GET['p'] == 'full-image' || isset($_GET['p']) && $_GET['p'] == '*full-image') {
 			$authType = 'zp_image_auth';
 			$check_auth = getOption('protected_image_password');
 			$check_user = getOption('protected_image_user');
@@ -1870,9 +1879,11 @@ function getUserIP() {
  * @return string
  */
 function seoFriendly($string) {
+	$string = trim(preg_replace('~\s+\.\s*~', '.', $string));
 	if (zp_has_filter('seoFriendly')) {
 		$string = zp_apply_filter('seoFriendly', $string);
 	} else { // no filter, do basic cleanup
+		$string = trim($string);
 		$string = preg_replace("/\s+/", "-", $string);
 		$string = preg_replace("/[^a-zA-Z0-9_.-]/", "-", $string);
 		$string = str_replace(array('---', '--'), '-', $string);
@@ -1890,6 +1901,8 @@ function seoFriendlyJS() {
 	} else {
 		?>
 		function seoFriendlyJS(fname) {
+		fname=fname.trim();
+		fname=fname.replace(/\s+\.\s*/,'.');
 		fname = fname.replace(/\s+/g, '-');
 		fname = fname.replace(/[^a-zA-Z0-9_.-]/g, '-');
 		fname = fname.replace(/--*/g, '-');
@@ -1934,11 +1947,30 @@ function debug404($album, $image, $theme) {
 			if ($target == $uri)
 				return;
 		}
+		$server = array();
+		foreach (array('REQUEST_URI', 'HTTP_REFERER', 'REMOTE_ADDR', 'REDIRECT_STATUS') as $key) {
+			$server[$key] = @$_SERVER[$key];
+		}
+		$request = $_REQUEST;
+		$request['theme'] = $theme;
+		if (!empty($image)) {
+			$request['image'] = $image;
+		}
+
 		trigger_error(sprintf(gettext('Zenphoto processed a 404 error on %s. See the debug log for details.'), $target), E_USER_NOTICE);
-		debugLog("404 error: album=$album; image=$image; theme=$theme");
-		debugLogVar('$_SERVER ', $_SERVER);
-		debugLogVar('$_REQUEST ', $_REQUEST);
-		debugLog('');
+		ob_start();
+		var_dump($server);
+		$server = preg_replace('~array\s*\(.*\)\s*~', '', html_decode(getBare(ob_get_contents())));
+		ob_end_clean();
+		ob_start();
+		var_dump($request);
+		$request['theme'] = $theme;
+		if (!empty($image)) {
+			$request['image'] = $image;
+		}
+		$request = preg_replace('~array\s*\(.*\)\s*~', '', html_decode(getBare(ob_get_contents())));
+		ob_end_clean();
+		debugLog("404 error details\n" . $server . $request);
 	}
 }
 
@@ -1968,7 +2000,7 @@ function XSRFToken($action) {
  * @param bool $inline set to true to run the task "in-line". Set false run asynchronously
  */
 function cron_starter($script, $params, $offsetPath, $inline = false) {
-	global $_zp_authority, $_zp_loggedin, $_zp_current_admin_obj;
+	global $_zp_authority, $_zp_loggedin, $_zp_current_admin_obj, $_zp_HTML_cache;
 	$admin = $_zp_authority->getMasterUser();
 
 	if ($inline) {
@@ -1989,6 +2021,7 @@ function cron_starter($script, $params, $offsetPath, $inline = false) {
 			$paramlist .= '&' . $key . '=' . $value;
 		}
 		$paramlist .= '&auth=' . $auth . '&offsetPath=' . $offsetPath;
+		$_zp_HTML_cache->abortHTMLCache();
 		?>
 		<script type="text/javascript">
 			// <!-- <![CDATA[
@@ -2016,33 +2049,6 @@ function cron_starter($script, $params, $offsetPath, $inline = false) {
 function zp_loggedin($rights = ALL_RIGHTS) {
 	global $_zp_loggedin;
 	return $_zp_loggedin & ($rights | ADMIN_RIGHTS);
-}
-
-/**
- *
- * Produces the # to table association array
- */
-function getTableAsoc() {
-	return array('1' => 'albums', '2' => 'images', '3' => 'news', '4' => 'pages', '5' => 'comments');
-}
-
-/**
- *
- * Returns a Zenphoto tiny URL to the object
- * @param $obj object
- */
-function getTinyURL($obj) {
-	$asoc = array_flip(getTableAsoc());
-	$tiny = ($obj->getID() << 3) | $asoc[$obj->table];
-	if (MOD_REWRITE) {
-		if (class_exists('seo_locale')) {
-			return seo_locale::localePath(true) . '/tiny/' . $tiny;
-		} else {
-			return FULLWEBPATH . '/tiny/' . $tiny;
-		}
-	} else {
-		return FULLWEBPATH . '/index.php?p=' . $tiny . '&t';
-	}
 }
 
 /**
@@ -2095,14 +2101,15 @@ function getLanguageFlag($lang) {
  * @return mixed
  */
 function getItemByID($table, $id) {
-	if ($result = query_single_row('SELECT * FROM ' . prefix($table) . ' WHERE id =' . $id)) {
+	if ($result = query_single_row('SELECT * FROM ' . prefix($table) . ' WHERE id =' . (int) $id)) {
 		switch ($table) {
 			case 'images':
 				if ($alb = getItemByID('albums', $result['albumid'])) {
-					return newImage($alb, $result['filename']);
+					return newImage($alb, $result['filename'], true);
 				}
+				break;
 			case 'albums':
-				return newAlbum($result['folder']);
+				return newAlbum($result['folder'], false, true);
 			case 'news':
 				return new ZenpageNews($result['titlelink']);
 			case 'pages':
@@ -2587,7 +2594,7 @@ class zpFunctions {
 			foreach ($matches[1] as $key => $match) {
 				preg_match('|.*i\.php\?(.*)|', $match, $imgproc);
 				if ($imgproc) {
-					$match = explode('&amp;', $imgproc[1]);
+					$match = preg_split('~\&[amp;]*~', $imgproc[1]);
 					$set = array();
 					foreach ($match as $v) {
 						$s = explode('=', $v);
@@ -2602,6 +2609,27 @@ class zpFunctions {
 			}
 		}
 		return $text;
+	}
+
+	static function pluginDebug($extension, $priority, $start) {
+		list($usec, $sec) = explode(" ", microtime());
+		$end = (float) $usec + (float) $sec;
+		$class = array();
+		if ($priority & CLASS_PLUGIN) {
+			$class[] = 'CLASS';
+		}
+		if ($priority & ADMIN_PLUGIN) {
+			$class[] = 'ADMIN';
+		}
+		if ($priority & FEATURE_PLUGIN) {
+			$class[] = 'FEATURE';
+		}
+		if ($priority & THEME_PLUGIN) {
+			$class[] = 'THEME';
+		}
+		if (empty($class))
+			$class[] = 'theme';
+		debugLog(sprintf('    ' . $extension . '(%s:%u)=>%.4fs', implode('|', $class), $priority & PLUGIN_PRIORITY, $end - $start));
 	}
 
 }

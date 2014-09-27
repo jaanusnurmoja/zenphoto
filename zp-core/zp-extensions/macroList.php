@@ -59,7 +59,7 @@
  *
  * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage tools
+ * @subpackage development
  */
 $plugin_is_filter = 5 | ADMIN_PLUGIN;
 $plugin_description = gettext('View available <code>content macros</code>.');
@@ -81,9 +81,15 @@ if (OFFSET_PATH != 2 && zp_loggedin(ZENPAGE_PAGES_RIGHTS | ZENPAGE_NEWS_RIGHTS |
 }
 
 function macro_admin_tabs($tabs) {
-	$tabs['macros'] = array('text'		 => gettext("macros"),
-					'link'		 => WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/macroList/macroList_tab.php?page=macros&amp;tab=' . gettext('macros'),
-					'subtabs'	 => NULL);
+	if (!isset($tabs['development'])) {
+		$tabs['development'] = array('text'		 => gettext("development"),
+						'subtabs'	 => NULL);
+	}
+	$tabs['development']['subtabs'][gettext("macros")] = PLUGIN_FOLDER . '/macroList/macroList_tab.php?page=macros&tab=' . gettext('macros');
+	$named = array_flip($tabs['development']['subtabs']);
+	natcasesort($named);
+	$tabs['development']['subtabs'] = $named = array_flip($named);
+	$tabs['development']['link'] = array_shift($named);
 	return $tabs;
 }
 
@@ -93,9 +99,9 @@ function macroList_show($macro, $detail) {
 	$warn = array();
 	if (preg_match('/[^\w]/', $macro)) {
 		$warn['identifier'] = gettext('Macro identifiers may not contain special characters.');
-		echo "<dt><code>[<span class=\"error\">$macro</span>";
+		echo '<dt class="top"><code>[<span class="error">' . $macro . '</span>';
 	} else {
-		echo "<dt><code>[$macro";
+		echo '<dt class="top"><code>[' . $macro;
 	}
 	$required = $array = false;
 	if ($detail['class'] == 'expression') {
@@ -143,7 +149,7 @@ function macroList_show($macro, $detail) {
 			$params .= "<em>}</em>";
 		echo $params;
 	}
-	echo ']</code> <em>(' . @$detail['owner'] . ')</em></dt><dd>' . $detail['desc'] . '</dd>';
+	echo ']</code> <em>(' . @$detail['owner'] . ')</em></dt><dd class="top">' . $detail['desc'] . '</dd>';
 	if (count($warn)) {
 		echo '<div class="notebox"><strong>Warning:</strong>';
 		foreach ($warn as $warning) {

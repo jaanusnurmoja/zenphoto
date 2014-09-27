@@ -12,15 +12,16 @@ class ZenpageCategory extends ZenpageRoot {
 	var $manage_rights = MANAGE_ALL_NEWS_RIGHTS;
 	var $manage_some_rights = ZENPAGE_NEWS_RIGHTS;
 	var $view_rights = ALL_NEWS_RIGHTS;
-	var $sortorder;
-	var $sortdirection;
-	var $sortSticky = true;
+	protected $sortorder = 'date';
+	protected $sortdirection = true;
+	protected $sortSticky = true;
 
 	function __construct($catlink, $create = NULL) {
 		if (is_array($catlink)) {
 			$catlink = $catlink['titlelink'];
 		}
-		$new = parent::PersistentObject('news_categories', array('titlelink' => $catlink), 'titlelink', true, empty($catlink), $create);
+		$new = $this->instantiate('news_categories', array('titlelink' => $catlink), 'titlelink', true, empty($catlink), $create);
+		$this->exists = $this->loaded;
 	}
 
 	/**
@@ -109,6 +110,30 @@ class ZenpageCategory extends ZenpageRoot {
 	 */
 	function setSortOrder($sortorder) {
 		$this->set('sort_order', $sortorder);
+	}
+
+	function getSortDirection() {
+		return $this->sortdirection;
+	}
+
+	function setSortDirection($value) {
+		$this->sortdirection = (int) ($value && true);
+	}
+
+	function getSortType() {
+		return $this->sortorder;
+	}
+
+	function setSortType($value) {
+		$this->sortorder = $value;
+	}
+
+	function getSortSticky() {
+		return $this->sortSticky;
+	}
+
+	function setSortSticky($value) {
+		$this->sortSticky = (bool) $value;
 	}
 
 	function getUser() {
@@ -410,13 +435,30 @@ class ZenpageCategory extends ZenpageRoot {
 	/**
 	 * Returns the full path to a news category
 	 *
-	 * @param string $catlink The category link of a category
+	 * @param string $page The category page number
 	 *
 	 * @return string
 	 */
-	function getCategoryLink() {
+	function getLink($page = NULL) {
 		global $_zp_zenpage;
-		return rewrite_path('/' . _CATEGORY_ . '/' . $this->getTitlelink(), "/index.php?p=news&category=" . $this->getTitlelink());
+		if ($page > 1) {
+			$pager = $page . '/';
+			$page = '&p=' . $page;
+		} else {
+			$pager = $page = '';
+		}
+		return zp_apply_filter('getLink', rewrite_path(_CATEGORY_ . '/' . $this->getTitlelink() . '/' . $pager, "/index.php?p=news&category=" . $this->getTitlelink() . $page), $this, NULL);
+	}
+
+	/**
+	 *
+	 * @global type $_zp_zenpage
+	 * @return type
+	 * @deprecated
+	 */
+	function getCategoryLink() {
+		Zenpage_internal_deprecations::getCategoryLink();
+		return $this->getLink();
 	}
 
 }

@@ -134,6 +134,10 @@ margin: 7px 0 0 0;
 padding: 0;
 }
 
+#collapsible-lists ul li a {
+word-break: break-all !important;
+}
+
 .disabledlink {
 display: none;
 }
@@ -266,26 +270,23 @@ li.rsslink {
 }
 
 #footer {
-padding-top: 10px !important;
+padding: 10px 0 0 0 !important;
 border-top: 1px solid lightgray;
 }
 
-#footer  ul {
+#footer  ul#footerlist {
 list-style: none;
-margin: 0;
-padding: 0 !important;
-display: inline;
+padding: 0;
+display: block;
+margin-bottom: 20px !important;
 }
 
-footer ul li {
-float: left;
-}
 
 #footer  ul.flags {
 line-height: 25px;
 }
 
-#footer, #footer a {
+#footer, #footer ul#footerlist li a {
 font-size: 12px !important;
 text-align: center;
 padding: 0px 0 2px 0;
@@ -327,44 +328,6 @@ margin: 0;
 
 #commentform table {
 width: 100%;
-}
-
-
-/* Admin Toolbox
------------------------------- */
-#admin,#admin_data {
-	font-family: sans-serif;
-	position: fixed;
-	right: 0px;
-	top: 0px;
-	width: 150px;
-	border-bottom: 1px solid #E6E6DF;
-	border-left: 1px solid #E6E6DF;
-	background: #fff;
-	z-index: 1001;
-	text-align: left;
-	font-size: 13px;
-}
-
-#admin_data {
-	top: 0px;
-	padding-top: 20px;
-	z-index: 1000;
-	line-height: 16px;
-}
-
-
-#admin h3 {
-	font-weight: normal;
-	color: #999;
-	margin: 0;
-	padding: 0;
-	text-align: center;
-	font-size: 13px;
-}
-
-#admin h3:hover {
-	color: #036;
 }
 
 #search_form .button {

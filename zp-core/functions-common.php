@@ -156,8 +156,23 @@ function ksesProcess($input_string, $allowed_tags) {
 	if (function_exists('kses')) {
 		return kses($input_string, $allowed_tags);
 	} else {
-		return strip_tags($input_string);
+		return getBare($input_string);
 	}
+}
+
+/**
+ * Cleans tags and some content.
+ * @param type $content
+ * @return type
+ */
+function getBare($content) {
+	$content = preg_replace('~<script.*?/script>~is', '', $content);
+	$content = preg_replace('~<style.*?/style>~is', '', $content);
+	$content = preg_replace('~<!--.*?-->~is', '', $content);
+	$content = strip_tags($content);
+	$content = str_replace('&nbsp;', ' ', $content);
+	$content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+	return $content;
 }
 
 /** returns a sanitized string for the sanitize function
@@ -171,18 +186,21 @@ function sanitize_string($input, $sanitize_level) {
 		if (get_magic_quotes_gpc()) {
 			$input = stripslashes($input);
 		}
+		$input = str_replace(chr(0), " ", $input);
 		switch ($sanitize_level) {
 			case 0:
-				return str_replace(chr(0), " ", $input);
-			case 1:
-				// Text formatting sanititation.
-				return ksesProcess($input, getAllowedTags('allowed_tags'));
+				return $input;
 			case 2:
 				// Strips non-style tags.
+				$input = sanitize_script($input);
 				return ksesProcess($input, getAllowedTags('style_tags'));
 			case 3:
 				// Full sanitation.  Strips all code.
-				return strip_tags($input);
+				return getBare($input);
+			case 1:
+				// Text formatting sanititation.
+				$input = sanitize_script($input);
+				return ksesProcess($input, getAllowedTags('allowed_tags'));
 			case 4:
 			default:
 				// for internal use to eliminate security injections
@@ -291,18 +309,13 @@ function html_encode($this_string) {
 /**
  * HTML encodes the non-metatag part of the string.
  *
- * @param string $str string to be encoded
+ * @param string $original string to be encoded
  * @param bool $allowScript set to false to prevent pass-through of script tags.
  * @return string
  */
-function html_encodeTagged($str, $allowScript = true) {
+function html_encodeTagged($original, $allowScript = true) {
 	$tags = array();
-	//html comments
-	preg_match_all('|<!--.*-->|ixs', $str, $matches);
-	foreach (array_unique($matches[0]) as $key => $tag) {
-		$tags[0]['%' . $key . '$-'] = $tag;
-		$str = str_replace($tag, '%' . $key . '$-', $str);
-	}
+	$str = $original;
 	//javascript
 	if ($allowScript) {
 		preg_match_all('!<script.*>.*</script>!ixs', $str, $matches);
@@ -316,6 +329,8 @@ function html_encodeTagged($str, $allowScript = true) {
 		$str = preg_replace('|<(.*)onclick|ixs', '%$c', $str);
 		$tags[2]['%$c'] = '&lt;<strike>onclick</strike>';
 	}
+	//strip html comments
+	$str = preg_replace('~<!--.*?-->~is', '', $str);
 	// markup
 	preg_match_all("/<\/?\w+((\s+(\w|\w[\w-]*\w)(\s*=\s*(?:\".*?\"|'.*?'|[^'\">\s]+))?)+\s*|\s*)\/?>/i", $str, $matches);
 	foreach (array_unique($matches[0]) as $key => $tag) {
@@ -323,7 +338,7 @@ function html_encodeTagged($str, $allowScript = true) {
 		$str = str_replace($tag, '%' . $key . '$s', $str);
 	}
 	//entities
-	preg_match_all('/(&[a-z#]+;)/', $str, $matches);
+	preg_match_all('/(&[a-z#]+;)/i', $str, $matches);
 	foreach (array_unique($matches[0]) as $key => $entity) {
 		$tags[3]['%' . $key . '$e'] = $entity;
 		$str = str_replace($entity, '%' . $key . '$e', $str);
@@ -331,6 +346,12 @@ function html_encodeTagged($str, $allowScript = true) {
 	$str = htmlspecialchars($str, ENT_FLAGS, LOCAL_CHARSET);
 	foreach (array_reverse($tags, true) as $taglist) {
 		$str = strtr($str, $taglist);
+	}
+	if (class_exists('tidy') && $str != $original) {
+		$tidy = new tidy();
+		$tidy->parseString($str, array('show-body-only' => true), 'utf8');
+		$tidy->cleanRepair();
+		$str = $tidy;
 	}
 	return $str;
 }
@@ -405,7 +426,7 @@ function debugLogVar($message) {
 	var_dump($var);
 	$str = ob_get_contents();
 	ob_end_clean();
-	debugLog(trim($message) . "\r" . html_decode(strip_tags($str)));
+	debugLog(trim($message) . "\r" . html_decode(getBare($str)));
 }
 
 /**
@@ -414,26 +435,26 @@ function debugLogVar($message) {
  * @param string $name the name of the cookie
  */
 function zp_getCookie($name) {
-	if (isset($_COOKIE[$name])) {
-		$cookiev = $_COOKIE[$name];
-	} else {
-		$cookiev = '';
-	}
-	if (DEBUG_LOGIN) {
-		if (isset($_SESSION[$name])) {
-			$sessionv = $_SESSION[$name];
-		} else {
-			$sessionv = '';
-		}
-		debugLog("zp_getCookie($name)::" . 'album_session=' . GALLERY_SESSION . "; SESSION[" . session_id() . "]=" . $sessionv . ", COOKIE=" . $cookiev);
-	}
-	if (!empty($cookiev) && (defined('GALLERY_SESSION') && !GALLERY_SESSION)) {
-		return zp_cookieEncode($cookiev);
-	}
-	if (isset($_SESSION[$name])) {
-		return $_SESSION[$name];
-	}
-	return NULL;
+  if (isset($_COOKIE[$name])) {
+    $cookiev = sanitize($_COOKIE[$name]);
+  } else {
+    $cookiev = '';
+  }
+  if (DEBUG_LOGIN) {
+    if (isset($_SESSION[$name])) {
+      $sessionv = sanitize($_SESSION[$name]);
+    } else {
+      $sessionv = '';
+    }
+    debugLog(zp_getCookie($name) . '=::' . 'album_session=' . GALLERY_SESSION . "; SESSION[" . session_id() . "]=" . sanitize($sessionv) . ", COOKIE=" . sanitize($cookiev));
+  }
+  if (!empty($cookiev) && (defined('GALLERY_SESSION') && !GALLERY_SESSION)) {
+    return zp_cookieEncode($cookiev);
+  }
+  if (isset($_SESSION[$name])) {
+    return sanitize($_SESSION[$name]);
+  }
+  return NULL;
 }
 
 /**
@@ -459,34 +480,34 @@ function zp_cookieEncode($value) {
  * @param bool $secure true if secure cookie
  */
 function zp_setCookie($name, $value, $time = NULL, $path = NULL, $secure = false) {
-	if (empty($value)) {
-		$cookiev = '';
-	} else {
-		$cookiev = zp_cookieEncode($value);
-	}
-	if (is_null($time)) {
-		$time = COOKIE_PESISTENCE;
-	}
-	if (is_null($path)) {
-		$path = WEBPATH;
-	}
-	if (substr($path, -1, 1) != '/')
-		$path .= '/';
-	if (DEBUG_LOGIN) {
-		debugLog("zp_setCookie($name, $value, $time, $path)::album_session=" . GALLERY_SESSION . "; SESSION=" . session_id());
-	}
-	if (($time < 0) || !GALLERY_SESSION) {
-		setcookie($name, $cookiev, time() + $time, $path, "", $secure);
-	}
-	if ($time < 0) {
-		if (isset($_SESSION))
-			unset($_SESSION[$name]);
-		if (isset($_COOKIE))
-			unset($_COOKIE[$name]);
-	} else {
-		$_SESSION[$name] = $value;
-		$_COOKIE[$name] = $cookiev;
-	}
+  if (empty($value)) {
+    $cookiev = '';
+  } else {
+    $cookiev = zp_cookieEncode(sanitize($value));
+  }
+  if (is_null($time)) {
+    $time = COOKIE_PESISTENCE;
+  }
+  if (is_null($path)) {
+    $path = WEBPATH;
+  }
+  if (substr($path, -1, 1) != '/')
+    $path .= '/';
+  if (DEBUG_LOGIN) {
+    debugLog("zp_setCookie($name, $value, $time, $path)::album_session=" . GALLERY_SESSION . "; SESSION=" . session_id());
+  }
+  if (($time < 0) || !GALLERY_SESSION) {
+    setcookie($name, $cookiev, time() + $time, $path, "", $secure);
+  }
+  if ($time < 0) {
+    if (isset($_SESSION))
+      unset($_SESSION[$name]);
+    if (isset($_COOKIE))
+      unset($_COOKIE[$name]);
+  } else {
+    $_SESSION[$name] = sanitize($value);
+    $_COOKIE[$name] = sanitize($cookiev);
+  }
 }
 
 /**
@@ -518,7 +539,7 @@ function getSerializedArray($string) {
 		} else {
 			return array();
 		}
-	} else if (empty($string)) {
+	} else if (strlen($string) == 0 && !is_bool($string)) {
 		return array();
 	} else {
 		return array($string);

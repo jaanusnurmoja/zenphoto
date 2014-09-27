@@ -72,14 +72,17 @@ if (isset($_GET['action'])) {
 			XSRFdefender('savecomment');
 			$id = sanitize_numeric($_POST['id']);
 			$comment = new Comment($id);
-			$comment->setName(sanitize($_POST['name'], 3));
-			$comment->setEmail(sanitize($_POST['email'], 3));
-			$comment->setWebsite(sanitize($_POST['website'], 3));
+			if (isset($_POST['name']))
+				$comment->setName(sanitize($_POST['name'], 3));
+			if (isset($_POST['email']))
+				$comment->setEmail(sanitize($_POST['email'], 3));
+			if (isset($_POST['website']))
+				$comment->setWebsite(sanitize($_POST['website'], 3));
 			$comment->setDateTime(sanitize($_POST['date'], 3));
 			$comment->setComment(sanitize($_POST['comment'], 1));
-			$comment->setCustomData($_comment_form_save_post = serialize(getUserInfo(0)));
+			$comment->setCustomData($_comment_form_save_post = serialize(getCommentAddress(0)));
 			$comment->save();
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?saved');
+			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?saved&page=editcomment&id=' . $comment->getID());
 			exitZP();
 	}
 }
@@ -99,7 +102,7 @@ printAdminHeader('comments');
 	// ]]> -->
 </script>
 <?php
-zp_apply_filter('texteditor_config', '', 'comments');
+zp_apply_filter('texteditor_config', 'zenphoto');
 echo "\n</head>";
 echo "\n<body>";
 printLogoAndLinks();
@@ -117,8 +120,9 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 		$commentarr = query_single_row("SELECT * FROM " . prefix('comments') . " WHERE id = $id LIMIT 1");
 		if ($commentarr) {
 			extract($commentarr);
+			$commentarr = array_merge($commentarr, getSerializedArray($commentarr['custom_data']));
 			?>
-			<form id="form_editcomment" action="?action=savecomment" method="post">
+			<form class="dirty-check" id="form_editcomment" action="?action=savecomment" method="post">
 				<?php XSRFToken('savecomment'); ?>
 				<input	type="hidden" name="id" value="<?php echo $id; ?>" />
 				<span class="buttons">
@@ -142,22 +146,50 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 				</span>
 				<br style="clear:both" /><br />
 				<div class="commentformedit_fields">
-					<label for="name"><?php echo gettext("Author:"); ?></label>
-					<input type="text" size="40" name="name" value="<?php echo html_encode($name); ?>" />
-					<label for="website"><?php echo gettext("Web Site:"); ?></label>
-					<input type="text" size="40" name="website" value="<?php echo html_encode($website); ?>" />
-					<label for="email"><?php echo gettext("E-Mail:"); ?></label>
-					<input type="text" size="40" name="email" value="<?php echo html_encode($email); ?>" />
+					<?php
+					if (getOption('comment_name_required')) {
+						?>
+						<label for="name"><?php echo gettext("Author:"); ?></label>
+						<input type="text" size="40" name="name" value="<?php echo html_encode($name); ?>" />
+						<?php
+					}
+					if (getOption('comment_web_required')) {
+						?>
+						<label for="website"><?php echo gettext("Web Site:"); ?></label>
+						<input type="text" size="40" name="website" value="<?php echo html_encode($website); ?>" />
+						<?php
+					}
+					if (getOption('comment_email_required')) {
+						?>
+						<label for="email"><?php echo gettext("E-Mail:"); ?></label>
+						<input type="text" size="40" name="email" value="<?php echo html_encode($email); ?>" />
+						<?php
+					}
+					?>
 					<label for="date"><?php echo gettext("Date/Time:"); ?></label>
 					<input type="text" size="18" name="date" value="<?php echo date('Y-m-d H:i:s', strtotime($date)); ?>" />
 					<label for="date"><?php echo gettext("IP:"); ?></label>
 					<input type="text" size="18" name="ip" value="<?php echo html_encode($IP); ?>" />
 					<?php
-					$_comment_form_save_post = zp_getCookie('comment_form_register_save');
-					echo comment_form_edit_comment(false, $_comment_form_save_post);
+					$_comment_form_save_post = $commentarr;
+					if (getOption('comment_form_addresses')) {
+						?>
+						<label for="comment_form_street"><?php echo gettext('Street:'); ?></label>
+						<input type="text" name="0-comment_form_street" id="comment_form_street" class="inputbox" size="40" value="<?php echo @$address['street']; ?>">
+						<label for="comment_form_city"><?php echo gettext('City:'); ?></label>
+						<input type="text" name="0-comment_form_city" id="comment_form_city" class="inputbox" size="40" value="<?php echo @$address['city']; ?>">
+						<label for="comment_form_state"><?php echo gettext('State:'); ?></label>
+						<input type="text" name="0-comment_form_state" id="comment_form_state" class="inputbox" size="40" value="<?php echo @$address['state']; ?>">
+						<label for="comment_form_country"><?php echo gettext('Country:'); ?></label>
+						<input type="text" name="0-comment_form_country" id="comment_form_country" class="inputbox" size="40" value="<?php echo @$address['country']; ?>">
+						<label for="comment_form_postal"><?php echo gettext('Postal code:'); ?></label>
+						<input type="text" name="0-comment_form_postal" id="comment_form_postal" class="inputbox" size="40" value="<?php echo @$address['postal']; ?>">
+						<?php
+					}
 					?>
-					<label for="comment"><?php echo gettext("Comment:"); ?></label>
-					<textarea rows="8" cols="60" name="comment" class="textarea_inputbox" /><?php echo html_encode($comment); ?></textarea>
+					<label for = "comment"><?php echo gettext("Comment:");
+					?></label>
+					<textarea rows="8" cols="60" name="comment" class="texteditor"><?php echo html_encode($comment); ?></textarea>
 				</div>
 				<div class="commentformedit_box">
 					<h2 class="h2_bordered_edit"><?php echo gettext('Comment management'); ?></h2>
@@ -200,14 +232,14 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 			<br class="clearall" />
 		</div> <!-- div box end -->
 		<?php
-		// end of $page == "editcomment"
+// end of $page == "editcomment"
 	} else {
 		?>
 		<p class="errorbox"><?php echo gettext('Comment does not exist'); ?></p>
 		<?php
 	}
 } else {
-	// Set up some view option variables.
+// Set up some view option variables.
 	if (isset($_GET['fulltext']) && $_GET['fulltext']) {
 		$fulltext = true;
 		$fulltexturl = '?fulltext = 1';
@@ -216,7 +248,9 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 		$fulltexturl = '';
 	}
 	$allcomments = fetchComments(NULL);
+
 	$pagenum = max((int) @$_GET['subpage'], 1);
+
 	$comments = array_slice($allcomments, ($pagenum - 1) * COMMENTS_PER_PAGE, COMMENTS_PER_PAGE);
 	$allcommentscount = count($allcomments);
 	$totalpages = ceil(($allcommentscount / COMMENTS_PER_PAGE));
@@ -272,7 +306,7 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 	}
 	?>
 
-	<p><?php echo gettext("You can edit or delete comments on your images."); ?></p>
+	<p><?php echo gettext("You can edit or delete comments."); ?></p>
 
 	<?php
 	if ($totalpages > 1) {
@@ -284,7 +318,7 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 	}
 	?>
 
-	<form name="comments" id="form_commentlist" action="?action=applycomments" method="post"	onsubmit="return confirmAction();">
+	<form class="dirty-check" name="comments" id="form_commentlist" action="?action=applycomments" method="post"	onsubmit="return confirmAction();">
 		<?php XSRFToken('applycomments'); ?>
 		<input type="hidden" name="subpage" value="<?php echo html_encode($pagenum) ?>" />
 		<p class="buttons"><button type="submit"><img src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong></button></p>
@@ -342,75 +376,42 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 				// ZENPAGE: switch added for zenpage comment support
 				switch ($comment['type']) {
 					case "albums":
-						$image = '';
-						$title = '';
-						$albmdata = query_full_array("SELECT `title`, `folder` FROM " . prefix('albums') .
-										" WHERE `id`=" . $comment['ownerid']);
-						if ($albmdata) {
-							$albumdata = $albmdata[0];
-							$album = $albumdata['folder'];
-							$albumtitle = get_language_string($albumdata['title']);
-							$link = '<a href = "' . rewrite_path("/$album", "/index.php ? album = " . html_encode(pathurlencode($album))) . '#zp_comment_id_' . $id . '">' . $albumtitle . $title . '</a>';
-							if (empty($albumtitle))
-								$albumtitle = $album;
+						$obj = getItemByID('albums', $comment['ownerid']);
+						if ($obj) {
+							$link = '<a href = "' . $obj->getLink() . '#zp_comment_id_' . $id . '">' . $obj->getTitle() . '</a>';
 						}
 						break;
 					case "news": // ZENPAGE: if plugin is installed
 						if (extensionEnabled('zenpage')) {
-							$titlelink = '';
-							$title = '';
-							$newsdata = query_full_array("SELECT `title`, `titlelink` FROM " . prefix('news') .
-											" WHERE `id`=" . $comment['ownerid']);
-							if ($newsdata) {
-								$newsdata = $newsdata[0];
-								$titlelink = $newsdata['titlelink'];
-								$title = get_language_string($newsdata['title']);
-								$link = '<a href = "' . rewrite_path("/news/" . $titlelink, "/index.php? p = news&amp;
-							title = " . urlencode($titlelink)) . '#zp_comment_id_' . $id . '">' . gettext("[news]") . ' ' . $title . "</a> ";
+							$obj = getItemByID('news', $comment['ownerid']);
+							if ($obj) {
+								$link = '<a href = "' . $obj->getLink() . '#zp_comment_id_' . $id . '">' . gettext("[news]") . ' ' . $obj->getTitle() . "</a> ";
 							}
 						}
 						break;
 					case "pages": // ZENPAGE: if plugin is installed
 						if (extensionEnabled('zenpage')) {
-							$image = '';
-							$title = '';
-							$pagesdata = query_full_array("SELECT `title`, `titlelink` FROM " . prefix('pages') .
-											" WHERE `id`=" . $comment['ownerid']);
-							if ($pagesdata) {
-								$pagesdata = $pagesdata[0];
-								$titlelink = $pagesdata['titlelink'];
-								$title = get_language_string($pagesdata['title']);
-								$link = "<a href=\"" . rewrite_path('/' . _PAGES_ . '/' . $titlelink, "/index.php?p=pages&amp;title=" . urlencode($titlelink)) . '#zp_comment_id_' . $id . '">' . gettext("[page]") . ' ' . $title . "</a>";
+							$obj = getItemByID('pages', $comment['ownerid']);
+							if ($obj) {
+								$link = "<a href=\"" . $obj->getLink() . '#zp_comment_id_' . $id . '">' . gettext("[page]") . ' ' . $obj->getTitle() . "</a>";
 							}
 						}
 						break;
 					default : // all the image types
-						$imagedata = query_full_array("SELECT `title`, `filename`, `albumid` FROM " . prefix('images') .
-										" WHERE `id`=" . $comment['ownerid']);
-						if ($imagedata) {
-							$imgdata = $imagedata[0];
-							$image = $imgdata['filename'];
-							if ($imgdata['title'] == "")
-								$title = $image;
-							else
-								$title = get_language_string($imgdata['title']);
-							$title = '::' . $title;
-							$album = getItemByID('albums', $imgdata['albumid']);
-							if ($album->exists) {
-								$albumtitle = $album->getTitle();
-								$albumname = $album->name;
-								$link = "<a href=\"" . rewrite_path('/' . pathurlencode($albumname . '/' . $image), '/index.php?album=' . html_encode(pathurlencode($album)) . "&amp;image=" . urlencode($image)) . '#zp_comment_id_' . $id . '">' . $albumtitle . $title . "</a>";
-							}
+						$obj = getItemByID('images', $comment['ownerid']);
+						if ($obj) {
+							$link = "<a href=\"" . $obj->getLink() . '#zp_comment_id_' . $id . '">' . $obj->getTitle() . "</a>";
 						}
 						break;
 				}
 				$date = myts_date('%m/%d/%Y %I:%M %p', $comment['date']);
 				$website = $comment['website'];
 				$fullcomment = sanitize($comment['comment'], 2);
-				$shortcomment = truncate_string(strip_tags($fullcomment), 123);
+				$shortcomment = truncate_string(getBare($fullcomment), 123);
 				$inmoderation = $comment['inmoderation'];
 				$private = $comment['private'];
 				$anon = $comment['anon'];
+    
 				?>
 				<tr class="newstr">
 					<td><?php echo ($fulltext) ? $fullcomment : $shortcomment; ?></td>
@@ -419,7 +420,7 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 						<?php
 						echo $website ? "<a href=\"$website\">$author</a>" : $author;
 						if ($anon) {
-							echo ' <a title="' . gettext('Anonymous posting') . '"><img src="<?php echo WEBPATH . ' / ' . ZENFOLDER; ?>/images/action.png" style="border: 0px;" alt="' . gettext("Anonymous posting") . '" /></a>';
+							echo ' <a title="' . gettext('Anonymous posting') . '"><img src="' . WEBPATH . '/' . ZENFOLDER . '/images/action.png" style="border: 0px;" alt="' . gettext("Anonymous posting") . '" /></a>';
 						}
 						?>
 					</td>
@@ -448,7 +449,7 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 					<td class="page-list_icon"><a href="?page=editcomment&amp;id=<?php echo $id; ?>" title="<?php echo gettext('Edit this comment.'); ?>">
 							<img src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/pencil.png" style="border: 0px;" alt="<?php echo gettext('Edit'); ?>" /></a></td>
 					<td class="page-list_icon">
-						<a href="mailto:<?php echo $email; ?>?body=<?php echo commentReply($fullcomment, $author, $image, $albumtitle); ?>" title="<?php echo gettext('Reply:') . ' ' . $email; ?>">
+						<a href="mailto:<?php echo $email; ?>?body=<?php echo commentReply($obj, $author, $fullcomment); ?>" title="<?php echo gettext('Reply:') . ' ' . $email; ?>">
 							<img src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/icon_mail.png" style="border: 0px;" alt="<?php echo gettext('Reply'); ?>" /></a>
 					</td>
 					<td class="page-list_icon">

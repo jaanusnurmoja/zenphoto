@@ -72,7 +72,7 @@ if (isset($_POST['processed'])) {
 				$album->save();
 			} else {
 				$AlbumDirName = str_replace(SERVERPATH, '', $_zp_gallery->albumdir);
-				zp_error(gettext("The album couldn't be created in the 'albums' folder. This is usually a permissions problem. Try setting the permissions on the albums and cache folders to be world-writable using a shell:") . " <code>chmod 777 " . $AlbumDirName . '/' . CACHEFOLDER . '/' . "</code>, "
+				zp_error(gettext("The album could not be created in the “albums” folder. This is usually a permissions problem. Try setting the permissions on the “albums” and “cache” folders to be world-writable using a shell:") . " <code>chmod 777 " . $AlbumDirName . '/' . CACHEFOLDER . '/' . "</code>, "
 								. gettext("or use your FTP program to give everyone write permissions to those folders."));
 			}
 
@@ -84,7 +84,7 @@ if (isset($_POST['processed'])) {
 					$soename = seoFriendly($name);
 					$error = zp_apply_filter('check_upload_quota', UPLOAD_ERR_OK, $tmp_name);
 					if (!$error) {
-						if (is_valid_image($name) || is_valid_other_type($name)) {
+						if (Gallery::validImage($name) || Gallery::validImageAlt($name)) {
 							if (strrpos($soename, '.') === 0)
 								$soename = md5($name) . $soename; // soe stripped out all the name.
 							if (!$error) {
@@ -128,7 +128,7 @@ if (isset($_POST['processed'])) {
 }
 // Handle the error and return to the upload page.
 if (!isset($_POST['processed'])) {
-	$errormsg = gettext("You've most likely exceeded the upload limits. Try uploading fewer files at a time, or use a ZIP file.");
+	$errormsg = gettext("You have most likely exceeded the upload limits. Try uploading fewer files at a time, or use a ZIP file.");
 } else if (!$filecount && !isset($_POST['newalbum'])) {
 	$errormsg = gettext("You must upload at least one file.");
 } else if (empty($_POST['folder'])) {

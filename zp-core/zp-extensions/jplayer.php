@@ -11,14 +11,17 @@
  * The counterpart formats are not valid formats for Zenphoto itself as that would confuse the management.
  * Therefore these formats can be uploaded via ftp only.
  * The files needed to have the same file name (beware the character case!). In single player usage the player
- * will check via file system if a counterpart file exists if counterpart support is enabled.
+ * will check via file system if a counterpart file exists.
  * <b>NOTE:</b> Counterpart format does not work correctly on playlists yet. Detailed reason: Priority solution
  * setting must be "flash" as otherwise flv and fla will not work on some browsers like Safari.
  * This in return disables counterpart support for ogg and webm files for some reason on Firefox).
- * Since the flash fallback covers all essential formats ths is not much of an issue for visitors though.
+ * Since the flash fallback covers all essential formats this is not much of an issue for visitors though.
  *
  * Otherwise it will not work. It is all or none.
  * See {@link http://jplayer.org/latest/developer-guide/#reference-html5-media the developer guide} for info on that.
+ *
+ * If you have problems with any format being recognized, you might need to tell your server about the mime types first:
+ * See examples on {@link http://jplayer.org/latest/developer-guide/#jPlayer-server-response the jplayer site}.
  *
  * Note on POPCORN Support (http://popcornjs.org)
  * jPlayer has support for this interactive libary and its plugin is included but currently not loaded or implemented. You need to customize the plugin or your theme to use it.
@@ -83,12 +86,12 @@ if (!empty($_zp_multimedia_extension->name) || $plugin_disable) {
 	}
 } else {
 
-	addPluginType('flv', 'Video');
-	addPluginType('fla', 'Video');
-	addPluginType('mp3', 'Video');
-	addPluginType('mp4', 'Video');
-	addPluginType('m4v', 'Video');
-	addPluginType('m4a', 'Video');
+	Gallery::addImageHandler('flv', 'Video');
+	Gallery::addImageHandler('fla', 'Video');
+	Gallery::addImageHandler('mp3', 'Video');
+	Gallery::addImageHandler('mp4', 'Video');
+	Gallery::addImageHandler('m4v', 'Video');
+	Gallery::addImageHandler('m4a', 'Video');
 
 	zp_register_filter('content_macro', 'jPlayer::macro');
 }
@@ -98,24 +101,24 @@ class jplayer_options {
 	public $name = 'jPlayer';
 
 	function jplayer_options() {
-		setOptionDefault('jplayer_autoplay', '');
-		setOptionDefault('jplayer_poster', 1);
-		setOptionDefault('jplayer_postercrop', 1);
-		setOptionDefault('jplayer_showtitle', '');
-		setOptionDefault('jplayer_playlist', '');
-		setOptionDefault('jplayer_playlist_numbered', 1);
-		setOptionDefault('jplayer_playlist_playtime', 0);
-		setOptionDefault('jplayer_download', '');
-		setOptionDefault('jplayer_size', 'jp-video-270p');
-		setOptionDefault('jplayer_skin', 'zenphotolight');
-		setOptionDefault('jplayer_counterparts', 0);
-		/* TODO: what are these sizes?
-		  if (class_exists('cacheManager')) {
-		  $player = new jPlayer();
-		  cacheManager::deleteThemeCacheSizes('jplayer');
-		  cacheManager::addThemeCacheSize('jplayer', NULL, $player->width, $player->height, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-		  }
-		 */
+		if (OFFSET_PATH == 2) {
+			setOptionDefault('jplayer_autoplay', '');
+			setOptionDefault('jplayer_poster', 1);
+			setOptionDefault('jplayer_postercrop', 1);
+			setOptionDefault('jplayer_showtitle', '');
+			setOptionDefault('jplayer_playlist', '');
+			setOptionDefault('jplayer_playlist_numbered', 1);
+			setOptionDefault('jplayer_playlist_playtime', 0);
+			setOptionDefault('jplayer_download', '');
+			setOptionDefault('jplayer_size', 'jp-video-270p');
+			setOptionDefault('jplayer_skin', 'zenphotolight');
+			setOptionDefault('jplayer_counterparts', 0);
+			/* TODO: what are these sizes?
+			  $player = new jPlayer();
+			  cacheManager::deleteThemeCacheSizes('jplayer');
+			  cacheManager::addThemeCacheSize('jplayer', NULL, $player->width, $player->height, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+			 */
+		}
 	}
 
 	function getOptionsSupported() {
@@ -250,7 +253,7 @@ class jPlayer {
 	}
 
 	static function headJS() {
-		$skin = @array_shift(getPluginFiles('*.css', '/jplayer/skin/' . getOption('jplayer_skin')));
+		$skin = @array_shift(getPluginFiles('*.css', 'jplayer/skin/' . getOption('jplayer_skin')));
 		if (file_exists($skin)) {
 			$skin = str_replace(SERVERPATH, WEBPATH, $skin); //replace SERVERPATH as that does not work as a CSS link
 		} else {
@@ -645,17 +648,23 @@ class jPlayer {
 					//	an invalid option parameter!
 					return;
 			}
+			if (in_context(ZP_SEARCH)) {
+				$id = '1';
+			} else {
+				$id = $albumobj->getID();
+			}
 			?>
 			<script type="text/javascript">
 								//<![CDATA[
 								$(document).ready(function(){
 				new jPlayerPlaylist({
-				jPlayer: "#jquery_jplayer_<?php echo $albumobj->getID(); ?>",
-								cssSelectorAncestor: "#jp_container_<?php echo $albumobj->getID(); ?>"
+				jPlayer: "#jquery_jplayer_<?php echo $id; ?>",
+								cssSelectorAncestor: "#jp_container_<?php echo $id; ?>"
 				}, [
 			<?php
 			$count = '';
 			$number = '';
+
 			foreach ($entries as $entry) {
 				$count++;
 				if (is_array($entry)) {
@@ -669,11 +678,15 @@ class jPlayer {
 					if (getOption('jplayer_playlist_numbered')) {
 						$numbering = '<span>' . $number . '</span>';
 					}
-					$video = newImage($albumobj, $entry);
+					if (is_array($entry)) {
+						$albumobj = newAlbum($entry['folder']);
+						$video = newImage($albumobj, $entry['filename']);
+					} else {
+						$video = newImage($albumobj, $entry);
+					}
 					$videoThumb = '';
 					$this->setModeAndSuppliedFormat($ext);
 					if ($option == 'playlist' && getOption('jplayer_poster')) {
-						$albumfolder = $albumobj->name;
 						$videoThumb = ',poster:"' . $video->getCustomImage(null, $this->width, $this->height, $this->width, $this->height, null, null, true) . '"';
 					}
 					$playtime = '';
@@ -725,9 +738,9 @@ class jPlayer {
 			<?php
 			if ($option == 'playlist') {
 				?>
-				<div id="jp_container_<?php echo $albumobj->getID(); ?>" class="jp-video <?php echo $this->playersize; ?>">
+				<div id="jp_container_<?php echo $id; ?>" class="jp-video <?php echo $this->playersize; ?>">
 					<div class="jp-type-playlist">
-						<div id="jquery_jplayer_<?php echo $albumobj->getID(); ?>" class="jp-jplayer"></div>
+						<div id="jquery_jplayer_<?php echo $id; ?>" class="jp-jplayer"></div>
 						<div class="jp-gui">
 							<div class="jp-video-play">
 								<a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
@@ -766,8 +779,8 @@ class jPlayer {
 				<?php
 			} else { // playlist-audio
 				?>
-				<div id="jquery_jplayer_<?php echo $albumobj->getID(); ?>" class="jp-jplayer"></div>
-				<div id="jp_container_<?php echo $albumobj->getID(); ?>" class="jp-audio">
+				<div id="jquery_jplayer_<?php echo $id; ?>" class="jp-jplayer"></div>
+				<div id="jp_container_<?php echo $id; ?>" class="jp-audio">
 					<div class="jp-type-playlist">
 						<div class="jp-gui jp-interface">
 							<?php echo $this->getPlayerHTMLparts('audio', 'controls-playlist'); ?>

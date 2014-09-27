@@ -63,11 +63,11 @@ class ga_colorbox {
 							// colorbox is only for real images
 							$link = html_encode(getDefaultSizedImage()) . '" class="thickbox"';
 						} else {
-							$link = html_encode(getImageLinkURL()) . '"';
+							$link = html_encode(getImageURL()) . '"';
 						}
 						?>
-						<a href="<?php echo $link; ?>" title="<?php echo sanitize(getImageTitle()); ?>">
-				<?php printImageThumb(getImageTitle()); ?>
+						<a href="<?php echo $link; ?>" title="<?php echo getBareImageTitle(); ?>">
+							<?php printImageThumb(getImageTitle()); ?>
 						</a></div>
 				</div>
 				<?php

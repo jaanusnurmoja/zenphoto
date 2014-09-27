@@ -1,9 +1,4 @@
 <?php
-if (getOption('register_user_address_info')) {
-	zp_register_filter('register_user_form', 'comment_form_register_user');
-	zp_register_filter('register_user_registered', 'comment_form_register_save');
-}
-
 define('COMMENTS_PER_PAGE', max(1, getOption('comment_form_comments_per_page')));
 
 $_zp_comment_stored = array();
@@ -59,19 +54,7 @@ function comment_form_PaginationJS() {
 }
 
 function comment_form_visualEditor() {
-	zp_apply_filter('texteditor_config', '', 'comments');
-}
-
-/**
- * Returns a processed comment custom data item
- * Called when a comment edit is saved
- *
- * @param string $discard always empty
- * @return string
- */
-function comment_form_save_comment($discard) {
-	global $_comment_form_save_post;
-	return $_comment_form_save_post = serialize(getUserInfo(0));
+	zp_apply_filter('texteditor_config', 'comments');
 }
 
 /**
@@ -92,68 +75,31 @@ function comment_form_print10Most() {
 				// ZENPAGE: switch added for zenpage comment support
 				switch ($comment['type']) {
 					case "albums":
-						$image = '';
-						$title = '';
-						$albmdata = query_full_array("SELECT `title`, `folder` FROM " . prefix('albums') .
-										" WHERE `id`=" . $comment['ownerid']);
-						if ($albmdata) {
-							$albumdata = $albmdata[0];
-							$album = $albumdata['folder'];
-							$albumtitle = get_language_string($albumdata['title']);
-							$link = "<a href=\"" . rewrite_path("/$album", "/index.php?album=" . pathurlencode($album)) . "\">" . $albumtitle . $title . "</a>";
-							if (empty($albumtitle))
-								$albumtitle = $album;
+						$album = getItemByID('albums', $comment['ownerid']);
+						if ($album) {
+							$link = "<a href=\"" . $album->getlink() . "\">" . $album->gettitle() . "</a>";
 						}
 						break;
 					case "news": // ZENPAGE: if plugin is installed
 						if (extensionEnabled('zenpage')) {
-							$titlelink = '';
-							$title = '';
-							$newsdata = query_full_array("SELECT `title`, `titlelink` FROM " . prefix('news') .
-											" WHERE `id`=" . $comment['ownerid']);
-							if ($newsdata) {
-								$newsdata = $newsdata[0];
-								$titlelink = $newsdata['titlelink'];
-								$title = get_language_string($newsdata['title']);
-								$link = "<a href=\"" . rewrite_path('/' . _NEWS_ . '/' . $titlelink, "/index.php?p=news&amp;title=" . urlencode($titlelink)) . "\">" . $title . "</a> " . gettext("[news]");
+							$news = getItemByID('news', $comment['ownerid']);
+							if ($news) {
+								$link = "<a href=\"" . $news->getLink() . "\">" . $news->getTitle() . "</a> " . gettext("[news]");
 							}
 						}
 						break;
 					case "pages": // ZENPAGE: if plugin is installed
 						if (extensionEnabled('zenpage')) {
-							$image = '';
-							$title = '';
-							$pagesdata = query_full_array("SELECT `title`, `titlelink` FROM " . prefix('pages') .
-											" WHERE `id`=" . $comment['ownerid']);
-							if ($pagesdata) {
-								$pagesdata = $pagesdata[0];
-								$titlelink = $pagesdata['titlelink'];
-								$title = get_language_string($pagesdata['title']);
-								$link = "<a href=\"" . rewrite_path('/' . _PAGES_ . '/' . $titlelink, "/index.php?p=pages&amp;title=" . urlencode($titlelink)) . "\">" . $title . "</a> " . gettext("[page]");
+							$page = getItemByID('pages', $comment['ownerid']);
+							if ($page) {
+								$link = "<a href=\"" . $page->getlink() . "\">" . $page->getTitle() . "</a> " . gettext("[page]");
 							}
 						}
 						break;
 					default: // all of the image types
-						$imagedata = query_full_array("SELECT `title`, `filename`, `albumid` FROM " . prefix('images') .
-										" WHERE `id`=" . $comment['ownerid']);
-						if ($imagedata) {
-							$imgdata = $imagedata[0];
-							$image = $imgdata['filename'];
-							if ($imgdata['title'] == "")
-								$title = $image;
-							else
-								$title = get_language_string($imgdata['title']);
-							$title = '/ ' . $title;
-							$albmdata = query_full_array("SELECT `folder`, `title` FROM " . prefix('albums') .
-											" WHERE `id`=" . $imgdata['albumid']);
-							if ($albmdata) {
-								$albumdata = $albmdata[0];
-								$album = $albumdata['folder'];
-								$albumtitle = get_language_string($albumdata['title']);
-								$link = "<a href=\"" . rewrite_path("/$album/$image", "/index.php?album=" . pathurlencode($album) . "&amp;image=" . urlencode($image)) . "\">" . $albumtitle . $title . "</a>";
-								if (empty($albumtitle))
-									$albumtitle = $album;
-							}
+						$image = getItemByID('images', $comment['ownerid']);
+						if ($image) {
+							$link = "<a href=\"" . $image->getLink() . "\">" . $image->getTitle() . "</a>";
 						}
 						break;
 				}
@@ -167,121 +113,12 @@ function comment_form_print10Most() {
 }
 
 /**
- * Returns table row(s) for edit of a comment's custom data
- *
- * @param string $discard always empty
- * @return string
- */
-function comment_form_edit_comment($discard, $raw) {
-	$address = getSerializedArray($raw);
-	if (empty($address)) {
-		$address = array('street'	 => '', 'city'		 => '', 'state'		 => '', 'country'	 => '', 'postal'	 => '', 'website'	 => '');
-	}
-	$required = getOption('register_user_address_info');
-	if ($required == 'required') {
-		$required = '*';
-	} else {
-		$required = false;
-	}
-	$html =
-					'<p>
-					<label for="comment_form_street">' .
-					sprintf(gettext('Street%s'), $required) .
-					'</label>
-					<input type="text" name="0-comment_form_street" id="comment_form_street" class="inputbox" size="40" value="' . @$address['street'] . '">
-				</p>
-				<p>
-					<label for="comment_form_city">' .
-					sprintf(gettext('City%s'), $required) .
-					'</label>
-					 <input type="text" name="0-comment_form_city" id="comment_form_city" class="inputbox" size="40" value="' . @$address['city'] . '">
-				</p>
-				<p>
-					<label for="comment_form_state">' .
-					sprintf(gettext('State%s'), $required) .
-					'</label>
-					<input type="text" name="0-comment_form_state" id="comment_form_state" class="inputbox" size="40" value="' . @$address['state'] . '">
-				</p>
-				<p>
-					<label for="comment_form_country">' .
-					sprintf(gettext('Country%s'), $required) .
-					'</label>
-					<input type="text" name="0-comment_form_country" id="comment_form_country" class="inputbox" size="40" value="' . @$address['country'] . '">
-				</p>
-				<p>
-					<label for="comment_form_postal">' .
-					sprintf(gettext('Postal code%s'), $required) .
-					'</label>
-					 <input type="text" name="0-comment_form_postal" id="comment_form_postal" class="inputbox" size="40" value="' . @$address['postal'] . '">
-				</p>' . "\n";
-	return $html;
-}
-
-function comment_form_register_user($html) {
-	global $_comment_form_save_post;
-	$_comment_form_save_post = zp_getCookie('comment_form_register_save');
-	return comment_form_edit_comment(false, $_comment_form_save_post);
-}
-
-function comment_form_register_save($user) {
-	global $_comment_form_save_post;
-	$addresses = getOption('register_user_address_info');
-	$userinfo = getUserInfo(0);
-	$_comment_form_save_post = serialize($userinfo);
-	if ($addresses == 'required') {
-		if (!isset($userinfo['street']) || empty($userinfo['street'])) {
-			$user->transient = true;
-			$user->msg .= ' ' . gettext('You must supply the street field.');
-		}
-		if (!isset($userinfo['city']) || empty($userinfo['city'])) {
-			$user->transient = true;
-			$user->msg .= ' ' . gettext('You must supply the city field.');
-		}
-		if (!isset($userinfo['state']) || empty($userinfo['state'])) {
-			$user->transient = true;
-			$user->msg .= ' ' . gettext('You must supply the state field.');
-		}
-		if (!isset($userinfo['country']) || empty($userinfo['country'])) {
-			$user->transient = true;
-			$user->msg .= ' ' . gettext('You must supply the country field.');
-		}
-		if (!isset($userinfo['postal']) || empty($userinfo['postal'])) {
-			$user->transient = true;
-			$user->msg .= ' ' . gettext('You must supply the postal code field.');
-		}
-	}
-	zp_setCookie('comment_form_register_save', $_comment_form_save_post);
-	$user->setCustomData($_comment_form_save_post);
-}
-
-/**
- * Saves admin custom data
- * Called when an admin is saved
- *
- * @param string $updated true if data has changed
- * @param object $userobj admin user object
- * @param string $i prefix for the admin
- * @param bool $alter will be true if critical admin data may be altered
- * @return bool
- */
-function comment_form_save_admin($updated, $userobj, $i, $alter) {
-	if ($userobj->getValid()) {
-		$olddata = $userobj->getCustomData();
-		$userobj->setCustomData(serialize(getUserInfo($i)));
-		if ($olddata != $userobj->getCustomData()) {
-			return true;
-		}
-	}
-	return $updated;
-}
-
-/**
  * Processes the post of an address
  *
  * @param int $i sequence number of the comment
  * @return array
  */
-function getUserInfo($i) {
+function getCommentAddress($i) {
 	$result = array();
 	if (isset($_POST[$i . '-comment_form_website']))
 		$result['website'] = sanitize($_POST[$i . '-comment_form_website'], 1);
@@ -296,110 +133,6 @@ function getUserInfo($i) {
 	if (isset($_POST[$i . '-comment_form_postal']))
 		$result['postal'] = sanitize($_POST[$i . '-comment_form_postal'], 1);
 	return $result;
-}
-
-/**
- * Processes the address parts of a comment post
- *
- * @param object $commentobj the comment object
- * @param object $receiver the object receiving the comment
- * @return object
- */
-function comment_form_comment_post($commentobj, $receiver) {
-	if ($addresses = getOption('comment_form_addresses')) {
-		$userinfo = getUserInfo(0);
-		if ($addresses == 'required') {
-			// Note: this error will be incremented by functions-controller
-			if (!isset($userinfo['street']) || empty($userinfo['street'])) {
-				$commentobj->setInModeration(-11);
-				$commentobj->comment_error_text .= ' ' . gettext('You must supply the street field.');
-			}
-			if (!isset($userinfo['city']) || empty($userinfo['city'])) {
-				$commentobj->setInModeration(-12);
-				$commentobj->comment_error_text .= ' ' . gettext('You must supply the city field.');
-			}
-			if (!isset($userinfo['state']) || empty($userinfo['state'])) {
-				$commentobj->setInModeration(-13);
-				$commentobj->comment_error_text .= ' ' . gettext('You must supply the state field.');
-			}
-			if (!isset($userinfo['country']) || empty($userinfo['country'])) {
-				$commentobj->setInModeration(-14);
-				$commentobj->comment_error_text .= ' ' . gettext('You must supply the country field.');
-			}
-			if (!isset($userinfo['postal']) || empty($userinfo['postal'])) {
-				$commentobj->comment_error_text .= ' ' . gettext('You must supply the postal code field.');
-				$commentobj->setInModeration(-15);
-			}
-		}
-		$commentobj->setCustomData(serialize($userinfo));
-	}
-	return $commentobj;
-}
-
-/**
- * Supplies comment form options on the options/comments tab
- */
-function comment_form_options() {
-	$optionHandler = new comment_form();
-	customOptions($optionHandler, "");
-}
-
-/**
- * Returns table row(s) for edit of an admin user's custom data
- *
- * @param string $html always empty
- * @param $userobj Admin user object
- * @param string $i prefix for the admin
- * @param string $background background color for the admin row
- * @param bool $current true if this admin row is the logged in admin
- * @return string
- */
-function comment_form_edit_admin($html, $userobj, $i, $background, $current) {
-	if (!$userobj->getValid())
-		return $html;
-	$needs = array('street'	 => '', 'city'		 => '', 'state'		 => '', 'country'	 => '', 'postal'	 => '', 'website'	 => '');
-	$address = getSerializedArray($userobj->getCustomData());
-	if (empty($address)) {
-		$address = $needs;
-	} else {
-		foreach ($needs as $needed => $value) {
-			if (!isset($address[$needed])) {
-				$address[$needed] = '';
-			}
-		}
-	}
-
-	return $html .
-					'<tr' . ((!$current) ? ' style="display:none;"' : '') . ' class="userextrainfo">' .
-					'<td width="20%"' . ((!empty($background)) ? ' style="' . $background . '"' : '') . ' valign="top">' .
-					'<fieldset>
-					<legend>' . gettext("Street") . '</legend>
-					<input type="text" name="' . $i . '-comment_form_street" value="' . $address['street'] . '" size="' . TEXT_INPUT_SIZE . '" />
-				</fieldset>' .
-					'<fieldset>
-					<legend>' . gettext("City") . '</legend>
-					<input type="text" name="' . $i . '-comment_form_city" value="' . $address['city'] . '" size="' . TEXT_INPUT_SIZE . '" />
-				</fieldset>' .
-					'<fieldset>
-					<legend>' . gettext("State") . '</legend>
-					<input type="text" name="' . $i . '-comment_form_state" value="' . $address['state'] . '" size="' . TEXT_INPUT_SIZE . '" />
-				</fieldset>' .
-					'</td>' .
-					'<td' . ((!empty($background)) ? ' style="' . $background . '"' : '') . ' valign="top">' .
-					'<fieldset>
-					<legend>' . gettext("Website") . '</legend>
-					<input type="text" name="' . $i . '-comment_form_website" value="' . $address['website'] . '" size="' . TEXT_INPUT_SIZE . '" />
-				</fieldset>' .
-					'<fieldset>
-					<legend>' . gettext("Country") . '</legend>
-					<input type="text" name="' . $i . '-comment_form_country" value="' . $address['country'] . '" size="' . TEXT_INPUT_SIZE . '" />
-				</fieldset>' .
-					'<fieldset>
-					<legend>' . gettext("Postal code") . '</legend>
-					<input type="text" name="' . $i . '-comment_form_postal" value="' . $address['postal'] . '" size="' . TEXT_INPUT_SIZE . '" />
-				</fieldset>' .
-					'</td>' .
-					'</tr>';
 }
 
 /**
@@ -471,10 +204,11 @@ define('COMMENT_SEND_EMAIL', 32);
  * @param string $ip the IP address of the comment poster
  * @param bool $private set to true if the comment is for the admin only
  * @param bool $anon set to true if the poster wishes to remain anonymous
+ * @param string $customdata
  * @param bit $check bitmask of which fields must be checked. If set overrides the options
  * @return object
  */
-function comment_form_addCcomment($name, $email, $website, $comment, $code, $code_ok, $receiver, $ip, $private, $anon, $check = false) {
+function comment_form_addComment($name, $email, $website, $comment, $code, $code_ok, $receiver, $ip, $private, $anon, $customdata, $check = false) {
 	global $_zp_captcha, $_zp_gallery, $_zp_authority, $_zp_comment_on_hold, $_zp_spamFilter;
 	if ($check === false) {
 		$whattocheck = 0;
@@ -503,13 +237,12 @@ function comment_form_addCcomment($name, $email, $website, $comment, $code, $cod
 		$whattocheck = $check;
 	}
 	$type = $receiver->table;
-	$class = get_class($receiver);
 	$receiver->getComments();
 	$name = trim($name);
 	$email = trim($email);
 	$website = trim($website);
-	// Let the comment have trailing line breaks and space? Nah...
-	// Also (in)validate HTML here, and in $name.
+// Let the comment have trailing line breaks and space? Nah...
+// Also (in)validate HTML here, and in $name.
 	$comment = trim($comment);
 	$receiverid = $receiver->getID();
 	$goodMessage = 2;
@@ -533,6 +266,7 @@ function comment_form_addCcomment($name, $email, $website, $comment, $code, $cod
 	$commentobj->setPrivate($private);
 	$commentobj->setAnon($anon);
 	$commentobj->setInModeration(0);
+	$commentobj->setCustomData($customdata);
 	if (($whattocheck & COMMENT_EMAIL_REQUIRED) && (empty($email) || !is_valid_email_zp($email))) {
 		$commentobj->setInModeration(-2);
 		$commentobj->comment_error_text .= ' ' . gettext("You must supply an e-mail address.");
@@ -598,31 +332,30 @@ function comment_form_addCcomment($name, $email, $website, $comment, $code, $cod
 							'date'				 => $commentobj->getDateTime(),
 							'custom_data'	 => $commentobj->getCustomData());
 		}
-		$class = strtolower(get_class($receiver));
-		switch ($class) {
-			case "album":
+		switch ($type) {
+			case "albums":
 				$url = "album=" . pathurlencode($receiver->name);
 				$ur_album = getUrAlbum($receiver);
 				if ($moderate) {
-					$action = sprintf(gettext('A comment has been placed in moderation on your album "%1$s".'), $receiver->name);
+					$action = sprintf(gettext('A comment has been placed in moderation on your album “%1$s”.'), $receiver->name);
 				} else {
-					$action = sprintf(gettext('A comment has been posted on your album "%1$s".'), $receiver->name);
+					$action = sprintf(gettext('A comment has been posted on your album “%1$s”.'), $receiver->name);
 				}
 				break;
-			case "zenpagenews":
+			case "news":
 				$url = "p=news&title=" . urlencode($receiver->getTitlelink());
 				if ($moderate) {
-					$action = sprintf(gettext('A comment has been placed in moderation on your article "%1$s".'), $receiver->getTitlelink());
+					$action = sprintf(gettext('A comment has been placed in moderation on your article “%1$s”.'), $receiver->getTitlelink());
 				} else {
-					$action = sprintf(gettext('A comment has been posted on your article "%1$s".'), $receiver->getTitlelink());
+					$action = sprintf(gettext('A comment has been posted on your article “%1$s”.'), $receiver->getTitlelink());
 				}
 				break;
-			case "zenpagepage":
+			case "pages":
 				$url = "p=pages&title=" . urlencode($receiver->getTitlelink());
 				if ($moderate) {
-					$action = sprintf(gettext('A comment has been placed in moderation on your page "%1$s".'), $receiver->getTitlelink());
+					$action = sprintf(gettext('A comment has been placed in moderation on your page “%1$s”.'), $receiver->getTitlelink());
 				} else {
-					$action = sprintf(gettext('A comment has been posted on your page "%1$s".'), $receiver->getTitlelink());
+					$action = sprintf(gettext('A comment has been posted on your page “%1$s”.'), $receiver->getTitlelink());
 				}
 				break;
 			default: // all image types
@@ -630,9 +363,9 @@ function comment_form_addCcomment($name, $email, $website, $comment, $code, $cod
 				$url = "album=" . pathurlencode($album->name) . "&image=" . urlencode($receiver->filename);
 				$ur_album = getUrAlbum($album);
 				if ($moderate) {
-					$action = sprintf(gettext('A comment has been placed in moderation on your image "%1$s" in the album "%2$s".'), $receiver->getTitle(), $album->name);
+					$action = sprintf(gettext('A comment has been placed in moderation on your image “%1$s” in the album “%2$s”.'), $receiver->getTitle(), $album->name);
 				} else {
-					$action = sprintf(gettext('A comment has been posted on your image "%1$s" in the album "%2$s".'), $receiver->getTitle(), $album->name);
+					$action = sprintf(gettext('A comment has been posted on your image “%1$s” in the album “%2$s”.'), $receiver->getTitle(), $album->name);
 				}
 				break;
 		}
@@ -730,10 +463,10 @@ function comment_form_handle_comment() {
 		$_zp_HTML_cache->disable();
 		if (in_context(ZP_IMAGE)) {
 			$commentobject = $_zp_current_image;
-			$redirectTo = $_zp_current_image->getImageLink();
+			$redirectTo = $_zp_current_image->getLink();
 		} else if (in_context(ZP_ALBUM)) {
 			$commentobject = $_zp_current_album;
-			$redirectTo = $_zp_current_album->getAlbumLink();
+			$redirectTo = $_zp_current_album->getLink();
 		} else if (in_context(ZP_ZENPAGE_NEWS_ARTICLE)) {
 			$commentobject = $_zp_current_zenpage_news;
 			$redirectTo = FULLWEBPATH . '/index.php?p=news&title=' . $_zp_current_zenpage_news->getTitlelink();
@@ -785,7 +518,7 @@ function comment_form_handle_comment() {
 			$p_private = isset($_POST['private']);
 			$p_anon = isset($_POST['anon']);
 
-			$commentadded = $commentobject->addComment($p_name, $p_email, $p_website, $p_comment, $code1, $code2, $p_server, $p_private, $p_anon);
+			$commentadded = $commentobject->addComment($p_name, $p_email, $p_website, $p_comment, $code1, $code2, $p_server, $p_private, $p_anon, serialize(getCommentAddress(0)));
 
 			$comment_error = $commentadded->getInModeration();
 			$_zp_comment_stored = array('name'		 => $commentadded->getName(),
@@ -870,19 +603,19 @@ function getCommentAuthorSite() {
  */
 function getCommentAuthorLink($title = NULL, $class = NULL, $id = NULL) {
 	global $_zp_current_comment;
-	$site = $_zp_current_comment['website'];
 	$name = $_zp_current_comment['name'];
 	if ($_zp_current_comment['anon']) {
-		$name = substr($name, 1, strlen($name) - 2); // strip off the < and >
+		$site = NULL;
+	} else {
+		$site = $_zp_current_comment['website'];
 	}
-	$namecoded = html_encode($_zp_current_comment['name']);
 	if (empty($site)) {
-		echo $namecoded;
+		return html_encode($_zp_current_comment['name']);
 	} else {
 		if (is_null($title)) {
 			$title = "Visit " . $name;
 		}
-		return getLink($site, $namecoded, $title, $class, $id);
+		return getLinkHTML($site, $_zp_current_comment['name'], $title, $class, $id);
 	}
 }
 
@@ -939,7 +672,7 @@ function printEditCommentLink($text, $before = '', $after = '', $title = NULL, $
 		if ($before) {
 			echo '<span class="beforetext">' . html_encode($before) . '</span>';
 		}
-		printLink(WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form//admin-comments.php?page=editcomment&id=' . $_zp_current_comment['id'], $text, $title, $class, $id);
+		printLinkHTML(WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form//admin-comments.php?page=editcomment&id=' . $_zp_current_comment['id'], $text, $title, $class, $id);
 		if ($after) {
 			echo '<span class="aftertext">' . html_encode($after) . '</span>';
 		}
@@ -978,7 +711,7 @@ function getLatestComments($number, $type = "all", $id = NULL) {
 						$commentcheck['title'] = $item->getTitle('all');
 						switch ($item->table) {
 							case 'albums':
-								$commentcheck['folder'] = $item->getFolder();
+								$commentcheck['folder'] = $item->getFileName();
 								$commentcheck['albumtitle'] = $commentcheck['title'];
 								break;
 							case 'images':
@@ -1081,37 +814,32 @@ function printLatestComments($number, $shorten = '123', $type = "all", $item = N
 		$date = $comment['date'];
 		switch ($comment['type']) {
 			case 'albums':
+				$album = getItemByID('albums', $comment['ownerid']);
+				if ($album) {
+					echo '<li><a href="' . $album->getLink() . '" class="commentmeta">' . $album->getTitle() . $author . "</a><br />\n";
+					echo '<span class="commentbody">' . $shortcomment . '</span></li>';
+				}
+				break;
 			case 'images':
-				$album = $comment['folder'];
-				if ($comment['type'] == "images") { // check if not comments on albums or Zenpage items
-					$imagetag = '&amp;image=' . $comment['filename'];
-					$imagetagR = '/' . $comment['filename'] . getOption('mod_rewrite_image_suffix');
-				} else {
-					$imagetag = $imagetagR = "";
+				$image = getItemByID('images', $comment['ownerid']);
+				if ($image) {
+					echo '<li><a href="' . $image->getLink() . '" class="commentmeta">' . $image->album->gettitle() . ': ' . $image->getTitle() . $author . "</a><br />\n";
+					echo '<span class="commentbody">' . $shortcomment . '</span></li>';
 				}
-				$albumtitle = get_language_string($comment['albumtitle']);
-				$title = '';
-				if ($comment['type'] != 'albums') {
-					if ($comment['title'] == "")
-						$title = '';
-					else
-						$title = get_language_string($comment['title']);
-				}
-				if (!empty($title)) {
-					$title = ": " . $title;
-				}
-				echo '<li><a href="' . rewrite_path($album . $imagetagR, '?album=' . $album . $imagetag) . '" class="commentmeta">' . $albumtitle . $title . $author . "</a><br />\n";
-				echo '<span class="commentbody">' . $shortcomment . '</span></li>';
 				break;
 			case 'news':
-				$title = get_language_string($comment['title']);
-				echo '<li><a href="' . rewrite_path('/' . _NEWS_ . '/' . $comment['titlelink'], '/index.php?p=news&amp;title=' . $comment['titlelink']) . '" class="commentmeta">' . gettext('News') . ':' . $title . $author . "</a><br />\n";
-				echo '<span class="commentbody">' . $shortcomment . '</span></li>';
+				$news = getItemByID('news', $comment['ownerid']);
+				if ($news) {
+					echo '<li><a href="' . $news->getLink() . '" class="commentmeta">' . gettext('News') . ':' . $news->getTitle() . $author . "</a><br />\n";
+					echo '<span class="commentbody">' . $shortcomment . '</span></li>';
+				}
 				break;
 			case 'pages':
-				$title = get_language_string($comment['title']);
-				echo '<li><a href="' . rewrite_path('/' . _PAGES_ . '/' . $comment['titlelink'], '/index.php?p=pages&amp;title=' . $comment['titlelink']) . '" class="commentmeta">' . gettext('News') . ':' . $title . $author . "</a><br />\n";
-				echo '<span class="commentbody">' . $shortcomment . '</span></li>';
+				$page = getItemByID('news', $comment['ownerid']);
+				if ($page) {
+					echo '<li><a href="' . $page->getLink() . '" class="commentmeta">' . gettext('News') . ':' . $page->getTitle() . $author . "</a><br />\n";
+					echo '<span class="commentbody">' . $shortcomment . '</span></li>';
+				}
 				break;
 		}
 	}
@@ -1145,22 +873,6 @@ function getCommentCount() {
 }
 
 /**
- * Returns true if neither the album nor the image have comments closed
- *
- * @return bool
- */
-function getCommentsAllowed() {
-	global $_zp_current_image, $_zp_current_album;
-	if (in_context(ZP_IMAGE)) {
-		if (is_null($_zp_current_image))
-			return false;
-		return $_zp_current_image->getCommentsAllowed();
-	} else {
-		return $_zp_current_album->getCommentsAllowed();
-	}
-}
-
-/**
  * Iterate through comments; use the ZP_COMMENT context.
  * Return true if there are more comments
  * @param  bool $desc set true for desecnding order
@@ -1169,7 +881,7 @@ function getCommentsAllowed() {
  */
 function next_comment($desc = false) {
 	global $_zp_current_image, $_zp_current_album, $_zp_current_comment, $_zp_comments, $_zp_current_zenpage_page, $_zp_current_zenpage_news;
-	//ZENPAGE: comments support
+//ZENPAGE: comments support
 	if (is_null($_zp_current_comment)) {
 		if (in_context(ZP_IMAGE) AND in_context(ZP_ALBUM)) {
 			if (is_null($_zp_current_image))
@@ -1215,5 +927,36 @@ function getCommentStored($numeric = false) {
 		return array_merge($_zp_comment_stored);
 	}
 	return $_zp_comment_stored;
+}
+
+
+	/**
+	 * Takes a comment and makes the body of an email.
+	 *
+	 * @param obj $obj Object of the item commented on
+	 * @param string $author Comment author
+	 * @param string $fullcomment The comment itself
+	 * @return string
+	 */
+	function commentReply($obj, $author, $fullcomment) {
+  if (is_object($obj)) {
+    $comment = ": %0D%0A%0D%0A" . implode('%0D%0A', explode('\n', wordwrap(getBare($fullcomment), 75, '\n')));
+    $message = '';
+    switch ($obj->table) {
+      case 'albums':
+        $title = $obj->getTitle();
+        $message = sprintf(gettext('%1$s commented on album %2$s%3$s'), $author, $obj->getTitle(),$comment);
+        break;
+      default:
+      case 'images':
+        $message = sprintf(gettext('%1$s commented on %2$s in album %3$s%4$s'), $author, $obj->getTitle(), $obj->getAlbum()->getTitle(), $comment);
+        break;
+      case 'news':
+      case 'pages':
+        $message = sprintf(gettext('%1$s commented on %2$s%3$s'), $author, $obj->getTitle(),$comment);
+        break;
+    }
+    return $message;
+  }
 }
 ?>

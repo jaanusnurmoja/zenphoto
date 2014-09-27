@@ -11,6 +11,7 @@ if (!defined('WEBPATH'))
 		?>
 		<?php printHeadTitle(); ?>
 		<?php $handler->theme_head($_zp_themeroot); ?>
+		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<link rel="stylesheet" href="<?php echo $_zp_themeroot ?>/zen.css" type="text/css" />
 		<?php if (class_exists('RSS')) printRSSHeaderLink('Gallery', gettext('Gallery RSS')); ?>
 		<script type="text/javascript">
@@ -61,7 +62,7 @@ if (!defined('WEBPATH'))
 				<div id="header">
 					<div id="logo-floater">
 						<div>
-							<h1 class="title"><a href="<?php echo html_encode(getGalleryIndexURL(false)); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a></h1>
+							<h1 class="title"><a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a></h1>
 						</div>
 					</div>
 				</div>
@@ -79,7 +80,7 @@ if (!defined('WEBPATH'))
 								<div class="main section" id="main">
 									<h2 id="gallerytitle">
 										<?php printHomeLink('', ' » '); ?>
-										<a href="<?php echo html_encode(getGalleryIndexURL(false)); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a> » <?php printSearchBreadcrumb(' » '); ?>
+										<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a> » <?php printSearchBreadcrumb(' » '); ?>
 									</h2>
 
 									<?php
@@ -124,7 +125,7 @@ if (!defined('WEBPATH'))
 															$c++;
 															?>
 															<li<?php if ($c > SHOW_ITEMS) echo ' class="pages_extrashow" style="display:none;"'; ?>>
-																<?php printPageTitleLink(); ?>
+																<?php printPageURL(); ?>
 																<p style="text-indent:1em;"><?php echo exerpt($_zp_current_zenpage_page->getContent(), TRUNCATE_LENGTH); ?></p>
 															</li>
 															<?php
@@ -157,7 +158,7 @@ if (!defined('WEBPATH'))
 															$c++;
 															?>
 															<li<?php if ($c > SHOW_ITEMS) echo ' class="news_extrashow" style="display:none;"'; ?>>
-																<?php printNewsTitleLink(); ?>
+																<?php printNewsURL(); ?>
 																<p style="text-indent:1em;"><?php echo exerpt($_zp_current_zenpage_news->getContent(), TRUNCATE_LENGTH); ?></p>
 															</li>
 															<?php
@@ -197,12 +198,12 @@ if (!defined('WEBPATH'))
 										while (next_album()) {
 											?>
 											<div class="album">
-												<a class="albumthumb" href="<?php echo getAlbumLinkURL(); ?>" title="<?php printf(gettext('View album:  %s'), sanitize(getAlbumTitle())); ?>">
+												<a class="albumthumb" href="<?php echo getAlbumURL(); ?>" title="<?php printf(gettext('View album:  %s'), getBareAlbumTitle()); ?>">
 													<?php printCustomAlbumThumbImage(getAlbumTitle(), 85, NULL, NULL, 85, 85); ?>
 												</a>
 												<div class="albumdesc">
 													<h3>
-														<a href="<?php echo getAlbumLinkURL(); ?>" title="<?php printf(gettext('View album:  %s'), sanitize(getAlbumTitle())); ?>">
+														<a href="<?php echo getAlbumURL(); ?>" title="<?php printf(gettext('View album:  %s'), getBareAlbumTitle()); ?>">
 															<?php printAlbumTitle(); ?>
 														</a>
 													</h3>

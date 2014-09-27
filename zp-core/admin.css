@@ -143,7 +143,7 @@ h3 {
 }
 
 p {
-
+	width: 97%;
 	margin-bottom: 0.8em;
 }
 
@@ -387,7 +387,7 @@ ul.nav li:hover > ul {
 	_top: 1px; /* IE Only */
 }
 
-.subnav li   . a:hover {
+.subnav li a:hover {
 	border-top: 1px solid #CBCBCB;
 	border-left: 1px solid #CBCBCB;
 	border-right: 1px solid #CBCBCB;
@@ -467,6 +467,7 @@ ul.nav li:hover > ul {
 	border-radius: 5px;
 	margin-bottom: 10px;
 	font-size: 100%;
+	list-style-type: none;
 }
 
 .warningbox li {
@@ -1360,7 +1361,6 @@ button.positive,.buttons a.positive {
 	border: 1px solid #ccc;
 	list-style: none;
 	height: 120px;
-	width: 255px;
 	overflow: auto;
 	background-color: white;
 }
@@ -1384,6 +1384,10 @@ button.positive,.buttons a.positive {
 	text-align: left;
 	float: left;
 }
+.tag_div {
+	width: 100%;
+}
+
 .new_tag {
 	border:none;
 	text-decoration: none;
@@ -1524,20 +1528,20 @@ button.positive,.buttons a.positive {
 	height: 1%;
 }
 
-.customchecklist li {
-	background: none;
-	padding-left: 0;
-	text-align: left;
-}
-
 /* CSS for custom checklists */
 .customchecklist {
 	border: 1px solid #ccc;
 	list-style: none;
-	height: 8em;
+	height: 15em;
 	overflow: auto;
 	width: 20em;
 	background-color: white;
+}
+
+.customchecklist li {
+	background: none;
+	padding-left: 0;
+	text-align: left;
 }
 
 .customchecklist,.customchecklist li {
@@ -2171,14 +2175,20 @@ button.positive,.log_buttons a.positive {
 }
 
 .metadata_table {
+	width:100%;
 	table-layout: fixed;
-	border: 1px solid #BAC9CF;
 	word-wrap: break-word;
 }
 
+.medtadata_tag {
+	width:30%;
+	text-align: right;
+}
+
 .metadata_container {
-	width: 350px;
-	height: 320px;
+	border: 1px solid #BAC9CF;
+	width: 100%;
+	height: 180px;
 	overflow:scroll;
 	overflow-x:hidden;
 }
@@ -2586,35 +2596,117 @@ Tooltip styling
 
 
 #form_editcomment label {
-width: 30% !important;
-float: left;
-display: block;
+	width: 30% !important;
+	float: left;
+	display: block;
 }
 
-#form_editcomment input,
-#form_editcomment textarea {
-width: 350px !important;
-display: block;
-float: left;
+#form_editcomment input {
+	width: 60% !important;
 }
+
+
+#form_editcomment textarea {
+	clear: both !important;
+	display: block;
+	width: 100% !important;
+}
+
 
 .commentformedit_fields {
-width: 60%;
-float: left;
+	width: 60%;
+	float: left;
 }
 
 .commentformedit_box {
-width:260px; 
-float:right;
+	width:260px;
+	float:right;
 }
 
 /* prevent jumping toolbar buttons of TinyMCE4 in some browsers */
-.mce-container .mce-toolbar button { 
-border: 0 !Important;
--webkit-box-sizing: border-box;
--moz-box-sizing: border-box;
--o-box-sizing: border-box;
--ms-box-sizing: border-box; 
-box-sizing: border-box;
+.mce-container .mce-toolbar button {
+	border: 0 !Important;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
+
+/* thumb albumsort */
+#images,
+#images li {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+
+#images li {
+	list-style-type: none;
+	float: left;
+	margin: 0 8px 8px 0;
+}
+
+#images li p {
+	margin: -5px 0 0 0 !important;
+	padding: 0;
+}
+
+/* definition lists */
+
+dl {
+	display: block;
+	clear: both;
+	width: 100%;
+}
+
+dt,dd {
+	display: inline-block;
+	width: 35%;
+	margin: 0;
+	padding: 5px;
+}
+
+dt {
+	font-weight: bold;
+}
+
+.bar {
+	background: #f0f0f0;
+}
+
+dd {
+	width: 60%;
+	margin-left: -10px;
+}
+
+.top {
+	vertical-align: top;
+}
+
+ul.userlist {
+	clear: both;
+	padding: 0;
+	margin: 0px;
+	list-style-type: none;
+}
+
+
+form.dirty button[type=submit],
+form.dirty input[type=submit] {
+	border: 1px solid #74b341 !important;
+	background: #d7e5a6;
+}
+
+form.dirty button[type=submit]:hover,
+form.dirty button[type=submit]:active,
+form.dirty input[type=submit]:hover,
+form.dirty input[type=submit]:active{
+	border: 1px solid green !important;
+	background: #eff6d5;
+}
+
+.mce-tinymce.mce-container .mce-toolbar {
+	float: left;
+}

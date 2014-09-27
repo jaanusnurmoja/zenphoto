@@ -7,21 +7,35 @@
  */
 if (!defined('OFFSET_PATH'))
 	die(); //	no direct linking
+
 $_zp_script_timer['start'] = microtime();
 // force UTF-8 Ø
 require_once(dirname(__FILE__) . '/global-definitions.php');
 require_once(dirname(__FILE__) . '/functions.php');
+zp_apply_filter('feature_plugin_load');
+if (DEBUG_PLUGINS) {
+	debugLog('Loading the "feature" plugins.');
+}
 foreach (getEnabledPlugins() as $extension => $plugin) {
 	$loadtype = $plugin['priority'];
 	if ($loadtype & FEATURE_PLUGIN) {
+		if (DEBUG_PLUGINS) {
+			list($usec, $sec) = explode(" ", microtime());
+			$start = (float) $usec + (float) $sec;
+		}
 		require_once($plugin['path']);
+		if (DEBUG_PLUGINS) {
+			zpFunctions::pluginDebug($extension, $priority, $start);
+		}
+		$_zp_loaded_plugins[$extension] = $extension;
 	}
-	$_zp_loaded_plugins[] = $extension;
 }
 
 require_once(SERVERPATH . "/" . ZENFOLDER . '/rewrite.php');
 require_once(dirname(__FILE__) . '/template-functions.php');
 checkInstall();
+if (MOD_REWRITE || isset($_GET['z']))
+	rewriteHandler();
 
 //$_zp_script_timer['require'] = microtime();
 /**
@@ -31,8 +45,7 @@ require_once(SERVERPATH . "/" . ZENFOLDER . '/functions-controller.php');
 require_once(SERVERPATH . "/" . ZENFOLDER . '/controller.php');
 
 $_index_theme = $_zp_script = '';
-$_zp_loaded_plugins = array();
-$_zp_page_check = 'checkPageValidityDummy'; //	Themes must "opt-in" to have URL page numbers validated
+$_zp_page_check = 'checkPageValidity';
 //$_zp_script_timer['controller'] = microtime();
 // Display an arbitrary theme-included PHP page
 if (isset($_GET['p'])) {
@@ -51,12 +64,6 @@ if (isset($_GET['p'])) {
 }
 
 //$_zp_script_timer['theme setup'] = microtime();
-
-if (!$zp_request && isset($_GET['fromlogout'])) { //	redirect not visible to user
-	zp_load_gallery();
-	$_index_theme = prepareIndexPage();
-	$zp_request = true;
-}
 $_zp_script = zp_apply_filter('load_theme_script', $_zp_script, $zp_request);
 
 //	HTML caching?
@@ -86,13 +93,11 @@ if (!preg_match('~' . ZENFOLDER . '~', $_zp_script)) {
 			}
 			require_once($plugin['path']);
 			if (DEBUG_PLUGINS) {
-				list($usec, $sec) = explode(" ", microtime());
-				$end = (float) $usec + (float) $sec;
-				debugLog(sprintf('    ' . $extension . '(THEME:%u)=>%.4fs', $priority & PLUGIN_PRIORITY, $end - $start));
+				zpFunctions::pluginDebug($extension, $priority, $start);
 			}
+			$_zp_loaded_plugins[$extension] = $extension;
 			//		$_zp_script_timer['load '.$extension] = microtime();
 		}
-		$_zp_loaded_plugins[] = $extension;
 	}
 }
 
@@ -102,6 +107,7 @@ if ($_zp_page < 0) {
 } else if ($zp_request && $_zp_page > 1) {
 	$zp_request = $_zp_page_check($zp_request, $_zp_gallery_page, $_zp_page);
 }
+
 //$_zp_script_timer['theme scripts'] = microtime();
 if ($zp_request && $_zp_script && file_exists($_zp_script = SERVERPATH . "/" . internalToFilesystem($_zp_script))) {
 	if (checkAccess($hint, $show)) { // ok to view
@@ -122,8 +128,8 @@ if ($zp_request && $_zp_script && file_exists($_zp_script = SERVERPATH . "/" . i
 	zp_apply_filter('theme_headers');
 	include(internalToFilesystem($_zp_script));
 } else {
-	// If the requested object does not exist, issue a 404 and redirect to the theme's
-	// 404.php page, or a 404.php in the zp-core folder.
+	// If the requested object does not exist, issue a 404 and redirect to the 404.php
+	// in the zp-core folder. This script will load the theme 404 page if it exists.
 	$_zp_HTML_cache->abortHTMLCache();
 	include(SERVERPATH . "/" . ZENFOLDER . '/404.php');
 }

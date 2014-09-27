@@ -21,7 +21,8 @@ class SearchEngine {
 	var $albums = NULL;
 	var $articles = NULL;
 	var $pages = NULL;
-	var $pattern = array('type' => 'like', 'open' => '%', 'close' => '%');
+	var $pattern;
+	var $tagPattern;
 	private $exact = false;
 	protected $dynalbumname = NULL;
 	protected $album = NULL;
@@ -53,10 +54,45 @@ class SearchEngine {
 	 */
 	function __construct($dynamic_album = false) {
 		global $_zp_exifvars, $_zp_gallery;
-		$this->exact = getOption('exact_tag_match');
-		$searchPattern = getOption('search_match_pattern');
-		if (!empty($searchPattern))
-			$this->pattern = unserialize($searchPattern);
+		switch ((int) getOption('exact_tag_match')) {
+			case 0:
+				// partial
+				$this->tagPattern = array('type' => 'like', 'open' => '%', 'close' => '%');
+				break;
+			case 1:
+				// exact
+				$this->tagPattern = array('type' => '=', 'open' => '', 'close' => '');
+				break;
+			case 2:
+				//word
+				$this->tagPattern = array('type' => 'regexp', 'open' => '[[:<:]]', 'close' => '[[:>:]]');
+				break;
+		}
+
+		switch ((int) getOption('exact_string_match')) {
+			case 0:
+				// pattern
+				$this->pattern = array('type' => 'like', 'open' => '%', 'close' => '%');
+				break;
+			case 1:
+				// partial start
+				$this->pattern = array('type' => 'regexp', 'open' => '[[:<:]]', 'close' => '');
+				break;
+			case 2:
+				//word
+				$this->pattern = array('type' => 'regexp', 'open' => '[[:<:]]', 'close' => '[[:>:]]');
+				break;
+		}
+
+		$this->extraparams['albumssorttype'] = getOption('search_album_sort_type');
+		$this->extraparams['albumssortdirection'] = getOption('search_album_sort_direction') ? 'DESC' : '';
+		$this->extraparams['imagessorttype'] = getOption('search_image_sort_type');
+		$this->extraparams['imagessortdirection'] = getOption('search_image_sort_direction') ? 'DESC' : '';
+		$this->extraparams['newssorttype'] = 'date';
+		$this->extraparams['newssortdirection'] = 'DESC';
+		$this->extraparams['pagesssorttype'] = 'title';
+		$this->extraparams['pagessortdirection'] = '';
+
 //image/album fields
 		$this->search_structure['title'] = gettext('Title');
 		$this->search_structure['desc'] = gettext('Description');
@@ -89,7 +125,7 @@ class SearchEngine {
 		}
 		$this->search_structure = zp_apply_filter('searchable_fields', $this->search_structure);
 		if (isset($_REQUEST['words'])) {
-			$this->words = strtr(sanitize($_REQUEST['words'], 0), array('__23__' => '#', '__25__' => '%', '__26__' => '&'));
+			$this->words = strtr(sanitize($_REQUEST['words'], 4), array('__23__' => '#', '__25__' => '%', '__26__' => '&'));
 		} else {
 			$this->words = NULL;
 			if (isset($_REQUEST['date'])) { // words & dates are mutually exclusive
@@ -312,12 +348,16 @@ class SearchEngine {
 	/**
 	 * sets sort directions
 	 *
-	 * @param string $val the direction
+	 * @param bool $val the direction
 	 * @param string $what 'images' if you want the image direction,
 	 *        'albums' if you want it for the album
 	 */
 	function setSortDirection($val, $what = 'images') {
-		$this->extraparams[$what . 'sortdirection'] = $val;
+		if ($val) {
+			$this->extraparams[$what . 'sortdirection'] = 'DESC';
+		} else {
+			$this->extraparams[$what . 'sortdirection'] = 'ASC';
+		}
 	}
 
 	/**
@@ -393,13 +433,9 @@ class SearchEngine {
 						$this->album = $alb;
 						$this->dynalbumname = $v;
 						$this->setSortType($this->album->getSortType('album'), 'albums');
-						if ($this->album->getSortDirection('album')) {
-							$this->setSortDirection('DESC', 'albums');
-						}
+						$this->setSortDirection($this->album->getSortDirection('album'), 'albums');
 						$this->setSortType($this->album->getSortType(), 'images');
-						if ($this->album->getSortDirection('image')) {
-							$this->setSortDirection('DESC', 'images');
-						}
+						$this->setSortDirection($this->album->getSortDirection('image'), 'images');
 					}
 					break;
 				case 'inimages':
@@ -605,9 +641,9 @@ class SearchEngine {
 						$c1 = $c;
 					}
 					break;
+				case '!':
 				case '&':
 				case '|':
-				case '!':
 				case '(':
 				case ')':
 					if (!empty($target)) {
@@ -678,6 +714,7 @@ class SearchEngine {
 		if (array_key_exists($lasttoken, $opChars) && $opChars[$lasttoken] == 1) {
 			array_pop($result);
 		}
+
 		$this->processed_search = zp_apply_filter('search_criteria', $result);
 		return $this->processed_search;
 	}
@@ -973,7 +1010,7 @@ class SearchEngine {
 		global $_zp_gallery;
 		$weights = $idlist = array();
 		$sql = $allIDs = NULL;
-
+		$tagPattern = $this->tagPattern;
 // create an array of [tag, objectid] pairs for tags
 		$tag_objects = array();
 		$fields = $this->fieldList;
@@ -997,6 +1034,10 @@ class SearchEngine {
 							case '(':
 							case ')':
 								break;
+							case '*':
+								$targetfound = true;
+								$tagsql .= "COALESCE(title, '') != '' OR ";
+								break;
 							default:
 								$targetfound = true;
 								$tagsql .= '`title` = ' . db_quote($singlesearchstring) . ' OR ';
@@ -1009,7 +1050,7 @@ class SearchEngine {
 					}
 					break;
 				case 'tags_exact':
-					$this->exact = true;
+					$tagPattern = array('type' => '=', 'open' => '', 'close' => '');
 				case 'tags':
 					unset($fields[$key]);
 					query('SET @serachfield="tags"');
@@ -1022,13 +1063,19 @@ class SearchEngine {
 							case '(':
 							case ')':
 								break;
+							case '*':
+								query('SET @emptyfield="*"');
+								$tagsql = str_replace('t.`name`', '@emptyfield as name', $tagsql);
+								$tagsql .= "t.`name` IS NOT NULL OR ";
+								break;
 							default:
 								$targetfound = true;
-								if ($this->exact) {
-									$tagsql .= '`name` = ' . db_quote($singlesearchstring) . ' OR ';
+								if ($tagPattern['type'] == 'like') {
+									$target = db_LIKE_escape($singlesearchstring);
 								} else {
-									$tagsql .= '`name` LIKE ' . db_quote('%' . db_LIKE_escape($singlesearchstring) . '%') . ' OR ';
+									$target = $singlesearchstring;
 								}
+								$tagsql .= 't.`name` ' . strtoupper($tagPattern['type']) . ' ' . db_quote($tagPattern['open'] . $target . $tagPattern['close']) . ' OR ';
 						}
 					}
 					$tagsql = substr($tagsql, 0, strlen($tagsql) - 4) . ') ORDER BY t.`id`';
@@ -1041,6 +1088,8 @@ class SearchEngine {
 					break;
 			}
 		}
+
+
 // create an array of [name, objectid] pairs for the search fields.
 		$field_objects = array();
 		if (count($fields) > 0) {
@@ -1053,8 +1102,8 @@ class SearchEngine {
 			}
 			foreach ($searchstring as $singlesearchstring) {
 				switch ($singlesearchstring) {
-					case '&':
 					case '!':
+					case '&':
 					case '|':
 					case '(':
 					case ')':
@@ -1063,21 +1112,26 @@ class SearchEngine {
 						$targetfound = true;
 						query('SET @serachtarget=' . db_quote($singlesearchstring));
 						foreach ($fields as $fieldname) {
-							if ($tbl == 'albums' && $fieldname == 'filename') {
+							if ($tbl == 'albums' && strtolower($fieldname) == 'filename') {
 								$fieldname = 'folder';
 							} else {
 								$fieldname = strtolower($fieldname);
 							}
 							if ($fieldname && in_array($fieldname, $columns)) {
 								query('SET @serachfield=' . db_quote($fieldname));
-
-								if ($this->pattern['type'] == 'like') {
-									$target = db_LIKE_escape($singlesearchstring);
-								} else {
-									$target = $singlesearchstring;
+								switch ($singlesearchstring) {
+									case '*':
+										$sql = 'SELECT @serachtarget AS name, @serachfield AS field, `id` AS `objectid` FROM ' . prefix($tbl) . ' WHERE (' . "COALESCE(`$fieldname`, '') != ''" . ') ORDER BY `id`';
+										break;
+									default:
+										if ($this->pattern['type'] == 'like') {
+											$target = db_LIKE_escape($singlesearchstring);
+										} else {
+											$target = $singlesearchstring;
+										}
+										$fieldsql = ' `' . $fieldname . '` ' . strtoupper($this->pattern['type']) . ' ' . db_quote($this->pattern['open'] . $target . $this->pattern['close']);
+										$sql = 'SELECT @serachtarget AS name, @serachfield AS field, `id` AS `objectid` FROM ' . prefix($tbl) . ' WHERE (' . $fieldsql . ') ORDER BY `id`';
 								}
-								$fieldsql = ' `' . $fieldname . '` ' . strtoupper($this->pattern['type']) . ' ' . db_quote($this->pattern['open'] . $target . $this->pattern['close']);
-								$sql = 'SELECT @serachtarget AS name, @serachfield AS field, `id` AS `objectid` FROM ' . prefix($tbl) . ' WHERE (' . $fieldsql . ') ORDER BY `id`';
 								$objects = query_full_array($sql, false);
 								if (is_array($objects)) {
 									$field_objects = array_merge($field_objects, $objects);
@@ -1089,6 +1143,7 @@ class SearchEngine {
 		}
 
 // now do the boolean logic of the search string
+		$exact = $tagPattern['type'] == '=';
 		$objects = array_merge($tag_objects, $field_objects);
 		if (count($objects) != 0) {
 			$tagid = '';
@@ -1101,7 +1156,6 @@ class SearchEngine {
 				}
 				$taglist[$tagid][] = $object['objectid'];
 			}
-
 			$op = '';
 			$idstack = array();
 			$opstack = array();
@@ -1151,7 +1205,7 @@ class SearchEngine {
 						$lookfor = strtolower($singlesearchstring);
 						$objectid = NULL;
 						foreach ($taglist as $key => $objlist) {
-							if (($this->exact && $lookfor == $key) || (!$this->exact && preg_match('|' . preg_quote($lookfor) . '|', $key))) {
+							if (($exact && $lookfor == $key) || (!$exact && preg_match('|' . preg_quote($lookfor) . '|', $key))) {
 								if (is_array($objectid)) {
 									$objectid = array_merge($objectid, $objlist);
 								} else {
@@ -1218,7 +1272,7 @@ class SearchEngine {
 						$news_list = $this->subsetNewsCategories();
 						$idlist = array_intersect($news_list, $idlist);
 						if (count($idlist) == 0) {
-							return NULL;
+							return array(false, array());
 						}
 					}
 					if (empty($sorttype)) {
@@ -1322,7 +1376,7 @@ class SearchEngine {
 		if (empty($searchstring)) {
 			return array();
 		} // nothing to find
-		$criteria = $this->getCacheTag('albums', serialize($searchstring), $sorttype . ' ' . $sortdirection);
+		$criteria = $this->getCacheTag('albums', serialize($searchstring), $sorttype . ' ' . $sortdirection . ' '. $mine);
 		if ($this->albums && $criteria == $this->searches['albums']) {
 			return $this->albums;
 		}
@@ -1350,7 +1404,7 @@ class SearchEngine {
 									case 2:
 										$row['show'] = 0;
 								}
-								if ($mine || (is_null($mine) && $album->isMyItem(LIST_RIGHTS) && $viewUnpublished) || (checkAlbumPassword($albumname) && $row['show'])) {
+								if ($mine || (is_null($mine) && $album->isMyItem(LIST_RIGHTS)) || (checkAlbumPassword($albumname) && ($row['show'] || $viewUnpublished))) {
 									if (empty($this->album_list) || in_array($albumname, $this->album_list)) {
 										$result[] = array('name' => $albumname, 'weight' => $weights[$row['id']]);
 									}
@@ -1474,7 +1528,7 @@ class SearchEngine {
 			return array();
 		} // nothing to find
 
-		$criteria = $this->getCacheTag('images', serialize($searchstring) . ' ' . $searchdate, $sorttype . ' ' . $sortdirection);
+		$criteria = $this->getCacheTag('images', serialize($searchstring) . ' ' . $searchdate, $sorttype . ' ' . $sortdirection . ' '.$mine);
 		if ($criteria == $this->searches['images']) {
 			return $this->images;
 		}
@@ -1514,7 +1568,7 @@ class SearchEngine {
 									$row['show'] = 0;
 									break;
 							}
-							if ($mine || is_null($mine) && ($album->isMyItem(LIST_RIGHTS) || checkAlbumPassword($albumname) && $album->getShow())) {
+							if ($mine || is_null($mine) && ($album->isMyItem(LIST_RIGHTS) || checkAlbumPassword($albumname) && ($album->getShow() || $viewUnpublished))) {
 								$allow = empty($this->album_list) || in_array($albumname, $this->album_list);
 							}
 							$albums_seen[$albumid] = $albumrow = array('allow' => $allow, 'viewUnpublished' => $viewUnpublished, 'folder' => $albumname, 'localpath' => ALBUM_FOLDER_SERVERPATH . internalToFilesystem($albumname) . '/');
@@ -1728,7 +1782,8 @@ class SearchEngine {
 	 *
 	 * @return array
 	 */
-	function getArticles($articles_per_page = 0, $published = NULL, $ignorepagination = false, $sorttype = "date", $sortdirection = "desc") {
+	function getArticles($articles_per_page = 0, $published = NULL, $ignorepagination = false, $sorttype = NULL, $sortdirection = NULL) {
+
 		$articles = $this->getSearchArticles($sorttype, $sortdirection);
 		if (empty($articles)) {
 			return array();
@@ -1851,7 +1906,7 @@ class SearchEngine {
 				if ((time() - strtotime($result['date'])) > SEARCH_CACHE_DURATION * 60) {
 					query('DELETE FROM ' . prefix('search_cache') . ' WHERE `id` = ' . $result['id']);
 				} else {
-					if ($result = unserialize($result['data'])) {
+					if ($result = getSerializedArray($result['data'])) {
 						return $result;
 					}
 				}

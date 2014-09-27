@@ -75,14 +75,16 @@ function EF_head($ignore) {
 	if (!$themeColor) {
 		$themeColor = getThemeOption('Theme_colors');
 	}
-	eval(file_get_contents(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/styles/' . $themeColor . '.txt'));
-	$css = file_get_contents(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/base.css');
-	$css = strtr($css, $tr);
-	$css = preg_replace('|\.\./images/|', WEBPATH . '/' . THEMEFOLDER . '/effervescence_plus/images/', $css);
+	if (!file_exists(SERVERPATH . '/' . DATA_FOLDER . '/effervescence_plus/styles/' . $themeColor . '.css') || filemtime(SERVERPATH . '/' . DATA_FOLDER . '/effervescence_plus/styles/' . $themeColor . '.css') < filemtime(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/styles/' . $themeColor . '.txt')) {
+		eval(file_get_contents(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/styles/' . $themeColor . '.txt'));
+		$css = file_get_contents(SERVERPATH . '/' . THEMEFOLDER . '/effervescence_plus/base.css');
+		$css = strtr($css, $tr);
+		$css = preg_replace('|\.\./images/|', WEBPATH . '/' . THEMEFOLDER . '/effervescence_plus/images/', $css);
+		mkdir_recursive(SERVERPATH . '/' . DATA_FOLDER . '/effervescence_plus/styles/', FOLDER_MOD);
+		file_put_contents(SERVERPATH . '/' . DATA_FOLDER . '/effervescence_plus/styles/' . $themeColor . '.css', $css);
+	}
 	?>
-	<style type="text/css">
-	<?php echo $css; ?>
-	</style>
+	<link rel="stylesheet" href="<?php echo WEBPATH . '/' . DATA_FOLDER; ?>/effervescence_plus/styles/<?php echo $themeColor; ?>.css" type="text/css" />
 	<link rel="stylesheet" href="<?php echo WEBPATH . '/' . THEMEFOLDER; ?>/effervescence_plus/common.css" type="text/css" />
 	<script type="text/javascript">
 		// <!-- <![CDATA[
@@ -185,7 +187,7 @@ function printHeadingImage($randomImage) {
 				$randomAlbum = $randomAlbum->getParent();
 			}
 		}
-		$randomImageURL = html_encode($randomImage->getImageLink());
+		$randomImageURL = html_encode($randomImage->getLink());
 		if (getOption('allow_upscale')) {
 			$wide = 620;
 			$high = 180;
@@ -386,22 +388,19 @@ function printFooter($admin = true) {
 		<?php printZenphotoLink(); ?>
 		<br />
 		<?php
-		if (function_exists('printFavoritesLink') && $_zp_gallery_page != 'password.php' && $_zp_gallery_page != 'favorites.php') {
-			printFavoritesLink();
-			echo '<br />';
+		if (function_exists('printFavoritesURL') && $_zp_gallery_page != 'password.php' && $_zp_gallery_page != 'favorites.php') {
+			printFavoritesURL(NULL, '', ' | ', '<br />');
 		}
 		?>
 		<?php
 		if ($_zp_gallery_page == 'gallery.php') {
 			if (class_exists('RSS'))
-				printRSSLink('Gallery', '', 'Gallery RSS', ''); echo '<br />';
+				printRSSLink('Gallery', '', 'Gallery RSS', '');
+			echo '<br />';
 		}
 		?>
 		<?php
-		if ($_zp_gallery_page != 'password.php') {
-			@call_user_func('printUserLogin_out', '');
-			echo '<br />';
-		}
+		@call_user_func('printUserLogin_out', '', '<br />');
 		?>
 		<?php
 		if ($_zp_gallery_page != 'contact.php' && extensionEnabled('contact_form') && ($_zp_gallery_page != 'password.php' || $_zp_gallery->isUnprotectedPage('contact'))) {
@@ -410,13 +409,13 @@ function printFooter($admin = true) {
 		}
 		?>
 		<?php
-		if ($_zp_gallery_page != 'register.php' && function_exists('printRegistrationForm') && !zp_loggedin() && ($_zp_gallery_page != 'password.php' || $_zp_gallery->isUnprotectedPage('register'))) {
-			printCustomPageURL(gettext('Register for this site'), 'register', '', '');
+		if ($_zp_gallery_page != 'register.php' && function_exists('printRegisterURL') && !zp_loggedin() && ($_zp_gallery_page != 'password.php' || $_zp_gallery->isUnprotectedPage('register'))) {
+			printRegisterURL(gettext('Register for this site'), '');
 			echo '<br />';
 		}
 		?>
 		<?php @call_user_func('mobileTheme::controlLink'); ?>
-		<?php @call_user_func('printLanguageSelector'); ?>
+	<?php @call_user_func('printLanguageSelector'); ?>
 		<br class="clearall" />
 	</div>
 	<!-- Administration Toolbox -->
@@ -426,14 +425,13 @@ function printFooter($admin = true) {
 function commonNewsLoop($paged) {
 	$newstypes = array('album' => gettext('album'), 'image' => gettext('image'), 'video' => gettext('video'), 'news' => gettext('news'));
 	while (next_news()) {
-		$newstype = getNewsType();
-		$newstypedisplay = $newstypes[$newstype];
+		$newstypedisplay = gettext('news');
 		if (stickyNews()) {
 			$newstypedisplay .= ' <small><em>' . gettext('sticky') . '</em></small>';
 		}
 		?>
 		<div class="newsarticle<?php if (stickyNews()) echo ' sticky'; ?>">
-			<h3><?php printNewsTitleLink(); ?><?php echo " <span class='newstype'>[" . $newstypedisplay . "]</span>"; ?></h3>
+			<h3><?php printNewsURL(); ?><?php echo " <span class='newstype'>[" . $newstypedisplay . "]</span>"; ?></h3>
 			<div class="newsarticlecredit">
 				<span class="newsarticlecredit-left">
 					<?php
@@ -447,19 +445,15 @@ function commonNewsLoop($paged) {
 					?>
 				</span>
 				<?php
-				if (is_GalleryNewsType()) {
-					echo ' | ' . gettext("Album:") . " <a href='" . getNewsAlbumURL() . "' title='" . getBareNewsAlbumTitle() . "'>" . getNewsAlbumTitle() . "</a>";
-				} else {
-					if (!empty($cat)) {
-						echo ' | ';
-						printNewsCategories(", ", gettext("Categories: "), "newscategories");
-					}
+				if (!empty($cat)) {
+					echo ' | ';
+					printNewsCategories(", ", gettext("Categories: "), "newscategories");
 				}
 				?>
 			</div> <!-- newsarticlecredit -->
 			<?php printCodeblock(1); ?>
 			<?php printNewsContent(); ?>
-			<?php printCodeblock(2); ?>
+		<?php printCodeblock(2); ?>
 			<br class="clearall" />
 		</div>
 		<?php
@@ -470,7 +464,7 @@ function commonNewsLoop($paged) {
 }
 
 function exerpt($content, $length) {
-	return shortenContent(strip_tags($content), $length, getOption("zenpage_textshorten_indicator"));
+	return shortenContent(getBare($content), $length, getOption("zenpage_textshorten_indicator"));
 }
 
 function commonComment() {
@@ -496,7 +490,7 @@ function commonComment() {
 
 function my_checkPageValidity($request, $gallery_page, $page) {
 	switch ($gallery_page) {
-		case 'gallery.php';
+		case 'gallery.php':
 			$gallery_page = 'index.php'; //	same as an album gallery index
 			break;
 		case 'index.php':

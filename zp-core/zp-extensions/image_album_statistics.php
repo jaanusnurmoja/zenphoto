@@ -42,7 +42,7 @@ function getAlbumStatistic($number = 5, $option, $albumfolder = '', $sortdirecti
 		$obj = $_zp_gallery;
 	}
 	getAllAccessibleAlbums($obj, $albumlist, false);
-	switch ($sortdirection) {
+	switch (strtolower($sortdirection)) {
 		case 'desc':
 		default:
 			$sortdir = 'DESC';
@@ -174,21 +174,24 @@ function printAlbumStatisticItem($album, $option, $showtitle = false, $showdate 
 	}
 	$tempalbum = newAlbum($album['folder']);
 	if ($firstimglink && $tempimage = $tempalbum->getImage(0)) {
-		$albumpath = $tempimage->getImageLink();
+		$albumpath = $tempimage->getLink();
 	} else {
-		$albumpath = $tempalbum->getAlbumLink();
+		$albumpath = $tempalbum->getLink();
 	}
 	echo "<li><a href=\"" . $albumpath . "\" title=\"" . html_encode($tempalbum->getTitle()) . "\">\n";
 	$albumthumb = $tempalbum->getAlbumThumbImage();
 	switch ($crop) {
 		case 0:
-			echo "<img src=\"" . html_encode(pathurlencode($albumthumb->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE))) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
+			$sizes = getSizeCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, $albumthumb);
+			echo '<img src="' . html_encode(pathurlencode($albumthumb->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE))) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($albumthumb->getTitle()) . '" /></a>' . "\n";
 			break;
 		case 1;
-			echo "<img src=\"" . html_encode(pathurlencode($albumthumb->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
+			$sizes = getSizeCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, $albumthumb);
+			echo '<img src="' . html_encode(pathurlencode($albumthumb->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($albumthumb->getTitle()) . '" /></a>' . "\n";
 			break;
 		case 2:
-			echo "<img src=\"" . html_encode(pathurlencode($albumthumb->getThumb())) . "\" alt=\"" . html_encode($albumthumb->getTitle()) . "\" /></a>\n<br />";
+			$sizes = getSizeDefaultThumb($albumthumb);
+			echo '<img src="' . html_encode(pathurlencode($albumthumb->getThumb())) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($albumthumb->getTitle()) . '" /></a>' . "\n";
 			break;
 	}
 	if ($showtitle) {
@@ -373,7 +376,7 @@ function getImageStatistic($number, $option, $albumfolder = '', $collection = fa
 	if ($threshold > 0) {
 		$albumWhere .= ' AND images.total_votes >= ' . $threshold;
 	}
-	switch ($sortdirection) {
+	switch (strtolower($sortdirection)) {
 		case 'desc':
 		default:
 			$sortdir = 'DESC';
@@ -490,22 +493,25 @@ function printImageStatistic($number, $option, $albumfolder = '', $showtitle = f
 		if ($fullimagelink) {
 			$imagelink = $image->getFullImageURL();
 		} else {
-			$imagelink = $image->getImageLink();
+			$imagelink = $image->getLink();
 		}
-		echo '<li><a href="' . html_encode(pathurlencode($imagelink)) . '" title="' . html_encode($image->getTitle()) . "\">\n";
+		echo '<li><a href="' . html_encode($imagelink) . '" title="' . html_encode($image->getTitle()) . "\">\n";
 		switch ($crop) {
 			case 0:
-				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE))) . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n";
+				$sizes = getSizeCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, $image);
+				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage($width, NULL, NULL, NULL, NULL, NULL, NULL, TRUE))) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n";
 				break;
 			case 1:
-				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n";
+				$sizes = getSizeCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, $image);
+				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($image->getTitle()) . "\" width=\"" . $width . "\" height=\"" . $height . "\" /></a>\n";
 				break;
 			case 2:
-				echo '<img src="' . html_encode(pathurlencode($image->getThumb())) . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n<br />";
+				$sizes = getSizeDefaultThumb($image);
+				echo '<img src="' . html_encode(pathurlencode($image->getThumb())) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n<br />";
 				break;
 		}
 		if ($showtitle) {
-			echo '<h3><a href="' . html_encode(pathurlencode($image->getImageLink())) . '" title="' . html_encode($image->getTitle()) . "\">\n";
+			echo '<h3><a href="' . html_encode(pathurlencode($image->getLink())) . '" title="' . html_encode($image->getTitle()) . "\">\n";
 			echo $image->getTitle() . "</a></h3>\n";
 		}
 		if ($showdate) {

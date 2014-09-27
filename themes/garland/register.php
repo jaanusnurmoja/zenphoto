@@ -8,6 +8,7 @@ if (function_exists('printRegistrationForm')) {
 		<head>
 			<?php zp_apply_filter('theme_head'); ?>
 			<?php printHeadTitle(); ?>
+			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<link rel="stylesheet" href="<?php echo $_zp_themeroot ?>/zen.css" type="text/css" />
 			<?php if (class_exists('RSS')) printRSSHeaderLink('Gallery', gettext('Gallery RSS')); ?>
 		</head>
@@ -19,7 +20,7 @@ if (function_exists('printRegistrationForm')) {
 					<div id="header">
 						<div id="logo-floater">
 							<div>
-								<h1 class="title"><a href="<?php echo html_encode(getGalleryIndexURL(false)); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a></h1>
+								<h1 class="title"><a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a></h1>
 							</div>
 						</div>
 					</div>
@@ -37,7 +38,7 @@ if (function_exists('printRegistrationForm')) {
 									<div class="main section" id="main">
 										<h2 id="gallerytitle">
 											<?php printHomeLink('', ' » '); ?>
-											<a href="<?php echo html_encode(getGalleryIndexURL(false)); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a> »
+											<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a> »
 											<?php echo "<em>" . gettext('Register') . "</em>"; ?>
 										</h2>
 										<h3><?php echo gettext('User Registration') ?></h3>
@@ -61,6 +62,6 @@ if (function_exists('printRegistrationForm')) {
 	</html>
 	<?php
 } else {
-	include(dirname(__FILE__) . '/404.php');
+	include(SERVERPATH . '/' . ZENFOLDER . '/404.php');
 }
 ?>

@@ -57,7 +57,7 @@ class Gallery {
 	 * @return string
 	 */
 	function getBareTitle($locale = NULL) {
-		return strip_tags($this->getTitle($locale));
+		return getBare($this->getTitle($locale));
 	}
 
 	function setTitle($title) {
@@ -186,7 +186,7 @@ class Gallery {
 	function getAlbums($page = 0, $sorttype = null, $direction = null, $care = true, $mine = NULL) {
 
 // Have the albums been loaded yet?
-		if (is_null($this->albums) || $care && $sorttype . $direction !== $this->lastalbumsort) {
+		if ($mine || is_null($this->albums) || $care && $sorttype . $direction !== $this->lastalbumsort) {
 
 			$albumnames = $this->loadAlbumNames();
 			$key = $this->getAlbumSortKey($sorttype);
@@ -215,9 +215,9 @@ class Gallery {
 		$dir = opendir($albumdir);
 		if (!$dir) {
 			if (!is_dir($albumdir)) {
-				$msg .= sprintf(gettext('Error: The \'albums\' directory (%s) cannot be found.'), $this->albumdir);
+				$msg .= sprintf(gettext('Error: The “albums” directory (%s) cannot be found.'), $this->albumdir);
 			} else {
-				$msg .= sprintf(gettext('Error: The \'albums\' directory (%s) is not readable.'), $this->albumdir);
+				$msg .= sprintf(gettext('Error: The “albums” directory (%s) is not readable.'), $this->albumdir);
 			}
 			zp_error($msg);
 		}
@@ -301,7 +301,7 @@ class Gallery {
 
 	/**
 	 * Returns the foldername of the current theme.
-	 * if no theme is set, returns "default".
+	 * if no theme is set, picks the "first" theme.
 	 * @return string
 	 */
 	function getCurrentTheme() {
@@ -623,7 +623,7 @@ class Gallery {
 						$album = newAlbum($folder);
 						if (!$album->isDynamic()) {
 							if (is_null($album->getDateTime())) { // see if we can get one from an image
-								$images = $album->getImages(0, 0, 'date', 'DESC');
+								$images = $album->getImages(0, 0);
 								if (count($images) > 0) {
 									$image = newImage($album, array_shift($images));
 									$album->setDateTime($image->getDateTime());
@@ -652,13 +652,10 @@ class Gallery {
 			if ($images) {
 				$c = 0;
 				while ($image = db_fetch_assoc($images)) {
-					$sql = 'SELECT `folder` FROM ' . prefix('albums') . ' WHERE `id`="' . $image['albumid'] . '";';
-					$row = query_single_row($sql);
-					$imageName = internalToFilesystem(ALBUM_FOLDER_SERVERPATH . $row['folder'] . '/' . $image['filename']);
-					if (file_exists($imageName)) {
-						$mtime = filemtime($imageName);
-						if ($image['mtime'] != $mtime) { // file has changed since we last saw it
-							$imageobj = newImage(newAlbum($row['folder']), $image['filename']);
+					$albumobj = getItemByID('albums', $image['albumid']);
+					if ($albumobj->exists && file_exists($imageName = internalToFilesystem(ALBUM_FOLDER_SERVERPATH . $albumobj->name . '/' . $image['filename']))) {
+						if ($image['mtime'] != $mtime = filemtime($imageName)) { // file has changed since we last saw it
+							$imageobj = newImage($albumobj, $image['filename']);
 							$imageobj->set('mtime', $mtime);
 							$imageobj->updateMetaData(); // prime the EXIF/IPTC fields
 							$imageobj->updateDimensions(); // update the width/height & account for rotation
@@ -681,7 +678,8 @@ class Gallery {
 			$resource = db_show('tables');
 			if ($resource) {
 				while ($row = db_fetch_assoc($resource)) {
-					query('OPTIMIZE TABLE ' . array_shift($row));
+					$tbl = array_shift($row);
+					query('OPTIMIZE TABLE `' . $tbl . '`');
 				}
 				db_free_result($resource);
 			}
@@ -1017,14 +1015,6 @@ class Gallery {
 
 	function save() {
 		setOption('gallery_data', serialize($this->data));
-//TODO: remove on Zenphoto 1.5
-		if (!TEST_RELEASE) {
-			foreach ($this->data as $option => $value) { //	for compatibility
-				if (is_array($value))
-					$value = serialize($value);
-				setOption($option, $value);
-			}
-		}
 	}
 
 	/**
@@ -1033,7 +1023,51 @@ class Gallery {
 	 * @return string
 	 */
 	public function __toString() {
-		return $this->table . " (" . $this->id . ")";
+		return 'Gallery object';
+	}
+
+	/**
+	 * registers object handlers for image varients
+	 * @global array $_zp_extra_filetypes
+	 * @param type $suffix
+	 * @param type $objectName
+	 */
+	static function addImageHandler($suffix, $objectName) {
+		global $_zp_extra_filetypes;
+		$_zp_extra_filetypes[strtolower($suffix)] = $objectName;
+	}
+
+	/**
+	 * Returns true if the file is an image
+	 *
+	 * @param string $filename the name of the target
+	 * @return bool
+	 */
+	static function validImage($filename) {
+		global $_zp_supported_images;
+		return in_array(getSuffix($filename), $_zp_supported_images);
+	}
+
+	/**
+	 * Returns true if the file is handled by an image handler plugin object
+	 *
+	 * @param string $filename
+	 * @return bool
+	 */
+	static function validImageAlt($filename) {
+		global $_zp_extra_filetypes;
+		return @$_zp_extra_filetypes[getSuffix($filename)];
+	}
+
+	/**
+	 * registers object handlers for album varients
+	 * @global array $_zp_albumHandlers
+	 * @param type $suffix
+	 * @param type $objectName
+	 */
+	static function addAlbumHandler($suffix, $objectName) {
+		global $_zp_albumHandlers;
+		$_zp_albumHandlers[strtolower($suffix)] = $objectName;
 	}
 
 }

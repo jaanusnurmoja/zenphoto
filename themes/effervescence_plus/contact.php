@@ -14,7 +14,7 @@ if (function_exists('printContactForm')) {
 		<head>
 			<?php zp_apply_filter('theme_head'); ?>
 			<?php printHeadTitle(); ?>
-			<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
+			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		</head>
 
 		<body onload="blurAnchors()">
@@ -40,13 +40,16 @@ if (function_exists('printContactForm')) {
 							<?php
 							if (getOption('custom_index_page') === 'gallery') {
 								?>
-								<a href="<?php echo html_encode(getGalleryIndexURL(false)); ?>" title="<?php echo gettext('Main Index'); ?>"><?php echo gettext('Home'); ?></a> |
+								<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Main Index'); ?>"><?php echo gettext('Home'); ?></a> |
+								<?php
+							} else {
+								?>
+								<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Albums Index'); ?>"><?php printGalleryTitle(); ?></a> |
 								<?php
 							}
-							?>
-							<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Albums Index'); ?>">
-								<?php printGalleryTitle(); ?></a></span> |
-								<?php
+							printGalleryTitle();
+							?></a></span> |
+						<?php
 						echo "<em>" . gettext('Contact') . "</em>";
 						?>
 					</div>
@@ -81,6 +84,6 @@ if (function_exists('printContactForm')) {
 	</html>
 	<?php
 } else {
-	include(dirname(__FILE__) . '/404.php');
+	include(SERVERPATH . '/' . ZENFOLDER . '/404.php');
 }
 ?>

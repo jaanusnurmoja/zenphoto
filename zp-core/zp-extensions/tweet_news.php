@@ -4,12 +4,13 @@
  *
  * @package plugins
  * @author Stephen Billard (sbillard)
- * @subpackage tools
+ * @subpackage misc
  */
-$plugin_is_filter = 9 | FEATURE_PLUGIN | ADMIN_PLUGIN;
+$plugin_is_filter = 9 | FEATURE_PLUGIN;
 $plugin_description = gettext('Tweet news articles when published.');
 $plugin_author = "Stephen Billard (sbillard)";
 $plugin_disable = (function_exists('curl_init')) ? false : gettext('The <em>php_curl</em> extension is required');
+$plugin_notice = (extensionEnabled('TinyURL')) ? '' : gettext('Enable the tinyURL plugin to shorten URLs in your tweets.');
 
 $option_interface = 'tweet';
 
@@ -111,7 +112,7 @@ class tweet {
 							'desc'			 => gettext('Select the language for the Tweet message.'));
 		}
 		if (getOption('tweet_news_news') && is_object($_zp_zenpage)) {
-			$catlist = unserialize(getOption('tweet_news_categories'));
+			$catlist = getSerializedArray(getOption('tweet_news_categories'));
 			$news_categories = $_zp_zenpage->getAllCategories(false);
 			$catlist = array(gettext('*not categorized*') => 'tweet_news_categories_none');
 			foreach ($news_categories as $category) {
@@ -281,9 +282,9 @@ class tweet {
 	 * @return string
 	 */
 	private static function composeStatus($link, $title, $text) {
-		$text = trim(html_decode(strip_tags($text)));
+		$text = trim(html_decode(getBare($text)));
 		if ($title) {
-			$title = trim(html_decode(strip_tags($title))) . ': ';
+			$title = trim(html_decode(getBare($title))) . ': ';
 		}
 		if (strlen($title . $text . ' ' . $link) > 140) {
 			$c = 140 - strlen($link);
@@ -314,7 +315,11 @@ class tweet {
 			setupCurrentLocale(getOption('tweet_language')); //	the log will be in the language of the master user.
 		}
 		$error = '';
-		$link = getTinyURL($obj);
+		if (class_exists('tinyURL')) {
+			$link = tinyURL::getURL($obj);
+		} else {
+			$link = $obj->getLink();
+		}
 		switch ($type = $obj->table) {
 			case 'pages':
 			case 'news':

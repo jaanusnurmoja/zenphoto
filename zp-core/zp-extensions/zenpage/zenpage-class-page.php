@@ -17,7 +17,8 @@ class ZenpagePage extends ZenpageItems {
 		if (is_array($titlelink)) {
 			$titlelink = $titlelink['titlelink'];
 		}
-		$new = parent::PersistentObject('pages', array('titlelink' => $titlelink), 'titlelink', true, empty($titlelink), $allowCreate);
+		$new = $this->instantiate('pages', array('titlelink' => $titlelink), 'titlelink', true, empty($titlelink), $allowCreate);
+		$this->exists = $this->loaded;
 	}
 
 	/**
@@ -188,7 +189,7 @@ class ZenpagePage extends ZenpageItems {
 	 * @param bool $toplevel ignored, left for parameter compatibility
 	 * @param int $number number of pages to get (NULL by default for all)
 	 * @param string $sorttype NULL for the standard order as sorted on the backend, "title", "date", "popular", "mostrated", "toprated", "random"
-	 * @param string $sortdirection "asc" or "desc" for ascending or descending order
+	 * @param string $sortdirection false for ascending, true for descending
 	 * @return array
 	 */
 	function getPages($published = NULL, $toplevel = false, $number = NULL, $sorttype = NULL, $sortdirection = NULL) {
@@ -210,7 +211,7 @@ class ZenpagePage extends ZenpageItems {
 	 * @deprecated
 	 */
 	function getSubPages() {
-		deprecated_functions::notify(gettext('Use the Zenpage Page class->getPages() method.'));
+		Zenpage_internal_deprecations::getSubPages();
 		return $this->getPages();
 	}
 
@@ -295,9 +296,19 @@ class ZenpagePage extends ZenpageItems {
 	 *
 	 * @return string
 	 */
+	function getLink() {
+		return zp_apply_filter('getLink', rewrite_path(_PAGES_ . '/' . $this->getTitlelink(), '/index.php?p=pages&title=' . $this->getTitlelink()), $this, NULL);
+	}
+
+	/**
+	 * Returns full path to a specific page
+	 *
+	 * @return string
+	 * @deprecated since version 1.4.6
+	 */
 	function getPageLink() {
-		global $_zp_zenpage;
-		return $_zp_zenpage->getPagesLinkPath($this->getTitlelink());
+		Zenpage_internal_deprecations::getPageLink();
+		return $this->getLink();
 	}
 
 }

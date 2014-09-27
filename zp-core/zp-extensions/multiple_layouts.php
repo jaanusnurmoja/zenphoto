@@ -37,7 +37,7 @@
  * @author Malte Müller (acrylian), Stephen Billard (sbillard)
  * @package plugins
  */
-$plugin_is_filter = 5 | ADMIN_PLUGIN | FEATURE_PLUGIN;
+$plugin_is_filter = 5 | FEATURE_PLUGIN;
 $plugin_description = gettext("Multiple <em>Theme</em> layouts");
 $plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard)";
 
@@ -113,11 +113,14 @@ class multipleLayoutOptions {
  * @return result
  */
 function getSelectedLayout($obj, $type) {
-	$assignedlayout = query_single_row("SELECT * FROM " . prefix('plugin_storage') . ' WHERE `aux` = ' . $obj->getID() . ' AND `type` = "' . $type . '"');
-	if (!$assignedlayout || empty($assignedlayout['data'])) {
-		$assignedlayout = checkParentLayouts($obj, $type);
+	if ($obj && $obj->exists) {
+		$assignedlayout = query_single_row("SELECT * FROM " . prefix('plugin_storage') . ' WHERE `aux` = ' . $obj->getID() . ' AND `type` = "' . $type . '"');
+		if (!$assignedlayout || empty($assignedlayout['data'])) {
+			$assignedlayout = checkParentLayouts($obj, $type);
+		}
+		return $assignedlayout;
 	}
-	return $assignedlayout;
+	return false;
 }
 
 /**
@@ -501,7 +504,7 @@ function deleteLayoutSelection($allow, $obj) {
 	$type = 'multiple_layouts_' . $obj->table;
 	if (getOption($type)) {
 		$query = query('DELETE FROM ' . prefix('plugin_storage') . ' WHERE `aux` = ' . $obj->getID() . ' AND type = "' . $type . '"', false);
-		if ($obj->table == 'albums') {
+		if (isAlbumClass($obj)) {
 			$result = query_single_row('DELETE FROM ' . prefix('plugin_storage') . ' WHERE `aux` = ' . $obj->getID() . ' AND type = "multiple_layouts_albums_images"', false);
 		}
 	}
@@ -521,7 +524,7 @@ function copyLayoutSelection($newid, $obj) {
 		if ($result) {
 			$query = query('INSERT INTO ' . prefix('plugin_storage') . ' (type,aux,data) VALUES ("' . $result['type'] . '", ' . $newid . ', ' . db_quote($result['data']) . ')');
 		}
-		if ($obj->table == 'albums') {
+		if (isAlbumClass($obj)) {
 			$result = query_single_row('SELECT * FROM ' . prefix('plugin_storage') . ' WHERE `aux` = ' . $obj->getID() . ' AND type = "multiple_layouts_albums_images"', false);
 			if ($result) {
 				$query = query('INSERT INTO ' . prefix('plugin_storage') . ' (type,aux,data) VALUES ("multiple_layouts_albums_images", ' . $newid . ', ' . db_quote($result['data']) . ')');

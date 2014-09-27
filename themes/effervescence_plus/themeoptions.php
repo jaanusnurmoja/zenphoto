@@ -12,7 +12,7 @@ require_once(dirname(__FILE__) . '/functions.php');
 
 class ThemeOptions {
 
-	function ThemeOptions() {
+	function __construct() {
 		if (OFFSET_PATH == 2) {
 			if ($personality = getThemeOption('Theme_personality', NULL, 'effervescence_plus')) {
 				if (strpos($personality, ' ') == false) {
@@ -25,7 +25,7 @@ class ThemeOptions {
 			}
 			purgeOption('Theme_personality');
 		}
-
+		$me = basename(dirname(__FILE__));
 		setThemeOptionDefault('Theme_logo', '');
 		setThemeOptionDefault('Allow_search', true);
 		setThemeOptionDefault('Slideshow', true);
@@ -49,42 +49,41 @@ class ThemeOptions {
 		setThemeOptionDefault('thumb_crop', 1);
 		setThemeOptionDefault('effervescence_daily_album_image', 1);
 		setThemeOptionDefault('effervescence_daily_album_image_effect', '');
-		setOptionDefault('colorbox_effervescence_plus_album', 1);
-		setOptionDefault('colorbox_effervescence_plus_image', 1);
-		setOptionDefault('colorbox_effervescence_plus_search', 1);
+		setOptionDefault('colorbox_' . $me . '_album', 1);
+		setOptionDefault('colorbox_' . $me . '_image', 1);
+		setOptionDefault('colorbox_' . $me . '_search', 1);
 		if (extensionEnabled('zenpage')) {
 			setThemeOption('custom_index_page', 'gallery', NULL, 'effervescence_plus', false);
 		}
 		if (class_exists('cacheManager')) {
-			$me = basename(dirname(__FILE__));
 			cacheManager::deleteThemeCacheSizes($me);
-			cacheManager::addThemeCacheSize($me, 595, NULL, NULL, NULL, NULL, NULL, NULL, false, getOption('fullimage_watermark'), NULL, NULL);
-			cacheManager::addThemeCacheSize($me, getThemeOption('thumb_size'), NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
-			cacheManager::addThemeCacheSize($me, NULL, 180, 80, NUll, NULL, NULL, NULL, true, getOption('Image_watermark'), NULL, NULL);
+			cacheManager::addThemeCacheSize($me, 595, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+			cacheManager::addThemeCacheSize($me, getThemeOption('thumb_size'), NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, NULL, NULL, NULL);
+			cacheManager::addThemeCacheSize($me, NULL, 180, 80, NUll, NULL, NULL, NULL, true, NULL, NULL, NULL);
 		}
 		if (function_exists('createMenuIfNotExists')) {
 			$menuitems = array(
-							array('type'		 => 'menulabel', 'title'		 => gettext('News Articles'), 'link'		 => '', 'show'		 => 1, 'nesting'	 => 0),
+							array('type' => 'menulabel', 'title' => gettext('News Articles'), 'link' => '', 'show' => 1, 'nesting' => 0),
 							array('type'			 => 'menufunction', 'title'			 => gettext('All news'),
 											'link'			 => 'printAllNewsCategories("All news",TRUE,"","menu-active",false,false,false,"list",false,getOption("menu_manager_truncate_string"));',
 											'show'			 => 1, 'include_li' => 0, 'nesting'		 => 1),
-							array('type'			 => 'html', 'title'			 => gettext('News Articles Rule'), 'link'			 => '<li class="menu_rule menu_menulabel"></li>', 'show'			 => 1, 'include_li' => 0, 'nesting'		 => 0),
-							array('type'		 => 'custompage', 'title'		 => gettext('Gallery'), 'link'		 => 'gallery', 'show'		 => 1, 'nesting'	 => 0),
-							array('type'			 => 'menufunction', 'title'			 => gettext('All Albums'), 'link'			 => 'printAlbumMenuList("list",NULL,"","menu-active","submenu","menu-active","",false,false,false,false,getOption("menu_manager_truncate_string"));', 'show'			 => 1, 'include_li' => 0, 'nesting'		 => 1),
-							array('type'			 => 'html', 'title'			 => gettext('Gallery Rule'), 'link'			 => '<li class="menu_rule menu_menulabel"></li>', 'show'			 => 1, 'include_li' => 0, 'nesting'		 => 0),
-							array('type'		 => 'menulabel', 'title'		 => gettext('Pages'), 'link'		 => '', 'show'		 => 1, 'nesting'	 => 0),
-							array('type'			 => 'menufunction', 'title'			 => gettext('All pages'), 'link'			 => 'printPageMenu("list","","menu-active","submenu","menu-active","",0,false,getOption("menu_manager_truncate_string"));', 'show'			 => 1, 'include_li' => 0, 'nesting'		 => 1, getOption("menu_manager_truncate_string")),
-							array('type'			 => 'html', 'title'			 => gettext('Pages Rule'), 'link'			 => '<li class="menu_rule menu_menulabel"></li>', 'show'			 => 1, 'include_li' => 0, 'nesting'		 => 0),
-							array('type'		 => 'menulabel', 'title'		 => gettext('Archive'), 'link'		 => '', 'show'		 => 1, 'nesting'	 => 0),
-							array('type'		 => 'custompage', 'title'		 => gettext('Gallery and News'), 'link'		 => 'archive', 'show'		 => 1, 'nesting'	 => 1),
-							array('type'			 => 'html', 'title'			 => gettext('Archive Rule'), 'link'			 => '<li class="menu_rule menu_menulabel"></li>', 'show'			 => 1, 'include_li' => 0, 'nesting'		 => 0)
+							array('type' => 'html', 'title' => gettext('News Articles Rule'), 'link' => '<li class="menu_rule menu_menulabel"></li>', 'show' => 1, 'include_li' => 0, 'nesting' => 0),
+							array('type' => 'custompage', 'title' => gettext('Gallery'), 'link' => 'gallery', 'show' => 1, 'nesting' => 0),
+							array('type' => 'menufunction', 'title' => gettext('All Albums'), 'link' => 'printAlbumMenuList("list",NULL,"","menu-active","submenu","menu-active","",false,false,false,false,getOption("menu_manager_truncate_string"));', 'show' => 1, 'include_li' => 0, 'nesting' => 1),
+							array('type' => 'html', 'title' => gettext('Gallery Rule'), 'link' => '<li class="menu_rule menu_menulabel"></li>', 'show' => 1, 'include_li' => 0, 'nesting' => 0),
+							array('type' => 'menulabel', 'title' => gettext('Pages'), 'link' => '', 'show' => 1, 'nesting' => 0),
+							array('type' => 'menufunction', 'title' => gettext('All pages'), 'link' => 'printPageMenu("list","","menu-active","submenu","menu-active","",0,false,getOption("menu_manager_truncate_string"));', 'show' => 1, 'include_li' => 0, 'nesting' => 1, getOption("menu_manager_truncate_string")),
+							array('type' => 'html', 'title' => gettext('Pages Rule'), 'link' => '<li class="menu_rule menu_menulabel"></li>', 'show' => 1, 'include_li' => 0, 'nesting' => 0),
+							array('type' => 'menulabel', 'title' => gettext('Archive'), 'link' => '', 'show' => 1, 'nesting' => 0),
+							array('type' => 'custompage', 'title' => gettext('Gallery and News'), 'link' => 'archive', 'show' => 1, 'nesting' => 1),
+							array('type' => 'html', 'title' => gettext('Archive Rule'), 'link' => '<li class="menu_rule menu_menulabel"></li>', 'show' => 1, 'include_li' => 0, 'nesting' => 0)
 			);
 			if (extensionEnabled('rss')) {
 				$rssItems = array(
-								array('type'		 => 'menulabel', 'title'		 => gettext('RSS'), 'link'		 => '', 'show'		 => 1, 'nesting'	 => 0),
-								array('type'		 => 'customlink', 'title'		 => gettext('Gallery'), 'link'		 => WEBPATH . '/index.php?rss', 'show'		 => 1, 'nesting'	 => 1),
-								array('type'		 => 'customlink', 'title'		 => gettext('News'), 'link'		 => getRSSLink('news'), 'show'		 => 1, 'nesting'	 => 1),
-								array('type'		 => 'customlink', 'title'		 => gettext('News and Gallery'), 'link'		 => getRSSLink('news') . '&amp;withimages', 'show'		 => 1, 'nesting'	 => 1),
+								array('type' => 'menulabel', 'title' => gettext('RSS'), 'link' => '', 'show' => 1, 'nesting' => 0),
+								array('type' => 'customlink', 'title' => gettext('Gallery'), 'link' => WEBPATH . '/index.php?rss', 'show' => 1, 'nesting' => 1),
+								array('type' => 'customlink', 'title' => gettext('News'), 'link' => getRSSLink('news'), 'show' => 1, 'nesting' => 1),
+								array('type' => 'customlink', 'title' => gettext('News and Gallery'), 'link' => getRSSLink('news') . '&amp;withimages', 'show' => 1, 'nesting' => 1),
 				);
 				$menuitems = array_merge($menuitems, $rssItems);
 			}
@@ -103,18 +102,18 @@ class ThemeOptions {
 		if (!extensionEnabled('print_album_menu') && (($m = getOption('effervescence_menu')) == 'effervescence' || $m == 'zenpage' || $m == 'garland')) {
 			$note .= '<p class="notebox">' . sprintf(gettext('<strong>Note:</strong> The <em>%s</em> custom menu makes use of the <em>print_album_menu</em> plugin.'), $m) . '</p>';
 		}
-		$options = array(gettext('Theme logo')						 => array('key'					 => 'Theme_logo', 'type'				 => OPTION_TYPE_TEXTBOX, 'multilingual' => 1, 'order'				 => 8, 'desc'				 => gettext('The text for the theme logo')),
-						gettext('Watermark head image')	 => array('key'		 => 'Watermark_head_image', 'type'	 => OPTION_TYPE_CHECKBOX, 'order'	 => 11, 'desc'	 => gettext('Check to place a watermark on the heading image. (Image watermarking must be set.)')),
-						gettext('Daily image')					 => array('key'		 => 'effervescence_daily_album_image', 'type'	 => OPTION_TYPE_CHECKBOX, 'order'	 => 3, 'desc'	 => gettext('If checked on the heading image will change daily rather than on each page load.')),
-						gettext('Allow search')					 => array('key'		 => 'Allow_search', 'type'	 => OPTION_TYPE_CHECKBOX, 'order'	 => 1, 'desc'	 => gettext('Check to enable search form.')),
-						gettext('Slideshow')						 => array('key'		 => 'Slideshow', 'type'	 => OPTION_TYPE_CHECKBOX, 'order'	 => 6, 'desc'	 => gettext('Check to enable slideshow for the <em>Smoothgallery</em> personality.')),
-						gettext('Graphic logo')					 => array('key'		 => 'Graphic_logo', 'type'	 => OPTION_TYPE_CUSTOM, 'order'	 => 4, 'desc'	 => sprintf(gettext('Select a logo (PNG files in the <em>%s/images</em> folder) or leave empty for text logo.'), UPLOAD_FOLDER)),
+		$options = array(gettext('Theme logo')						 => array('key' => 'Theme_logo', 'type' => OPTION_TYPE_TEXTBOX, 'multilingual' => 1, 'order' => 8, 'desc' => gettext('The text for the theme logo')),
+						gettext('Watermark head image')	 => array('key' => 'Watermark_head_image', 'type' => OPTION_TYPE_CHECKBOX, 'order' => 11, 'desc' => gettext('Check to place a watermark on the heading image. (Image watermarking must be set.)')),
+						gettext('Daily image')					 => array('key' => 'effervescence_daily_album_image', 'type' => OPTION_TYPE_CHECKBOX, 'order' => 3, 'desc' => gettext('If checked on the heading image will change daily rather than on each page load.')),
+						gettext('Allow search')					 => array('key' => 'Allow_search', 'type' => OPTION_TYPE_CHECKBOX, 'order' => 1, 'desc' => gettext('Check to enable search form.')),
+						gettext('Slideshow')						 => array('key' => 'Slideshow', 'type' => OPTION_TYPE_CHECKBOX, 'order' => 6, 'desc' => gettext('Check to enable slideshow for the <em>Smoothgallery</em> personality.')),
+						gettext('Graphic logo')					 => array('key' => 'Graphic_logo', 'type' => OPTION_TYPE_CUSTOM, 'order' => 4, 'desc' => sprintf(gettext('Select a logo (PNG files in the <em>%s/images</em> folder) or leave empty for text logo.'), UPLOAD_FOLDER)),
 						gettext('Theme personality')		 => array('key'				 => 'effervescence_personality', 'type'			 => OPTION_TYPE_SELECTOR,
 										'selections' => $personalities,
 										'order'			 => 9,
 										'desc'			 => gettext('Select the theme personality')),
-						gettext('Theme colors')					 => array('key'		 => 'Theme_colors', 'type'	 => OPTION_TYPE_CUSTOM, 'order'	 => 7, 'desc'	 => gettext('Select the colors of the theme')),
-						gettext('Custom menu')					 => array('key'		 => 'effervescence_menu', 'type'	 => OPTION_TYPE_CUSTOM, 'order'	 => 2, 'desc'	 => gettext('Set this to the <em>menu_manager</em> menu you wish to use.') . $note)
+						gettext('Theme colors')					 => array('key' => 'Theme_colors', 'type' => OPTION_TYPE_CUSTOM, 'order' => 7, 'desc' => gettext('Select the colors of the theme')),
+						gettext('Custom menu')					 => array('key' => 'effervescence_menu', 'type' => OPTION_TYPE_CUSTOM, 'order' => 2, 'desc' => gettext('Set this to the <em>menu_manager</em> menu you wish to use.') . $note)
 		);
 
 		if (!function_exists('printCustomMenu') || getThemeOption('custom_index_page', NULL, 'effervescence_plus') != 'gallery') {
@@ -123,11 +122,11 @@ class ThemeOptions {
 
 		if (getOption('effervescence_personality') == 'Image_gallery') {
 			$options[gettext('Image gallery transition')] = array('key'				 => 'effervescence_transition', 'type'			 => OPTION_TYPE_SELECTOR,
-							'selections' => array(gettext('None')				 => '', gettext('Fade')				 => 'fade', gettext('Shrink/grow') => 'resize', gettext('Horizontal')	 => 'slide-hori', gettext('Vertical')		 => 'slide-vert'),
+							'selections' => array(gettext('None') => '', gettext('Fade') => 'fade', gettext('Shrink/grow') => 'resize', gettext('Horizontal') => 'slide-hori', gettext('Vertical') => 'slide-vert'),
 							'order'			 => 10,
 							'desc'			 => gettext('Transition effect for Image gallery'));
 			$options[gettext('Image gallery caption')] = array('key'			 => 'effervescence_caption_location', 'type'		 => OPTION_TYPE_RADIO,
-							'buttons'	 => array(gettext('On image')	 => 'image', gettext('Separate')	 => 'separate', gettext('Omit')			 => 'none'),
+							'buttons'	 => array(gettext('On image') => 'image', gettext('Separate') => 'separate', gettext('Omit') => 'none'),
 							'order'		 => 10.5,
 							'desc'		 => gettext('Location for Image gallery picture caption'));
 		}

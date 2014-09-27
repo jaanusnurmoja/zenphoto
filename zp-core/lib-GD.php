@@ -65,7 +65,7 @@ if (!function_exists('zp_graphicsLibInfo')) {
 		$_lib_GD_info['JPG'] = ($imgtypes & IMG_JPG) ? 'jpg' : false;
 		$_lib_GD_info['JPEG'] = ($imgtypes & IMG_JPG) ? 'jpg' : false;
 		$_lib_GD_info['PNG'] = ($imgtypes & IMG_PNG) ? 'png' : false;
-		$_lib_GD_info['BMP'] = ($imgtypes & IMG_WBMP) ? 'jpg' : false;
+		$_lib_GD_info['WBMP'] = ($imgtypes & IMG_WBMP) ? 'jpg' : false;
 		unset($imgtypes);
 		unset($info);
 
@@ -340,7 +340,7 @@ if (!function_exists('zp_graphicsLibInfo')) {
 		 * @return resource
 		 */
 		function zp_rotateImage($im, $rotate) {
-			$newim_rot = imagerotate($im, $rotate, 0);
+			$newim_rot = imagerotate($im, 360-$rotate, 0);//The GD Library rotates counterclockwise !
 			imagedestroy($im);
 			return $newim_rot;
 		}

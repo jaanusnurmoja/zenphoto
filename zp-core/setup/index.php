@@ -30,12 +30,21 @@ if (!file_exists($session_path) || !is_writable($session_path)) {
 }
 
 $session = session_start();
+session_cache_limiter('nocache');
 
-header('Last-Modified: ' . ZP_LAST_MODIFIED);
 header('Content-Type: text/html; charset=UTF-8');
-header("Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0");
+header("HTTP/1.0 200 OK");
+header("Status: 200 OK");
+header("Cache-Control: no-cache, must-revalidate, no-store, pre-check=0, post-check=0, max-age=0");
+header("Pragma: no-cache");
+header('Last-Modified: ' . ZP_LAST_MODIFIED);
+header("Expires: Thu, 19 Nov 1981 08:52:00 GMT");
 
 require_once(dirname(__FILE__) . '/setup-functions.php');
+//allow only one setup to run
+$setupMutex = new setupMutex();
+$setupMutex->lock();
+
 if ($debug = isset($_REQUEST['debug'])) {
 	if (!$debug = $_REQUEST['debug']) {
 		$debug = true;
@@ -526,7 +535,7 @@ if ($c <= 0) {
 					if ($optionlist) {
 						$_zp_options = array();
 						foreach ($optionlist as $option) {
-							$_zp_options[$option['name']] = $option['value'];
+							$_zp_options[strtolower($option['name'])] = $option['value'];
 						}
 					}
 				}
@@ -642,7 +651,7 @@ if ($c <= 0) {
 							} else {
 								$magic_quotes_disabled = true;
 							}
-							checkMark($magic_quotes_disabled, gettext("PHP <code>magic_quotes_gpc</code>"), gettext("PHP <code>magic_quotes_gpc</code> [is enabled]"), gettext('We strongly recommend disabling <code>magic_quotes_gpc</code>. For more information See <em><a href="http://www.zenphoto.org/news/troubleshooting-zenphoto#what-is-magic_quotes_gpc-and-why-should-it-be-disabled-">What is magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto troubleshooting guide.'));
+							checkMark($magic_quotes_disabled, gettext("PHP <code>magic_quotes_gpc</code>"), gettext("PHP <code>magic_quotes_gpc</code> [is enabled]"), gettext('We strongly recommend disabling <code>magic_quotes_gpc</code>. For more information See <em><a href="http://www.zenphoto.org/news/installation-problems#about-magicquotes-and-why-they-should-be-disabled">What is magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto troubleshooting guide.'));
 							if (get_magic_quotes_runtime()) {
 								$magic_quotes_disabled = 0;
 							} else {
@@ -676,7 +685,7 @@ if ($c <= 0) {
 							checkMark($noxlate, gettext('PHP <code>gettext()</code> support'), gettext('PHP <code>gettext()</code> support [is not present]'), gettext("Localization of Zenphoto requires native PHP <code>gettext()</code> support"));
 							checkmark(function_exists('flock') ? 1 : -1, gettext('PHP <code>flock</code> support'), gettext('PHP <code>flock</code> support [is not present]'), gettext('Zenpoto uses <code>flock</code> for serializing critical regions of code. Without <code>flock</code> active sites may experience <em>race conditions</em> which may be causing inconsistent data.'));
 							if ($_zp_setupCurrentLocale_result === false) {
-								checkMark(-1, gettext('PHP <code>setlocale()</code>'), ' ' . gettext('PHP <code>setlocale()</code> failed'), gettext("Locale functionality is not implemented on your platform or the specified locale does not exist. Language translation may not work.") . '<br />' . gettext('See the <a  href="http://www.zenphoto.org/news/troubleshooting-zenphoto#24">troubleshooting guide</a> on zenphoto.org for details.'));
+								checkMark(-1, gettext('PHP <code>setlocale()</code>'), ' ' . gettext('PHP <code>setlocale()</code> failed'), gettext("Locale functionality is not implemented on your platform or the specified locale does not exist. Language translation may not work.") . '<br />' . gettext('See the <a  href="http://www.zenphoto.org/news/problems-with-languages">user guide</a> on zenphoto.org for details.'));
 							}
 							primeMark(gettext('mb_strings'));
 							if (function_exists('mb_internal_encoding')) {
@@ -760,7 +769,7 @@ if ($c <= 0) {
 							}
 
 
-							$good = checkMark($cfg, sprintf(gettext('<em>%1$s</em> file'), CONFIGFILE), sprintf(gettext('<em>%1$s</em> file [does not exist]'), CONFIGFILE), sprintf(gettext('Setup was not able to create this file. You will need to copy the <code>%1$s/zenphoto_cfg.txt</code> file to <code>%2$s/%3$s</code> then edit it as indicated in the file\'s comments.'), ZENFOLDER, DATA_FOLDER, CONFIGFILE)) && $good;
+							$good = checkMark($cfg, sprintf(gettext('<em>%1$s</em> file'), CONFIGFILE), sprintf(gettext('<em>%1$s</em> file [does not exist]'), CONFIGFILE), sprintf(gettext('Setup was not able to create this file. You will need to copy the <code>%1$s/zenphoto_cfg.txt</code> file to <code>%2$s/%3$s</code> then edit it as indicated in the file’s comments.'), ZENFOLDER, DATA_FOLDER, CONFIGFILE)) && $good;
 							if ($cfg) {
 								primeMark(gettext('File permissions'));
 								$chmodselector = '<form action="#"><input type="hidden" name="xsrfToken" value="' . $xsrftoken . '" />' .
@@ -902,7 +911,7 @@ if ($c <= 0) {
 						<?php
 						if (!UTF8_IMAGE_URI) {
 							?>
-																$('#UTF8_uri_warn').html('<?php echo gettext('You should enable the URL option <em>UTF8 image URIs</em>.'); ?>' + ' <?php echo gettext('<a href="javascript:uri(true)">Please do</a>'); ?>');
+																$('#UTF8_uri_warn').html('<?php echo addslashes(gettext('You should enable the URL option <em>UTF8 image URIs</em>.')); ?>' + ' <?php echo addslashes(gettext('<a href="javascript:uri(true)">Please do</a>')); ?>');
 																$('#UTF8_uri_warn').show();
 							<?php
 							if ($autorun) {
@@ -914,12 +923,12 @@ if ($c <= 0) {
 						?>
 														};
 														image.onerror = function() {
-															$('#UTF8_uri_text').html('<?php echo $req_iso; ?>');
+															$('#UTF8_uri_text').html('<?php echo addslashes($req_iso); ?>');
 						<?php
 						if (UTF8_IMAGE_URI) {
 							?>
 																$('#UTF8_uri').attr('class', 'warn');
-																$('#UTF8_uri_warn').html('<?php echo gettext('You should disable the URL option <em>UTF8 image URIs</em>.'); ?>' + ' <?php echo gettext('<a href="javascript:uri(false)">Please do</a>'); ?>');
+																$('#UTF8_uri_warn').html('<?php echo addslashes(gettext('You should disable the URL option <em>UTF8 image URIs</em>.')); ?>' + ' <?php echo gettext('<a href="javascript:uri(false)">Please do</a>'); ?>');
 																$('#UTF8_uri_warn').show();
 							<?php
 							if ($autorun) {
@@ -1305,7 +1314,7 @@ if ($c <= 0) {
 										$plugin_subfolders[] = implode('/', $folders);
 										unset($installed_files[$key]); // this will be taken care of later
 										break;
-									case 'cache_html':
+									case STATIC_CACHE_FOLDER:
 										$Cache_html_subfolders[] = implode('/', $folders);
 										unset($installed_files[$key]);
 										break;
@@ -1315,7 +1324,7 @@ if ($c <= 0) {
 							foreach ($installed_files as $extra) {
 								$filelist .= filesystemToInternal(str_replace($base, '', $extra) . '<br />');
 							}
-							if (count($installed_files) > 0) {
+							if (class_exists('zpFunctions') && zpFunctions::hasPrimaryScripts() && count($installed_files) > 0) {
 								if (defined('TEST_RELEASE') && TEST_RELEASE) {
 									$msg1 = gettext("Zenphoto core files [This is a <em>debug</em> build. Some files are missing or seem wrong]");
 								} else {
@@ -1384,7 +1393,7 @@ if ($c <= 0) {
 															'</code><p class="buttons"><a href="?delete_extra' . ($debug ? '&amp;debug' : '') . '">' . gettext("Delete extra files") . '</a></p><br class="clearall" /><br class="clearall" />');
 										}
 									}
-									checkMark($permissions, gettext("Zenphoto core file permissions"), gettext("Zenphoto core file permissions [not correct]"), gettext('Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href="http://www.zenphoto.org/news/troubleshooting-zenphoto#29">Troubleshooting guide</a> for details on Zenphoto permissions requirements.'));
+									checkMark($permissions, gettext("Zenphoto core file permissions"), gettext("Zenphoto core file permissions [not correct]"), gettext('Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href="http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders">Troubleshooting guide</a> for details on Zenphoto permissions requirements.'));
 								}
 							}
 							$msg = gettext("<em>.htaccess</em> file");
@@ -1410,8 +1419,7 @@ if ($c <= 0) {
 								} else if ($Nginx) {
 									$err = gettext("Server seems to be <em>nginx</em>");
 									$mod = "&amp;mod_rewrite"; //	enable test to see if it works.
-									$desc = gettext('If you wish to create cruft-free URLs, you will need to configuring <em>URL rewriting for NGINX servers</em>.') . ' ' .
-//TODO							sprintf(gettest('Please see the <em>nginx_zenphoto_rewrite.conf</em> file in the %s folder for details.'),ZENFOLDER).
+									$desc = gettext('If you wish to create cruft-free URLs, you will need to configuring <a href="http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial"><em>URL rewriting for NGINX servers</em></a>.') . ' ' .
 													'<br /><br />' . gettext('You can ignore this warning if you do not intend to set the <code>mod_rewrite</code> option.');
 								} else {
 									$mod = "&amp;mod_rewrite"; //	enable test to see if it works.
@@ -1539,7 +1547,7 @@ if ($c <= 0) {
 								if (file_exists($serverpath . '/robots.txt')) {
 									checkmark(-2, gettext('<em>robots.txt</em> file'), gettext('<em>robots.txt</em> file [Not created]'), gettext('Setup did not create a <em>robots.txt</em> file because one already exists.'));
 								} else {
-									$text = explode('****delete all lines above and including this one *******', $robots);
+									$text = explode('# Place it in the root folder of your web pages.', $robots);
 									$d = dirname(dirname(dirname($_SERVER['SCRIPT_NAME'])));
 									if ($d == '/')
 										$d = '';
@@ -2487,47 +2495,6 @@ if ($c <= 0) {
 							}
 
 							if ($createTables) {
-								if (isset($_GET['protect_files'])) {
-									require_once(dirname(dirname(__FILE__)) . '/' . PLUGIN_FOLDER . '/security-logger.php');
-									$curdir = getcwd();
-									chdir(dirname(__FILE__));
-									$list = setup_glob('*.php');
-									chdir($curdir);
-									$rslt = array();
-									foreach ($list as $component) {
-										@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, 0777);
-										if (@rename(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component . '.xxx')) {
-											@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component . '.xxx', FILE_MOD);
-											setupLog(sprintf(gettext('%s protected.'), $component), true);
-										} else {
-											@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, FILE_MOD);
-											setupLog(sprintf(gettext('failed to protect %s.'), $component), true);
-											$rslt[] = '../setup/' . $component;
-										}
-									}
-
-									if (empty($rslt)) {
-										zp_apply_filter('log_setup', true, 'protect', gettext('protected'));
-										?>
-										<p class="messagebox"><?php echo gettext('Setup scripts protected.'); ?></p>
-										<?php
-									} else {
-										$rslt = implode(', ', $rslt);
-										zp_apply_filter('log_setup', false, 'protect', $rslt);
-										?>
-										<p class="errorbox">
-											<?php printf(gettext('Failed to protect: %s'), $rslt); ?>
-										</p>
-										<?php
-										$autorun = false;
-									}
-								} else {
-									if (!(defined('TEST_RELEASE') && TEST_RELEASE)) {
-										$origautorun = $autorun;
-										$autorun = 'setup';
-									}
-								}
-
 								if ($_zp_loggedin == ADMIN_RIGHTS) {
 									$filelist = safe_glob(SERVERPATH . "/" . BACKUPFOLDER . '/*.zdb');
 									if (count($filelist) > 0) {
@@ -2540,7 +2507,7 @@ if ($c <= 0) {
 										}
 									}
 								} else {
-									$link = sprintf(gettext('You can now <a href="%1$s">View your gallery</a> or <a href="%2$s">administer.</a>'), WEBPATH . '/', WEBPATH . '/' . ZENFOLDER . '/admin.php');
+									$link = sprintf(gettext('You can now <a href="%1$s">administer your gallery.</a>'), WEBPATH . '/' . ZENFOLDER . '/admin.php');
 								}
 								?>
 								<p id="golink" class="delayshow" style="display:none;"><?php echo $link; ?></p>
@@ -2548,14 +2515,9 @@ if ($c <= 0) {
 								switch ($autorun) {
 									case false:
 										break;
+									case 'gallery':
 									case 'admin':
 										$autorun = WEBPATH . '/' . ZENFOLDER . '/admin.php';
-										break;
-									case 'gallery':
-										$autorun = WEBPATH . '/';
-										break;
-									case 'setup':
-										$autorun = WEBPATH . '/' . ZENFOLDER . '/setup/index.php?checked&autorun=' . $origautorun . '&protect_files&xsrfToken=' . $xsrftoken;
 										break;
 									default:
 										break;
@@ -2736,7 +2698,7 @@ if ($c <= 0) {
 							<div class="error">
 								<h3><?php echo gettext("database did not connect"); ?></h3>
 								<p>
-									<?php echo gettext("If you haven't created the database yet, now would be a good time."); ?>
+									<?php echo gettext("If you haven not created the database yet, now would be a good time."); ?>
 								</p>
 							</div>
 							<?php
@@ -2755,7 +2717,7 @@ if ($c <= 0) {
 					}
 					?>
 					<?php
-					if ($noxlate > 0) {
+					if ($noxlate > 0 && !isset($_GET['checked'])) {
 						setupLanguageSelector();
 					}
 					?>
@@ -2765,3 +2727,6 @@ if ($c <= 0) {
 		<?php printSetupFooter(); ?>
 	</body>
 </html>
+<?php
+$setupMutex->unlock();
+?>

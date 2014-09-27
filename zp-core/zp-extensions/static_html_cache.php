@@ -6,10 +6,15 @@
  *
  * Exceptions to this are the <var>password.php</var> and <var>404.php</var> pages, any page listed in the
  * <i>Excluded pages</i> option, and any page whose script makes a call on the
- * <var>static_cache_html_disable_cache()</var> function. <b>NOTE:</b> this function only prevents the
+ * <var>static_cache_html::disable()</var> function. <b>NOTE:</b> this function only prevents the
  * creation of a cache image of the page being viewed. If there is already an existing
  * cached page and none of the other exclusions are in effect, the cached page will be
  * shown.
+ *
+ * Caching is also aborted when the page being rendered is not static. For instance
+ * pages containing a link to the image processor will not be cached so that the
+ * image may be cached and the link changed to the cache folder. Similarly, pages
+ * which contain comment forms are not cached because then the comment would never show.
  *
  * In addition, caching does not occur for pages viewed by Zenphoto users if the user has
  * <var>ADMIN</var> privileges or if he is the manager of an album being viewed or whose images are
@@ -19,7 +24,7 @@
  * @package plugins
  * @subpackage admin
  */
-$plugin_is_filter = 90 | CLASS_PLUGIN;
+$plugin_is_filter = 400 | CLASS_PLUGIN;
 $plugin_description = gettext("Adds static HTML cache functionality to Zenphoto.");
 $plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard)";
 

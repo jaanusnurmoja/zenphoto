@@ -7,7 +7,7 @@
  *
  * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage tools
+ * @subpackage misc
  */
 if (isset($_REQUEST['performcrop'])) {
 	if (!defined('OFFSET_PATH'))
@@ -190,7 +190,7 @@ if (isset($_REQUEST['crop'])) {
 	if ($_REQUEST['performcrop'] == 'backend') {
 		$return = FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . pathurlencode($albumname) . '&saved&subpage=' . sanitize($_REQUEST['subpage']) . '&tagsort=' . sanitize($_REQUEST['tagsort']) . '&tab=imageinfo';
 	} else {
-		$return = FULLWEBPATH . $imageobj->getImageLink();
+		$return = FULLWEBPATH . $imageobj->getLink();
 	}
 
 	header('Location: ' . $return);
@@ -325,7 +325,7 @@ printAdminHeader('edit', gettext('crop image'));
 					?>
 
 					<!-- This is the form that our event handler fills -->
-					<form name="crop" id="crop" action="?crop" onsubmit="return checkCoords();">
+					<form class="dirty-check" name="crop" id="crop" action="?crop" onsubmit="return checkCoords();">
 						<?php XSRFToken('crop'); ?>
 						<input type="hidden" size="4" id="x" name="x" value="<?php echo $iX ?>" />
 						<input type="hidden" size="4" id="y" name="y" value="<?php echo $iY ?>" />

@@ -9,7 +9,8 @@
 define('OFFSET_PATH', 1);
 
 require_once(dirname(__FILE__) . '/admin-globals.php');
-require_once(dirname(__FILE__) . '/reconfigure.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/reconfigure.php');
+
 if (isset($_GET['_zp_login_error'])) {
 	$_zp_login_error = sanitize($_GET['_zp_login_error']);
 }
@@ -51,7 +52,7 @@ if (zp_loggedin()) { /* Display the admin pages. Do action handling first. */
 				case "clear_rss_cache":
 					if (class_exists('RSS')) {
 						XSRFdefender('clear_cache');
-						$RSS = new RSS();
+						$RSS = new RSS(array('rss' => 'null'));
 						$RSS->clearCache();
 						$class = 'messagebox';
 						$msg = gettext('RSS cache cleared.');
@@ -203,7 +204,6 @@ if (!zp_loggedin()) {
 			<?php
 			/*			 * * HOME ************************************************************************** */
 			/*			 * ********************************************************************************* */
-
 			if (!empty($msg)) {
 				?>
 				<div class="<?php echo $class; ?> fade-message">
@@ -212,6 +212,90 @@ if (!zp_loggedin()) {
 				<?php
 			}
 			zp_apply_filter('admin_note', 'Overview', NULL);
+			$buttonlist = array();
+
+			$curdir = getcwd();
+			chdir(SERVERPATH . "/" . ZENFOLDER . '/' . UTILITIES_FOLDER . '/');
+			$filelist = safe_glob('*' . 'php');
+			natcasesort($filelist);
+			foreach ($filelist as $utility) {
+				$utilityStream = file_get_contents($utility);
+				$s = strpos($utilityStream, '$buttonlist');
+				if ($s !== false) {
+					$e = strpos($utilityStream, ';', $s);
+					if ($e) {
+						$str = substr($utilityStream, $s, $e - $s) . ';';
+						eval($str);
+					}
+				}
+			}
+			$buttonlist = zp_apply_filter('admin_utilities_buttons', $buttonlist);
+			foreach ($buttonlist as $key => $button) {
+				if (zp_loggedin($button['rights'])) {
+					if (!array_key_exists('category', $button)) {
+						$buttonlist[$key]['category'] = gettext('Misc');
+					}
+				} else {
+					unset($buttonlist[$key]);
+				}
+			}
+			list($diff, $needs) = checkSignature(false);
+			if (zpFunctions::hasPrimaryScripts()) {
+				//	button to restore setup files if needed
+				if (!empty($needs)) {
+					$buttonlist[] = array(
+									'XSRFTag'			 => 'restore_setup',
+									'category'		 => gettext('Admin'),
+									'enable'			 => true,
+									'button_text'	 => gettext('Setup » restore scripts'),
+									'formname'		 => 'restore_setup.php',
+									'action'			 => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=restore_setup',
+									'icon'				 => 'images/lock_open.png',
+									'alt'					 => '',
+									'title'				 => gettext('Restores setup files so setup can be run.'),
+									'hidden'			 => '<input type="hidden" name="action" value="restore_setup" />',
+									'rights'			 => ADMIN_RIGHTS
+					);
+				} else {
+					if (zp_loggedin(ADMIN_RIGHTS)) {
+						?>
+						<div class="warningbox">
+							<h2><?php echo gettext('Your Setup scripts are not protected.'); ?></h2>
+							<?php echo gettext('The Setup environment is not totally secure, you should protect the scripts to thwart hackers. Use the <strong>Setup » protect scripts</strong> button in the <em>Admin</em> section of the <em>Utility functions</em>. '); ?>
+						</div>
+						<?php
+					}
+					$buttonlist[] = array(
+									'XSRFTag'			 => 'protect_setup',
+									'category'		 => gettext('Admin'),
+									'enable'			 => true,
+									'button_text'	 => gettext('Setup » protect scripts'),
+									'formname'		 => 'restore_setup.php',
+									'action'			 => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=protect_setup',
+									'icon'				 => 'images/lock_2.png',
+									'alt'					 => '',
+									'title'				 => gettext('Protects setup files so setup cannot be run.'),
+									'hidden'			 => '<input type="hidden" name="action" value="protect_setup" />',
+									'rights'			 => ADMIN_RIGHTS
+					);
+				}
+			}
+			if (empty($needs)) {
+				$buttonlist[] = array(
+								'category'		 => gettext('Admin'),
+								'enable'			 => true,
+								'button_text'	 => gettext('Run setup'),
+								'formname'		 => 'run_setup.php',
+								'action'			 => WEBPATH . '/' . ZENFOLDER . '/setup.php',
+								'icon'				 => 'images/Zp.png',
+								'alt'					 => '',
+								'title'				 => gettext('Run the setup script.'),
+								'hidden'			 => '',
+								'rights'			 => ADMIN_RIGHTS
+				);
+			}
+
+			$buttonlist = sortMultiArray($buttonlist, array('category', 'button_text'), false);
 
 			if (zp_loggedin(OVERVIEW_RIGHTS)) {
 				?>
@@ -229,14 +313,28 @@ if (!zp_loggedin()) {
 								} else {
 									$official = gettext('Official build');
 								}
-								if (!zpFunctions::hasPrimaryScripts()) {
-									$official .= ' <em>' . gettext('clone') . '</em>';
+								if (zpFunctions::hasPrimaryScripts()) {
+									$source = '';
+								} else {
+									$clone = clonedFrom();
+									$official .= ' <em>' . gettext('clone') . '<em>';
+									$base = substr(SERVERPATH, 0, -strlen(WEBPATH));
+									if (strpos($base, $clone) == 0) {
+										$base = substr($clone, strlen($base));
+										$link = $base . '/' . ZENFOLDER . '/admin.php';
+										$source = '<a href="' . $link . '">' . $clone . '</a>';
+									} else {
+										$source = $clone;
+									}
+									$source = '<br />&nbsp;&nbsp;&nbsp;' . sprintf(gettext('source: %s'), $source);
 								}
+
 								$graphics_lib = zp_graphicsLibInfo();
 								?>
 								<li>
 									<?php
 									printf(gettext('Zenphoto version <strong>%1$s [%2$s] (%3$s)</strong>'), ZENPHOTO_VERSION, '<a title="' . ZENPHOTO_FULL_RELEASE . '">' . ZENPHOTO_RELEASE . '</a>', $official);
+									echo $source;
 									if (extensionEnabled('check_for_update') && TEST_RELEASE) {
 										if (is_connected() && class_exists('DOMDocument')) {
 											require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenphoto_news/rsslib.php');
@@ -250,7 +348,7 @@ if (!zp_loggedin()) {
 												if ($v && version_compare($c, $v, '>')) {
 													?>
 													<p class="notebox">
-														<a href="http://www.zenphoto.org/index.php?p=news&title=zenphoto-<?php echo $c; ?>">
+														<a href="http://www.zenphoto.org/news/zenphoto-<?php echo $c; ?>">
 															<?php printf(gettext('Preview the release notes for Zenphoto %s'), $c); ?>
 														</a>
 													</p>
@@ -410,8 +508,9 @@ if (!zp_loggedin()) {
 							</ul>
 
 							<?php
+							require_once(SERVERPATH . '/' . ZENFOLDER . '/template-filters.php');
 							$plugins = array_keys(getEnabledPlugins());
-							$filters = array();
+							$filters = $_zp_filters;
 							$c = count($plugins);
 							?>
 							<h3><a href="javascript:toggle('plugins_hide');toggle('plugins_show');" ><?php printf(ngettext("%u active plugin:", "%u active plugins:", $c), $c); ?></a></h3>
@@ -501,67 +600,6 @@ if (!zp_loggedin()) {
 						</div><!-- overview-info -->
 						<?php
 					}
-					$buttonlist = array();
-
-					$curdir = getcwd();
-					chdir(SERVERPATH . "/" . ZENFOLDER . '/' . UTILITIES_FOLDER . '/');
-					$filelist = safe_glob('*' . 'php');
-					natcasesort($filelist);
-					foreach ($filelist as $utility) {
-						$utilityStream = file_get_contents($utility);
-						$s = strpos($utilityStream, '$buttonlist');
-						if ($s !== false) {
-							$e = strpos($utilityStream, ';', $s);
-							if ($e) {
-								$str = substr($utilityStream, $s, $e - $s) . ';';
-								eval($str);
-							}
-						}
-					}
-					$buttonlist = zp_apply_filter('admin_utilities_buttons', $buttonlist);
-					foreach ($buttonlist as $key => $button) {
-						if (zp_loggedin($button['rights'])) {
-							if (!array_key_exists('category', $button)) {
-								$buttonlist[$key]['category'] = gettext('Misc');
-							}
-						} else {
-							unset($buttonlist[$key]);
-						}
-					}
-					if (PRIMARY_INSTALLATION) {
-						//	button to restore setup files if needed
-						list($diff, $needs) = checkSignature(false);
-						if (!empty($needs)) {
-							$buttonlist[] = array(
-											'XSRFTag'			 => 'restore_setup',
-											'category'		 => gettext('Admin'),
-											'enable'			 => true,
-											'button_text'	 => gettext('Setup » restore scripts'),
-											'formname'		 => 'restore_setup.php',
-											'action'			 => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=restore_setup',
-											'icon'				 => 'images/lock_open.png',
-											'alt'					 => '',
-											'title'				 => gettext('Restores setup files so setup can be run.'),
-											'hidden'			 => '<input type="hidden" name="action" value="restore_setup" />',
-											'rights'			 => ADMIN_RIGHTS
-							);
-						} else {
-							$buttonlist[] = array(
-											'XSRFTag'			 => 'protect_setup',
-											'category'		 => gettext('Admin'),
-											'enable'			 => true,
-											'button_text'	 => gettext('Setup » protect scripts'),
-											'formname'		 => 'restore_setup.php',
-											'action'			 => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=protect_setup',
-											'icon'				 => 'images/lock_2.png',
-											'alt'					 => '',
-											'title'				 => gettext('Protects setup files so setup cannot be run.'),
-											'hidden'			 => '<input type="hidden" name="action" value="protect_setup" />',
-											'rights'			 => ADMIN_RIGHTS
-							);
-						}
-					}
-					$buttonlist = sortMultiArray($buttonlist, array('category', 'button_text'), false);
 					?>
 					<div class="box overview-utility">
 						<h2 class="h2_bordered"><?php echo gettext("Utility functions"); ?></h2>

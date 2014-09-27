@@ -59,8 +59,8 @@ function processTags($object) {
 function updatePage(&$reports, $newpage = false) {
 	$title = process_language_string_save("title", 2);
 	$author = sanitize($_POST['author']);
-	$content = zpFunctions::updateImageProcessorLink(process_language_string_save("content", 0)); // TinyMCE already clears unallowed code
-	$extracontent = process_language_string_save("extracontent", 0); // TinyMCE already clears unallowed code
+	$content = zpFunctions::updateImageProcessorLink(process_language_string_save("content", EDITOR_SANITIZE_LEVEL));
+	$extracontent = zpFunctions::updateImageProcessorLink(process_language_string_save("extracontent", EDITOR_SANITIZE_LEVEL));
 	$custom = process_language_string_save("custom_data", 1);
 	$show = getcheckboxState('show');
 	$date = sanitize($_POST['date']);
@@ -69,7 +69,9 @@ function updatePage(&$reports, $newpage = false) {
 	$expiredate = getExpiryDatePost();
 	$commentson = getcheckboxState('commentson');
 	$permalink = getcheckboxState('permalink');
-	$codeblock = processCodeblockSave(0);
+	if (zp_loggedin(CODEBLOCK_RIGHTS)) {
+		$codeblock = processCodeblockSave(0);
+	}
 	$locked = getcheckboxState('locked');
 	$date = sanitize($_POST['date']);
 	if ($newpage) {
@@ -124,7 +126,9 @@ function updatePage(&$reports, $newpage = false) {
 	$page->setShow($show);
 	$page->setDateTime($date);
 	$page->setCommentsAllowed($commentson);
-	$page->setCodeblock($codeblock);
+	if (zp_loggedin(CODEBLOCK_RIGHTS)) {
+		$page->setCodeblock($codeblock);
+	}
 	$page->setAuthor($author);
 	$page->setLastchange($lastchange);
 	$page->setLastchangeauthor($lastchangeauthor);
@@ -220,16 +224,16 @@ function printPagesListTable($page, $flag) {
 			?>
 		</div>
 		<div class="page-list_extra">
-			<?php
-			checkIfScheduled($page);
-			checkIfExpires($page);
-			?>
+			<span>
+				<?php echo html_encode($page->getAuthor()); ?>
+			</span>
 		</div>
-
 		<div class="page-list_extra">
-			<?php echo html_encode($page->getAuthor()); ?>
+			<?php printPublished($page); ?>
 		</div>
-
+		<div class="page-list_extra">
+			<?php printExpired($page); ?>
+		</div>
 		<div class="page-list_iconwrapper">
 			<div class="page-list_icon">
 				<?php
@@ -325,8 +329,8 @@ function updateArticle(&$reports, $newarticle = false) {
 	$date = date('Y-m-d_H-i-s');
 	$title = process_language_string_save("title", 2);
 	$author = sanitize($_POST['author']);
-	$content = zpFunctions::updateImageProcessorLink(process_language_string_save("content", 0)); // TinyMCE already clears unallowed code
-	$extracontent = process_language_string_save("extracontent", 0); // TinyMCE already clears unallowed code
+	$content = zpFunctions::updateImageProcessorLink(process_language_string_save("content", EDITOR_SANITIZE_LEVEL));
+	$extracontent = zpFunctions::updateImageProcessorLink(process_language_string_save("extracontent", EDITOR_SANITIZE_LEVEL));
 	$custom = process_language_string_save("custom_data", 1);
 	$show = getcheckboxState('show');
 	$date = sanitize($_POST['date']);
@@ -335,7 +339,9 @@ function updateArticle(&$reports, $newarticle = false) {
 	$lastchange = sanitize($_POST['lastchange']);
 	$lastchangeauthor = sanitize($_POST['lastchangeauthor']);
 	$commentson = getcheckboxState('commentson');
-	$codeblock = processCodeblockSave(0);
+	if (zp_loggedin(CODEBLOCK_RIGHTS)) {
+		$codeblock = processCodeblockSave(0);
+	}
 	$locked = getcheckboxState('locked');
 	if ($newarticle) {
 		$titlelink = seoFriendly(get_language_string($title));
@@ -390,7 +396,9 @@ function updateArticle(&$reports, $newarticle = false) {
 	$article->setShow($show);
 	$article->setDateTime($date);
 	$article->setCommentsAllowed($commentson);
-	$article->setCodeblock($codeblock);
+	if (zp_loggedin(CODEBLOCK_RIGHTS)) {
+		$article->setCodeblock($codeblock);
+	}
 	$article->setAuthor($author);
 	$article->setLastchange($lastchange);
 	$article->setLastchangeauthor($lastchangeauthor);
@@ -468,15 +476,15 @@ function deleteArticle($titlelink) {
  * @param obj $obj object of the news article
  */
 function printArticleCategories($obj) {
-	$cat = $obj->getCategories();
-	$number = 0;
-	foreach ($cat as $cats) {
-		$number++;
-		if ($number != 1) {
-			echo ", ";
-		}
-		echo get_language_string($cats['titlelink']);
-	}
+  $cat = $obj->getCategories();
+  $number = 0;
+  foreach ($cat as $cats) {
+    $number++;
+    if ($number != 1) {
+      echo ", ";
+    }
+    echo get_language_string($cats['title']);
+  }
 }
 
 /**
@@ -843,7 +851,7 @@ function updateCategory(&$reports, $newcategory = false) {
 	$id = sanitize_numeric($_POST['id']);
 	$permalink = getcheckboxState('permalink');
 	$title = process_language_string_save("title", 2);
-	$desc = process_language_string_save("desc", 0);
+	$desc = process_language_string_save("desc", EDITOR_SANITIZE_LEVEL);
 	$custom = process_language_string_save("custom_data", 1);
 
 	if ($newcategory) {
@@ -1048,7 +1056,7 @@ function printCategoryListSortableTable($cat, $flag) {
  * @param int $id ID of the news article if the categories an existing articles is assigned to shall be shown, empty if this is a new article to be added.
  * @param string $option "all" to show all categories if creating a new article without categories assigned, empty if editing an existing article that already has categories assigned.
  */
-function printCategoryCheckboxListEntry($cat, $articleid, $option) {
+function printCategoryCheckboxListEntry($cat, $articleid, $option, $class = '') {
 	$selected = '';
 	if (($option != "all") && !$cat->transient && !empty($articleid)) {
 		$cat2news = query_single_row("SELECT cat_id FROM " . prefix('news2cat') . " WHERE news_id = " . $articleid . " AND cat_id = " . $cat->getID());
@@ -1066,7 +1074,7 @@ function printCategoryCheckboxListEntry($cat, $articleid, $option) {
 		$protected = '';
 	}
 	$catid = $cat->getID();
-	echo "<label for='cat" . $catid . "'><input name='cat" . $catid . "' id='cat" . $catid . "' type='checkbox' value='" . $catid . "' " . $selected . " />" . $catname . " " . $protected . "</label>\n";
+	echo '<label for="cat' . $catid . '"><input name="cat' . $catid . '" class="' . $class . '" id="cat' . $catid . '" type="checkbox" value="' . $catid . '"' . $selected . ' />' . $catname . ' ' . $protected . "</label>\n";
 }
 
 /* * ************************
@@ -1083,7 +1091,7 @@ function printCategoryCheckboxListEntry($cat, $articleid, $option) {
  * @param string $option Only for $listtype = 'cats-checkboxlist': "all" to show all categories if creating a new article without categories assigned, empty if editing an existing article that already has categories assigned.
  * @return string | bool
  */
-function printNestedItemsList($listtype = 'cats-sortablelist', $articleid = '', $option = '') {
+function printNestedItemsList($listtype = 'cats-sortablelist', $articleid = '', $option = '', $class = 'nestedItem') {
 	global $_zp_zenpage;
 	switch ($listtype) {
 		case 'cats-checkboxlist':
@@ -1155,7 +1163,7 @@ function printNestedItemsList($listtype = 'cats-sortablelist', $articleid = '', 
 			switch ($listtype) {
 				case 'cats-checkboxlist':
 					echo "<li>\n";
-					printCategoryCheckboxListEntry($itemobj, $articleid, $option);
+					printCategoryCheckboxListEntry($itemobj, $articleid, $option, $class);
 					break;
 				case 'cats-sortablelist':
 					echo str_pad("\t", $indent - 1, "\t") . "<li id=\"id_" . $itemid . "\" class=\"clear-element page-item1 left\">";
@@ -1232,7 +1240,7 @@ function checkForEmptyTitle($titlefield, $type, $truncate = true) {
 			$text = gettext("Untitled category");
 			break;
 	}
-	$title = strip_tags($titlefield);
+	$title = getBare($titlefield);
 	if ($title) {
 		if ($truncate) {
 			$title = truncate_string($title, 40);
@@ -1436,45 +1444,39 @@ function authorSelector($author = NULL) {
 }
 
 /**
- * Checks if a page or articles has an expiration date set and prints out this date and a message about it or if it already is expired
+ * Prints data info for objects
  *
  * @param string $object Object of the page or news article to check
  * @return string
  */
-function checkIfExpires($object) {
-	$dt = $object->getExpireDate();
-	if (!empty($dt)) {
-		$expired = $dt < date('Y-m-d H:i:s');
-		echo " <small>";
-		if ($expired) {
-			echo '<strong class="expired">';
-			printf(gettext('Expired: %s'), $dt);
-			echo "</strong>";
+function printPublished($object) {
+	$dt = $object->getDateTime();
+	if ($dt > date('Y-m-d H:i:s')) {
+		if ($object->getShow() != 1) {
+			echo '<span class="inactivescheduledate">' . $dt . '</strong>';
 		} else {
-			echo '<strong class="expiredate">';
-			printf(gettext("Expires: %s"), $dt);
-			echo "</strong>";
+			echo '<span class="scheduledate">' . $dt . '</strong>';
 		}
-		echo "</small>";
+	} else {
+		echo '<span>' . $dt . '</span>';
 	}
 }
 
 /**
- * Checks if a page or articles is scheduled for publishing and prints out a message and the future date or the publishing date if not scheduled.
+ * Prints data info for objects
  *
  * @param string $object Object of the page or news article to check
  * @return string
  */
-function checkIfScheduled($object) {
-	$dt = $object->getDateTime();
-	if ($dt > date('Y-m-d H:i:s')) {
-		if ($object->getShow() != 1) {
-			echo '<strong class="inactivescheduledate">' . $dt . '</strong>';
+function printExpired($object) {
+	$dt = $object->getExpireDate();
+	if (!empty($dt)) {
+		$expired = $dt < date('Y-m-d H:i:s');
+		if ($expired) {
+			echo ' <span class="expired">' . $dt . "</span>";
 		} else {
-			echo '<strong class="scheduledate">' . $dt . '</strong>';
+			echo ' <span class="expiredate">' . $dt . "</span>";
 		}
-	} else {
-		echo $dt;
 	}
 }
 

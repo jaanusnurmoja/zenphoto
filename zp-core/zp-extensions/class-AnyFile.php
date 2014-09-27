@@ -13,13 +13,13 @@
  * @subpackage media
  *
  */
-$plugin_is_filter = 9 | CLASS_PLUGIN;
+$plugin_is_filter = 990 | CLASS_PLUGIN;
 $plugin_description = gettext('Provides a means for handling arbitrary file types. (No rendering provided!)');
 $plugin_author = "Stephen Billard (sbillard)";
 
 
 foreach (get_AnyFile_suffixes() as $suffix) {
-	addPluginType($suffix, 'AnyFile');
+	Gallery::addImageHandler($suffix, 'AnyFile');
 }
 $option_interface = 'AnyFile_Options';
 
@@ -76,21 +76,7 @@ class AnyFile_Options {
 
 function get_AnyFile_suffixes() {
 	$mysetoptions = array();
-	if ($list = getOption('AnyFileSuffixList')) {
-		return unserialize($list);
-	}
-	//TODO: remove on 1.5
-	$alloptionlist = getOptionList();
-	foreach ($alloptionlist as $key => $option) {
-		if (strpos($key, 'AnyFile_file_list_') === 0) {
-			if ($option) {
-				$mysetoptions[] = str_replace('AnyFile_file_list_', '', $key);
-			} else {
-				purgeOption($key);
-			}
-		}
-	}
-	return $mysetoptions;
+	return getSerializedArray(getOption('AnyFileSuffixList'));
 }
 
 require_once(dirname(__FILE__) . '/class-textobject/class-textobject_core.php');
@@ -146,7 +132,7 @@ class AnyFile extends TextObject {
 	 * @param int $h optional height
 	 * @return string
 	 */
-	function getBody($w = NULL, $h = NULL) {
+	function getContent($w = NULL, $h = NULL) {
 		$this->updateDimensions();
 		if (is_null($w))
 			$w = $this->getWidth();

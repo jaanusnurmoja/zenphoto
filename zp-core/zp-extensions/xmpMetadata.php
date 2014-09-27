@@ -576,7 +576,7 @@ class xmpMetadata {
 	function getOptionsSupported() {
 		global $_zp_supported_images, $_zp_extra_filetypes;
 		$list = $_zp_supported_images;
-		foreach (array('gif', 'bmp') as $suffix) {
+		foreach (array('gif', 'wbmp') as $suffix) {
 			$key = array_search($suffix, $list);
 			if ($key !== false)
 				unset($list[$key]);
@@ -774,7 +774,7 @@ class xmpMetadata {
 						$album->setDateTime($metadata['EXIFDateTimeOriginal']);
 					}
 					if (array_key_exists('thumb', $metadata)) {
-						$album->setAlbumThumb($metadata['thumb']);
+						$album->setThumb($metadata['thumb']);
 					}
 					if (array_key_exists('owner', $metadata)) {
 						$album->setOwner($metadata['owner']);
@@ -1024,7 +1024,7 @@ class xmpMetadata {
 						'rating'					 => '<MicrosoftPhoto:Rating>'
 		);
 		$process = array('dc', 'Iptc4xmpCore', 'photoshop', 'xap');
-		if (get_class($object) == 'Album') {
+		if (isAlbumClass($object)) {
 			$file = rtrim($object->localpath, '/');
 			$file .= '.xmp';
 		} else {

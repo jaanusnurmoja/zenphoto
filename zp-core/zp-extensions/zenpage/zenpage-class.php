@@ -10,35 +10,43 @@
  * Some global variable setup
  *
  */
+//TODO: on the 1.4.7 release these combinews defines can be removed.
+define('ZENPAGE_COMBINEWS', false);
+define('ZP_COMBINEWS', false);
+
 define('ZP_SHORTENINDICATOR', $shortenindicator = getOption('zenpage_textshorten_indicator'));
-define('ZP_COMBINEWS_CUSTOMTITLE', get_language_string(getOption('combinews-customtitle')));
-define('ZP_COMBINEWS_IMAGETITLES', getOption('combinews-customtitle-imagetitles'));
 define('ZP_SHORTEN_LENGTH', getOption('zenpage_text_length'));
-define('ZP_COMBINEWS_SORTORDER', getOption("zenpage_combinews_sortorder"));
 define('ZP_READ_MORE', getOption("zenpage_read_more"));
-define('ZP_COMBINEWS', getOption('zenpage_combinews'));
 define('ZP_ARTICLES_PER_PAGE', getOption("zenpage_articles_per_page"));
-define('ZP_CN_IMAGESIZE', getOption('zenpage_combinews_imagesize'));
-define('ZP_CN_THUMBWIDTH', getOption('combinews-thumbnail-width'));
-define('ZP_CN_THUMBHEIGHT', getOption('combinews-thumbnail-height'));
-define('ZP_CN_CROPWIDTH', getOption('combinews-thumbnail-cropwidth'));
-define('ZP_CN_CROPHEIGHT', getOption('combinews-thumbnail-cropheight'));
-define('ZP_CN_CROPX', getOption('combinews-thumbnail-cropx'));
-define('ZP_CN_CROPY', getOption('combinews-thumbnail-cropy'));
-define('ZP_CN_MODE', getOption('zenpage_combinews_mode'));
 if (!defined('MENU_TRUNCATE_STRING'))
 	define('MENU_TRUNCATE_STRING', getOption('menu_truncate_string'));
 if (!defined('MENU_TRUNCATE_INDICATOR'))
 	define('MENU_TRUNCATE_INDICATOR', getOption('menu_truncate_indicator'));
+if (!defined('ZP_NEWS_ENABLED')) {
+  if (getOption('enabled-zenpage-items') == 'news-and-pages' || getOption('enabled-zenpage-items') == 'news') {
+    define('ZP_NEWS_ENABLED', true);
+  } else {
+    define('ZP_NEWS_ENABLED', false);
+  }
+}
+if (!defined('ZP_PAGES_ENABLED')) {
+  if (getOption('enabled-zenpage-items') == 'news-and-pages' || getOption('enabled-zenpage-items') == 'pages') {
+    define('ZP_PAGES_ENABLED', true);
+  } else {
+    define('ZP_PAGES_ENABLED', false);
+  }
+}
 
 class Zenpage {
 
-	var $news_on_index = NULL;
-	var $categoryStructure = array();
-	var $sortorder;
-	var $sortdirection;
-	var $sortSticky = true;
-
+	public $categoryStructure = array();
+	// article defaults (mirrors category vars)
+	protected $sortorder = 'date';
+	protected $sortdirection = true;
+	protected $sortSticky = true;
+	// page defaults
+	protected $page_sortorder;
+	protected $page_sortdirection;
 	/**
 	 * Class instantiator
 	 */
@@ -97,11 +105,17 @@ class Zenpage {
 	 * @param bool $toplevel TRUE for only the toplevel pages
 	 * @param int $number number of pages to get (NULL by default for all)
 	 * @param string $sorttype NULL for the standard order as sorted on the backend, "title", "date", "id", "popular", "mostrated", "toprated", "random"
-	 * @param string $sortdirection "asc" or "desc" for ascending or descending order
+	 * @param string $sortdirection false for ascenting, true for descending
 	 * @return array
 	 */
 	function getPages($published = NULL, $toplevel = false, $number = NULL, $sorttype = NULL, $sortdirection = NULL) {
 		global $_zp_loggedin;
+		if (is_null($sortdirection)) {
+			$sortdirection = $this->getSortDirection('pages');
+		}
+		if (is_null($sorttype)) {
+			$sorttype = $this->getSortType('pages');
+		}
 		if (is_null($published)) {
 			$published = !zp_loggedin();
 			$all = zp_loggedin(MANAGE_ALL_PAGES_RIGHTS);
@@ -118,21 +132,10 @@ class Zenpage {
 				$gettop = " WHERE parentid IS NULL";
 			$show = $gettop;
 		}
-		if (is_null($sortdirection)) {
-			$sortdirection = $this->sortdirection;
-		}
-		switch ($sortdirection) {
-			default:
-			case 'asc':
-				$sortdir = ' ASC';
-				break;
-			default:
-			case 'desc':
-				$sortdir = ' DESC';
-				break;
-		}
-		if (is_null($sorttype)) {
-			$sorttype = $this->sortorder;
+		if ($sortdirection) {
+			$sortdir = ' DESC';
+		} else {
+			$sortdir = ' ASC';
 		}
 		switch ($sorttype) {
 			default:
@@ -161,6 +164,7 @@ class Zenpage {
 				break;
 			case 'random':
 				$sortorder = 'RAND()';
+				$sortdir = '';
 				break;
 			default:
 				$sortorder = 'sort_order';
@@ -188,15 +192,6 @@ class Zenpage {
 		return $all_pages;
 	}
 
-	/**
-	 * Returns path to the pages.php page without the title(link)
-	 *
-	 * @return string
-	 */
-	function getPagesLinkPath($title) {
-		return rewrite_path(_PAGES_ . '/' . $title, "/index.php?p=pages&title=$title");
-	}
-
 	/*	 * ********************************* */
 	/* general news article functions   */
 	/*	 * ********************************* */
@@ -216,18 +211,12 @@ class Zenpage {
 	 * @param boolean $ignorepagination Since also used for the news loop this function automatically paginates the results if the "page" GET variable is set. To avoid this behaviour if using it directly to get articles set this TRUE (default FALSE)
 	 * @param string $sortorder "date" (default), "title", "id, "popular", "mostrated", "toprated", "random"
 	 * 													This parameter is not used for date archives
-	 * @param string $sortdirection "asc" or "desc" for ascending or descending order
-	 * 											        This parameter is not used for date archives
+	 * @param bool $sortdirection TRUE for ascending, FALSE for descending. Note: This parameter is not used for date archives
 	 * @param bool $sticky set to true to place "sticky" articles at the front of the list.
 	 * @return array
 	 */
 	function getArticles($articles_per_page = 0, $published = NULL, $ignorepagination = false, $sortorder = NULL, $sortdirection = NULL, $sticky = NULL, $category = NULL) {
 		global $_zp_current_category, $_zp_post_date, $_zp_newsCache;
-		if ($category) {
-			$sortObj = $category;
-		} else {
-			$sortObj = $this;
-		}
 		if (empty($published)) {
 			if (zp_loggedin() || $category && $category->isMyItem(ZENPAGE_NEWS_RIGHTS)) {
 				$published = "all";
@@ -235,11 +224,25 @@ class Zenpage {
 				$published = "published";
 			}
 		}
+		if ($category) {
+			$sortObj = $category;
+		} else {
+			$sortObj = $this;
+		}
+		if (is_null($sticky)) {
+			$sticky = $sortObj->getSortSticky();
+		}
 
-		$newsCacheIndex = "$sortorder-$sortdirection-$published-" . (bool) $sticky;
-		if ($category)
+		if (is_null($sortdirection)) {
+			$sortdirection = $sortObj->getSortDirection('news');
+		}
+		if (is_null($sortorder)) {
+			$sortorder = $sortObj->getSortType('news');
+		}
+    $newsCacheIndex = "$sortorder-$sortdirection-$published-" . (bool) $sticky;
+    if ($category) {
 			$newsCacheIndex .= '-' . $category->getTitlelink();
-
+		}
 		if (isset($_zp_newsCache[$newsCacheIndex])) {
 			$result = $_zp_newsCache[$newsCacheIndex];
 		} else {
@@ -266,50 +269,37 @@ class Zenpage {
 				$showConjunction = ' WHERE ';
 			}
 
-			if (is_null($sticky)) {
-				$sticky = $sortObj->sortSticky;
-			}
 			if ($sticky) {
 				$sticky = 'sticky DESC,';
 			}
-			switch ($sortdirection) {
-				case NULL:
-					$sortdirection = $sortObj->sortdirection;
-				case "desc":
-				default:
-					$dir = "DESC";
-					break;
-				case "asc":
-					$dir = "ASC";
-					$sticky = false; //makes no sense
-					break;
+			if ($sortdirection) {
+				$dir = " DESC";
+			} else {
+				$dir = " ASC";
 			}
 			// sortorder and sortdirection (only used for all news articles and categories naturally)
 			switch ($sortorder) {
-				case NULL:
-					$sortorder = $sortObj->sortorder;
 				case "date":
 				default:
-					$sort1 = "date";
+					$sort1 = "date" . $dir;
 					break;
 				case 'lastchange':
-					$sort1 = 'lastchange';
+					$sort1 = 'lastchange' . $dir;
 					break;
 				case "id":
-					$sort1 = "id";
+					$sort1 = "id" . $dir;
 					break;
 				case "title":
-					$sort1 = "title";
+					$sort1 = "title" . $dir;
 					break;
 				case "popular":
-					$sort1 = 'hitcounter';
+					$sort1 = 'hitcounter' . $dir;
 					break;
 				case "mostrated":
-					$sort1 = 'total_votes';
+					$sort1 = 'total_votes' . $dir;
 					break;
 				case "toprated":
 					$sort1 = '(total_value/total_votes) DESC, total_value';
-					$dir = '';
 					break;
 				case "random":
 					$sort1 = 'RAND()';
@@ -331,12 +321,12 @@ class Zenpage {
 					$getUnpublished = true;
 					break;
 				case 'sticky':
-					$show = ' `sticky` <> 0';
+					$show = "$showConjunction `sticky` <> 0";
 					$getUnpublished = true;
 					break;
 				case "all":
 					$getUnpublished = true;
-					$show = "";
+					$show = false;
 					break;
 			}
 			$order = " ORDER BY $sticky";
@@ -364,14 +354,17 @@ class Zenpage {
 				$order .= " date DESC";
 			} else {
 				$datesearch = "";
-				if ($category)
+				if ($category) {
 					$order .= ' news.';
-				$order .= " $sort1 $dir";
+				} else {
+					$order .= ' ';
+				}
+				$order .= $sort1;
 			}
 			if ($category) {
-				$sql = "SELECT DISTINCT news.date, news.title, news.titlelink FROM " . prefix('news') . " as news, " . prefix('news2cat') . " as cat WHERE" . $cat . $show . $order;
+				$sql = "SELECT DISTINCT news.date, news.title, news.titlelink, news.sticky FROM " . prefix('news') . " as news, " . prefix('news2cat') . " as cat WHERE" . $cat . $show . $order;
 			} else {
-				$sql = "SELECT date, title, titlelink FROM " . prefix('news') . $show . $datesearch . " " . $order;
+				$sql = "SELECT date, title, titlelink, sticky FROM " . prefix('news') . $show . $datesearch . " " . $order;
 			}
 			$resource = query($sql);
 			$result = array();
@@ -383,10 +376,18 @@ class Zenpage {
 					}
 				}
 				db_free_result($resource);
-				if ($sort1 == 'title') { // multi-lingual field!
-					$result = sortByMultilingual($result, 'title', $dir == 'DESC');
+				if ($sortorder == 'title') { // multi-lingual field!
+					$result = sortByMultilingual($result, 'title', $sortdirection);
 					if ($sticky) {
-						$result = sortMultiArray($result, array('sticky'), true);
+						$stickyItems = array();
+						foreach ($result as $key => $element) {
+							if ($element['sticky']) {
+								array_unshift($stickyItems, $element);
+								unset($result[$key]);
+							}
+						}
+						$stickyItems = sortMultiArray($stickyItems, 'sticky', true);
+						$result = array_merge($stickyItems, $result);
 					}
 				}
 			}
@@ -410,7 +411,7 @@ class Zenpage {
 	 * @param int $index
 	 * @return int
 	 */
-	function getArticle($index, $published = NULL, $sortorder = 'date', $sortdirection = 'desc', $sticky = true) {
+	function getArticle($index, $published = NULL, $sortorder = NULL, $sortdirection = NULL, $sticky = true) {
 		$articles = $this->getArticles(0, NULL, true, $sortorder, $sortdirection, $sticky);
 		if ($index >= 0 && $index < count($articles)) {
 			$article = $articles[$index];
@@ -444,25 +445,22 @@ class Zenpage {
 
 	/**
 	 * Returns the articles count
+	 * @deprecated since version 1.4.6
 	 *
 	 */
 	function getTotalArticles() {
 		global $_zp_current_category;
-		if (ZP_COMBINEWS AND !isset($_GET['title']) AND !isset($_GET['category']) AND !isset($_GET['date']) AND OFFSET_PATH != 4) {
-			return $this->countCombiNews();
-		} else {
-			if (empty($_zp_current_category)) {
-				if (isset($_GET['category'])) {
-					$cat = sanitize($_GET['category']);
-					$catobj = new ZenpageCategory($cat);
-				} else {
-					return count($this->getArticles(0));
-				}
+		if (empty($_zp_current_category)) {
+			if (isset($_GET['category'])) {
+				$cat = sanitize($_GET['category']);
+				$catobj = new ZenpageCategory($cat);
 			} else {
-				$catobj = $_zp_current_category;
+				return count($this->getArticles(0));
 			}
-			return count($catobj->getArticles());
+		} else {
+			$catobj = $_zp_current_category;
 		}
+		return count($catobj->getArticles());
 	}
 
 	/**
@@ -562,9 +560,11 @@ class Zenpage {
 	 * @param bool $sticky set to true to place "sticky" articles at the front of the list.
 	 * @param string $direction 	"desc" or "asc"
 	 * @return array
+	 * @deprecated since version 1.4.6
 	 */
-	function getCombiNews($articles_per_page = '', $mode = '', $published = NULL, $sortorder = NULL, $sticky = true, $sortdirection = 'desc') {
+	protected function getCombiNews($articles_per_page = '', $mode = '', $published = NULL, $sortorder = NULL, $sticky = true, $sortdirection = 'desc') {
 		global $_zp_combiNews_cache, $_zp_gallery;
+
 		if (is_null($published)) {
 			if (zp_loggedin(ZENPAGE_NEWS_RIGHTS | ALL_NEWS_RIGHTS)) {
 				$published = "all";
@@ -574,7 +574,7 @@ class Zenpage {
 		}
 
 		if (empty($mode)) {
-			$mode = ZP_CN_MODE;
+			$mode = getOption('zenpage_combinews_mode');
 		}
 
 		if (isset($_zp_combiNews_cache[$published . $mode . $sticky . $sortorder . $sortdirection])) {
@@ -608,7 +608,7 @@ class Zenpage {
 		if ($sticky) {
 			$stickyorder = 'sticky DESC,';
 		}
-		switch ($sortdirection) {
+		switch (strtolower($sortdirection)) {
 			case 'desc':
 			default:
 				$sortdir = 'DESC';
@@ -652,6 +652,7 @@ class Zenpage {
 			case "latestalbums-sizedimage":
 			case "latestalbums-sizedimage-maxspace":
 			case "latestalbums-fullimage":
+			default:
 				if (empty($show)) {
 					$albumWhere = ' WHERE ' . $albumWhere;
 				} else {
@@ -671,6 +672,7 @@ class Zenpage {
 													" . $show . $albumWhere . ")";
 						break;
 					case 'mtime':
+					default:
 						$albumquery = "(SELECT albums.folder, albums.title, FROM_UNIXTIME(albums.mtime), @type2, @type3 as sticky FROM " . prefix('albums') . " AS albums
 							" . $show . $albumWhere . ")";
 						break;
@@ -743,7 +745,7 @@ class Zenpage {
 						$albumdate = strftime('%Y-%m-%d %H:%M:%S', $timestamp);
 					}
 					$latestalbums[$counter] = array(
-									"albumname"	 => $tempalbum->getFolder(),
+									"albumname"	 => $tempalbum->getFileName(),
 									"titlelink"	 => $tempalbum->getTitle(),
 									"date"			 => $albumdate,
 									"type"			 => 'albums',
@@ -762,60 +764,52 @@ class Zenpage {
 	}
 
 	/**
-	 * CombiNews Feature: Counts all news articles and all images
-	 *
-	 * @return int
-	 */
-	function countCombiNews($published = NULL) {
-		return count($this->getCombiNews(NULL, NULL, $published));
-	}
-
-	/**
 	 * Returns the full path of the news index page (news page 1) or if the "news on zp index" option is set a link to the gallery index.
 	 *
 	 * @return string
 	 */
 	function getNewsIndexURL() {
-		if ($this->news_on_index) {
-			return getGalleryIndexURL(false);
-		} else {
-			return rewrite_path(_NEWS_, "/index.php?p=news");
-		}
+		Zenpage_internal_deprecations::getNewsIndexURL();
+		return getNewsIndexURL();
 	}
 
 	/**
 	 * Returns partial path of news category
 	 *
 	 * @return string
+	 * @deprecated since version 1.4.6
 	 */
 	function getNewsCategoryPath($category, $page = NULL) {
-		if ($page) {
-			return rewrite_path('/' . _CATEGORY_ . '/' . $category . '/' . $page, "/index.php?p=news&category=$category&page=$page");
-		} else {
-			return rewrite_path('/' . _CATEGORY_ . '/' . $category, "/index.php?p=news&category=$category");
+		Zenpage_internal_deprecations::getNewsCategoryPath();
+		$rewrite = '/' . _CATEGORY_ . '/' . $category;
+		$plain = "/index.php?p=news&category=$category";
+		if ($page > 1) {
+			$rewrite .='/' . $page;
+			$plain .= '&page=' . $page;
 		}
+		return rewrite_path($rewrite, $plain); //deprecated
 	}
 
 	/**
 	 * Returns partial path of news date archive
 	 *
 	 * @return string
+	 * @deprecated since version 1.4.6
 	 */
 	function getNewsArchivePath($date, $page = NULL) {
-		if ($page > 1) {
-			return rewrite_path('/' . _NEWS_ARCHIVE_ . '/' . $date . '/' . $page, "/index.php?p=news&date=$date&page=$page");
-		} else {
-			return rewrite_path('/' . _NEWS_ARCHIVE_ . '/' . $date, "/index.php?p=news&date=$date");
-		}
+		Zenpage_internal_deprecations::getNewsArchivePath();
+		return getNewsArchivePath($date, $page);
 	}
 
 	/**
 	 * Returns partial path of news article title
 	 *
 	 * @return string
+	 * @deprecated since version 1.4.6
 	 */
 	function getNewsTitlePath($title) {
-		return rewrite_path('/' . _NEWS_ . "/$title", "/index.php?p=news&title=$title");
+		Zenpage_internal_deprecations::getNewsTitlePath();
+		return rewrite_path(_NEWS_ . "/$title", "/index.php?p=news&title=$title"); //deprecated
 	}
 
 	/*	 * ********************************* */
@@ -827,8 +821,10 @@ class Zenpage {
 	 *
 	 * @param string $catname the title of the category
 	 * @return string
+	 * @deprecated since version 1.4.6
 	 */
 	function getCategoryLink($catname) {
+		Zenpage_internal_deprecations::getCategoryLink();
 		foreach ($this->getAllCategories(false) as $cat) {
 			if ($cat['titlelink'] == $catname) {
 				return $cat['title'];
@@ -855,20 +851,14 @@ class Zenpage {
 	 * Gets all categories
 	 * @param bool $visible TRUE for published and unprotected
 	 * @param string $sorttype NULL for the standard order as sorted on the backend, "title", "id", "popular", "random"
-	 * @param string $sortdirection "asc" or "desc" for ascending or descending order
+	 * @param bool $sortdirection TRUE for ascending or FALSE for descending order
 	 * @return array
 	 */
 	function getAllCategories($visible = true, $sorttype = NULL, $sortdirection = NULL) {
 		$structure = $this->getCategoryStructure();
-		switch ($sortdirection) {
-			case 'asc':
-			default:
-				$sortdir = FALSE;
-				break;
-			case 'desc':
-				$sortdir = TRUE;
-				break;
-		}
+		if (is_null($sortdirection))
+			$sortdirection = $this->sortdirection;
+
 		switch ($sorttype) {
 			case "id":
 				$sortorder = "id";
@@ -901,7 +891,7 @@ class Zenpage {
 			if ($sorttype == 'random') {
 				shuffle($structure);
 			} else {
-				$structure = sortMultiArray($structure, $sortorder, $sortdir, true, false, false);
+				$structure = sortMultiArray($structure, $sortorder, $sortdirection, true, false, false);
 			}
 		}
 		return $structure;
@@ -916,6 +906,46 @@ class Zenpage {
 		return 'Zenpage';
 	}
 
+	function getSortDirection($what = 'news') {
+		if ($what == 'pages') {
+			return $this->page_sortdirection;
+		} else {
+			return $this->sortdirection;
+		}
+	}
+
+	function setSortDirection($value, $what = 'news') {
+		if ($what == 'pages') {
+			$this->page_sortdirection = (int) ($value && true);
+		} else {
+			$this->sortdirection = (int) ($value && true);
+		}
+	}
+
+	function getSortType($what = 'news') {
+		if ($what == 'pages') {
+			return $this->page_sortorder;
+		} else {
+			return $this->sortorder;
+		}
+	}
+
+	function setSortType($value, $what = 'news') {
+		if ($what == 'pages') {
+			$this->page_sortorder = $value;
+		} else {
+			$this->sortorder = $value;
+		}
+	}
+
+	function getSortSticky() {
+		return $this->sortSticky;
+	}
+
+	function setSortSticky($value) {
+		$this->sortSticky = (bool) $value;
+	}
+
 }
 
 // ZenpageCMS
@@ -927,12 +957,9 @@ class Zenpage {
  */
 class ZenpageRoot extends ThemeObject {
 
-	/**
-	 * Class instantiator
-	 */
-	function ZenpageRoot() {
-		// no action required
-	}
+	protected $sortorder;
+	protected $sortdirection;
+	protected $sortSticky = true;
 
 	/**
 	 * Returns the perma link status (only used on admin)
@@ -978,10 +1005,6 @@ class ZenpageRoot extends ThemeObject {
  *
  */
 class ZenpageItems extends ZenpageRoot {
-
-	var $sortorder;
-	var $sortdirection;
-	var $sortSticky = true;
 
 	/**
 	 * Class instantiator
@@ -1097,11 +1120,11 @@ class ZenpageItems extends ZenpageRoot {
 	 */
 	function getExtraContent($locale = NULL) {
 		$text = $this->get("extracontent");
-		if ($locale !== 'all') {
-			$text = get_language_string($text, $locale);
+		if ($locale == 'all') {
+			return zpFunctions::unTagURLs($text);
+		} else {
+			return applyMacros(zpFunctions::unTagURLs(get_language_string($text, $locale)));
 		}
-		$text = zpFunctions::unTagURLs($text);
-		return $text;
 	}
 
 	/**
@@ -1139,26 +1162,6 @@ class ZenpageItems extends ZenpageRoot {
 		} else {
 			$this->set('expiredate', NULL);
 		}
-	}
-
-	/**
-	 *
-	 * @param bool $value
-	 */
-	function setSortDirection($value) {
-		$this->sort_direction = (int) ($value && true);
-	}
-
-	function setSortSticky($value) {
-		$this->sortSticky = (bool) $value;
-	}
-
-	/**
-	 *
-	 * @param string $value
-	 */
-	function setSortType($value) {
-		$this->sorttype = $value;
 	}
 
 }

@@ -522,13 +522,13 @@ class Zenphoto_Authority {
 								'UPLOAD_RIGHTS'						 => array('value' => pow(2, 6), 'name' => gettext('Upload'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may upload to the albums for which they have management rights.')),
 								'POST_COMMENT_RIGHTS'			 => array('value' => pow(2, 8), 'name' => gettext('Post comments'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('When the comment_form plugin is used for comments and its "Only members can comment" option is set, only users with this right may post comments.')),
 								'COMMENT_RIGHTS'					 => array('value' => pow(2, 10), 'name' => gettext('Comments'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make comments tab changes.')),
-								'ALBUM_RIGHTS'						 => array('value' => pow(2, 12), 'name' => gettext('Albums'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users with this right may access the "albums" tab to make changes.')),
+								'ALBUM_RIGHTS'						 => array('value' => pow(2, 12), 'name' => gettext('Albums'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users with this right may access the “albums” tab to make changes.')),
 								'ZENPAGE_PAGES_RIGHTS'		 => array('value' => pow(2, 14), 'name' => gettext('Pages'), 'set' => gettext('Pages'), 'display' => true, 'hint' => gettext('Users with this right may edit and manage Zenpage pages.')),
 								'ZENPAGE_NEWS_RIGHTS'			 => array('value' => pow(2, 16), 'name' => gettext('News'), 'set' => gettext('News'), 'display' => true, 'hint' => gettext('Users with this right may edit and manage Zenpage articles and categories.')),
-								'FILES_RIGHTS'						 => array('value' => pow(2, 18), 'name' => gettext('Files'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Allows the user access to the "filemanager" located on the upload: files sub-tab.')),
-								'MANAGE_ALL_PAGES_RIGHTS'	 => array('value' => pow(2, 20), 'name' => gettext('Manage all pages'), 'set' => gettext('Pages'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage page.')),
-								'MANAGE_ALL_NEWS_RIGHTS'	 => array('value' => pow(2, 22), 'name' => gettext('Manage all news'), 'set' => gettext('News'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage news article or category.')),
-								'MANAGE_ALL_ALBUM_RIGHTS'	 => array('value' => pow(2, 24), 'name' => gettext('Manage all albums'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any album in the gallery.')),
+								'FILES_RIGHTS'						 => array('value' => pow(2, 18), 'name' => gettext('Files'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Allows the user access to the “filemanager” located on the upload: files sub-tab.')),
+								'MANAGE_ALL_PAGES_RIGHTS'	 => array('value' => pow(2, 20), 'name' => gettext('Manage all pages'), 'set' => gettext('Pages'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage page.')),
+								'MANAGE_ALL_NEWS_RIGHTS'	 => array('value' => pow(2, 22), 'name' => gettext('Manage all news'), 'set' => gettext('News'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage news article or category.')),
+								'MANAGE_ALL_ALBUM_RIGHTS'	 => array('value' => pow(2, 24), 'name' => gettext('Manage all albums'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any album in the gallery.')),
 								'THEMES_RIGHTS'						 => array('value' => pow(2, 26), 'name' => gettext('Themes'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make themes related changes. These are limited to the themes associated with albums checked in their managed albums list.')),
 								'TAGS_RIGHTS'							 => array('value' => pow(2, 28), 'name' => gettext('Tags'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make additions and changes to the set of tags.')),
 								'OPTIONS_RIGHTS'					 => array('value' => pow(2, 29), 'name' => gettext('Options'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make changes on the options tabs.')),
@@ -549,11 +549,11 @@ class Zenphoto_Authority {
 								'UPLOAD_RIGHTS'						 => array('value' => pow(2, 13), 'name' => gettext('Upload'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users with this right may upload to the albums for which they have management rights.')),
 								'ZENPAGE_NEWS_RIGHTS'			 => array('value' => pow(2, 15), 'name' => gettext('News'), 'set' => gettext('News'), 'display' => false, 'hint' => gettext('Users with this right may edit and manage Zenpage articles and categories.')),
 								'ZENPAGE_PAGES_RIGHTS'		 => array('value' => pow(2, 16), 'name' => gettext('Pages'), 'set' => gettext('Pages'), 'display' => false, 'hint' => gettext('Users with this right may edit and manage Zenpage pages.')),
-								'FILES_RIGHTS'						 => array('value' => pow(2, 17), 'name' => gettext('Files'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Allows the user access to the "filemanager" located on the upload: files sub-tab.')),
-								'ALBUM_RIGHTS'						 => array('value' => pow(2, 18), 'name' => gettext('Albums'), 'set' => gettext('Albums'), 'display' => false, 'hint' => gettext('Users with this right may access the "albums" tab to make changes.')),
-								'MANAGE_ALL_NEWS_RIGHTS'	 => array('value' => pow(2, 21), 'name' => gettext('Manage all'), 'set' => gettext('News'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage news article or category.')),
-								'MANAGE_ALL_PAGES_RIGHTS'	 => array('value' => pow(2, 22), 'name' => gettext('Manage all'), 'set' => gettext('Pages'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage page.')),
-								'MANAGE_ALL_ALBUM_RIGHTS'	 => array('value' => pow(2, 23), 'name' => gettext('Manage all'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any album in the gallery.')),
+								'FILES_RIGHTS'						 => array('value' => pow(2, 17), 'name' => gettext('Files'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Allows the user access to the “filemanager” located on the upload: files sub-tab.')),
+								'ALBUM_RIGHTS'						 => array('value' => pow(2, 18), 'name' => gettext('Albums'), 'set' => gettext('Albums'), 'display' => false, 'hint' => gettext('Users with this right may access the “albums” tab to make changes.')),
+								'MANAGE_ALL_NEWS_RIGHTS'	 => array('value' => pow(2, 21), 'name' => gettext('Manage all'), 'set' => gettext('News'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage news article or category.')),
+								'MANAGE_ALL_PAGES_RIGHTS'	 => array('value' => pow(2, 22), 'name' => gettext('Manage all'), 'set' => gettext('Pages'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage page.')),
+								'MANAGE_ALL_ALBUM_RIGHTS'	 => array('value' => pow(2, 23), 'name' => gettext('Manage all'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any album in the gallery.')),
 								'THEMES_RIGHTS'						 => array('value' => pow(2, 26), 'name' => gettext('Themes'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make themes related changes. These are limited to the themes associated with albums checked in their managed albums list.')),
 								'TAGS_RIGHTS'							 => array('value' => pow(2, 28), 'name' => gettext('Tags'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make additions and changes to the set of tags.')),
 								'OPTIONS_RIGHTS'					 => array('value' => pow(2, 29), 'name' => gettext('Options'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make changes on the options tabs.')),
@@ -575,11 +575,12 @@ class Zenphoto_Authority {
 								'UPLOAD_RIGHTS'						 => array('value' => pow(2, 15), 'name' => gettext('Upload'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users with this right may upload to the albums for which they have management rights.')),
 								'ZENPAGE_NEWS_RIGHTS'			 => array('value' => pow(2, 17), 'name' => gettext('News'), 'set' => gettext('News'), 'display' => false, 'hint' => gettext('Users with this right may edit and manage Zenpage articles and categories.')),
 								'ZENPAGE_PAGES_RIGHTS'		 => array('value' => pow(2, 18), 'name' => gettext('Pages'), 'set' => gettext('Pages'), 'display' => false, 'hint' => gettext('Users with this right may edit and manage Zenpage pages.')),
-								'FILES_RIGHTS'						 => array('value' => pow(2, 19), 'name' => gettext('Files'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Allows the user access to the "filemanager" located on the upload: files sub-tab.')),
-								'ALBUM_RIGHTS'						 => array('value' => pow(2, 20), 'name' => gettext('Albums'), 'set' => gettext('Albums'), 'display' => false, 'hint' => gettext('Users with this right may access the "albums" tab to make changes.')),
-								'MANAGE_ALL_NEWS_RIGHTS'	 => array('value' => pow(2, 21), 'name' => gettext('Manage all'), 'set' => gettext('News'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage news article or category.')),
-								'MANAGE_ALL_PAGES_RIGHTS'	 => array('value' => pow(2, 22), 'name' => gettext('Manage all'), 'set' => gettext('Pages'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage page.')),
-								'MANAGE_ALL_ALBUM_RIGHTS'	 => array('value' => pow(2, 23), 'name' => gettext('Manage all'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users who do not have "Admin" rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any album in the gallery.')),
+								'FILES_RIGHTS'						 => array('value' => pow(2, 19), 'name' => gettext('Files'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Allows the user access to the “filemanager” located on the upload: files sub-tab.')),
+								'ALBUM_RIGHTS'						 => array('value' => pow(2, 20), 'name' => gettext('Albums'), 'set' => gettext('Albums'), 'display' => false, 'hint' => gettext('Users with this right may access the “albums” tab to make changes.')),
+								'MANAGE_ALL_NEWS_RIGHTS'	 => array('value' => pow(2, 21), 'name' => gettext('Manage all'), 'set' => gettext('News'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage news article or category.')),
+								'MANAGE_ALL_PAGES_RIGHTS'	 => array('value' => pow(2, 22), 'name' => gettext('Manage all'), 'set' => gettext('Pages'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any Zenpage page.')),
+								'MANAGE_ALL_ALBUM_RIGHTS'	 => array('value' => pow(2, 23), 'name' => gettext('Manage all'), 'set' => gettext('Albums'), 'display' => true, 'hint' => gettext('Users who do not have “Admin” rights normally are restricted to manage only objects to which they have been assigned. This right allows them to manage any album in the gallery.')),
+								'CODEBLOCK_RIGHTS'				 => array('value' => pow(2, 25), 'name' => gettext('Codeblock'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may edit Codeblocks.')),
 								'THEMES_RIGHTS'						 => array('value' => pow(2, 26), 'name' => gettext('Themes'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make themes related changes. These are limited to the themes associated with albums checked in their managed albums list.')),
 								'TAGS_RIGHTS'							 => array('value' => pow(2, 28), 'name' => gettext('Tags'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make additions and changes to the set of tags.')),
 								'OPTIONS_RIGHTS'					 => array('value' => pow(2, 29), 'name' => gettext('Options'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make changes on the options tabs.')),
@@ -816,7 +817,7 @@ class Zenphoto_Authority {
 	function printLoginForm($redirect = null, $logo = true, $showUserField = true, $showCaptcha = true, $hint = '') {
 		global $_zp_login_error, $_zp_captcha, $_zp_gallery;
 		if (is_null($redirect)) {
-			$redirect = WEBPATH . '/' . ZENFOLDER . '/admin.php';
+			$redirect = getRequestURI();
 		}
 
 		if (isset($_POST['user'])) {
@@ -842,7 +843,7 @@ class Zenphoto_Authority {
 				$info = $admin->getChallengePhraseInfo();
 			}
 			if (empty($info['challenge'])) {
-				$questions = array(gettext("What is your father's middle name?"),
+				$questions = array(gettext("What is your father’s middle name?"),
 								gettext("What street did your Grandmother live on?"),
 								gettext("Who was your favorite singer?"),
 								gettext("When did you first get a computer?"),
@@ -998,8 +999,9 @@ class Zenphoto_Authority {
 						</script>
 						<?php
 					}
+					$redirect = zp_apply_filter('login_redirect_link', $redirect);
 					?>
-					<form name="login" action="<?php echo html_encode(pathurlencode(getRequestURI())); ?>" method="post">
+					<form name="login" action="<?php echo html_encode(pathurlencode($redirect)); ?>" method="post">
 						<input type="hidden" name="login" value="1" />
 						<input type="hidden" name="password" value="1" />
 						<input type="hidden" name="redirect" value="<?php echo html_encode(pathurlencode($redirect)); ?>" />
@@ -1084,14 +1086,13 @@ class Zenphoto_Authority {
 	static function printPasswordFormJS() {
 		?>
 		<script type="text/javascript">
-		// <!-- <![CDATA[
+			// <!-- <![CDATA[
 			function passwordStrength(id) {
 				var inputa = '#pass' + id;
 				var inputb = '#pass_r' + id;
 				var displaym = '#match' + id;
 				var displays = '#strength' + id;
 				var numeric = 0;
-				var inputa = '#pass' + id;
 				var special = 0;
 				var upper = 0;
 				var lower = 0;
@@ -1141,13 +1142,14 @@ class Zenphoto_Authority {
 					if (strength < <?php echo (int) getOption('password_strength'); ?>) {
 						$(inputb).attr('disabled', 'disabled');
 						$(displays).css('color', '#ff0000');
-						$(displays).html('<?php echo gettext('password strength weak'); ?>');
+						$(displays).html('<?php echo gettext('password strength too weak'); ?>');
 					} else {
 						$(inputb).removeAttr('disabled');
 						passwordMatch(id);
 					}
 					var url = 'url(<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/strengths/strength' + strength + '.png)';
 					$(inputa).css('background-image', url);
+					$(inputa).css('background-size', '100%');
 				}
 			}
 
@@ -1195,7 +1197,7 @@ class Zenphoto_Authority {
 					$('.password_field_' + id).show();
 				}
 			}
-		// ]]> -->
+			// ]]> -->
 		</script>
 		<?php
 	}
@@ -1292,7 +1294,7 @@ class Zenphoto_Administrator extends PersistentObject {
 	function __construct($user, $valid) {
 		global $_zp_authority;
 		$this->passhash = (int) getOption('strong_hash');
-		parent::PersistentObject('administrators', array('user' => $user, 'valid' => $valid), NULL, false, empty($user));
+		$this->instantiate('administrators', array('user' => $user, 'valid' => $valid), NULL, false, empty($user));
 		if (empty($user)) {
 			$this->set('id', -1);
 		}
@@ -1642,12 +1644,7 @@ class Zenphoto_Administrator extends PersistentObject {
 	 * Data to support other credential systems integration
 	 */
 	function getCredentials() {
-		$cred = $this->get('other_credentials');
-		if ($cred) {
-			return unserialize($cred);
-		} else {
-			return array();
-		}
+		return getSerializedArray($this->get('other_credentials'));
 	}
 
 	function setCredentials($cred) {
@@ -1697,7 +1694,7 @@ class Zenphoto_Administrator extends PersistentObject {
 	function getChallengePhraseInfo() {
 		$info = $this->get('challenge_phrase');
 		if ($info) {
-			return unserialize($info);
+			return getSerializedArray($info);
 		} else {
 			return array('challenge' => '', 'response' => '');
 		}

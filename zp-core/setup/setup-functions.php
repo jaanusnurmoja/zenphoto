@@ -418,7 +418,7 @@ function setupLanguageSelector() {
 	$languages = generateLanguageList();
 	if (isset($_REQUEST['locale'])) {
 		$locale = sanitize($_REQUEST['locale']);
-		if (getOption('locale') != $locale) {
+		if (getOption('locale') != $locale || getOption('unsupported_' . $locale)) {
 			?>
 			<div class="errorbox">
 				<h2>
@@ -438,30 +438,32 @@ function setupLanguageSelector() {
 		krsort($_languages, SORT_LOCALE_STRING);
 		$currentValue = getOption('locale');
 		foreach ($_languages as $text => $lang) {
-			?>
-			<li<?php if ($lang == $currentValue) echo ' class="currentLanguage"'; ?>>
-				<?php
-				if ($lang != $currentValue) {
-					?>
-					<a href="javascript:launchScript('',['locale=<?php echo $lang; ?>']);" >
-						<?php
-					}
-					if (file_exists(SERVERPATH . '/' . ZENFOLDER . '/locale/' . $lang . '/flag.png')) {
-						$flag = WEBPATH . '/' . ZENFOLDER . '/locale/' . $lang . '/flag.png';
-					} else {
-						$flag = WEBPATH . '/' . ZENFOLDER . '/locale/missing_flag.png';
-					}
-					?>
-					<img src="<?php echo $flag; ?>" alt="<?php echo $text; ?>" title="<?php echo $text; ?>" />
+			if (setupLocale($lang)) {
+				?>
+				<li<?php if ($lang == $currentValue) echo ' class="currentLanguage"'; ?>>
 					<?php
 					if ($lang != $currentValue) {
 						?>
-					</a>
-					<?php
-				}
-				?>
-			</li>
-			<?php
+						<a href="javascript:launchScript('',['locale=<?php echo $lang; ?>']);" >
+							<?php
+						}
+						if (file_exists(SERVERPATH . '/' . ZENFOLDER . '/locale/' . $lang . '/flag.png')) {
+							$flag = WEBPATH . '/' . ZENFOLDER . '/locale/' . $lang . '/flag.png';
+						} else {
+							$flag = WEBPATH . '/' . ZENFOLDER . '/locale/missing_flag.png';
+						}
+						?>
+						<img src="<?php echo $flag; ?>" alt="<?php echo $text; ?>" title="<?php echo $text; ?>" />
+						<?php
+						if ($lang != $currentValue) {
+							?>
+						</a>
+						<?php
+					}
+					?>
+				</li>
+				<?php
+			}
 		}
 		?>
 	</ul>
@@ -627,5 +629,95 @@ function checkUnique($table, $unique) {
 		</p>
 		<?php
 	}
+}
+
+function mkdir_r($pathname, $mode) {
+	if (!is_dir(dirname($pathname))) {
+		mkdir_r(dirname($pathname), $mode);
+	}
+	return is_dir($pathname) || @mkdir($pathname, $mode);
+}
+
+function setupLocale($locale) {
+	global $_zp_RTL_css;
+	$en1 = LOCAL_CHARSET;
+	$en2 = str_replace('ISO-', 'ISO', $en1);
+	$simple = str_replace('_', '-', $locale);
+	$simple = explode('-', $simple);
+	$try[$locale . '.UTF8'] = $locale . '.UTF8';
+	$try[$locale . '.UTF-8'] = $locale . '.UTF-8';
+	$try[$locale . '.@euro'] = $locale . '.@euro';
+	$try[$locale . '.' . $en2] = $locale . '.' . $en2;
+	$try[$locale . '.' . $en1] = $locale . '.' . $en1;
+	$try[$locale] = $locale;
+	$try[$simple[0]] = $simple[0];
+	$try['NULL'] = NULL;
+	$rslt = setlocale(LC_ALL, $try);
+	$_zp_RTL_css = in_array(substr($rslt, 0, 2), array('fa', 'ar', 'he', 'hi', 'ur'));
+	return $rslt;
+}
+
+/**
+ * Zenphoto Mutex class
+ * @author Stephen
+ *
+ */
+class setupMutex {
+
+	private $locked = NULL;
+	private $ignoreUseAbort = NULL;
+	private $mutex = NULL;
+	private $lock = NULL;
+	private $lockfolder;
+
+	function __construct() {
+		// if any of the construction fails, run in free mode (lock = NULL)
+		if (function_exists('flock')) {
+			$this->lockfolder = dirname(dirname(dirname(__FILE__))) . '/' . DATA_FOLDER . '/' . MUTEX_FOLDER;
+			if (!file_exists($this->lockfolder))
+				mkdir_r($this->lockfolder, 0777);
+			if (file_exists($this->lockfolder))
+				$this->lock = 'sP';
+		}
+		return $this->lock;
+	}
+
+	function __destruct() {
+		if ($this->locked) {
+			$this->unlock();
+		}
+	}
+
+	public function lock() {
+		//if "flock" is not supported run un-serialized
+		//Only lock an unlocked mutex, we don't support recursive mutex'es
+		if (!$this->locked && $this->lock) {
+			if ($this->mutex = @fopen($this->lockfolder . '/' . $this->lock, 'wb')) {
+				if (flock($this->mutex, LOCK_EX)) {
+					$this->locked = true;
+					//We are entering a critical section so we need to change the ignore_user_abort setting so that the
+					//script doesn't stop in the critical section.
+					$this->ignoreUserAbort = ignore_user_abort(true);
+				}
+			}
+		}
+		return $this->locked;
+	}
+
+	/**
+	 * 	Unlock the mutex.
+	 */
+	public function unlock() {
+		if ($this->locked) {
+			//Only unlock a locked mutex.
+			$this->locked = false;
+			ignore_user_abort($this->ignoreUserAbort); //Restore the ignore_user_abort setting.
+			flock($this->mutex, LOCK_UN);
+			fclose($this->mutex);
+			return true;
+		}
+		return false;
+	}
+
 }
 ?>

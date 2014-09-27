@@ -24,12 +24,13 @@ if (isset($_GET['ticket'])) {
 admin_securityChecks(USER_RIGHTS, currentRelativeURL());
 
 $newuser = array();
-$showset = array();
-foreach ($_REQUEST as $param => $value) {
-	if (strpos($param, 'show-') === 0) {
-		$showset[] = substr($param, 5);
-	}
+if (isset($_REQUEST['show']) && is_array($_REQUEST['show'])) {
+	$showset = $_REQUEST['show'];
+} else {
+	$showset = array();
 }
+
+
 if (isset($_GET['subpage'])) {
 	$subpage = sanitize_numeric($_GET['subpage']);
 } else {
@@ -86,6 +87,7 @@ if (isset($_GET['action'])) {
 							admin_securityChecks(ADMIN_RIGHTS, currentRelativeURL());
 						}
 					}
+
 					$alter = isset($_POST['alter_enabled']);
 					$nouser = true;
 					$returntab = $newuser = false;
@@ -102,7 +104,7 @@ if (isset($_GET['action'])) {
 							$nouser = false;
 							if (isset($_POST[$i . '-newuser'])) {
 								$newuser = $user;
-								$userobj = Zenphoto_Authority::getAnAdmin(array('`user`='	 => $user, '`valid`>' => 0));
+								$userobj = Zenphoto_Authority::getAnAdmin(array('`user`=' => $user, '`valid`>' => 0));
 								if (is_object($userobj)) {
 									$notify = '?exists';
 									break;
@@ -195,7 +197,7 @@ if (isset($_GET['action'])) {
 								markUpdated();
 							}
 							if ($updated) {
-								$returntab .= '&show-' . $user;
+								$returntab .= '&show[]=' . $user;
 								$msg = zp_apply_filter('save_user', $msg, $userobj, $what);
 								if (empty($msg)) {
 									if (!$notify)
@@ -219,8 +221,7 @@ if (isset($_GET['action'])) {
 	}
 	$returntab .= "&page=users";
 	if (!empty($newuser)) {
-		$returntab .= '&show-' . $newuser;
-		unset($_POST['show-']);
+		$returntab .= '&show[]=' . $newuser;
 	}
 	if (empty($notify)) {
 		$notify = '?saved';
@@ -356,7 +357,7 @@ echo $refresh;
 							}
 							$rangeset = getPageSelector($list, USERS_PER_PAGE);
 						}
-						$newuser = array('id'					 => -1, 'user'				 => '', 'pass'				 => '', 'name'				 => '', 'email'				 => '', 'rights'			 => $rights, 'custom_data'	 => NULL, 'valid'				 => 1, 'group'				 => $groupname);
+						$newuser = array('id' => -1, 'user' => '', 'pass' => '', 'name' => '', 'email' => '', 'rights' => $rights, 'custom_data' => NULL, 'valid' => 1, 'group' => $groupname);
 						$alterrights = '';
 					} else {
 						$alterrights = ' disabled="disabled"';
@@ -388,11 +389,6 @@ echo $refresh;
 						echo "<h2>Deleted</h2>";
 						echo '</div>';
 					}
-					if (isset($_GET['tag_parse_error'])) {
-						echo '<div class="errorbox fade-message">';
-						echo "<h2>" . gettext("Your Allowed tags change did not parse successfully.") . "</h2>";
-						echo '</div>';
-					}
 					if (isset($_GET['migration_error'])) {
 						echo '<div class="errorbox fade-message">';
 						echo "<h2>" . gettext("Rights migration failed.") . "</h2>";
@@ -407,7 +403,7 @@ echo $refresh;
 						echo '<div class="errorbox fade-message">';
 						switch ($_GET['mismatch']) {
 							case 'mismatch':
-								echo "<h2>" . gettext('You must supply a password') . "</h2>";
+								echo "<h2>" . gettext('You must supply a password.') . "</h2>";
 								break;
 							case 'nothing':
 								echo "<h2>" . gettext('User name not provided') . "</h2>";
@@ -416,7 +412,7 @@ echo $refresh;
 								echo '<h2>' . html_encode(urldecode(sanitize($_GET['error'], 2))) . '</h2>';
 								break;
 							default:
-								echo "<h2>" . gettext('Your passwords did not match') . "</h2>";
+								echo "<h2>" . gettext('Your passwords did not match.') . "</h2>";
 								break;
 						}
 						echo '</div>';
@@ -440,7 +436,7 @@ echo $refresh;
 							}
 						}
 					</script>
-					<form action="?action=saveoptions<?php echo str_replace('&', '&amp;', $ticket); ?>" method="post" autocomplete="off" onsubmit="return checkNewuser();" >
+					<form class="dirty-check" action="?action=saveoptions<?php echo str_replace('&', '&amp;', $ticket); ?>" method="post" autocomplete="off" onsubmit="return checkNewuser();" >
 						<?php XSRFToken('saveadmin'); ?>
 						<input type="hidden" name="saveadminoptions" value="yes" />
 						<input type="hidden" name="subpage" value="<?php echo $subpage; ?>" />
@@ -464,14 +460,14 @@ echo $refresh;
 									?>
 									<th>
 										<span style="font-weight: normal">
-											<a href="javascript:setShow(1);toggleExtraInfo('','user',true);"><?php echo gettext('Expand all'); ?></a>
+											<a href="javascript:toggleExtraInfo('','user',true);"><?php echo gettext('Expand all'); ?></a>
 											|
-											<a href="javascript:setShow(0);toggleExtraInfo('','user',false);"><?php echo gettext('Collapse all'); ?></a>
+											<a href="javascript:toggleExtraInfo('','user',false);"><?php echo gettext('Collapse all'); ?></a>
 										</span>
 									</th>
 									<th>
 										<?php echo gettext('show'); ?>
-										<select name="showgroup" id="showgroup" onchange="launchScript('<?php echo WEBPATH . '/' . ZENFOLDER; ?>/admin-users.php', ['showgroup=' + $('#showgroup').val()]);" >
+										<select name="showgroup" id="showgroup" class="ays-ignore" onchange="launchScript('<?php echo WEBPATH . '/' . ZENFOLDER; ?>/admin-users.php', ['showgroup=' + $('#showgroup').val()]);" >
 											<option value=""<?php if (!$showgroup) echo ' selected="selected"'; ?>><?php echo gettext('all'); ?></option>
 											<option value="*"<?php if ($showgroup == '*') echo ' selected="selected"'; ?>><?php echo gettext('pending verification'); ?></option>
 											<?php
@@ -520,7 +516,7 @@ echo $refresh;
 								$local_alterrights = $alterrights;
 								$userid = $user['user'];
 								$current = in_array($userid, $showset);
-								$showlist[] = '#show-' . $userid;
+
 								if ($userid == $_zp_current_admin_obj->getuser()) {
 									$userobj = $_zp_current_admin_obj;
 								} else {
@@ -568,7 +564,6 @@ echo $refresh;
 										<table class="bordered" style="border: 0" id='user-<?php echo $id; ?>'>
 											<tr>
 												<td style="margin-top: 0px; width:20em;<?php echo $background; ?>" valign="top">
-													<input type="hidden" name="show-<?php echo $userid; ?>" id="show_<?php echo $id; ?>" value="<?php echo ($current); ?>" />
 													<?php
 													if (empty($userid)) {
 														$displaytitle = gettext("Show details");
@@ -588,7 +583,7 @@ echo $refresh;
 															<em><?php echo gettext("New User"); ?></em>
 															<input type="text" size="<?php echo TEXT_INPUT_SIZE; ?>" id="adminuser<?php echo $id; ?>" name="adminuser<?php echo $id; ?>" value=""
 																		 onclick="toggleExtraInfo('<?php echo $id; ?>', 'user', visible);
-									$('#adminuser<?php echo $id; ?>').focus();" />
+																						 $('#adminuser<?php echo $id; ?>').focus();" />
 
 															<?php
 														} else {
@@ -770,7 +765,7 @@ echo $refresh;
 														$album_alter_rights = ' disabled="disabled"';
 													}
 													if ($ismaster) {
-														echo '<p>' . gettext("The <em>master</em> account has full rights to all albums.") . '</p>';
+														echo '<p>' . gettext("The <em>master</em> account has full rights to all objects.") . '</p>';
 													} else {
 														if (is_object($primeAlbum)) {
 															$flag = array($primeAlbum->name);
@@ -800,9 +795,6 @@ echo $refresh;
 												</td>
 											</tr>
 											<?php echo $custom_row; ?>
-
-
-
 										</table> <!-- end individual admin table -->
 									</td>
 								</tr>
@@ -873,25 +865,16 @@ echo $refresh;
 							if (newuser == '')
 								return true;
 							if (newuser.indexOf('?') >= 0 || newuser.indexOf('&') >= 0 || newuser.indexOf('"') >= 0 || newuser.indexOf('\'') >= 0) {
-								alert('<?php echo js_encode(gettext('User names may not contain "?", "&", or quotation marks.')); ?>');
+								alert('<?php echo js_encode(gettext('User names may not contain “?”, “&", or quotation marks.')); ?>');
 								return false;
 							}
 							for (i = 0; i < admins.length; i++) {
 								if (admins[i] == newuser) {
-									alert(sprintf('<?php echo js_encode(gettext('The user "%s" already exists.')); ?>', newuser));
+									alert(sprintf('<?php echo js_encode(gettext('The user “%s” already exists.')); ?>', newuser));
 									return false;
 								}
 							}
 							return true;
-						}
-						function setShow(v) {
-<?php
-foreach ($showlist as $show) {
-	?>
-								$('<?php echo $show; ?>').val(v);
-	<?php
-}
-?>
 						}
 						// ]]> -->
 					</script>

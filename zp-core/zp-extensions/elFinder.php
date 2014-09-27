@@ -71,45 +71,44 @@ if (getOption('elFinder_tinymce')) {
 
 function elFinder_admin_tabs($tabs) {
 	$me = sprintf(gettext('files (%s)'), 'elFinder');
-	$mylink = PLUGIN_FOLDER . '/' . 'elFinder/filemanager.php?page=upload&amp;tab=' . $me;
+	$mylink = PLUGIN_FOLDER . '/' . 'elFinder/filemanager.php?page=upload&tab=elFinder&type=' . gettext('files');
 	if (is_null($tabs['upload'])) {
 		$tabs['upload'] = array('text'		 => gettext("upload"),
-						'link'		 => WEBPATH . "/" . ZENFOLDER . '/' . $mylink,
+						'link'		 => WEBPATH . "/" . ZENFOLDER . '/admin-upload.php',
 						'subtabs'	 => NULL);
-	} else {
-		$default = str_replace(WEBPATH . '/' . ZENFOLDER . '/', '', $tabs['upload']['link']);
-		preg_match('|&amp;tab=([^&]*)|', $default, $matches);
-		$tabs['upload']['subtabs'][$matches[1]] = $default;
-		$tabs['upload']['subtabs'][$me] = $mylink;
-		$tabs['upload']['default'] = $me;
-		$tabs['upload']['link'] = WEBPATH . "/" . ZENFOLDER . '/' . $mylink;
 	}
+	$tabs['upload']['subtabs'][$me] = $mylink;
+	if (zp_getcookie('uploadtype') == 'elFinder')
+		$tabs['upload']['link'] = $mylink;
 	return $tabs;
 }
 
 function elFinder_tinymce($discard) {
+
+	$file = FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/elFinder/elfinder.php?XSRFToken=' . getXSRFToken('elFinder');
 	?>
 	<script type="text/javascript">
 		// <!-- <![CDATA[
 		function elFinderBrowser(field_name, url, type, win) {
-			var elfinder_url = '<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER; ?>/elFinder/elfinder.php?XSRFToken=<?php echo getXSRFToken('elFinder'); ?>';    // use an absolute path!
-					tinyMCE.activeEditor.windowManager.open({
-						file: elfinder_url,
-						title: 'elFinder 2.0',
-						width: 900,
-						height: 450,
-						resizable: 'yes',
-						inline: 'yes', // This parameter only has an effect if you use the inlinepopups plugin!
-						popup_css: false, // Disable TinyMCE's default popup CSS
-						close_previous: 'no'
-					}, {
-						window: win,
-						input: field_name
-					});
-					return false;
+			tinymce.activeEditor.windowManager.open({
+				file: '<?php echo $file; ?>', // use an absolute path!
+				title: 'elFinder 2.0',
+				width: 900,
+				height: 450,
+				close_previous: 'no',
+				inline: 'yes', // This parameter only has an effect if you use the inlinepopups plugin!
+				popup_css: false, // Disable TinyMCE's default popup CSS
+				resizable: 'yes'
+			}, {
+				setUrl: function(url) {
+					win.document.getElementById(field_name).value = url;
 				}
-				// ]]> -->
+			});
+			return false;
+		}
+		// ]]> -->
 	</script>
+
 	<?php
 	return 'elFinderBrowser';
 }

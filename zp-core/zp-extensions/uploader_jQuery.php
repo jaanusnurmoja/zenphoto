@@ -19,6 +19,8 @@ $plugin_disable = (version_compare(PHP_VERSION, '5.3') >= 0) ? false : gettext('
 if ($plugin_disable) {
 	enableExtension('uploader_jQuery', 0);
 } else {
+	if (OFFSET_PATH == 2)
+		setoptiondefault('zp_plugin_uploader_jQuery', $plugin_is_filter);
 	if (zp_loggedin(UPLOAD_RIGHTS)) {
 		zp_register_filter('upload_handlers', 'jQueryUploadHandler');
 		zp_register_filter('admin_tabs', 'jQueryUploadHandler_admin_tabs', 5);
@@ -32,19 +34,15 @@ function jQueryUploadHandler($uploadHandlers) {
 
 function jQueryUploadHandler_admin_tabs($tabs) {
 	$me = sprintf(gettext('images (%s)'), 'jQuery');
-	$mylink = 'admin-upload.php?page=upload&amp;tab=' . $me . '&amp;uploadtype=jQuery';
+	$mylink = 'admin-upload.php?page=upload&tab=jQuery&type=' . gettext('images');
 	if (is_null($tabs['upload'])) {
 		$tabs['upload'] = array('text'		 => gettext("upload"),
-						'link'		 => WEBPATH . "/" . ZENFOLDER . '/' . $mylink,
+						'link'		 => WEBPATH . "/" . ZENFOLDER . '/admin-upload.php',
 						'subtabs'	 => NULL);
-	} else {
-		$default = str_replace(WEBPATH . '/' . ZENFOLDER . '/', '', $tabs['upload']['link']);
-		preg_match('|&amp;tab=([^&]*)|', $default, $matches);
-		$tabs['upload']['subtabs'][$matches[1]] = $default;
-		$tabs['upload']['subtabs'][$me] = $mylink;
-		$tabs['upload']['default'] = $me;
-		$tabs['upload']['link'] = WEBPATH . "/" . ZENFOLDER . '/' . $mylink;
 	}
+	$tabs['upload']['subtabs'][$me] = $mylink;
+	if (zp_getcookie('uploadtype') == 'jQuery')
+		$tabs['upload']['link'] = $mylink;
 	return $tabs;
 }
 

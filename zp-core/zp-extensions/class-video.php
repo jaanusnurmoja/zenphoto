@@ -13,13 +13,13 @@
  */
 // force UTF-8 Ø
 
-$plugin_is_filter = 9 | CLASS_PLUGIN;
+$plugin_is_filter = 990 | CLASS_PLUGIN;
 $plugin_description = gettext('The Zenphoto <em>audio-video</em> handler.');
 $plugin_notice = gettext('This plugin must always be enabled to use multimedia content. Note that you should also enable a multimedia player. See the info of the player you use to see how it is configured.');
 $plugin_author = "Stephen Billard (sbillard)";
 
-addPluginType('3gp', 'Video');
-addPluginType('mov', 'Video');
+Gallery::addImageHandler('3gp', 'Video');
+Gallery::addImageHandler('mov', 'Video');
 $option_interface = 'VideoObject_Options';
 
 define('GETID3_INCLUDEPATH', SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/class-video/getid3/');
@@ -32,11 +32,11 @@ require_once(dirname(__FILE__) . '/class-video/getid3/getid3.php');
 class VideoObject_Options {
 
 	function VideoObject_Options() {
-		setOptionDefault('zp_plugin_class-video_mov_w', 520);
-		setOptionDefault('zp_plugin_class-video_mov_h', 390);
-		setOptionDefault('zp_plugin_class-video_3gp_w', 520);
-		setOptionDefault('zp_plugin_class-video_3gp_h', 390);
-		setOptionDefault('zp_plugin_class-video_videoalt', 'ogg, avi, wmv');
+		setOptionDefault('class-video_mov_w', 520);
+		setOptionDefault('class-video_mov_h', 390);
+		setOptionDefault('class-video_3gp_w', 520);
+		setOptionDefault('class-video_3gp_h', 390);
+		setOptionDefault('class-video_videoalt', 'ogg, avi, wmv');
 	}
 
 	/**
@@ -48,19 +48,19 @@ class VideoObject_Options {
 		return array(gettext('Watermark default images')	 => array('key'		 => 'video_watermark_default_images', 'type'	 => OPTION_TYPE_CHECKBOX,
 										'order'	 => 0,
 										'desc'	 => gettext('Check to place watermark image on default thumbnail images.')),
-						gettext('Quicktime video width')		 => array('key'		 => 'zp_plugin_class-video_mov_w', 'type'	 => OPTION_TYPE_TEXTBOX,
+						gettext('Quicktime video width')		 => array('key'		 => 'class-video_mov_w', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 2,
 										'desc'	 => ''),
-						gettext('Quicktime video height')		 => array('key'		 => 'zp_plugin_class-video_mov_h', 'type'	 => OPTION_TYPE_TEXTBOX,
+						gettext('Quicktime video height')		 => array('key'		 => 'class-video_mov_h', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 2,
 										'desc'	 => ''),
-						gettext('3gp video width')					 => array('key'		 => 'zp_plugin_class-video_3gp_w', 'type'	 => OPTION_TYPE_TEXTBOX,
+						gettext('3gp video width')					 => array('key'		 => 'class-video_3gp_w', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 2,
 										'desc'	 => ''),
-						gettext('3gp video height')					 => array('key'		 => 'zp_plugin_class-video_3gp_h', 'type'	 => OPTION_TYPE_TEXTBOX,
+						gettext('3gp video height')					 => array('key'		 => 'class-video_3gp_h', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 2,
 										'desc'	 => ''),
-						gettext('High quality alternate')		 => array('key'		 => 'zp_plugin_class-video_videoalt', 'type'	 => OPTION_TYPE_TEXTBOX,
+						gettext('High quality alternate')		 => array('key'		 => 'class-video_videoalt', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 1,
 										'desc'	 => gettext('<code>getFullImageURL()</code> returns a URL to a file with one of these high quality video alternate suffixes if present.'))
 		);
@@ -79,7 +79,7 @@ class Video extends Image {
 	 * @param sting $filename the filename of the image
 	 * @return Image
 	 */
-	function __construct(&$album, $filename, $quiet = false) {
+	function __construct($album, $filename, $quiet = false) {
 		global $_zp_supported_images;
 		$msg = false;
 		if (!is_object($album) || !$album->exists) {
@@ -106,7 +106,7 @@ class Video extends Image {
 		$album_name = $album->name;
 		$this->updateDimensions();
 
-		$new = parent::PersistentObject('images', array('filename' => $filename, 'albumid' => $this->album->getID()), 'filename', true, empty($album_name));
+		$new = $this->instantiate('images', array('filename' => $filename, 'albumid' => $this->album->getID()), 'filename', true, empty($album_name));
 		if ($new || $this->filemtime != $this->get('mtime')) {
 			if ($new)
 				$this->setTitle($this->displayname);
@@ -283,7 +283,7 @@ class Video extends Image {
 		} else {
 			$width = $width * $size / $height;
 		}
-		return $this->getBody($width, $height);
+		return $this->getContent($width, $height);
 	}
 
 	/**
@@ -295,7 +295,7 @@ class Video extends Image {
 	function getFullImageURL() {
 		// Search for a high quality version of the video
 		if ($vid = parent::getFullImageURL()) {
-			$folder = ALBUM_FOLDER_SERVERPATH . internalToFilesystem($this->album->getFolder());
+			$folder = ALBUM_FOLDER_SERVERPATH . internalToFilesystem($this->album->getFileName());
 			$video = stripSuffix($this->filename);
 			$curdir = getcwd();
 			chdir($folder);
@@ -311,6 +311,11 @@ class Video extends Image {
 		return $vid;
 	}
 
+	function getBody($w = NULL, $h = NULL) {
+		Video_deprecated_functions::getBody();
+		$this->getContent($w, $h);
+	}
+
 	/**
 	 * returns the content of the vido
 	 *
@@ -318,7 +323,7 @@ class Video extends Image {
 	 * @param $h
 	 * @return string
 	 */
-	function getBody($w = NULL, $h = NULL) {
+	function getContent($w = NULL, $h = NULL) {
 		global $_zp_multimedia_extension;
 		if (is_null($w))
 			$w = $this->getWidth();
@@ -372,38 +377,45 @@ class Video extends Image {
 		global $_zp_exifvars;
 		parent::updateMetaData();
 		if (!SAFE_MODE) {
-			$ThisFileInfo = $this->getMetaDataID3();
-			if (is_array($ThisFileInfo)) {
-				foreach ($ThisFileInfo as $key => $info) {
-					if (is_array($info)) {
-						switch ($key) {
-							case 'comments':
-								foreach ($info as $key1 => $data) {
-									$ThisFileInfo[$key1] = array_shift($data);
-								}
-								break;
-							case 'audio':
-							case 'video':
-								foreach ($info as $key1 => $data) {
-									$ThisFileInfo[$key1] = $data;
-								}
-								break;
-							case 'error':
-								$msg = sprintf(gettext('getid3 exceptions for %1$s::%2$s'), $this->album->name, $this->filename);
-								foreach ($info as $data) {
-									$msg .= "\n" . $data;
-								}
-								debugLog($msg);
-								break;
-							default:
-								//discard, not used
-								break;
-						}
-						unset($ThisFileInfo[$key]);
-					}
+			//see if there are any "enabled" VIDEO fields
+			$process = array();
+			foreach ($_zp_exifvars as $field => $exifvar) {
+				if ($exifvar[5] && $exifvar[0] == 'VIDEO') {
+					$process[$field] = $exifvar;
 				}
-				foreach ($_zp_exifvars as $field => $exifvar) {
-					if ($exifvar[5] && $exifvar[0] == 'VIDEO') {
+			}
+			if (!empty($process)) {
+				$ThisFileInfo = $this->getMetaDataID3();
+				if (is_array($ThisFileInfo)) {
+					foreach ($ThisFileInfo as $key => $info) {
+						if (is_array($info)) {
+							switch ($key) {
+								case 'comments':
+									foreach ($info as $key1 => $data) {
+										$ThisFileInfo[$key1] = array_shift($data);
+									}
+									break;
+								case 'audio':
+								case 'video':
+									foreach ($info as $key1 => $data) {
+										$ThisFileInfo[$key1] = $data;
+									}
+									break;
+								case 'error':
+									$msg = sprintf(gettext('getid3 exceptions for %1$s::%2$s'), $this->album->name, $this->filename);
+									foreach ($info as $data) {
+										$msg .= "\n" . $data;
+									}
+									debugLog($msg);
+									break;
+								default:
+									//discard, not used
+									break;
+							}
+							unset($ThisFileInfo[$key]);
+						}
+					}
+					foreach ($process as $field => $exifvar) {
 						if (isset($ThisFileInfo[$exifvar[1]])) {
 							$data = $ThisFileInfo[$exifvar[1]];
 							if (!empty($data)) {
@@ -412,10 +424,10 @@ class Video extends Image {
 							}
 						}
 					}
-				}
-				$title = $this->get('VideoTitle');
-				if (!empty($title)) {
-					$this->setTitle($title);
+					$title = $this->get('VideoTitle');
+					if (!empty($title)) {
+						$this->setTitle($title);
+					}
 				}
 			}
 		}

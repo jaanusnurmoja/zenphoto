@@ -22,21 +22,20 @@ $option_interface = 'comment_form';
 
 zp_register_filter('admin_toolbox_global', 'comment_form::toolbox');
 
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/class-comment.php');
 require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/functions.php');
 
 if (OFFSET_PATH) {
 	zp_register_filter('admin_overview', 'comment_form_print10Most');
-	zp_register_filter('save_admin_custom_data', 'comment_form_save_admin');
-	zp_register_filter('edit_admin_custom_data', 'comment_form_edit_admin');
 	zp_register_filter('admin_tabs', 'comment_form::admin_tabs');
 } else {
 	zp_register_filter('handle_comment', 'comment_form_postcomment');
-	zp_register_filter('object_addComment', 'comment_form_addCcomment');
+	zp_register_filter('object_addComment', 'comment_form_addComment');
 	if (getOption('comment_form_pagination')) {
 		zp_register_filter('theme_head', 'comment_form_PaginationJS');
 	}
-	if (getOption('tinymce_comments')) {
-		require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/tiny_mce.php');
+	if (getOption('tinymce4_comments')) {
+		require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/tinymce4.php');
 		zp_register_filter('theme_head', 'comment_form_visualEditor');
 	}
 }
@@ -66,7 +65,8 @@ class comment_form {
 		setOptionDefault('comment_form_showURL', 1);
 		setOptionDefault('comment_form_comments_per_page', 10);
 		setOptionDefault('comment_form_pagination', true);
-		setOptionDefault('tinymce_comments', 'comment_form-default.js.php');
+		setOptionDefault('comment_form_toggle', 1);
+		setOptionDefault('tinymce4_comments', 'comment-ribbon.js.php');
 	}
 
 	/**
@@ -76,12 +76,12 @@ class comment_form {
 	 */
 	function getOptionsSupported() {
 		global $_zp_captcha;
-		require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/tiny_mce.php');
+		require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/tinymce4.php');
 		$checkboxes = array(gettext('Albums') => 'comment_form_albums', gettext('Images') => 'comment_form_images');
 		if (extensionEnabled('zenpage')) {
 			$checkboxes = array_merge($checkboxes, array(gettext('Pages') => 'comment_form_pages', gettext('News') => 'comment_form_articles'));
 		}
-		$configarray = getTinyMCEConfigFiles();
+		$configarray = getTinyMCE4ConfigFiles('comment');
 
 		$options = array(
 						gettext('Enable comment notification')	 => array('key'		 => 'email_new_comments', 'type'	 => OPTION_TYPE_CHECKBOX,
@@ -132,7 +132,7 @@ class comment_form {
 						gettext('Comments per page')						 => array('key'		 => 'comment_form_comments_per_page', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 9,
 										'desc'	 => gettext('The comments that should show per page on the admin tab and when using the jQuery pagination')),
-						gettext('Comment editor configuration')	 => array('key'						 => 'tinymce_comments', 'type'					 => OPTION_TYPE_SELECTOR,
+						gettext('Comment editor configuration')	 => array('key'						 => 'tinymce4_comments', 'type'					 => OPTION_TYPE_SELECTOR,
 										'order'					 => 1,
 										'selections'		 => $configarray,
 										'null_selection' => gettext('Disabled'),
@@ -155,7 +155,7 @@ class comment_form {
 			foreach ($tabs as $key => $tab) {
 				if ($add && !in_array($key, array('overview', 'edit', 'upload', 'pages', 'news', 'tags', 'menu'))) {
 					$newtabs['comments'] = array('text'		 => gettext("comments"),
-									'link'		 => WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&amp;tab=' . gettext('comments'),
+									'link'		 => WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&tab=' . gettext('comments'),
 									'subtabs'	 => NULL);
 					$add = false;
 				}
@@ -170,7 +170,7 @@ class comment_form {
 		if (zp_loggedin(COMMENT_RIGHTS)) {
 			?>
 			<li>
-				<?php printLink(WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&amp;tab=' . gettext('comments'), gettext("Comments"), NULL, NULL, NULL); ?>
+				<?php printLinkHTML(WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&amp;tab=' . gettext('comments'), gettext("Comments"), NULL, NULL, NULL); ?>
 			</li>
 			<?php
 		}
@@ -188,7 +188,8 @@ class comment_form {
  * @param bool $desc_order default false, set to true to change the comment order to descending ( = newest to oldest)
  */
 function printCommentForm($showcomments = true, $addcommenttext = NULL, $addheader = true, $comment_commententry_mod = '', $desc_order = false) {
-	global $_zp_gallery_page, $_zp_current_admin_obj, $_zp_current_comment, $_zp_captcha, $_zp_authority, $_zp_HTML_cache;
+	global $_zp_gallery_page, $_zp_current_admin_obj, $_zp_current_comment, $_zp_captcha, $_zp_authority, $_zp_HTML_cache, $_zp_current_image, $_zp_current_album, $_zp_current_zenpage_page, $_zp_current_zenpage_news;
+
 	if (getOption('email_new_comments')) {
 		$email_list = $_zp_authority->getAdminEmail();
 		if (empty($email_list)) {
@@ -201,31 +202,28 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 		case 'album.php':
 			if (!getOption('comment_form_albums'))
 				return;
-			$comments_open = OpenedForComments(ALBUM);
-			$formname = '/comment_form.php';
+			$obj = $_zp_current_album;
 			break;
 		case 'image.php':
 			if (!getOption('comment_form_images'))
 				return;
-			$comments_open = OpenedForComments(IMAGE);
-			$formname = '/comment_form.php';
+			$obj = $_zp_current_image;
 			break;
 		case 'pages.php':
 			if (!getOption('comment_form_pages'))
 				return;
-			$comments_open = zenpageOpenedForComments();
-			$formname = '/comment_form.php';
+			$obj = $_zp_current_zenpage_page;
 			break;
 		case 'news.php':
-			if (!getOption('comment_form_articles'))
+			if (!getOption('comment_form_articles') || !is_NewsArticle())
 				return;
-			$comments_open = zenpageOpenedForComments();
-			$formname = '/comment_form.php';
+			$obj = $_zp_current_zenpage_news;
 			break;
 		default:
 			return;
 			break;
 	}
+	$comments_open = $obj->getCommentsAllowed();
 	?>
 	<!-- printCommentForm -->
 	<div id="commentcontent">
@@ -325,14 +323,15 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 				}
 
 				if (zp_loggedin()) {
-					$address = getSerializedArray($_zp_current_admin_obj->getCustomData());
-					foreach ($address as $key => $value) {
-						if (!empty($value)) {
-							$disabled[$key] = true;
-							$stored[$key] = $value;
+					if (extensionEnabled('userAddressFields')) {
+						$address = userAddressFields::getCustomData($_zp_current_admin_obj);
+						foreach ($address as $key => $value) {
+							if (!empty($value)) {
+								$disabled[$key] = true;
+								$stored[$key] = $value;
+							}
 						}
 					}
-
 					$name = $_zp_current_admin_obj->getName();
 					if (!empty($name)) {
 						$stored['name'] = $name;
@@ -374,7 +373,7 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 				<div id="commententry" <?php echo $comment_commententry_mod; ?>>
 					<?php
 					$theme = getCurrentTheme();
-					$form = getPlugin('comment_form' . $formname, $theme);
+					$form = getPlugin('comment_form/comment_form.php', $theme);
 					require($form);
 					?>
 				</div><!-- id="commententry" -->
@@ -394,23 +393,21 @@ function printCommentForm($showcomments = true, $addcommenttext = NULL, $addhead
 		?>
 		<br class="clearall" />
 		<?php
-		switch ($_zp_gallery_page) {
-			case "image.php":
-				if (class_exists('RSS'))
+		if (class_exists('RSS')) {
+			switch ($_zp_gallery_page) {
+				case "image.php":
 					printRSSLink("Comments-image", "", gettext("Subscribe to comments"), "");
-				break;
-			case "album.php":
-				if (class_exists('RSS'))
+					break;
+				case "album.php":
 					printRSSLink("Comments-album", "", gettext("Subscribe to comments"), "");
-				break;
-			case "news.php":
-				if (class_exists('RSS'))
+					break;
+				case "news.php":
 					printRSSLink("Comments-news", "", gettext("Subscribe to comments"), "");
-				break;
-			case "pages.php":
-				if (class_exists('RSS'))
+					break;
+				case "pages.php":
 					printRSSLink("Comments-page", "", gettext("Subscribe to comments"), "");
-				break;
+					break;
+			}
 		}
 	}
 	?>

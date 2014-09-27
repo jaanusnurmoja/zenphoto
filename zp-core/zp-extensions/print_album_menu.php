@@ -37,7 +37,7 @@ $_recursion_limiter = array();
  */
 class print_album_menu {
 
-	function register_user_options() {
+	function __construct() {
 		setOptionDefault('print_album_menu_showsubs', 0);
 		setOptionDefault('print_album_menu_count', 1);
 		setOptionDefault('menu_truncate_string', 0);
@@ -48,7 +48,7 @@ class print_album_menu {
 		global $_common_truncate_handler;
 		$options = array(gettext('"List" subalbum level') => array('key'		 => 'print_album_menu_showsubs', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 0,
-										'desc'	 => gettext('The depth of subalbum levels shown with the <code>printAlbumMenu</code> and <code>printAlbumMenuList</code> "List" option. Note: themes may override this default.')),
+										'desc'	 => gettext('The depth of subalbum levels shown with the <code>printAlbumMenu</code> and <code>printAlbumMenuList</code> “List” option. Note: themes may override this default.')),
 						gettext('Show counts')					 => array('key'		 => 'print_album_menu_count', 'type'	 => OPTION_TYPE_CHECKBOX,
 										'order'	 => 1,
 										'desc'	 => gettext('If checked, image and album counts will be included in the list. Note: Themes may override this option.')),
@@ -173,7 +173,7 @@ function printAlbumMenuList($option, $showcount = NULL, $css_id = '', $css_class
 	$startlist = $startlist && !($option == 'omit-top' || $option == 'list-sub');
 	if ($startlist)
 		echo "<ul" . $css_id . ">\n"; // top level list
-	/*	 * ** Top level start with Index link  *** */
+		/*		 * ** Top level start with Index link  *** */
 	if ($option === "list" OR $option === "list-top") {
 		if (!empty($indexname)) {
 			echo "<li><a href='" . html_encode(getGalleryIndexURL()) . "' title='" . html_encode($indexname) . "'>" . $indexname . "</a></li>";
@@ -186,7 +186,7 @@ function printAlbumMenuList($option, $showcount = NULL, $css_id = '', $css_class
 		$albums = $_zp_gallery->getAlbums();
 	}
 
-	printAlbumMenuListAlbum($albums, $albumpath, $currentfolder, $option, $showcount, $showsubs, $css_class, $css_class_topactive, $css_class_active, $firstimagelink, $keeptopactive, $limit);
+	printAlbumMenuListAlbum($albums, $currentfolder, $option, $showcount, $showsubs, $css_class, $css_class_topactive, $css_class_active, $firstimagelink, $keeptopactive, $limit);
 
 	if ($startlist)
 		echo "</ul>\n";
@@ -196,7 +196,6 @@ function printAlbumMenuList($option, $showcount = NULL, $css_id = '', $css_class
  * Handles an album for printAlbumMenuList
  *
  * @param array $albums albums array
- * @param string $path for createAlbumMenuLink
  * @param string $folder
  * @param string $option see printAlbumMenuList
  * @param string $showcount see printAlbumMenuList
@@ -208,7 +207,7 @@ function printAlbumMenuList($option, $showcount = NULL, $css_id = '', $css_class
  * @param bool $keeptopactive If set to TRUE the toplevel album entry will stay marked as active if within its subalbums ("list" only)
  * @param int $limit truncation of display text
  */
-function printAlbumMenuListAlbum($albums, $path, $folder, $option, $showcount, $showsubs, $css_class, $css_class_topactive, $css_class_active, $firstimagelink, $keeptopactive, $limit = NULL) {
+function printAlbumMenuListAlbum($albums, $folder, $option, $showcount, $showsubs, $css_class, $css_class_topactive, $css_class_active, $firstimagelink, $keeptopactive, $limit = NULL) {
 	global $_zp_gallery, $_zp_current_album, $_zp_current_search, $_recursion_limiter;
 	if (is_null($limit)) {
 		$limit = MENU_TRUNCATE_STRING;
@@ -231,7 +230,7 @@ function printAlbumMenuListAlbum($albums, $path, $folder, $option, $showcount, $
 						&& $level <= $pagelevel) // but not too deep\
 						);
 
-		if ($process && hasDynamicAlbumSuffix($album)) {
+		if ($process && hasDynamicAlbumSuffix($album) && !is_dir(ALBUM_FOLDER_SERVERPATH . $album)) {
 			if (in_array($album, $_recursion_limiter))
 				$process = false; // skip already seen dynamic albums
 		}
@@ -282,9 +281,9 @@ function printAlbumMenuListAlbum($albums, $path, $folder, $option, $showcount, $
 				$display = $title;
 			}
 			if ($firstimagelink && $topalbum->getNumImages() != 0) {
-				$link = "<li><a " . $current . "href='" . html_encode($topalbum->getImage(0)->getImageLink()) . "' title='" . html_encode($title) . "'>" . html_encode($display) . "</a>" . $count;
+				$link = "<li><a " . $current . "href='" . html_encode($topalbum->getImage(0)->getLink()) . "' title='" . html_encode($title) . "'>" . html_encode($display) . "</a>" . $count;
 			} else {
-				$link = "<li><a " . $current . "href='" . html_encode($topalbum->getAlbumLink(0)) . "' title='" . html_encode($title) . "'>" . html_encode($display) . "</a>" . $count;
+				$link = "<li><a " . $current . "href='" . html_encode($topalbum->getLink(1)) . "' title='" . html_encode($title) . "'>" . html_encode($display) . "</a>" . $count;
 			}
 			echo $link;
 		}
@@ -293,7 +292,7 @@ function printAlbumMenuListAlbum($albums, $path, $folder, $option, $showcount, $
 			if (!empty($subalbums)) {
 				echo "\n<ul" . $css_class . ">\n";
 				array_push($_recursion_limiter, $album);
-				printAlbumMenuListAlbum($subalbums, $path, $folder, $option, $showcount, $showsubs, $css_class, $css_class_topactive, $css_class_active, $firstimagelink, false, $limit);
+				printAlbumMenuListAlbum($subalbums, $folder, $option, $showcount, $showsubs, $css_class, $css_class_topactive, $css_class_active, $firstimagelink, false, $limit);
 				array_pop($_recursion_limiter);
 				echo "\n</ul>\n";
 			}
@@ -363,8 +362,6 @@ function printAlbumMenuJumpAlbum($albums, $option, $albumpath, $firstimagelink, 
 	global $_zp_gallery;
 	foreach ($albums as $album) {
 		$subalbum = newAlbum($album, true);
-
-
 		if ($option === "count" AND $subalbum->getNumImages() > 0) {
 			$count = " (" . $subalbum->getNumImages() . ")";
 		} else {
@@ -374,9 +371,9 @@ function printAlbumMenuJumpAlbum($albums, $option, $albumpath, $firstimagelink, 
 
 		$selected = checkSelectedAlbum($subalbum->name, "album");
 		if ($firstimagelink && $subalbum->getNumImages() != 0) {
-			$link = "<option $selected value='" . html_encode($subalbum->getImage(0)->getImageLink()) . "'>" . $arrow . strip_tags($subalbum->getTitle()) . $count . "</option>";
+			$link = "<option $selected value='" . html_encode($subalbum->getImage(0)->getLink()) . "'>" . $arrow . getBare($subalbum->getTitle()) . $count . "</option>";
 		} else {
-			$link = "<option $selected value='" . html_encode($albumpath . pathurlencode($subalbum->name)) . "'>" . $arrow . strip_tags($subalbum->getTitle()) . $count . "</option>";
+			$link = "<option $selected value='" . html_encode($subalbum->getLink(1)) . "'>" . $arrow . getBare($subalbum->getTitle()) . $count . "</option>";
 		}
 		echo $link;
 		$subalbums = $subalbum->getAlbums();

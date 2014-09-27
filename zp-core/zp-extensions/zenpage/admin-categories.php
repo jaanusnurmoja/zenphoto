@@ -61,7 +61,7 @@ if (isset($_GET['id'])) {
 }
 
 printAdminHeader('news', 'categories');
-zp_apply_filter('texteditor_config', '', 'zenpage');
+zp_apply_filter('texteditor_config', 'zenpage');
 printSortableHead();
 zenpageJSCSS();
 ?>
@@ -122,7 +122,7 @@ zenpageJSCSS();
 				?>
 				<h1>
 					<?php echo gettext('Categories'); ?><span class="zenpagestats"><?php printCategoriesStatistic(); ?></span></h1>
-				<form action="admin-categories.php?page=news&amp;tab=categories" method="post" id="checkeditems" name="checkeditems" onsubmit="return confirmAction();">
+				<form class="dirty-check" action="admin-categories.php?page=news&amp;tab=categories" method="post" id="checkeditems" name="checkeditems" onsubmit="return confirmAction();">
 					<?php XSRFToken('checkeditems'); ?>
 					<input	type="hidden" name="action" id="action" value="update" />
 					<p class="buttons">

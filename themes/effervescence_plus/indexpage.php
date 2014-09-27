@@ -14,7 +14,7 @@ if (!defined('WEBPATH')) die();
 	}
 	?>
 	<?php printHeadTitle(); ?>
-	<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
+	<meta charset="<?php echo LOCAL_CHARSET; ?>">
 </head>
 
 <body onload="blurAnchors()">

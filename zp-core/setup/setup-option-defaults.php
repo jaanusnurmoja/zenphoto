@@ -79,7 +79,9 @@ if (isset($_GET['mod_rewrite'])) {
 	<script type="text/javascript">
 		$(function() {
 			$('img').error(function() {
-				$(this).attr('src', '../images/fail.png');
+				var link = $(this).attr('src');
+				var title = $(this).attr('title');
+				$(this).parent().html('<a href="' + link + '"><img src="../images/fail.png" title="' + title + '"></a>');
 				imageErr = true;
 			});
 		});
@@ -87,7 +89,9 @@ if (isset($_GET['mod_rewrite'])) {
 	<p>
 		<?php echo gettext('Mod_Rewrite check:'); ?>
 		<br />
-		<img src="<?php echo FULLWEBPATH . '/' . _PAGE_; ?>/setup_set-mod_rewrite?z=setup" title="<?php echo gettext('Mod_rewrite'); ?>" alt="<?php echo gettext('Mod_rewrite'); ?>" height="16px" width="16px" />
+		<span>
+			<img src="<?php echo FULLWEBPATH . '/' . $_zp_conf_vars['special_pages']['page']['rewrite']; ?>/setup_set-mod_rewrite?z=setup" title="<?php echo gettext('Mod_rewrite'); ?>" alt="<?php echo gettext('Mod_rewrite'); ?>" height="16px" width="16px" />
+		</span>
 	</p>
 	<?php
 }
@@ -197,6 +201,7 @@ setOptionDefault('custom_index_page', '');
 setOptionDefault('picture_of_the_day', serialize(array('day' => NULL, 'folder' => NULL, 'filename' => NULL)));
 setOptionDefault('exact_tag_match', 0);
 
+setOptionDefault('image_max_size', 3000);
 setOptionDefault('EXIFMake', 1);
 setOptionDefault('EXIFModel', 1);
 setOptionDefault('EXIFExposureTime', 1);
@@ -211,9 +216,9 @@ foreach ($_zp_exifvars as $key => $item) {
 	setOptionDefault($key, 0);
 }
 setOptionDefault('IPTC_encoding', 'ISO-8859-1');
+setOptionDefault('IPTC_convert_linebreaks', 0);
 
 setOptionDefault('UTF8_image_URI', 0);
-setOptionDefault('zp_plugin_zpCaptcha', 5 | CLASS_PLUGIN);
 
 setOptionDefault('sharpen_amount', 40);
 setOptionDefault('sharpen_radius', 0.5);
@@ -319,14 +324,15 @@ if (file_exists(SERVERPATH . '/' . ZENFOLDER . '/Zenphoto.package')) {
 	echo gettext('Theme setup:') . '<br />';
 	foreach (array_keys($_zp_gallery->getThemes()) as $theme) {
 		?>
-		<img src="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/setup/setup_themeOptions.php?theme=' . $theme; ?>" title="<?php echo $theme; ?>" alt="<?php echo $theme; ?>" height="16px" width="16px" />
+		<span>
+			<img src="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/setup/setup_themeOptions.php?theme=' . $theme; ?>" title="<?php echo $theme; ?>" alt="<?php echo $theme; ?>" height="16px" width="16px" />
+		</span
 		<?php
 	}
 	?>
 </p>
 
 <?php
-setOptionDefault('zp_plugin_security-logger', 9 | CLASS_PLUGIN);
 // migrate search space is opton
 if (getOption('search_space_is_OR')) {
 	setOption('search_space_is', '|');
@@ -453,22 +459,22 @@ setOption('gallery_data', serialize($data));
 
 $_zp_gallery = new Gallery(); // insure we have the proper options instantiated
 
-/* TODO:enable on the 1.5 release
+/* TODO:enable on the 1.4.7 release
  *
   The following options have been relocated to methods of the gallery object. They will be purged form installations
   on the Zenphoto 1.5 release.
 
- * gallery_page_unprotected_xxx
- * gallery_sortdirection
- * gallery_sorttype
- * gallery_title
- * Gallery_description
+  gallery_page_unprotected_xxx
+  gallery_sortdirection
+  gallery_sorttype
+  gallery_title
+  Gallery_description
   gallery_password
   gallery_user
   gallery_hint
   current_theme
- * website_title
- * website_url
+  website_title
+  website_url
   gallery_security
   login_user_field
   album_use_new_image_date
@@ -534,11 +540,9 @@ if (!is_null($autoRotate)) {
 
 purgeOption('zp_plugin_failed_access_blocker');
 setOptionDefault('plugins_per_page', 20);
+setOptionDefault('plugins_per_page_options', 10);
 setOptionDefault('users_per_page', 10);
 setOptionDefault('articles_per_page', 15);
-setOptionDefault('combinews-customtitle', getOption('combinews-customtitle-plural'));
-purgeOption('combinews-customtitle-singular');
-purgeOption('combinews-customtitle-plural');
 setOptionDefault('debug_log_size', 5000000);
 setOptionDefault('imageProcessorConcurrency', 30);
 switch (getOption('spam_filter')) {
@@ -552,14 +556,51 @@ switch (getOption('spam_filter')) {
 		setOptionDefault('zp_plugin_legacySpam', 5 | CLASS_PLUGIN);
 		break;
 }
+setOptionDefault('search_album_sort_type', 'title');
+setOptionDefault('search_image_sort_type', 'title');
+setOptionDefault('search_album_sort_direction', '');
+setOptionDefault('search_image_sort_direction', '');
 purgeOption('zp_plugin_releaseUpdater');
 
 query('UPDATE ' . prefix('administrators') . ' SET `passhash`=' . ((int) getOption('strong_hash')) . ' WHERE `valid`>=1 AND `passhash` IS NULL');
 query('UPDATE ' . prefix('administrators') . ' SET `passupdate`=' . db_quote(date('Y-m-d H:i:s')) . ' WHERE `valid`>=1 AND `passupdate` IS NULL');
 setOptionDefault('image_processor_flooding_protection', 1);
 setOptionDefault('codeblock_first_tab', 1);
-setOptionDefault('zp_plugin_rss', 9 | FEATURE_PLUGIN | ADMIN_PLUGIN);
 setOptionDefault('GD_FreeType_Path', SERVERPATH . '/' . USER_PLUGIN_FOLDER . '/gd_fonts');
+
+$vers = explode('-', ZENPHOTO_VERSION);
+$vers = explode('.', $vers[0]);
+while (count($vers) < 3) {
+	$vers[] = 0;
+}
+$zpversion = $vers[0] . '.' . $vers[1] . '.' . $vers[2];
+$_languages = generateLanguageList('all');
+foreach ($_languages as $language => $dirname) {
+	if (!empty($dirname) && $dirname != 'en_US') {
+		$version = '';
+		$po = file_get_contents(SERVERPATH . "/" . ZENFOLDER . "/locale/" . $dirname . '/LC_MESSAGES/zenphoto.po');
+		$i = strpos($po, 'Project-Id-Version:');
+		if ($i !== false) {
+			$j = strpos($po, '\n', $i);
+			if ($j !== false) {
+				$pversion = strtolower(substr($po, $i + 19, $j - $i - 19));
+				$vers = explode('.', trim(str_replace('zenphoto', '', $pversion)));
+				while (count($vers) < 3) {
+					$vers[] = 0;
+				}
+				$version = (int) $vers[0] . '.' . (int) $vers[1] . '.' . (int) $vers[2];
+			}
+		}
+		if (is_null(getOption('disallow_' . $dirname)) && $version < $zpversion) {
+			setOptionDefault('disallow_' . $dirname, 1);
+		}
+		if (setupLocale($dirname)) {
+			purgeOption('unsupported_' . $dirname);
+		} else {
+			setOption('unsupported_' . $dirname, 1);
+		}
+	}
+}
 
 //The following should be done LAST so it catches anything done above
 //set plugin default options by instantiating the options interface
@@ -572,7 +613,9 @@ $plugins = getPluginFiles('*.php');
 	echo gettext('Plugin setup:') . '<br />';
 	foreach ($plugins as $extension) {
 		?>
-		<img src="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/setup/setup_pluginOptions.php?plugin=' . $extension; ?>" title="<?php echo $extension; ?>" alt="<?php echo $extension; ?>" height="16px" width="16px" />
+		<span>
+			<img src="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/setup/setup_pluginOptions.php?plugin=' . $extension; ?>" title="<?php echo $extension; ?>" alt="<?php echo $extension; ?>" height="16px" width="16px" />
+		</span>
 		<?php
 	}
 	?>

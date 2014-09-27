@@ -38,8 +38,19 @@ $_zp_graphics_optionhandlers += array('lib_Imagick_Options' => new lib_Imagick_O
  */
 class lib_Imagick_Options {
 
-	function __construct() {
+	public static $ignore_size = 0;
 
+	function __construct() {
+		setOptionDefault('magick_max_height', self::$ignore_size);
+		setOptionDefault('magick_max_width', self::$ignore_size);
+
+		if (!sanitize_numeric(getOption('magick_max_height'))) {
+			setOption('magick_max_height', self::$ignore_size);
+		}
+
+		if (!sanitize_numeric(getOption('magick_max_width'))) {
+			setOption('magick_max_width', self::$ignore_size);
+		}
 	}
 
 	/**
@@ -61,6 +72,23 @@ class lib_Imagick_Options {
 										'desc'		 => ($disabled) ? '<p class="notebox">' . $disabled . '</p>' : gettext('Your PHP has support for Imagick. Check this option if you wish to use the Imagick graphics library.')
 						)
 		);
+
+		if (!$disabled) {
+			$imagickOptions += array(
+							gettext('Max height')	 => array(
+											'key'		 => 'magick_max_height',
+											'type'	 => OPTION_TYPE_TEXTBOX,
+											'order'	 => 1,
+											'desc'	 => sprintf(gettext('The maximum height used by the site for processed images. Set to %d for unconstrained. Default is <strong>%d</strong>'), self::$ignore_size, self::$ignore_size)
+							),
+							gettext('Max width')	 => array(
+											'key'		 => 'magick_max_width',
+											'type'	 => OPTION_TYPE_TEXTBOX,
+											'order'	 => 2,
+											'desc'	 => sprintf(gettext('The maximum width used by the site for processed images. Set to %d for unconstrained. Default is <strong>%d</strong>.'), self::$ignore_size, self::$ignore_size)
+							)
+			);
+		}
 
 		return $imagickOptions;
 	}
@@ -127,7 +155,16 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 		global $_lib_Imagick_info;
 
 		if (in_array(getSuffix($imgfile), $_lib_Imagick_info)) {
-			$image = new Imagick(filesystemToInternal($imgfile));
+			$image = new Imagick();
+
+			$maxHeight = getOption('magick_max_height');
+			$maxWidth = getOption('magick_max_width');
+
+			if ($maxHeight > lib_Imagick_Options::$ignore_size && $maxWidth > lib_Imagick_Options::$ignore_size) {
+				$image->setOption('jpeg:size', $maxWidth . 'x' . $maxHeight);
+			}
+
+			$image->readImage(filesystemToInternal($imgfile));
 
 			return $image;
 		}
@@ -152,8 +189,8 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 
 		switch ($type) {
 			case 'gif':
-				$im->setCompression(Imagick::COMPRESSION_LZW);
-				$im->setCompressionQuality($qual);
+				$im->setImageCompression(Imagick::COMPRESSION_LZW);
+				$im->setImageCompressionQuality($qual);
 
 				if ($interlace) {
 					$im->setInterlaceScheme(Imagick::INTERLACE_GIF);
@@ -163,8 +200,8 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 
 			case 'jpeg':
 			case 'jpg':
-				$im->setCompression(Imagick::COMPRESSION_JPEG);
-				$im->setCompressionQuality($qual);
+				$im->setImageCompression(Imagick::COMPRESSION_JPEG);
+				$im->setImageCompressionQuality($qual);
 
 				if ($interlace) {
 					$im->setInterlaceScheme(Imagick::INTERLACE_JPEG);
@@ -173,8 +210,8 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 				break;
 
 			case 'png':
-				$im->setCompression(Imagick::COMPRESSION_ZIP);
-				$im->setCompressionQuality($qual);
+				$im->setImageCompression(Imagick::COMPRESSION_ZIP);
+				$im->setImageCompressionQuality($qual);
 
 				if ($interlace) {
 					$im->setInterlaceScheme(Imagick::INTERLACE_PNG);
@@ -604,6 +641,14 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 	 */
 	function zp_imageFromString($string) {
 		$im = new Imagick();
+
+		$maxHeight = getOption('magick_max_height');
+		$maxWidth = getOption('magick_max_width');
+
+		if ($maxHeight > lib_Imagick_Options::$ignore_size && $maxWidth > lib_Imagick_Options::$ignore_size) {
+			$im->setOption('jpeg:size', $maxWidth . 'x' . $maxHeight);
+		}
+
 		$im->readImageBlob($string);
 
 		return $im;

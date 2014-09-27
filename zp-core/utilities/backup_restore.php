@@ -317,7 +317,7 @@ if (isset($_REQUEST['backup'])) {
 				$counter = 0;
 				$missing_table = array();
 				$missing_element = array();
-				while (!empty($string) && count($errors) < 10) {
+				while (!empty($string) && count($errors) < 100) {
 					extendExecution();
 					$sep = strpos($string, TABLE_SEPARATOR);
 					$table = substr($string, 0, $sep);
@@ -340,7 +340,7 @@ if (isset($_REQUEST['backup'])) {
 								}
 							}
 							if (array_search($key, $tables[$prefix . $table]) === false) {
-//	Flag it if data will be lost
+								//	Flag it if data will be lost
 								$missing_element[] = $table . '->' . $key;
 								unset($row[$key]);
 							} else {
@@ -429,7 +429,14 @@ if (isset($_REQUEST['backup'])) {
 	} else if (count($errors) > 0) {
 		$messages = '
 		<div class="errorbox">
-			<h2>' . gettext("Restore failed") . '</h2>
+			<h2>';
+		if (count($errors) >= 100) {
+			$messages .= gettext('The maximum error count was exceeded and the restore aborted.');
+			unset($_GET['compression']);
+		} else {
+			$messages .= gettext("Restore encountered the following errors:");
+		}
+		$messages .= '</h2>
 			';
 		foreach ($errors as $msg) {
 			$messages .= '<p>' . html_encode($msg) . '</p>';
@@ -446,7 +453,14 @@ if (isset($_REQUEST['backup'])) {
 			</script>
 		';
 	}
-	setOption('zenphoto_install', $signaure);
+	$_zp_options = NULL; //invalidate any options from before the restore
+	if (getOption('zenphoto_install') !== $signaure) {
+		$l1 = '<a href="' . WEBPATH . '/' . ZENFOLDER . '/setup.php">';
+		$messages .= '<div class="notebox">
+			<h2>' . sprintf(gettext('You have restored your database from a different instance of Zenphoto. You should run %1$ssetup%2$s to insure proper migration.'), $l1, '</a>') . '</h2>
+			</div>';
+	}
+
 	setOption('license_accepted', ZENPHOTO_VERSION . '[' . ZENPHOTO_RELEASE . ']');
 	if ($oldlibauth != Zenphoto_Authority::getVersion()) {
 		if (!$_zp_authority->migrateAuth($oldlibauth)) {

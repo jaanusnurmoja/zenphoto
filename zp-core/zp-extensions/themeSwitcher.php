@@ -18,7 +18,7 @@
  * @package plugins
  * @subpackage development
  */
-$plugin_is_filter = 98 | CLASS_PLUGIN;
+$plugin_is_filter = 500 | CLASS_PLUGIN;
 $plugin_description = gettext('Allow a visitor to select the theme of the gallery.');
 $plugin_author = "Stephen Billard (sbillard)";
 
@@ -141,7 +141,7 @@ class themeSwitcher {
 			$theme = $_zp_gallery->getCurrentTheme();
 			?>
 			<span class="themeSwitcherControlLink">
-				<span title="<?php echo gettext("Themes will not show in this list if selecting them would result in a 'not found' error."); ?>">
+				<span title="<?php echo gettext("Themes will not show in this list if selecting them would result in a “not found” error."); ?>">
 					<?php echo $text; ?>
 					<select name="themeSwitcher" id="themeSwitcher" onchange="switchTheme('<?php echo html_encode($reloc); ?>')">
 						<?php generateListFromArray(array($theme), $themes, false, true); ?>
@@ -156,7 +156,7 @@ class themeSwitcher {
 
 	static function active() {
 		global $_showNotLoggedin_real_auth;
-		if (isset($_showNotLoggedin_real_auth)) {
+		if (is_object($_showNotLoggedin_real_auth)) {
 			$loggedin = $_showNotLoggedin_real_auth->getRights();
 		} else {
 			$loggedin = zp_loggedin();
@@ -168,7 +168,10 @@ class themeSwitcher {
 
 $_themeSwitcherThemelist = array();
 foreach ($_zp_gallery->getThemes() as $__key => $__theme) {
-	$_themeSwitcherThemelist[$__key] = getOption('themeSwitcher_theme_' . $__key);
+	$set = getOption('themeSwitcher_theme_' . $__key);
+	if (is_null($set)) //newly arrived theme?
+		$set = 1;
+	$_themeSwitcherThemelist[$__key] = $set;
 }
 unset($__key);
 unset($__theme);
@@ -179,6 +182,6 @@ if (isset($_GET['themeSwitcher'])) {
 if (zp_getCookie('themeSwitcher_theme')) {
 	zp_register_filter('setupTheme', 'themeSwitcher::theme');
 }
-zp_register_filter('theme_head', 'themeSwitcher::head');
+zp_register_filter('theme_head', 'themeSwitcher::head', 999);
 zp_register_filter('theme_body_open', 'themeSwitcher::controlLink');
 ?>

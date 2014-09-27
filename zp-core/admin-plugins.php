@@ -63,7 +63,7 @@ if (isset($_GET['action'])) {
 }
 $saved = isset($_GET['saved']);
 printAdminHeader('plugins');
-zp_apply_filter('texteditor_config', '', 'zenphoto');
+zp_apply_filter('texteditor_config', 'zenphoto');
 
 natcasesort($pluginlist);
 $rangeset = getPageSelector($pluginlist, PLUGINS_PER_PAGE);
@@ -88,7 +88,7 @@ $filelist = array_slice($pluginlist, $subpage * PLUGINS_PER_PAGE, PLUGINS_PER_PA
 		i = Math.floor(jQuery.inArray(plugin, pluginsToPage) / <?php echo PLUGINS_PER_PAGE; ?>);
 		window.location = '<?php echo WEBPATH . '/' . ZENFOLDER; ?>/admin-plugins.php?page=plugins&tab=<?php echo $subtab; ?>&subpage=' + i + '&show=' + plugin + '#' + plugin;
 	}
-	//-->
+//-->
 </script>
 <?php
 echo "\n</head>";
@@ -132,7 +132,7 @@ $subtab = printSubtabs();
 	</p>
 	<p class='notebox'><?php echo gettext("<strong>Note:</strong> Support for a particular plugin may be theme dependent! You may need to add the plugin theme functions if the theme does not currently provide support."); ?>
 	</p>
-	<form id="form_plugins" action="?action=saveplugins&amp;page=plugins&amp;tab=<?php echo html_encode($subtab); ?>" method="post">
+	<form class="dirty-check" id="form_plugins" action="?action=saveplugins&amp;page=plugins&amp;tab=<?php echo html_encode($subtab); ?>" method="post">
 		<?php XSRFToken('saveplugins'); ?>
 		<input type="hidden" name="saveplugins" value="yes" />
 		<input type="hidden" name="subpage" value="<?php echo $subpage; ?>" />
@@ -143,7 +143,7 @@ $subtab = printSubtabs();
 		<table class="bordered options">
 			<tr>
 				<th id="imagenav" colspan="3">
-					<?php printPageSelector($subpage, $rangeset, 'admin-plugins.php', array('page' => 'plugins', 'tab'	 => $subtab)); ?>
+					<?php printPageSelector($subpage, $rangeset, 'admin-plugins.php', array('page' => 'plugins', 'tab' => $subtab)); ?>
 				</th>
 			</tr>
 			<tr>
@@ -321,7 +321,7 @@ $subtab = printSubtabs();
 						<?php
 						if ($subtab == 'all') {
 							$tab = $member[$extension];
-							echo '<span class="displayrightsmall"><a href="' . $tabs[$tab] . '"><em>' . $tab . '</em></a></span>';
+							echo '<span class="displayrightsmall"><a href="' . html_encode($tabs[$tab]) . '"><em>' . $tab . '</em></a></span>';
 						}
 						?>
 					</td>
@@ -378,7 +378,7 @@ $subtab = printSubtabs();
 			?>
 			<tr>
 				<td colspan="4" id="imagenavb">
-					<?php printPageSelector($subpage, $rangeset, 'admin-plugins.php', array('page' => 'plugins', 'tab'	 => $subtab)); ?>
+					<?php printPageSelector($subpage, $rangeset, 'admin-plugins.php', array('page' => 'plugins', 'tab' => $subtab)); ?>
 				</td>
 			</tr>
 		</table>

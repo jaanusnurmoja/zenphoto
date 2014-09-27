@@ -54,13 +54,6 @@
  * 			<li>news</li>
  * 		</ul>
  * 	</li>
- * 	<li>withimages</li>
- * 	<li>withimages_mtime</li>
- * 	<li>withimages_publishdate</li>
- * 	<li>withalbums</li>
- * 	<li>withalbums_mtim</li>
- * 	<li>withalbums_publishdate</li>
- * 	<li>withalbums_publishdate</li>
  * </ul>
  *
  *
@@ -93,8 +86,6 @@ class feed {
 	protected $cattitle = NULL;
 	protected $newsoption = NULL;
 	protected $titleappendix = NULL;
-	protected $combinews_images = NULL;
-	protected $combinews_albums = NULL;
 	//comment feed specific
 	protected $id = NULL;
 	protected $commentfeedtype = NULL;
@@ -128,7 +119,7 @@ class feed {
 	protected function startCache() {
 		$caching = getOption($this->feed . "_cache") && !zp_loggedin();
 		if ($caching) {
-			$cachefilepath = SERVERPATH . '/cache_html/' . strtolower($this->feed) . '/' . internalToFilesystem($this->getCacheFilename());
+			$cachefilepath = SERVERPATH . '/' . STATIC_CACHE_FOLDER . '/' . strtolower($this->feed) . '/' . internalToFilesystem($this->getCacheFilename());
 			if (file_exists($cachefilepath) AND time() - filemtime($cachefilepath) < getOption($this->feed . "_cache_expire")) {
 				echo file_get_contents($cachefilepath);
 				exitZP();
@@ -151,8 +142,8 @@ class feed {
 		if ($caching) {
 			$cachefilepath = internalToFilesystem($this->getCacheFilename());
 			if (!empty($cachefilepath)) {
-				$cachefilepath = SERVERPATH . '/cache_html/' . strtolower($this->feed) . '/' . $cachefilepath;
-				mkdir_recursive(SERVERPATH . '/cache_html/' . strtolower($this->feed) . '/', FOLDER_MOD);
+				$cachefilepath = SERVERPATH . '/' . STATIC_CACHE_FOLDER . '/' . strtolower($this->feed) . '/' . $cachefilepath;
+				mkdir_recursive(SERVERPATH . '/' . STATIC_CACHE_FOLDER . '/' . strtolower($this->feed) . '/', FOLDER_MOD);
 				$pagecontent = ob_get_contents();
 				ob_end_clean();
 				if ($fh = @fopen($cachefilepath, "w")) {
@@ -183,12 +174,9 @@ class feed {
 		}
 		$this->locale_xml = strtr($this->locale, '_', '-');
 		if (isset($this->options['sortdir'])) {
-			$this->sortdirection = $this->options['sortdir'];
-			if ($this->sortdirection = !'desc' || $sortdir != 'asc') {
-				$this->sortdirection = 'desc';
-			}
+			$this->sortdirection = strtolower($this->options['sortdir']) != 'asc';
 		} else {
-			$this->sortdirection = 'desc';
+			$this->sortdirection = true;
 		}
 		if (isset($this->options['sortorder'])) {
 			$this->sortorder = $this->options['sortorder'];
@@ -242,29 +230,11 @@ class feed {
 					$this->cattitle = '';
 					$this->newsoption = 'news';
 				}
-
-				if (isset($this->options['withimages'])) {
-					$this->sortorder = NULL;
-					return $this->newsoption = 'withimages';
-				} else if (isset($this->options['withimages_mtime'])) {
-					return $this->newsoption = 'withimages_mtime';
-				} else if (isset($this->options['withimages_publishdate'])) {
-					return $this->newsoption = 'withimages_publishdate';
-				}
-
-				if (isset($this->options['withalbums'])) {
-					$this->sortorder = NULL;
-					return $this->newsoption = 'withalbums';
-				} else if (isset($this->options['withalbums_mtime'])) {
-					return $this->newsoption = 'withalbums_mtime';
-				} else if (isset($this->options['withalbums_publishdate'])) {
-					return $this->newsoption = 'withalbums_publishdate';
-				} else if (isset($this->options['withalbums_latestupdated'])) {
-					return $this->newsoption = 'withalbums_latestupdated';
-				}
 				break;
 			case 'pages':
 				break;
+			case 'null': //we just want the class instantiated
+				return;
 		}
 		if (isset($this->options['itemnumber'])) {
 			$this->itemnumber = (int) $this->options['itemnumber'];
@@ -325,12 +295,12 @@ class feed {
 		} else {
 			$imagesize = NULL;
 		}
-		if (is_numeric($imagesize) && !is_null($imagesize) && $imagesize < getOption($this->feed . '_imagesize')) {
-			$imagesize = $imagesize;
-		} else {
-			if ($this->mode == 'albums') {
+		if ($this->mode == 'albums') {
+			if (is_null($imagesize) || $imagesize > getOption($this->feed . '_imagesize_albums')) {
 				$imagesize = getOption($this->feed . '_imagesize_albums'); // un-cropped image size
-			} else {
+			}
+		} else {
+			if (is_null($imagesize) || $imagesize > getOption($this->feed . '_imagesize')) {
 				$imagesize = getOption($this->feed . '_imagesize'); // un-cropped image size
 			}
 		}
@@ -358,48 +328,17 @@ class feed {
 						if ($this->sortorder) {
 							$items = getZenpageStatistic($this->itemnumber, 'categories', $this->sortorder, $this->sortdirection);
 						} else {
-							$items = getLatestNews($this->itemnumber, "none", $this->catlink, false, $this->sortdirection);
+							$items = getLatestNews($this->itemnumber, $this->catlink, false, $this->sortdirection);
 						}
 						break;
+					default:
 					case "news":
 						if ($this->sortorder) {
 							$items = getZenpageStatistic($this->itemnumber, 'news', $this->sortorder, $this->sortdirection);
 						} else {
 							// Needed baceause type variable "news" is used by the feed item method and not set by the class method getArticles!
-							$items = getLatestNews($this->itemnumber, 'none', '', false, $this->sortdirection);
+							$items = getLatestNews($this->itemnumber, '', false, $this->sortdirection);
 						}
-						break;
-					case "withimages":
-						//$items = getLatestNews($this->itemnumber,"with_latest_images_date",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestimages-thumbnail', NULL, 'date', false, $this->sortdirection);
-						break;
-					case "withimages_id":
-						//$items = getLatestNews($this->itemnumber,"with_latest_images_date",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestimages-thumbnail', NULL, 'id', false, $this->sortdirection);
-						break;
-					case 'withimages_mtime':
-						//$items = getLatestNews($this->itemnumber,"with_latest_images_mtime",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestimages-thumbnail', NULL, 'mtime', false, $this->sortdirection);
-						break;
-					case 'withimages_publishdate':
-						//$items = getLatestNews($this->itemnumber,"with_latest_images_publishdate",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestimages-thumbnail', NULL, 'publishdate', false, $this->sortdirection);
-						break;
-					case 'withalbums':
-						//$items = getLatestNews($this->itemnumber,"with_latest_albums_date",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestalbums-thumbnail', NULL, 'date', false, $this->sortdirection);
-						break;
-					case 'withalbums_mtime':
-						//$items = getLatestNews($this->itemnumber,"with_latest_albums_mtime",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestalbums-thumbnail', NULL, 'mtime', false, $this->sortdirection);
-						break;
-					case 'withalbums_publishdate':
-						//$items = getLatestNews($this->itemnumber,"with_latest_albums_publishdate",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestalbums-thumbnail', NULL, 'publishdate', false, $this->sortdirection);
-						break;
-					case 'withalbums_latestupdated':
-						//$items = getLatestNews($this->itemnumber,"with_latestupdated_albums",'',false,$this->sortdirection);
-						$items = $_zp_zenpage->getCombiNews($this->itemnumber, 'latestupdatedalbums-thumbnail', NULL, '', false, $this->sortdirection);
 						break;
 				}
 				break;
@@ -407,7 +346,7 @@ class feed {
 				if ($this->sortorder) {
 					$items = getZenpageStatistic($this->itemnumber, 'pages', $this->sortorder, $this->sortdirection);
 				} else {
-					$items = $_zp_zenpage->getPages(NULL, false, $this->itemnumber, $this->sortorder, $this->sortdirection);
+					$items = $_zp_zenpage->getPages(NULL, false, $this->itemnumber);
 				}
 				break;
 			case 'comments':
@@ -460,8 +399,11 @@ class feed {
 	protected function getitemPages($item, $len) {
 		$obj = new ZenpagePage($item['titlelink']);
 		$feeditem['title'] = $feeditem['title'] = get_language_string($obj->getTitle('all'), $this->locale);
-		$feeditem['link'] = getPageLinkURL($obj->getTitlelink());
-		$feeditem['desc'] = shortenContent($obj->getContent($this->locale), $len, '...');
+		$feeditem['link'] = $obj->getLink();
+		$desc = $obj->getContent($this->locale);
+		$desc = str_replace('//<![CDATA[', '', $desc);
+		$desc = str_replace('//]]>', '', $desc);
+		$feeditem['desc'] = shortenContent($desc, $len, '...');
 		$feeditem['enclosure'] = '';
 		$feeditem['category'] = '';
 		$feeditem['media_content'] = '';
@@ -487,7 +429,7 @@ class feed {
 			case 'images':
 				$title = get_language_string($item['title']);
 				$obj = newImage(NULL, array('folder' => $item['folder'], 'filename' => $item['filename']));
-				$link = $obj->getImagelink();
+				$link = $obj->getlink();
 				$feeditem['pubdate'] = date("r", strtotime($item['date']));
 				$category = $item['albumtitle'];
 				$website = $item['website'];
@@ -496,7 +438,7 @@ class feed {
 				break;
 			case 'albums':
 				$obj = newAlbum($item['folder']);
-				$link = rtrim($obj->getAlbumlink(), '/');
+				$link = rtrim($obj->getLink(), '/');
 				$feeditem['pubdate'] = date("r", strtotime($item['date']));
 				$title = get_language_string($item['albumtitle']);
 				$website = $item['website'];
@@ -504,24 +446,22 @@ class feed {
 				break;
 			case 'news':
 			case 'pages':
-				$album = '';
-				$feeditem['pubdate'] = date("r", strtotime($item['date']));
-				$category = '';
-				$title = get_language_string($item['title']);
-				$titlelink = $item['titlelink'];
-				$website = $item['website'];
-				if (function_exists('getNewsURL')) {
-					if ($item['type'] == 'news') {
-						$commentpath = PROTOCOL . '://' . $this->host . html_encode(getNewsURL($titlelink)) . "#" . $item['id'];
-					} else {
-						$commentpath = PROTOCOL . '://' . $this->host . html_encode(getPageLinkURL($titlelink)) . "#" . $item['id'];
-					}
+				if (extensionEnabled('zenpage')) {
+					$album = '';
+					$feeditem['pubdate'] = date("r", strtotime($item['date']));
+					$category = '';
+					$title = get_language_string($item['title']);
+					$titlelink = $item['titlelink'];
+					$website = $item['website'];
+					$obj = new $item['type']($titlelink);
+					$commentpath = PROTOCOL . '://' . $this->host . html_encode($obj->getLink()) . "#" . $item['id'];
 				} else {
 					$commentpath = '';
 				}
+
 				break;
 		}
-		$feeditem['title'] = strip_tags($title . $author);
+		$feeditem['title'] = getBare($title . $author);
 		$feeditem['link'] = $commentpath;
 		$feeditem['desc'] = $item['comment'];
 		return $feeditem;
@@ -530,7 +470,7 @@ class feed {
 	static protected function feed404() {
 		header("HTTP/1.0 404 Not Found");
 		header("Status: 404 Not Found");
-		include(ZENFOLDER . '/404.php');
+		include(SERVERPATH . '/' . ZENFOLDER . '/404.php');
 		exitZP();
 	}
 

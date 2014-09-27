@@ -12,8 +12,12 @@ function updateConfigItem($item, $value, $zp_cfg, $quote = true) {
 	}
 	$i = strpos($zp_cfg, $item);
 	if ($i === false) {
-		$i = strpos($zp_cfg, '/** Do not edit below this line. **/');
-		$zp_cfg = substr($zp_cfg, 0, $i) . "\$conf['" . $item . "'] = " . $value . ";\n" . substr($zp_cfg, $i);
+		$parts = preg_split('~\/\*.*Do not edit below this line.*\*\/~', $zp_cfg);
+		if (isset($parts[1])) {
+			$zp_cfg = $parts[0] . "\$conf['" . $item . "'] = " . $value . ";\n/** Do not edit below this line. **/" . $parts[1];
+		} else {
+			zp_error(gettext('The Zenphoto configuration file is corrupt. You will need to restore it from a backup.'));
+		}
 	} else {
 		$i = strpos($zp_cfg, '=', $i);
 		$j = strpos($zp_cfg, "\n", $i);

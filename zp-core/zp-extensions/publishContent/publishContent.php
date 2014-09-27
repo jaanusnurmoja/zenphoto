@@ -192,7 +192,7 @@ echo '</head>';
 								<?php
 							}
 							?>
-							<form name="set_publication" action="" method="post">
+							<form class="dirty-check" name="set_publication" action="" method="post">
 								<?php XSRFToken('publishContent'); ?>
 								<input type="hidden" name="set_defaults" value="true" />
 								<label><input type="checkbox" name="album_default"	value="1"<?php if ($albpublish) echo ' checked="checked"'; ?> /> <?php echo gettext("Publish albums by default"); ?></label>
@@ -246,7 +246,7 @@ echo '</head>';
 						}
 						if ($c > 0) {
 							?>
-							<form name="publish_albums" action="" method="post"><?php echo gettext('Albums:'); ?>
+							<form class="dirty-check" name="publish_albums" action="" method="post"><?php echo gettext('Albums:'); ?>
 								<label id="autocheck">
 									<input type="checkbox" name="checkAllAuto" id="checkAllAuto" onclick="$('.checkAuto').prop('checked', $('#checkAllAuto').prop('checked'));"/>
 									<span id="autotext"><?php echo gettext('all'); ?></span>
@@ -266,7 +266,7 @@ echo '</head>';
 												<img src="<?php echo html_encode(pathurlencode($thumb)); ?>" width="60" height="60" alt="" title="album thumb" />
 												<?php echo $album->name; ?>
 											</label>
-											<a href="<?php echo $album->getAlbumLink(); ?>" title="<?php echo gettext('view'); ?>"> (<?php echo gettext('view'); ?>)</a>
+											<a href="<?php echo $album->getLink(); ?>" title="<?php echo gettext('view'); ?>"> (<?php echo gettext('view'); ?>)</a>
 										</li>
 										<?php
 									}
@@ -371,7 +371,7 @@ echo '</head>';
 								}
 								// ]]> -->
 							</script>
-							<form name="publish_images" action="" method="post"><?php echo gettext('Images:'); ?>
+							<form class="dirty-check" name="publish_images" action="" method="post"><?php echo gettext('Images:'); ?>
 
 								<?php XSRFToken('publishContent'); ?>
 								<input type="hidden" name="publish" value="images" />
@@ -426,7 +426,7 @@ echo '</head>';
 																	<img src="<?php echo html_encode(pathurlencode(getAdminThumb($image, 'large'))); ?>" alt="<?php echo $image->filename; ?>"/>
 																</td>
 																<td>
-																	<?php printf(gettext('%s'), $display); ?><a href="<?php echo html_encode($image->getImageLink()); ?>" title="<?php echo html_encode($image->getTitle()); ?>"> (<?php echo gettext('View'); ?>)</a>
+																	<?php printf(gettext('%s'), $display); ?><a href="<?php echo html_encode($image->getLink()); ?>" title="<?php echo html_encode($image->getTitle()); ?>"> (<?php echo gettext('View'); ?>)</a>
 																</td>
 
 															</tr>
@@ -480,7 +480,7 @@ echo '</head>';
 						$itemobj = new ZenpageCategory($item['titlelink']);
 						if (!$itemobj->getShow()) {
 							$c++;
-							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="catcheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getCategoryLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
+							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="catcheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
 						}
 					}
 					?>
@@ -504,7 +504,7 @@ echo '</head>';
 									<?php
 								}
 								?>
-								<form name="publish_cat" action="" method="post"><?php echo gettext('Categories:'); ?>
+								<form class="dirty-check" name="publish_cat" action="" method="post"><?php echo gettext('Categories:'); ?>
 									<label id="autocheck_cat">
 										<input type="checkbox" id="checkAllcat" name="checkAllcat" onclick="$('.catcheck').prop('checked', $('#checkAllcat').prop('checked'));" />
 										<span id="autotext_cat"><?php echo gettext('all'); ?></span>
@@ -539,7 +539,7 @@ echo '</head>';
 						$itemobj = new ZenpageNews($item['titlelink']);
 						if (!$itemobj->getShow()) {
 							$c++;
-							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="artcheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getNewsLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
+							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="artcheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
 						}
 					}
 					?>
@@ -562,7 +562,7 @@ echo '</head>';
 									<?php
 								}
 								?>
-								<form name="publish_articles" action="" method="post"><?php echo gettext('Articles:'); ?>
+								<form class="dirty-check" name="publish_articles" action="" method="post"><?php echo gettext('Articles:'); ?>
 									<label id="autocheck_art">
 										<input type="checkbox" name="checkAllcat" onclick="$('.artcheck').prop('checked', checked)" />
 										<span id="autotext_art"><?php echo gettext('all'); ?></span>
@@ -595,7 +595,7 @@ echo '</head>';
 						$itemobj = new ZenpagePage($item['titlelink']);
 						if (!$itemobj->getShow()) {
 							$c++;
-							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="pagecheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getPageLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
+							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="pagecheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
 						}
 					}
 					?>
@@ -617,7 +617,7 @@ echo '</head>';
 							echo sprintf(ngettext('%u unpublished page', '%u unpublished pages', $c), $c);
 							?>
 							<div id="pagebox"<?php if (!$visible) echo ' style="display:none"' ?>>
-								<form name="publish_pages" action="" method="post"><?php echo gettext('Pages:'); ?>
+								<form class="dirty-check" name="publish_pages" action="" method="post"><?php echo gettext('Pages:'); ?>
 									<label id="autocheck_page">
 										<input type="checkbox" name="checkAllpage" onclick="$('.pagecheck').prop('checked', checked);" />
 										<span id="autotext_page"><?php echo gettext('all'); ?></span>

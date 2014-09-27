@@ -1,11 +1,13 @@
 <?php
+
 $path_extra = dirname(__FILE__);
 $path = ini_get('include_path');
 $path = $path_extra . PATH_SEPARATOR . $path;
 ini_set('include_path', $path);
 
-if (!defined('OFFSET_PATH')) define('OFFSET_PATH',4);
-require_once(dirname(dirname(dirname(__FILE__))).'/admin-functions.php');
+if (!defined('OFFSET_PATH'))
+	define('OFFSET_PATH', 4);
+require_once(dirname(dirname(dirname(__FILE__))) . '/admin-functions.php');
 
 function displayError($message) {
 	$error = $message;
@@ -40,9 +42,9 @@ doIncludes();
 
 global $pape_policy_uris;
 $pape_policy_uris = array(
-PAPE_AUTH_MULTI_FACTOR_PHYSICAL,
-PAPE_AUTH_MULTI_FACTOR,
-PAPE_AUTH_PHISHING_RESISTANT
+				PAPE_AUTH_MULTI_FACTOR_PHYSICAL,
+				PAPE_AUTH_MULTI_FACTOR,
+				PAPE_AUTH_PHISHING_RESISTANT
 );
 
 function &getStore() {
@@ -51,13 +53,13 @@ function &getStore() {
 	 * You should change this path if you want the example store to be
 	 * created elsewhere.  After you're done playing with the example
 	 * script, you'll have to remove this directory manually.
- */
-	$tmpfile = tempnam("dummy","");
+	 */
+	$tmpfile = tempnam("dummy", "");
 	$store_path = dirname($tmpfile);
 	unlink($tmpfile);
 
-	if (!file_exists($store_path) && !mkdir_recursive($store_path,FOLDER_MOD)) {
-		printf(gettext('Could not create the FileStore directory %s. Please check the effective permissions.'),$store_path);
+	if (!file_exists($store_path) && !mkdir_recursive($store_path, FOLDER_MOD)) {
+		printf(gettext('Could not create the FileStore directory %s. Please check the effective permissions.'), $store_path);
 		exit(0);
 	}
 
@@ -84,17 +86,11 @@ function getScheme() {
 }
 
 function getReturnTo() {
-	return sprintf("%s://%s:%s%s/OpenID_finish_auth.php",
-	getScheme(), $_SERVER['SERVER_NAME'],
-	$_SERVER['SERVER_PORT'],
-	dirname($_SERVER['PHP_SELF']));
+	return sprintf("%s://%s:%s%s/OpenID_finish_auth.php", getScheme(), $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT'], dirname($_SERVER['PHP_SELF']));
 }
 
 function getTrustRoot() {
-	return sprintf("%s://%s:%s%s/",
-	getScheme(), $_SERVER['SERVER_NAME'],
-	$_SERVER['SERVER_PORT'],
-	dirname($_SERVER['PHP_SELF']));
+	return sprintf("%s://%s:%s%s/", getScheme(), $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT'], dirname($_SERVER['PHP_SELF']));
 }
 
 ?>

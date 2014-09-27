@@ -9,7 +9,7 @@ if (!defined('WEBPATH'))
 	<head>
 		<?php zp_apply_filter('theme_head'); ?>
 		<?php printHeadTitle(); ?>
-		<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
+		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
 		<?php if (zp_has_filter('theme_head', 'colorbox::css')) { ?>
 			<script type="text/javascript">
@@ -50,8 +50,9 @@ if (!defined('WEBPATH'))
 			<div id="content">
 
 				<div id="breadcrumb">
-					<h2><a href="<?php echo getGalleryIndexURL(false); ?>" title="<?php gettext('Index'); ?>"><?php echo gettext("Index"); ?></a> » <?php printParentBreadcrumb("", " » ", " » ");
-					printAlbumBreadcrumb("  ", " » "); ?>
+					<h2><a href="<?php echo getGalleryIndexURL(); ?>" title="<?php gettext('Index'); ?>"><?php echo gettext("Index"); ?></a> » <?php printParentBreadcrumb("", " » ", " » ");
+					printAlbumBreadcrumb("  ", " » ");
+					?>
 						<strong><?php printImageTitle(); ?></strong> (<?php echo imageNumber() . "/" . getNumImages(); ?>)
 					</h2>
 				</div>
@@ -60,8 +61,8 @@ if (!defined('WEBPATH'))
 					<!-- The Image -->
 					<?php
 					//
-					if (function_exists('printjCarouselThumbNav')) {
-						printjCarouselThumbNav(6, 50, 50, 50, 50, FALSE);
+					if (function_exists('printThumbNav')) {
+						printThumbNav(3, 6, 50, 50, 50, 50, FALSE);
 					} else {
 						@call_user_func('printPagedThumbsNav', 6, FALSE, gettext('« prev thumbs'), gettext('next thumbs »'), 40, 40);
 					}
@@ -96,9 +97,11 @@ if (!defined('WEBPATH'))
 					</div>
 					<div id="narrow">
 						<div id="imagedesc"><?php printImageDesc(); ?></div>
-						<?php if (getTags()) {
+						<?php
+						if (getTags()) {
 							echo gettext('<strong>Tags:</strong>');
-						} printTags('links', '', 'taglist', ', '); ?>
+						} printTags('links', '', 'taglist', ', ');
+						?>
 						<br style="clear:both;" /><br />
 						<?php
 						if (function_exists('printSlideShowLink')) {
@@ -115,10 +118,10 @@ if (!defined('WEBPATH'))
 						?>
 
 						<br style="clear:both" />
-<?php If (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_image); ?>
-					<?php @call_user_func('printRating'); ?>
-					<?php @call_user_func('printGoogleMap'); ?>
-
+<?php If (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_image); 
+      @call_user_func('printRating'); 
+      @call_user_func('printGoogleMap'); 
+      ?>
 					</div>
 <?php @call_user_func('printCommentForm'); ?>
 

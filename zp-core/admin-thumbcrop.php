@@ -100,7 +100,7 @@ $imageurl = getImageProcessorURI($args, $albumname, $imagepart);
 
 $isCrop = $imageobj->get('thumbY');
 $iY = round($isCrop * $sr);
-$cr = max($cropwidth, $cropheight) / getOption('thumb_size');
+$cr = max($cropwidth, $cropheight) / max(1, getOption('thumb_size'));
 $si = min($sizedwidth, $sizedheight);
 $oW = round($si * $cr);
 $oH = round($si * $cr);
@@ -241,7 +241,7 @@ printAdminHeader('edit', 'thumbcrop');
 					</div>
 
 					<!-- This is the form that our event handler fills -->
-					<form name="crop" id="crop" action="?crop" onsubmit="return checkCoords();">
+					<form class="dirty-check" name="crop" id="crop" action="?crop" onsubmit="return checkCoords();">
 						<?php XSRFToken('thumb_crop'); ?>
 						<input type="hidden" size="4" id="x" name="x" value="<?php echo $iX ?>" />
 						<input type="hidden" size="4" id="y" name="y" value="<?php echo $iY ?>" />

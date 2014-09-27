@@ -10,7 +10,7 @@ if (function_exists('printRegistrationForm')) {
 		<head>
 			<?php zp_apply_filter('theme_head'); ?>
 			<?php printHeadTitle(); ?>
-			<meta http-equiv="content-type" content="text/html; charset=<?php echo LOCAL_CHARSET; ?>" />
+			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
 		</head>
 		<body>
@@ -26,7 +26,7 @@ if (function_exists('printRegistrationForm')) {
 				<div id="content">
 
 					<div id="breadcrumb">
-						<h2><a href="<?php echo getGalleryIndexURL(false); ?>"><strong><?php echo gettext("Index"); ?></strong></a>
+						<h2><a href="<?php echo getGalleryIndexURL(); ?>"><strong><?php echo gettext("Index"); ?></strong></a>
 						</h2>
 					</div>
 
@@ -56,6 +56,6 @@ if (function_exists('printRegistrationForm')) {
 	</html>
 	<?php
 } else {
-	include(dirname(__FILE__) . '/404.php');
+	include(SERVERPATH . '/' . ZENFOLDER . '/404.php');
 }
-?>
+	?>

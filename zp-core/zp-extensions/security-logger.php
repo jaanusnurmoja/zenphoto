@@ -16,7 +16,7 @@
  * @package plugins
  * @subpackage admin
  */
-$plugin_is_filter = 10 | CLASS_PLUGIN;
+$plugin_is_filter = 100 | CLASS_PLUGIN;
 $plugin_description = gettext('Logs selected security events.');
 $plugin_author = "Stephen Billard (sbillard)";
 
@@ -50,11 +50,15 @@ class security_logger {
 	 * @return security_logger
 	 */
 	function __construct() {
-		setOptionDefault('logger_log_guests', 1);
-		setOptionDefault('logger_log_admin', 1);
-		setOptionDefault('logger_log_type', 'all');
-		setOptionDefault('logge_access_log_type', 'all_user');
-		setOptionDefault('security_log_size', 5000000);
+		global $plugin_is_filter;
+		if (OFFSET_PATH == 2) {
+			setOptionDefault('zp_plugin_security-logger', $plugin_is_filter);
+			setOptionDefault('logger_log_guests', 1);
+			setOptionDefault('logger_log_admin', 1);
+			setOptionDefault('logger_log_type', 'all');
+			setOptionDefault('logge_access_log_type', 'all_user');
+			setOptionDefault('security_log_size', 5000000);
+		}
 	}
 
 	/**
@@ -173,7 +177,7 @@ class security_logger {
 		$f = fopen($file, 'a');
 		if ($f) {
 			if (!$preexists) { // add a header
-				fwrite($f, gettext('date' . "\t" . 'requestor\'s IP' . "\t" . 'type' . "\t" . 'user ID' . "\t" . 'user name' . "\t" . 'outcome' . "\t" . 'authority' . "\tadditional information\n"));
+				fwrite($f, gettext('date' . "\t" . 'requestor’s IP' . "\t" . 'type' . "\t" . 'user ID' . "\t" . 'user name' . "\t" . 'outcome' . "\t" . 'authority' . "\tadditional information\n"));
 			}
 			$message = date('Y-m-d H:i:s') . "\t";
 			$message .= $ip . "\t";

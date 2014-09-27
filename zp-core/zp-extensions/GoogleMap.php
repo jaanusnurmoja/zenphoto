@@ -30,7 +30,7 @@ if (isset($_zp_gallery_page) && $_zp_gallery_page != 'index.php') {
  */
 class GoogleMap {
 
-	function GoogleMap() {
+	function __construct() {
 		setOptionDefault('gmap_width', 595);
 		setOptionDefault('gmap_height', 300);
 		setOptionDefault('gmap_map_roadmap', 1);
@@ -143,7 +143,6 @@ class GoogleMap {
 }
 
 // codeIgniter stuff
-error_reporting(E_ALL ^ E_STRICT); //	required for the CodeIgniter-Google-Maps-V3-API code!
 require_once(SERVERPATH . '/' . ZENFOLDER . '/' . COMMON_FOLDER . '/jsMin/JSMin.php');
 
 class CI_load {
@@ -196,7 +195,7 @@ function omsAdditions() {
 function getGeoCoord($image) {
 	global $_zp_current_image;
 	$result = false;
-	if ((is_object($image)) && ($image->table == 'images')) {
+	if (isImageClass($image)) {
 		$_zp_current_image = $image;
 		$exif = $_zp_current_image->getMetaData();
 		if ((!empty($exif['EXIFGPSLatitude'])) && (!empty($exif['EXIFGPSLongitude']))) {

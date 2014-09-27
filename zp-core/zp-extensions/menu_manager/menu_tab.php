@@ -58,7 +58,7 @@ if (isset($_GET['deletemenuset'])) {
 	$sql = 'DELETE FROM ' . prefix('menu') . ' WHERE `menuset`=' . db_quote(sanitize($_GET['deletemenuset']));
 	query($sql);
 	$_menu_manager_items = array();
-	$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Menu '%s' deleted"), html_encode(sanitize($_GET['deletemenuset']))) . "</p>";
+	$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Menu “%s” deleted"), html_encode(sanitize($_GET['deletemenuset']))) . "</p>";
 }
 if (isset($_GET['dupmenuset'])) {
 	XSRFdefender('dup_menu');
@@ -70,9 +70,9 @@ if (isset($_GET['dupmenuset'])) {
 		$menuitems[$key]['nesting'] = $order;
 	}
 	if (createMenuIfNotExists($menuitems, $menuset)) {
-		$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Menu '%s' duplicated"), html_encode($oldmenuset)) . "</p>";
+		$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Menu “%s” duplicated"), html_encode($oldmenuset)) . "</p>";
 	} else {
-		$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Menu '%s' already exists"), html_encode($menuset)) . "</p>";
+		$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Menu “%s” already exists"), html_encode($menuset)) . "</p>";
 	}
 }
 // publish or un-publish page by click
@@ -130,17 +130,19 @@ printSortableHead();
 				}
 				// ]]> -->
 			</script>
-			<h1><?php echo gettext("Menu Manager") . "<small>";
-			printf(gettext(" (Menu: %s)"), html_encode($menuset));
-			echo "</small>"; ?></h1>
+			<h1><?php
+				echo gettext("Menu Manager") . "<small>";
+				printf(gettext(" (Menu: %s)"), html_encode($menuset));
+				echo "</small>";
+				?></h1>
 
-			<form action="menu_tab.php?menuset=<?php echo $menuset; ?>" method="post" name="update" onsubmit="return confirmAction();">
-					<?php XSRFToken('update_menu'); ?>
+			<form class="dirty-check" action="menu_tab.php?menuset=<?php echo $menuset; ?>" method="post" name="update" onsubmit="return confirmAction();">
+				<?php XSRFToken('update_menu'); ?>
 				<p>
 					<?php echo gettext("Drag the items into the order and nesting you wish displayed. Place the menu on your theme pages by calling printCustomMenu()."); ?>
 				</p>
 				<p class="notebox">
-				<?php echo gettext("<strong>IMPORTANT:</strong> This menu's order is completely independent from any order of albums or pages set on the other admin pages. Use with customized themes that do not wish the standard Zenphoto display structure. Zenphoto functions such as the breadcrumb functions and the next_album() loop will NOT reflect of this menu's structure!"); ?>
+					<?php echo gettext("<strong>IMPORTANT:</strong> This menu’s order is completely independent from any order of albums or pages set on the other admin pages. Use with customized themes that do not wish the standard Zenphoto display structure. Zenphoto functions such as the breadcrumb functions and the next_album() loop will NOT reflect of this menu’s structure!"); ?>
 				</p>
 				<?php
 				foreach ($reports as $report) {
@@ -196,14 +198,14 @@ printSortableHead();
 								}
 								?>
 								<select name="checkallaction" id="checkallaction" size="1">
-	<?php generateListFromArray(array('noaction'), $checkarray, false, true); ?>
+									<?php generateListFromArray(array('noaction'), $checkarray, false, true); ?>
 								</select>
 							</span>
 						</div>
 						<br class="clearall" />
 						<div class="subhead">
 							<label style="float: right">
-	<?php echo gettext("Check All"); ?> <input type="checkbox" name="allbox" id="allbox" onclick="checkAll(this.form, 'ids[]', this.checked);" />
+								<?php echo gettext("Check All"); ?> <input type="checkbox" name="allbox" id="allbox" onclick="checkAll(this.form, 'ids[]', this.checked);" />
 							</label>
 						</div>
 						<ul class="page-list">
@@ -243,7 +245,7 @@ printSortableHead();
 			</ul>
 		</div>
 	</div>
-<?php printAdminFooter(); ?>
+	<?php printAdminFooter(); ?>
 
 </body>
 </html>

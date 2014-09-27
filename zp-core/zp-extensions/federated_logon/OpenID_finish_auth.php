@@ -1,9 +1,10 @@
 <?php
 
 require_once('OpenID_common.php');
-require_once(dirname(__FILE__).'/Auth/OpenID/AX.php');
-if (!defined('OFFSET_PATH')) define('OFFSET_PATH',4);
-require_once(dirname(dirname(dirname(__FILE__))).'/admin-functions.php');
+require_once(dirname(__FILE__) . '/Auth/OpenID/AX.php');
+if (!defined('OFFSET_PATH'))
+	define('OFFSET_PATH', 4);
+require_once(dirname(dirname(dirname(__FILE__))) . '/admin-functions.php');
 session_start();
 
 function escape($thing) {
@@ -33,12 +34,11 @@ function run() {
 		$openid = $response->getDisplayIdentifier();
 		$esc_identity = escape($openid);
 
-		$success = sprintf(gettext('You have successfully verified <a href="%s">%s</a> as your identity.'),
-		$esc_identity, $esc_identity);
+		$success = sprintf(gettext('You have successfully verified <a href="%s">%s</a> as your identity.'), $esc_identity, $esc_identity);
 
 		if ($response->endpoint->canonicalID) {
 			$escaped_canonicalID = escape($response->endpoint->canonicalID);
-			$success .= '  (XRI CanonicalID: '.$escaped_canonicalID.') ';
+			$success .= '  (XRI CanonicalID: ' . $escaped_canonicalID . ') ';
 		}
 
 		$email = $name = NULL;
@@ -59,59 +59,57 @@ function run() {
 		if ($ax_resp) {
 			$arr_ax_resp = get_object_vars($ax_resp);
 			$arr_ax_data = $arr_ax_resp['data'];
-			if(empty($email) && isset($arr_ax_data["http://axschema.org/contact/email"]) && count($arr_ax_data["http://axschema.org/contact/email"])>0) {
+			if (empty($email) && isset($arr_ax_data["http://axschema.org/contact/email"]) && count($arr_ax_data["http://axschema.org/contact/email"]) > 0) {
 				$email = $arr_ax_data["http://axschema.org/contact/email"][0];
 			}
-			if(empty($name) && isset($arr_ax_data["http://axschema.org/namePerson"]) && count($arr_ax_data["http://axschema.org/namePerson"])>0) {
+			if (empty($name) && isset($arr_ax_data["http://axschema.org/namePerson"]) && count($arr_ax_data["http://axschema.org/namePerson"]) > 0) {
 				$name = $arr_ax_data["http://axschema.org/namePerson"][0];
 			}
 			if (empty($name)) {
 				$name_first = '';
 				$name_middle = '';
 				$name_last = '';
-				if(isset($arr_ax_data["http://axschema.org/namePerson/first"]) && count($arr_ax_data["http://axschema.org/namePerson/first"])>0) {
+				if (isset($arr_ax_data["http://axschema.org/namePerson/first"]) && count($arr_ax_data["http://axschema.org/namePerson/first"]) > 0) {
 					$name_first = $arr_ax_data["http://axschema.org/namePerson/first"][0];
 				}
-				if(isset($arr_ax_data["http://axschema.org/namePerson/middle"]) && count($arr_ax_data["http://axschema.org/namePerson/middle"])>0) {
+				if (isset($arr_ax_data["http://axschema.org/namePerson/middle"]) && count($arr_ax_data["http://axschema.org/namePerson/middle"]) > 0) {
 					$name_middle = $arr_ax_data["http://axschema.org/namePerson/middle"][0];
 				}
-				if(isset($arr_ax_data["http://axschema.org/namePerson/last"]) && count($arr_ax_data["http://axschema.org/namePerson/last"])>0) {
+				if (isset($arr_ax_data["http://axschema.org/namePerson/last"]) && count($arr_ax_data["http://axschema.org/namePerson/last"]) > 0) {
 					$name_last = $arr_ax_data["http://axschema.org/namePerson/last"][0];
 				}
-				$fullname = trim(trim(trim($name_first).' '.$name_middle).' '.$name_last);
+				$fullname = trim(trim(trim($name_first) . ' ' . $name_middle) . ' ' . $name_last);
 				if (!empty($fullname)) {
 					$name = $fullname;
 				}
 			}
-			if(empty($name) && isset($arr_ax_data["http://axschema.org/namePerson/friendly"]) && count($arr_ax_data["http://axschema.org/namePerson/friendly"])>0) {
+			if (empty($name) && isset($arr_ax_data["http://axschema.org/namePerson/friendly"]) && count($arr_ax_data["http://axschema.org/namePerson/friendly"]) > 0) {
 				$name = $arr_ax_data["http://axschema.org/namePerson/friendly"][0];
 			}
 		}
-		$userid = trim(str_replace(array('http://','https://'), '', $openid), '/');	//	always remove the protocol
+		$userid = trim(str_replace(array('http://', 'https://'), '', $openid), '/'); //	always remove the protocol
 		$pattern = @$_SESSION['OpenID_cleaner_pattern'];
 		if ($pattern) {
-			if(preg_match($pattern, $userid, $matches)) {
+			if (preg_match($pattern, $userid, $matches)) {
 				$userid = $matches[1];
 			}
 		}
 		$provider = @$_SESSION['provider'];
-		if (strlen($userid)+strlen($provider) > 63) {
+		if (strlen($userid) + strlen($provider) > 63) {
 			$userid = sha1($userid);
 		}
 		if ($provider) {
-			$userid = $provider.':'.$userid;
+			$userid = $provider . ':' . $userid;
 		}
 		$redirect = @$_SESSION['OpenID_redirect'];
 		$success .= federated_logon::credentials($userid, $email, $name, $redirect);
-
 	}
 	return $success;
 }
 
 $error = run();
-if ($success) {
-	header('Location: '.FULLWEBPATH.'/'.ZENFOLDER.'/admin.php?_zp_login_error='.sprintf(gettext('Federated logon error:<br />%s'), $error));
+if ($error) {
+	header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?_zp_login_error=' . sprintf(gettext('Federated logon error:<br />%s'), $error));
 	exitZP();
 }
-
 ?>

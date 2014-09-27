@@ -6,7 +6,7 @@
  */
 // force UTF-8 Ø
 
-$_zp_extra_filetypes = array(); // contains file extensions and the handler class
+$_zp_extra_filetypes = array(); // contains file extensions and the handler class for alternate images
 
 define('WATERMARK_IMAGE', 1);
 define('WATERMARK_THUMB', 2);
@@ -38,17 +38,17 @@ function newImage($album, $filename, $quiet = false) {
 			$xalbum = $album;
 		}
 	}
-	if (!is_object($xalbum) || strtoLower(get_class($xalbum)) != 'album' || !$xalbum->exists) {
+	if (!is_object($xalbum) || !$xalbum->exists || !isAlbumClass($xalbum)) {
 		if (!$quiet) {
 			$msg = sprintf(gettext('Bad album object parameter to newImage(%s)'), $filename);
 			trigger_error($msg, E_USER_NOTICE);
 		}
 		return $_zp_missing_image;
 	}
-	if ($object = is_valid_other_type($filename)) {
+	if ($object = Gallery::validImageAlt($filename)) {
 		$image = New $object($xalbum, $filename, $quiet);
 	} else {
-		if (is_valid_image($filename)) {
+		if (Gallery::validImage($filename)) {
 			$image = New Image($xalbum, $filename, $quiet);
 		} else {
 			$image = NULL;
@@ -82,11 +82,10 @@ function newImage($album, $filename, $quiet = false) {
  * @return bool
  */
 function isImageClass($image = NULL) {
-	global $_zp_extra_filetypes;
+	global $_zp_current_image;
 	if (is_null($image)) {
 		if (!in_context(ZP_IMAGE))
 			return false;
-		global $_zp_current_image;
 		$image = $_zp_current_image;
 	}
 	return is_object($image) && ($image->table == 'images');
@@ -129,7 +128,7 @@ class Image extends MediaObject {
 	 * @return Image
 	 */
 
-	function __construct(&$album, $filename, $quiet = false) {
+	function __construct($album, $filename, $quiet = false) {
 		global $_zp_current_admin_obj;
 		// $album is an Album object; it should already be created.
 		$msg = false;
@@ -150,7 +149,7 @@ class Image extends MediaObject {
 
 		// This is where the magic happens...
 		$album_name = $album->name;
-		$new = parent::PersistentObject('images', array('filename' => $filename, 'albumid' => $this->album->getID()), 'filename', false, empty($album_name));
+		$new = $this->instantiate('images', array('filename' => $filename, 'albumid' => $this->album->getID()), 'filename', false, empty($album_name));
 		if ($new || $this->filemtime != $this->get('mtime')) {
 			if ($new)
 				$this->setTitle($this->displayname);
@@ -441,6 +440,9 @@ class Image extends MediaObject {
 		/* iptc description */
 		$desc = $this->get('IPTCImageCaption');
 		if (!empty($desc)) {
+   if(getOption('IPTC_convert_linebreaks')) {
+     $desc = nl2br($desc);
+   }
 			$this->setDesc($desc);
 		}
 
@@ -817,17 +819,21 @@ class Image extends MediaObject {
 		$newpath = $newalbum->localpath . internalToFilesystem($newfilename);
 		if (file_exists($newpath)) {
 			// If the file exists, don't overwrite it.
-			return 2;
+			if (!(CASE_INSENSITIVE && strtolower($newpath) == strtolower($this->localpath))) {
+				return 2;
+			}
 		}
 		$filename = basename($this->localpath);
 		@chmod($filename, 0777);
 		$result = @rename($this->localpath, $newpath);
 		@chmod($filename, FILE_MOD);
+		$this->localpath = $newpath;
+		clearstatcache();
 		if ($result) {
 			$filestomove = safe_glob(substr($this->localpath, 0, strrpos($this->localpath, '.')) . '.*');
 			foreach ($filestomove as $file) {
 				if (in_array(strtolower(getSuffix($file)), $this->sidecars)) {
-					$result = $result && @rename($file, $newalbum->localpath . basename($file));
+					$result = $result && @rename($file, stripSuffix($newpath) . '.' . getSuffix($file));
 				}
 			}
 		}
@@ -896,7 +902,7 @@ class Image extends MediaObject {
 	 *
 	 * @return string
 	 */
-	function getImageLink() {
+	function getLink() {
 		if (is_array($this->filename)) {
 			$albumq = $album = dirname($this->filename['source']);
 			$image = basename($this->filename['source']);
@@ -905,7 +911,17 @@ class Image extends MediaObject {
 			$albumq = $this->albumnamealbum->name;
 			$image = $this->filename;
 		}
-		return rewrite_path('/' . pathurlencode($album) . '/' . urlencode($image) . IM_SUFFIX, '/index.php?album=' . pathurlencode($albumq) . '&image=' . urlencode($image));
+		return zp_apply_filter('getLink', rewrite_path(pathurlencode($album) . '/' . urlencode($image) . IM_SUFFIX, '/index.php?album=' . pathurlencode($albumq) . '&image=' . urlencode($image)), $this, NULL);
+	}
+
+	/**
+	 * Returns a path urlencoded image page link for the image
+	 * @return string
+	 * @deprecated since version 1.4.6
+	 */
+	function getImageLink() {
+		internal_deprecations::getImageLink();
+		return $this->getLink();
 	}
 
 	/**
@@ -978,6 +994,59 @@ class Image extends MediaObject {
 	}
 
 	/**
+	 * Returns the default sized image HTML
+	 *
+	 * @return string
+	 */
+	function getContent() {
+		$class = '';
+		if (!$this->getShow()) {
+			$class .= " not_visible";
+		}
+		$album = $this->getAlbum();
+		$pwd = $album->getPassword();
+		if (!empty($pwd)) {
+			$class .= " password_protected";
+		}
+		$size = getOption('image_size');
+		$h = $this->getHeight();
+		$w = $this->getWidth();
+		$side = getOption('image_use_side');
+		$us = getOption('image_allow_upscale');
+		$dim = $size;
+
+		if ($w == 0) {
+			$hprop = 1;
+		} else {
+			$hprop = round(($h / $w) * $dim);
+		}
+		if ($h == 0) {
+			$wprop = 1;
+		} else {
+			$wprop = round(($w / $h) * $dim);
+		}
+
+		if (($size && ($side == 'longest' && $h > $w) || ($side == 'height') || ($side == 'shortest' && $h < $w))) {
+// Scale the height
+			$newh = $dim;
+			$neww = $wprop;
+		} else {
+// Scale the width
+			$neww = $dim;
+			$newh = $hprop;
+		}
+		if (!$us && $newh >= $h && $neww >= $w) {
+			$neww = $w;
+			$newh = $h;
+		}
+		$html = '<img src="' . html_encode(pathurlencode($this->getSizedImage($size))) . '" alt="' . html_encode($this->getTitle()) . '"' .
+						' width="' . $neww . '" height="' . $newh . '"' .
+						(($class) ? " class=\"$class\"" : "") . " />";
+		$html = zp_apply_filter('standard_image_html', $html);
+		return $html;
+	}
+
+	/**
 	 * Returns the image file name for the thumbnail image.
 	 *
 	 * @param string $path override path
@@ -1038,9 +1107,9 @@ class Image extends MediaObject {
 		} else {
 			$sw = $sh = NULL;
 		}
-		$filename = $this->filename;
 		$wmt = getWatermarkParam($this, WATERMARK_THUMB);
 		$args = getImageParameters(array($ts, NULL, NULL, $sw, $sh, NULL, NULL, NULL, true, NULL, true, $wmt, NULL, NULL), $this->album->name);
+
 		return getImageURI($args, $this->album->name, $this->filename, $this->filemtime);
 	}
 
@@ -1221,13 +1290,12 @@ class Transientimage extends Image {
 	 * @param string $image the full path to the image
 	 * @return transientimage
 	 */
-	function __construct(&$album, $image) {
+	function __construct($album, $image) {
 		if (!is_object($album)) {
 			$album = new AlbumBase('Transient');
 		}
 		$this->album = $album;
 		$this->localpath = $image;
-
 		$filename = makeSpecialImageName($image);
 		$this->filename = $filename;
 		$this->displayname = stripSuffix(basename($image));
@@ -1236,7 +1304,7 @@ class Transientimage extends Image {
 		}
 		$this->filemtime = @filemtime($this->localpath);
 		$this->comments = null;
-		parent::PersistentObject('images', array('filename' => $filename['name'], 'albumid' => $this->album->getID()), 'filename', true, true);
+		$this->instantiate('images', array('filename' => $filename['name'], 'albumid' => $this->album->getID()), 'filename', true, true);
 		$this->exists = false;
 	}
 

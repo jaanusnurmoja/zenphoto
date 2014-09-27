@@ -5,12 +5,8 @@
  * @package core
  */
 // force UTF-8 Ø
-
-define('DEBUG_LOCALE', false); // used for examining language selection problems
-
-function setupLanguageArray() {
-	global $_zp_languages;
-	$_zp_languages = array(
+function getLanguageArray() {
+	return array(
 					'af'		 => gettext('Afrikaans'),
 					'sq_AL'	 => gettext('Albanian'),
 					'ar_AE'	 => gettext('Arabic (United Arab Emirates)'),
@@ -36,7 +32,7 @@ function setupLanguageArray() {
 					'bn_BD'	 => gettext('Bengali'),
 					'bg_BG'	 => gettext('Bulgarian'),
 					'ca_ES'	 => gettext('Catalan'),
-					'zh_CN'	 => gettext('Chinese (People\'s Republic of China)'),
+					'zh_CN'	 => gettext('Chinese (People’s Republic of China)'),
 					'zh_HK'	 => gettext('Chinese (Hong Kong)'),
 					'zh_TW'	 => gettext('Chinese (Taiwan)'),
 					'hr_HR'	 => gettext('Croatian'),
@@ -143,18 +139,16 @@ function setupLanguageArray() {
  *
  */
 function generateLanguageList($all = false) {
-	global $_zp_languages, $_zp_active_languages, $_zp_all_languages;
+	global $_zp_active_languages, $_zp_all_languages;
 	if (is_null($_zp_all_languages)) {
-		if (is_null($_zp_languages)) {
-			setupLanguageArray();
-		}
+		$zp_languages = getLanguageArray();
 		$dir = @opendir(SERVERPATH . "/" . ZENFOLDER . "/locale/");
 		$_zp_active_languages = $_zp_all_languages = array();
 		if ($dir !== false) {
 			while ($dirname = readdir($dir)) {
 				if (is_dir(SERVERPATH . "/" . ZENFOLDER . "/locale/" . $dirname) && (substr($dirname, 0, 1) != '.')) {
-					if (isset($_zp_languages[$dirname])) {
-						$language = $_zp_languages[$dirname];
+					if (isset($zp_languages[$dirname])) {
+						$language = $zp_languages[$dirname];
 						if (empty($language)) {
 							$language = $dirname;
 						}
@@ -180,23 +174,6 @@ function generateLanguageList($all = false) {
 }
 
 /**
- * Sets the optional textdomain for separate translation files for plugins.
- * The plugin translation files must be located within
- * zp-core/plugins/<plugin name>/locale/<language locale>/LC_MESSAGES/ and must
- * have the name of the plugin (<plugin name>.po  <plugin name>.mo)
- *
- * Return value is the success of the setlocale() call
- *
- * @param string $plugindomain The name of the plugin
- * @return bool
- * @deprecated
- *
- */
-function setPluginDomain($plugindomain) {
-	return setupDomain($plugindomain, "plugin");
-}
-
-/**
  * Sets the locale, etc. to the zenphoto domain details.
  * Returns the result of setupCurrentLocale()
  *
@@ -204,22 +181,6 @@ function setPluginDomain($plugindomain) {
 function setMainDomain() {
 	$locale = getUserLocale();
 	return setupCurrentLocale($locale);
-}
-
-/**
- * Sets the optional textdomain for separate translation files for themes.
- * The plugin translation files must be located within
- * zenphoto/themes/<theme name>/locale/<language locale>/LC_MESSAGES/ and must
- * have the name of the theme (<theme name>.po  <theme name>.mo)
- *
- * Return value is the success of the setlocale() call
- *
- * @param string $plugindomain The name of the theme
- * @return bool
- * @deprecated
- */
-function setThemeDomain($themedomain) {
-	return setupDomain($themedomain, "theme");
 }
 
 /**
@@ -293,24 +254,34 @@ function ngettext_pl($msgid1, $msgid2, $n, $plugin) {
  * @return string
  */
 function i18nSetLocale($locale) {
-	global $_zp_RTL_css, $_zp_languages;
+	global $_zp_RTL_css;
 	$en1 = LOCAL_CHARSET;
 	$en2 = str_replace('ISO-', 'ISO', $en1);
-	$simple = explode('-', $locale);
-	$rslt = setlocale(LC_ALL, $locale . '.UTF8', $locale . '.UTF-8', $locale . '@euro', $locale . '.' . $en2, $locale . '.' . $en1, $locale, $simple[0], NULL);
-	if (is_null($_zp_languages)) {
-		setupLanguageArray();
-	}
+	$locale_hyphen = str_replace('_', '-', $locale);
+	$simple = explode('-', $locale_hyphen);
+	$try[$locale . '.UTF8'] = $locale . '.UTF8';
+	$try[$locale . '.UTF-8'] = $locale . '.UTF-8';
+	$try[$locale . '.@euro'] = $locale . '.@euro';
+	$try[$locale . '.' . $en2] = $locale . '.' . $en2;
+	$try[$locale . '.' . $en1] = $locale . '.' . $en1;
+	$try[$locale] = $locale;
+	$try[$simple[0]] = $simple[0];
+	$try['NULL'] = NULL;
+	$rslt = setlocale(LC_ALL, $try);
 	$_zp_RTL_css = in_array(substr($rslt, 0, 2), array('fa', 'ar', 'he', 'hi', 'ur'));
+	if (DEBUG_LOCALE) {
+		debugLog("setlocale(" . implode(',', $try) . ") returned: $rslt");
+	}
 	return $rslt;
 }
 
 /**
- * Sets the translation domain and
- * @param $domaine
- * @param $type
+ * Sets the translation domain and type for optional theme or plugin based translations
+ * @param $domaine If $type "plugin" or "theme" the file/folder name of the theme or plugin
+ * @param $type NULL (Zenphoto main translation), "theme" or "plugin"
  */
 function setupDomain($domain = NULL, $type = NULL) {
+	global $_zp_active_languages, $_zp_all_languages;
 	switch ($type) {
 		case "plugin":
 			$domainpath = getPlugin($domain . "/locale/");
@@ -329,6 +300,8 @@ function setupDomain($domain = NULL, $type = NULL) {
 		bind_textdomain_codeset($domain, 'UTF-8');
 	}
 	textdomain($domain);
+	//invalidate because the locale was not setup until now
+	$_zp_active_languages = $_zp_all_languages = NULL;
 }
 
 /**
@@ -339,37 +312,35 @@ function setupDomain($domain = NULL, $type = NULL) {
  * @return mixed
  */
 function setupCurrentLocale($override = NULL) {
-	if (empty($domain) && empty($type)) {
-		if (is_null($override)) {
-			$locale = getOption('locale');
-		} else {
-			$locale = $override;
-		}
-		if (getOption('disallow_' . $locale)) {
-			if (DEBUG_LOCALE)
-				debugLogBacktrace("setupCurrentLocale($override): $locale denied by option.");
-			$locale = getOption('locale');
-			if (empty($locale) || getOption('disallow_' . $locale)) {
-				$languages = generateLanguageList();
-				$locale = array_shift($languages);
-			}
-		}
-		// gettext setup
-		@putenv("LANG=$locale"); // Windows ???
-		@putenv("LANGUAGE=$locale"); // Windows ???
-		$result = i18nSetLocale($locale);
-		if (!$result) {
-			if (isset($_REQUEST['locale']) || is_null($override)) { // and it was chosen via locale
-				if (isset($_REQUEST['oldlocale'])) {
-					$locale = sanitize($_REQUEST['oldlocale'], 3);
-					setOption('locale', $locale, false);
-					zp_clearCookie('dynamic_locale');
-				}
-			}
-		}
-		if (DEBUG_LOCALE)
-			debugLogBacktrace("setupCurrentLocale($override): locale=$locale, \$result=$result");
+	if (is_null($override)) {
+		$locale = getOption('locale');
+	} else {
+		$locale = $override;
 	}
+	if (getOption('disallow_' . $locale)) {
+		if (DEBUG_LOCALE)
+			debugLogBacktrace("setupCurrentLocale($override): $locale denied by option.");
+		$locale = getOption('locale');
+		if (empty($locale) || getOption('disallow_' . $locale)) {
+			$languages = generateLanguageList();
+			$locale = array_shift($languages);
+		}
+	}
+	// gettext setup
+	@putenv("LANG=$locale"); // Windows ???
+	@putenv("LANGUAGE=$locale"); // Windows ???
+	$result = i18nSetLocale($locale);
+	if (!$result) {
+		if (isset($_REQUEST['locale']) || is_null($override)) { // and it was chosen via locale
+			if (isset($_REQUEST['oldlocale'])) {
+				$locale = sanitize($_REQUEST['oldlocale'], 3);
+				setOption('locale', $locale, false);
+				zp_clearCookie('dynamic_locale');
+			}
+		}
+	}
+	if (DEBUG_LOCALE)
+		debugLogBacktrace("setupCurrentLocale($override): locale=$locale, \$result=$result");
 	setupDomain();
 	return $result;
 }
@@ -385,11 +356,12 @@ function setupCurrentLocale($override = NULL) {
  * @return array
  */
 function parseHttpAcceptLanguage($str = NULL) {
-	if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-		return array();
 	// getting http instruction if not provided
 	if (!$str) {
-		$str = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+		$str = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
+	}
+	if (!is_string($str)) {
+		return array();
 	}
 	$langs = explode(',', $str);
 	// creating output list
@@ -404,19 +376,21 @@ function parseHttpAcceptLanguage($str = NULL) {
 			$morecode = array_key_exists(3, $found) ? $found[3] : false;
 			// full lang code
 			$fullcode = $morecode ? $code . '_' . $morecode : $code;
-			// coefficient
+			// coefficient (preference value, will be used in sorting the list)
 			$coef = sprintf('%3.1f', array_key_exists(5, $found) ? $found[5] : '1');
 			// for sorting by coefficient
-			$key = $coef . '-' . $code;
-			// adding
-			$accepted[$key] = array('code' => $code, 'coef' => $coef, 'morecode' => $morecode, 'fullcode' => $fullcode);
+			if ($coef) { //	q=0 means do not supply this language
+				// adding
+				$accepted[$coef . '-' . $code] = array('code' => $code, 'coef' => $coef, 'morecode' => $morecode, 'fullcode' => $fullcode);
+			}
 		}
 	}
+
 	// sorting the list by coefficient desc
 	krsort($accepted);
 	if (DEBUG_LOCALE) {
 		debugLog("parseHttpAcceptLanguage($str)");
-		debugLogVar('$accepted', $accepted);
+		debugLogVar('parseHttpAcceptLanguage::$accepted', $accepted);
 	}
 	return $accepted;
 }
@@ -477,14 +451,17 @@ function getUserLocale() {
 				zp_clearCookie('dynamic_locale');
 			}
 		}
+
 		if (!$_zp_current_locale && is_object($_zp_current_admin_obj)) {
 			$_zp_current_locale = $_zp_current_admin_obj->getLanguage();
 			if (DEBUG_LOCALE)
 				debugLog("locale from user: " . $_zp_current_locale);
 		}
+
 		if (!$_zp_current_locale) {
 			$localeOption = getOption('locale');
 			$_zp_current_locale = zp_getCookie('dynamic_locale');
+
 			if (DEBUG_LOCALE)
 				debugLog("locale from option: " . $localeOption . '; dynamic locale=' . $_zp_current_locale);
 			if (empty($localeOption) && empty($_zp_current_locale)) { // if one is not set, see if there is a match from 'HTTP_ACCEPT_LANGUAGE'
@@ -502,6 +479,7 @@ function getUserLocale() {
 				}
 			}
 		}
+
 		if (empty($_zp_current_locale)) {
 			// return "default" language, English if allowed, otherwise whatever is the "first" allowed language
 			$languageSupport = generateLanguageList();
@@ -586,10 +564,10 @@ function timezoneDiff($server, $local) {
 		foreach ($timezones as $key => $zones) {
 			foreach ($zones as $id => $zone) {
 				if (!isset($offset_server) && $zone['timezone_id'] === $server) {
-					$offset_server = $zone['offset'];
+					$offset_server = (int) $zone['offset'];
 				}
 				if (!isset($offset_local) && $zone['timezone_id'] === $local) {
-					$offset_local = $zone['offset'];
+					$offset_local = (int) $zone['offset'];
 				}
 				if (isset($offset_server) && isset($offset_local)) {
 					return ($offset_server - $offset_local) / 3600;

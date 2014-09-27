@@ -17,7 +17,7 @@
  *
  * A child class should run the follwing in its constructor:
  *
- * $new = parent::PersistentObject('tablename',
+ * $new = $this->instantiate('tablename',
  *   array('uniquestring'=>$value, 'uniqueid'=>$uniqueid));
  *
  * where 'tablename' is the name of the database table to use for this object
@@ -39,6 +39,7 @@ define('OBJECT_CACHE_DEPTH', 150); //	how many objects to hold for each object c
 class PersistentObject {
 
 	var $loaded = false;
+	var $exists = false;
 	var $table;
 	var $transient;
 	protected $id = 0;
@@ -51,6 +52,16 @@ class PersistentObject {
 
 	/**
 	 *
+	 * @deprecated
+	 */
+	function PersistentObject($tablename, $unique_set, $cache_by = NULL, $use_cache = true, $is_transient = false, $allowCreate = true) {
+		deprecated_functions::PersistentObject();
+		return instantiate($tablename, $unique_set, $cache_by, $use_cache, $is_transient, $allowCreate);
+	}
+
+	/**
+	  }
+	 *
 	 * Prime instantiator for Zenphoto objects
 	 * @param $tablename	The name of the database table
 	 * @param $unique_set	An array of unique fields
@@ -60,7 +71,7 @@ class PersistentObject {
 	 * @param $allowCreate Set true to allow a new object to be made.
 	 * @return bool will be true if the unique_set does not already exist
 	 */
-	function PersistentObject($tablename, $unique_set, $cache_by = NULL, $use_cache = true, $is_transient = false, $allowCreate = true) {
+	function instantiate($tablename, $unique_set, $cache_by = NULL, $use_cache = true, $is_transient = false, $allowCreate = true) {
 		global $_zp_object_cache;
 		//	insure a cache entry
 		$classname = get_class($this);
@@ -144,8 +155,8 @@ class PersistentObject {
 	 */
 	function move($new_unique_set) {
 		// Check if we have a row
-		$result = query('SELECT * FROM ' . prefix($this->table) . getWhereClause($new_unique_set) . ' LIMIT 1;');
-		if ($result && db_num_rows($result) == 0) { //	we should not find an entry for the new unique set!
+		$result = query_single_row('SELECT * FROM ' . prefix($this->table) . getWhereClause($new_unique_set) . ' LIMIT 1;');
+		if (!$result || $result['id'] == $this->id) { //	we should not find an entry for the new unique set!
 			if (!zp_apply_filter('move_object', true, $this, $new_unique_set)) {
 				return false;
 			}
@@ -168,6 +179,7 @@ class PersistentObject {
 	function copy($new_unique_set) {
 		// Check if we have a row
 		$result = query('SELECT * FROM ' . prefix($this->table) . getWhereClause($new_unique_set) . ' LIMIT 1;');
+
 		if ($result && db_num_rows($result) == 0) {
 			if (!zp_apply_filter('copy_object', true, $this, $new_unique_set)) {
 				return false;
@@ -315,12 +327,12 @@ class PersistentObject {
 	 * true if successful, false if not.
 	 */
 	function save() {
+		if ($this->transient)
+			return false; // If this object isn't supposed to be persisted, don't save it.
 		if (!$this->unique_set) { // If we don't have a unique set, then this is incorrect. Don't attempt to save.
 			zp_error('empty $this->unique set is empty');
-			return;
+			return false;
 		}
-		if ($this->transient)
-			return; // If this object isn't supposed to be persisted, don't save it.
 		if (!$this->id) {
 			$this->setDefaults();
 			// Create a new object and set the id from the one returned.
@@ -657,10 +669,11 @@ class ThemeObject extends PersistentObject {
 	 * @param string $ip the IP address of the comment poster
 	 * @param bool $private set to true if the comment is for the admin only
 	 * @param bool $anon set to true if the poster wishes to remain anonymous
+	 * @param string $customdata
 	 * @return object
 	 */
-	function addComment($name, $email, $website, $comment, $code, $code_ok, $ip, $private, $anon) {
-		$goodMessage = zp_apply_filter('object_addComment', $name, $email, $website, $comment, $code, $code_ok, $this, $ip, $private, $anon);
+	function addComment($name, $email, $website, $comment, $code, $code_ok, $ip, $private, $anon, $customdata) {
+		$goodMessage = zp_apply_filter('object_addComment', $name, $email, $website, $comment, $code, $code_ok, $this, $ip, $private, $anon, $customdata);
 		return $goodMessage;
 	}
 

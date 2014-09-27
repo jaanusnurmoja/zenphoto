@@ -12,7 +12,7 @@
  * @subpackage media
  *
  */
-$plugin_is_filter = 9 | CLASS_PLUGIN;
+$plugin_is_filter = 990 | CLASS_PLUGIN;
 $plugin_description = gettext('Provides a means for showing documents using <em>WEBdocs</em> for the document rendering.');
 $plugin_author = "Stephen Billard (sbillard)";
 
@@ -20,15 +20,15 @@ $plugin_author = "Stephen Billard (sbillard)";
 $option_interface = 'WEBdocs_Options';
 
 if (getOption('WEBdocs_pdf_provider')) {
-	addPluginType('pdf', 'WEBdocs');
+	Gallery::addImageHandler('pdf', 'WEBdocs');
 }
 if (getOption('WEBdocs_pps_provider')) {
-	addPluginType('pps', 'WEBdocs');
-	addPluginType('ppt', 'WEBdocs');
+	Gallery::addImageHandler('pps', 'WEBdocs');
+	Gallery::addImageHandler('ppt', 'WEBdocs');
 }
 if (getOption('WEBdocs_tif_provider')) {
-	addPluginType('tif', 'WEBdocs');
-	addPluginType('tiff', 'WEBdocs');
+	Gallery::addImageHandler('tif', 'WEBdocs');
+	Gallery::addImageHandler('tiff', 'WEBdocs');
 }
 
 /**
@@ -37,7 +37,7 @@ if (getOption('WEBdocs_tif_provider')) {
  */
 class WEBdocs_Options {
 
-	function WEBdocs_Options() {
+	function __construct() {
 		setOptionDefault('WEBdocs_pdf_provider', 'local');
 		setOptionDefault('WEBdocs_pps_provider', 'google');
 		setOptionDefault('WEBdocs_tif_provider', 'zoho');
@@ -142,7 +142,7 @@ class WEBdocs extends TextObject {
 	 * @param int $h optional height
 	 * @return string
 	 */
-	function getBody($w = NULL, $h = NULL) {
+	function getContent($w = NULL, $h = NULL) {
 		$this->updateDimensions();
 		if (is_null($w))
 			$w = $this->getWidth();

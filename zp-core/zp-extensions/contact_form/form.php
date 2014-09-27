@@ -5,7 +5,6 @@
  * @package plugins
  */
 ?>
-
 <form id="mailform" action="<?php echo html_encode(getRequestURI()); ?>" method="post" accept-charset="UTF-8">
 	<input type="hidden" id="sendmail" name="sendmail" value="sendmail" />
 	<?php
@@ -117,14 +116,13 @@
 				echo $captcha['hidden'];
 			?>
 		</p>
-	<?php
-}
-?>
+		<?php
+	}
+	?>
 	<p>
 		<label for="subject"><?php echo gettext("Subject<strong>*</strong>"); ?></label>
 		<input type="text" id="subject" name="subject" size="50" value="<?php echo html_encode($mailcontent['subject']); ?>"<?php if ($_processing_post) echo ' disabled="disabled"'; ?> />
 	</p>
-
 	<p class="mailmessage">
 		<label for="message"><?php echo gettext("Message<strong>*</strong>"); ?></label>
 		<textarea id="message" name="message" <?php if ($_processing_post) echo ' disabled="disabled"'; ?>><?php echo $mailcontent['message']; ?></textarea>
@@ -136,5 +134,5 @@
 			<input type="submit" class="button buttons" value="<?php echo gettext("Send e-mail"); ?>" />
 			<input type="reset" class="button buttons" value="<?php echo gettext("Reset"); ?>" />
 		</p>
-<?php } ?>
+	<?php } ?>
 </form>

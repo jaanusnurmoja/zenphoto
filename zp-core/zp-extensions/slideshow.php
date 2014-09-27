@@ -10,10 +10,13 @@
  * 		<li>Plugin Option 'slideshow_showdesc' -- Allows the show to display image descriptions</li>
  * 	</ul>
  *
- * The theme files <var>slideshow.php</var>, <var>slideshow.css</var>, and <var>slideshow-controls.png</var> must reside in the theme
- * folder. If you are creating a custom theme, copy these files form the "default" theme of the Zenphoto
- * distribution. Note that the Colorbox mode does not require these files as it is called on your theme's image.php and album.php direclty
- * via the slideshow button. The Colorbox plugin must be enabled and setup for these pages.
+ * For the jQuery Cycle mode, the theme file <var>slideshow.php</var> must reside in the theme
+ * folder. If you are creating a custom theme, copy this file from an included theme of the Zenphoto
+ * distribution. A custom theme css file <var>slideshow.css</var> will be loaded from the theme
+ * folder, if not present, a default css file in the plugin folder will be loaded.  
+ *
+ * Note that the Colorbox mode does not require these files as it is called on your theme's image.php, album.php, 
+ * search.php, and favorites.php (if enabled) directly via the slideshow button. The Colorbox plugin must be enabled and setup for these pages.
  *
  * <b>NOTE:</b> The jQuery Cycle and the jQuery Colorbox modes do not support movie and audio files.
  * In Colorbox mode there will be no slideshow button on the image page if that current image is a movie/audio file.
@@ -36,11 +39,12 @@
 $plugin_is_filter = 9 | THEME_PLUGIN | ADMIN_PLUGIN;
 $plugin_description = gettext("Adds a theme function to call a slideshow either based on jQuery (default) or Colorbox.");
 $plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard), Don Peterson (dpeterson)";
+$plugin_disable = (extensionEnabled('slideshow2')) ? sprintf(gettext('Only one slideshow plugin may be enabled. <a href="#%1$s"><code>%1$s</code></a> is already enabled.'), 'slideshow2') : '';
 
 $option_interface = 'slideshow';
 
 global $_zp_gallery, $_zp_gallery_page;
-if (getOption('slideshow_' . $_zp_gallery->getCurrentTheme() . '_' . stripSuffix($_zp_gallery_page))) {
+if ($_zp_gallery_page == 'slideshow.php' || getOption('slideshow_' . $_zp_gallery->getCurrentTheme() . '_' . stripSuffix($_zp_gallery_page))) {
 	zp_register_filter('theme_head', 'slideshow::header_js');
 }
 zp_register_filter('content_macro', 'slideshow::macro');
@@ -57,26 +61,21 @@ class slideshow {
 
 	function slideshow() {
 		global $_zp_gallery;
-		//setOptionDefault('slideshow_size', '595');
-		setOptionDefault('slideshow_width', '595');
-		setOptionDefault('slideshow_height', '595');
-		setOptionDefault('slideshow_mode', 'jQuery');
-		setOptionDefault('slideshow_effect', 'fade');
-		setOptionDefault('slideshow_speed', '1000');
-		setOptionDefault('slideshow_timeout', '3000');
-		setOptionDefault('slideshow_showdesc', '');
-		setOptionDefault('slideshow_colorbox_transition', 'fade');
-		// incase the flowplayer has not been enabled!!!
-		setOptionDefault('slideshow_colorbox_imagetype', 'sizedimage');
-		setOptionDefault('slideshow_colorbox_imagetitle', 1);
-		if (class_exists('cacheManager')) {
+		if (OFFSET_PATH == 2) {
+			//setOptionDefault('slideshow_size', '595');
+			setOptionDefault('slideshow_width', '595');
+			setOptionDefault('slideshow_height', '595');
+			setOptionDefault('slideshow_mode', 'jQuery');
+			setOptionDefault('slideshow_effect', 'fade');
+			setOptionDefault('slideshow_speed', '1000');
+			setOptionDefault('slideshow_timeout', '3000');
+			setOptionDefault('slideshow_showdesc', '');
+			setOptionDefault('slideshow_colorbox_transition', 'fade');
+			// incase the flowplayer has not been enabled!!!
+			setOptionDefault('slideshow_colorbox_imagetype', 'sizedimage');
+			setOptionDefault('slideshow_colorbox_imagetitle', 1);
 			cacheManager::deleteThemeCacheSizes('slideshow');
 			cacheManager::addThemeCacheSize('slideshow', NULL, getOption('slideshow_width'), getOption('slideshow_height'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, true);
-			cacheManager::addThemeCacheSize('slideshow', NULL, getOption('slideshow_width'), getOption('slideshow_height'), getOption('slideshow_width'), getOption('slideshow_height'), NULL, NULL, NULL, NULL, NULL, false);
-		}
-		//	we will presume that themes slideshow script wants to use the slideshow
-		foreach (array_keys($_zp_gallery->getThemes()) as $theme) {
-			setOptionDefault('slideshow_' . $theme . '_slideshow', 1);
 		}
 	}
 
@@ -89,7 +88,7 @@ class slideshow {
 										'order'	 => 1,
 										'desc'	 => gettext("Speed of the transition in milliseconds."))
 		);
-		foreach (getThemeFiles(array('404.php', 'themeoptions.php', 'theme_description.php')) as $theme => $scripts) {
+		foreach (getThemeFiles(array('404.php', 'themeoptions.php', 'theme_description.php', 'slideshow.php', 'functions.php', 'password.php', 'sidebar.php', 'register.php', 'contact.php')) as $theme => $scripts) {
 			$list = array();
 			foreach ($scripts as $script) {
 				$list[$script] = 'slideshow_' . $theme . '_' . stripSuffix($script);
@@ -118,7 +117,7 @@ class slideshow {
 												'desc'	 => gettext("Milliseconds between slide transitions (0 to disable auto advance.)")),
 								gettext('Description')	 => array('key'		 => 'slideshow_showdesc', 'type'	 => OPTION_TYPE_CHECKBOX,
 												'order'	 => 4,
-												'desc'	 => gettext("Check if you want to show the image's description below the slideshow."))
+												'desc'	 => gettext("Check if you want to show the image’s description below the slideshow."))
 				));
 				break;
 			case 'colorbox':
@@ -129,7 +128,7 @@ class slideshow {
 								gettext('Colorbox image type')	 => array('key'				 => 'slideshow_colorbox_imagetype', 'type'			 => OPTION_TYPE_SELECTOR,
 												'order'			 => 3,
 												'selections' => array(gettext('full image') => "fullimage", gettext('sized image') => "sizedimage"),
-												'desc'			 => gettext("The image type you wish to use for the Colorbox. If you choose 'sized image' the slideshow width value will be used for the longest side of the image.")),
+												'desc'			 => gettext("The image type you wish to use for the Colorbox. If you choose “sized image” the slideshow width value will be used for the longest side of the image.")),
 								gettext('Colorbox image title')	 => array('key'		 => 'slideshow_colorbox_imagetitle', 'type'	 => OPTION_TYPE_CHECKBOX,
 												'order'	 => 4,
 												'desc'	 => gettext("If the image title should be shown at the bottom of the Colorbox."))
@@ -155,7 +154,7 @@ class slideshow {
 			$albumobj = newAlbum($album, NULL, true);
 		}
 		if (is_object($albumobj) && $albumobj->loaded) {
-			$returnpath = rewrite_path('/' . pathurlencode($albumobj->name) . '/', '/index.php?album=' . urlencode($albumobj->name));
+			$returnpath = $albumobj->getLink();
 			return slideshow::getShow(false, false, $albumobj, NULL, $width, $height, false, false, false, $controls, $returnpath, 0);
 		} else {
 			return '<div class="errorbox" id="message"><h2>' . gettext('Invalid slideshow album name!') . '</h2></div>';
@@ -411,7 +410,7 @@ class slideshow {
 							<a>';
 				} else {
 					if ($linkslides)
-						$slideshow .= '<a href="' . html_encode($image->getImageLink()) . '">';
+						$slideshow .= '<a href="' . html_encode($image->getLink()) . '">';
 					if ($crop) {
 						$img = $image->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, NULL, NULL);
 					} else {
@@ -484,281 +483,288 @@ class slideshow {
 
 }
 
-$slideshow_instance = 0;
+if ($plugin_disable) {
+	enableExtension('slideshow', 0);
+}
+if (extensionEnabled('slideshow')) {
+	$slideshow_instance = 0;
 
-/**
- * Prints a link to call the slideshow (not shown if there are no images in the album)
- * To be used on album.php and image.php
- * A CSS id names 'slideshowlink' is attached to the link so it can be directly styled.
- *
- * If the mode is set to "jQuery Colorbox" and the Colorbox plugin is enabled this link starts a Colorbox slideshow
- * from a hidden HTML list of all images in the album. On album.php it starts with the first always, on image.php with the current image.
- *
- * @param string $linktext Text for the link
- * @param string $linkstyle Style of Text for the link
- */
-function printSlideShowLink($linktext = NULL, $linkstyle = Null) {
-	global $_zp_gallery, $_zp_current_image, $_zp_current_album, $_zp_current_search, $slideshow_instance, $_zp_gallery_page;
-	if (is_null($linktext)) {
-		$linktext = gettext('View Slideshow');
-	}
-	if (empty($_GET['page'])) {
-		$pagenr = 1;
-	} else {
-		$pagenr = sanitize_numeric($_GET['page']);
-	}
-	$slideshowhidden = '';
-	$numberofimages = 0;
-	if (in_context(ZP_SEARCH)) {
-		$imagenumber = '';
-		$imagefile = '';
-		$albumnr = 0;
-		$slideshowlink = rewrite_path('/' . _PAGE_ . '/slideshow', "index.php?p=slideshow");
-		$slideshowhidden = '<input type="hidden" name="preserve_search_params" value="' . html_encode($_zp_current_search->getSearchParams()) . '" />';
-	} else {
-		if (in_context(ZP_IMAGE)) {
-			$imagenumber = imageNumber();
-			$imagefile = $_zp_current_image->filename;
+	/**
+	 * Prints a link to call the slideshow (not shown if there are no images in the album)
+	 * To be used on album.php and image.php
+	 * A CSS id names 'slideshowlink' is attached to the link so it can be directly styled.
+	 *
+	 * If the mode is set to "jQuery Colorbox" and the Colorbox plugin is enabled this link starts a Colorbox slideshow
+	 * from a hidden HTML list of all images in the album. On album.php it starts with the first always, on image.php with the current image.
+	 *
+	 * @param string $linktext Text for the link
+	 * @param string $linkstyle Style of Text for the link
+	 */
+	function printSlideShowLink($linktext = NULL, $linkstyle = Null) {
+		global $_zp_gallery, $_zp_current_image, $_zp_current_album, $_zp_current_search, $slideshow_instance, $_zp_gallery_page;
+		if (is_null($linktext)) {
+			$linktext = gettext('View Slideshow');
+		}
+		if (empty($_GET['page'])) {
+			$pagenr = 1;
 		} else {
+			$pagenr = sanitize_numeric($_GET['page']);
+		}
+		$slideshowhidden = '';
+		$numberofimages = 0;
+		if (in_context(ZP_SEARCH)) {
 			$imagenumber = '';
 			$imagefile = '';
-		}
-		if (in_context(ZP_SEARCH_LINKED)) {
-			$albumnr = -$_zp_current_album->getID();
+			$albumnr = 0;
+			$slideshowlink = rewrite_path(_PAGE_ . '/slideshow', "index.php?p=slideshow");
 			$slideshowhidden = '<input type="hidden" name="preserve_search_params" value="' . html_encode($_zp_current_search->getSearchParams()) . '" />';
 		} else {
-			$albumnr = $_zp_current_album->getID();
-		}
-		if ($albumnr) {
-			$slideshowlink = rewrite_path(pathurlencode($_zp_current_album->getFolder()) . '/' . _PAGE_ . '/slideshow', "index.php?p=slideshow&amp;album=" . urlencode($_zp_current_album->getFolder()));
-		} else {
-			$slideshowlink = rewrite_path('/' . _PAGE_ . '/slideshow', "index.php?p=slideshow");
-			$slideshowhidden = '<input type="hidden" name="favorites_page" value="1" />';
-		}
-	}
-	$numberofimages = getNumImages();
-	$option = getOption('slideshow_mode');
-	switch ($option) {
-		case 'jQuery':
-			if ($numberofimages > 1) {
-				?>
-				<form name="slideshow_<?php echo $slideshow_instance; ?>" method="post"	action="<?php echo $slideshowlink; ?>">
-					<?php echo $slideshowhidden; ?>
-					<input type="hidden" name="pagenr" value="<?php echo html_encode($pagenr); ?>" />
-					<input type="hidden" name="albumid" value="<?php echo $albumnr; ?>" />
-					<input type="hidden" name="numberofimages" value="<?php echo $numberofimages; ?>" />
-					<input type="hidden" name="imagenumber" value="<?php echo $imagenumber; ?>" />
-					<input type="hidden" name="imagefile" value="<?php echo html_encode($imagefile); ?>" />
-					<?php if (!empty($linkstyle)) echo '<p style="' . $linkstyle . '">'; ?>
-					<a class="slideshowlink" id="slideshowlink_<?php echo $slideshow_instance; ?>" 	href="javascript:document.slideshow_<?php echo $slideshow_instance; ?>.submit()"><?php echo $linktext; ?></a>
-					<?php if (!empty($linkstyle)) echo '</p>'; ?>
-				</form>
-				<?php
-			}
-			$slideshow_instance++;
-			break;
-		case 'colorbox':
-			$theme = $_zp_gallery->getCurrentTheme();
-			$script = stripSuffix($_zp_gallery_page);
-			if (!getOption('colorbox_' . $theme . '_' . $script)) {
-				setOptionDefault('colorbox_' . $theme . '_' . $script, 1);
-				$themes = $_zp_gallery->getThemes();
-				?>
-				<div class="errorbox"><?php printf(gettext('Slideshow not available because colorbox is not enabled on %1$s <em>%2$s</em> pages.'), $themes[$theme]['name'], $script); ?></div>
-				<?php
-				break;
-			}
-			if ($numberofimages > 1) {
-				if ((in_context(ZP_SEARCH_LINKED) && !in_context(ZP_ALBUM_LINKED)) || in_context(ZP_SEARCH) && is_null($_zp_current_album)) {
-					$images = $_zp_current_search->getImages(0);
-				} else {
-					$images = $_zp_current_album->getImages(0);
-				}
-				$count = '';
-				?>
-				<script type="text/javascript">
-					$(document).ready(function() {
-						$("a[rel='slideshow']").colorbox({
-							slideshow: true,
-							loop: true,
-							transition: '<?php echo getOption('slideshow_colorbox_transition'); ?>',
-							slideshowSpeed: <?php echo getOption('slideshow_speed'); ?>,
-							slideshowStart: '<?php echo gettext("start slideshow"); ?>',
-							slideshowStop: '<?php echo gettext("stop slideshow"); ?>',
-							previous: '<?php echo gettext("prev"); ?>',
-							next: '<?php echo gettext("next"); ?>',
-							close: '<?php echo gettext("close"); ?>',
-							current: '<?php printf(gettext('image %1$s of %2$s'), '{current}', '{total}'); ?>',
-							maxWidth: '98%',
-							maxHeight: '98%',
-							photo: true
-						});
-					});
-				</script>
-				<?php
-				foreach ($images as $image) {
-					if (is_array($image)) {
-						$suffix = getSuffix($image['filename']);
-					} else {
-						$suffix = getSuffix($image);
-					}
-					$suffixes = array('jpg', 'jpeg', 'gif', 'png');
-					if (in_array($suffix, $suffixes)) {
-						$count++;
-						if (is_array($image)) {
-							$albobj = newAlbum($image['folder']);
-							$imgobj = newImage($albobj, $image['filename']);
-						} else {
-							$imgobj = newImage($_zp_current_album, $image);
-						}
-						if (in_context(ZP_SEARCH_LINKED) || $_zp_gallery_page != 'image.php') {
-							if ($count == 1) {
-								$style = '';
-							} else {
-								$style = ' style="display:none"';
-							}
-						} else {
-							if ($_zp_current_image->filename == $image) {
-								$style = '';
-							} else {
-								$style = ' style="display:none"';
-							}
-						}
-						switch (getOption('slideshow_colorbox_imagetype')) {
-							case 'fullimage':
-								$imagelink = getFullImageURL($imgobj);
-								break;
-							case 'sizedimage':
-								$imagelink = $imgobj->getCustomImage(getOption("slideshow_width"), NULL, NULL, NULL, NULL, NULL, NULL, false, NULL);
-								break;
-						}
-						$imagetitle = '';
-						if (getOption('slideshow_colorbox_imagetitle')) {
-							$imagetitle = html_encode(strip_tags($imgobj->getTitle()));
-						}
-						?>
-						<a href="<?php echo html_encode(pathurlencode($imagelink)); ?>" rel="slideshow"<?php echo $style; ?> title="<?php echo $imagetitle; ?>"><?php echo $linktext; ?></a>
-						<?php
-					}
-				}
-			}
-			break;
-	}
-}
-
-/**
- * Gets the slideshow using the {@link http://http://www.malsup.com/jquery/cycle/  jQuery plugin Cycle}
- *
- * NOTE: The jQuery mode does not support movie and audio files anymore. If you need to show them please use the Flash mode.
- * Also note that this function is not used for the Colorbox mode!
- *
- * @param bool $heading set to true (default) to emit the slideshow breadcrumbs in flash mode
- * @param bool $speedctl controls whether an option box for controlling transition speed is displayed
- * @param obj $albumobj The object of the album to show the slideshow of. If set this overrides the POST data of the printSlideShowLink()
- * @param obj $imageobj The object of the image to start the slideshow with. If set this overrides the POST data of the printSlideShowLink(). If not set the slideshow starts with the first image of the album.
- * @param int $width The width of the images (jQuery mode). If set this overrides the size the slideshow_width plugin option that otherwise is used.
- * @param int $height The heigth of the images (jQuery mode). If set this overrides the size the slideshow_height plugin option that otherwise is used.
- * @param bool $crop Set to true if you want images cropped width x height (jQuery mode only)
- * @param bool $shuffle Set to true if you want random (shuffled) order
- * @param bool $linkslides Set to true if you want the slides to be linked to their image pages (jQuery mode only)
- * @param bool $controls Set to true (default) if you want the slideshow controls to be shown (might require theme CSS changes if calling outside the slideshow.php page) (jQuery mode only)
- *
- */
-
-/**
- * Prints the slideshow using the {@link http://http://www.malsup.com/jquery/cycle/  jQuery plugin Cycle}
- *
- * Two ways to use:
- * a) Use on your theme's slideshow.php page and called via printSlideShowLink():
- * If called from image.php it starts with that image, called from album.php it starts with the first image (jQuery only)
- * To be used on slideshow.php only and called from album.php or image.php.
- *
- * b) Calling directly via printSlideShow() function (jQuery mode)
- * Place the printSlideShow() function where you want the slideshow to appear and set create an album object for $albumobj and if needed an image object for $imageobj.
- * The controls are disabled automatically.
- *
- * NOTE: The jQuery mode does not support movie and audio files anymore. If you need to show them please use the Flash mode.
- * Also note that this function is not used for the Colorbox mode!
- *
- * @param bool $heading set to true (default) to emit the slideshow breadcrumbs in flash mode
- * @param bool $speedctl controls whether an option box for controlling transition speed is displayed
- * @param obj $albumobj The object of the album to show the slideshow of. If set this overrides the POST data of the printSlideShowLink()
- * @param obj $imageobj The object of the image to start the slideshow with. If set this overrides the POST data of the printSlideShowLink(). If not set the slideshow starts with the first image of the album.
- * @param int $width The width of the images (jQuery mode). If set this overrides the size the slideshow_width plugin option that otherwise is used.
- * @param int $height The heigth of the images (jQuery mode). If set this overrides the size the slideshow_height plugin option that otherwise is used.
- * @param bool $crop Set to true if you want images cropped width x height (jQuery mode only)
- * @param bool $shuffle Set to true if you want random (shuffled) order
- * @param bool $linkslides Set to true if you want the slides to be linked to their image pages (jQuery mode only)
- * @param bool $controls Set to true (default) if you want the slideshow controls to be shown (might require theme CSS changes if calling outside the slideshow.php page) (jQuery mode only)
- *
- */
-function printSlideShow($heading = true, $speedctl = false, $albumobj = NULL, $imageobj = NULL, $width = NULL, $height = NULL, $crop = false, $shuffle = false, $linkslides = false, $controls = true) {
-	global $_myFavorites, $_zp_conf_vars;
-	if (!isset($_POST['albumid']) AND !is_object($albumobj)) {
-		return '<div class="errorbox" id="message"><h2>' . gettext('Invalid linking to the slideshow page.') . '</h2></div>';
-	}
-	//getting the image to start with
-	if (!empty($_POST['imagenumber']) AND !is_object($imageobj)) {
-		$imagenumber = sanitize_numeric($_POST['imagenumber']) - 1; // slideshows starts with 0, but zp with 1.
-	} elseif (is_object($imageobj)) {
-		$imagenumber = $imageobj->getIndex();
-	} else {
-		$imagenumber = 0;
-	}
-	// set pagenumber to 0 if not called via POST link
-	if (isset($_POST['pagenr'])) {
-		$pagenumber = sanitize_numeric($_POST['pagenr']);
-	} else {
-		$pagenumber = 1;
-	}
-	// getting the number of images
-	if (!empty($_POST['numberofimages'])) {
-		$numberofimages = sanitize_numeric($_POST['numberofimages']);
-	} elseif (is_object($albumobj)) {
-		$numberofimages = $albumobj->getNumImages();
-	} else {
-		$numberofimages = 0;
-	}
-	if ($imagenumber < 2 || $imagenumber > $numberofimages) {
-		$imagenumber = 0;
-	}
-	//getting the album to show
-	if (!empty($_POST['albumid']) && !is_object($albumobj)) {
-		$albumid = sanitize_numeric($_POST['albumid']);
-	} elseif (is_object($albumobj)) {
-		$albumid = $albumobj->getID();
-	} else {
-		$albumid = 0;
-	}
-
-	if (isset($_POST['preserve_search_params'])) { // search page
-		$search = new SearchEngine();
-		$params = sanitize($_POST['preserve_search_params']);
-		$search->setSearchParams($params);
-		$searchwords = $search->getSearchWords();
-		$searchdate = $search->getSearchDate();
-		$searchfields = $search->getSearchFields(true);
-		$page = $search->page;
-		$returnpath = getSearchURL($searchwords, $searchdate, $searchfields, $page);
-		$albumobj = new AlbumBase(NULL, false);
-		$albumobj->setTitle(gettext('Search'));
-		$albumobj->images = $search->getImages(0);
-	} else {
-		if (isset($_POST['favorites_page'])) {
-			$albumobj = $_myFavorites;
-			$returnpath = rewrite_path(favorites::getFavorites_link() . '/' . $pagenumber, FULLWEBPATH . '/index.php?p=favorites' . '&page=' . $pagenumber);
-		} else {
-			$albumq = query_single_row("SELECT title, folder FROM " . prefix('albums') . " WHERE id = " . $albumid);
-			$albumobj = newAlbum($albumq['folder']);
-			if (empty($_POST['imagenumber'])) {
-				$returnpath = rewrite_path('/' . pathurlencode($albumobj->name) . '/' . _PAGE_ . '/' . $pagenumber, '/index.php?album=' . urlencode($albumobj->name) . '&page=' . $pagenumber);
+			if (in_context(ZP_IMAGE)) {
+				$imagenumber = imageNumber();
+				$imagefile = $_zp_current_image->filename;
 			} else {
-				$returnpath = rewrite_path('/' . pathurlencode($albumobj->name) . '/' . rawurlencode(sanitize($_POST['imagefile'])) . getOption('mod_rewrite_image_suffix'), '/index.php?album=' . urlencode($albumobj->name) . '&image=' . urlencode($_POST['imagefile']));
+				$imagenumber = '';
+				$imagefile = '';
 			}
+			if (in_context(ZP_SEARCH_LINKED)) {
+				$albumnr = -$_zp_current_album->getID();
+				$slideshowhidden = '<input type="hidden" name="preserve_search_params" value="' . html_encode($_zp_current_search->getSearchParams()) . '" />';
+			} else {
+				$albumnr = $_zp_current_album->getID();
+			}
+			if ($albumnr) {
+				$slideshowlink = rewrite_path(pathurlencode($_zp_current_album->getFileName()) . '/' . _PAGE_ . '/slideshow', "index.php?p=slideshow&amp;album=" . urlencode($_zp_current_album->getFileName()));
+			} else {
+				$slideshowlink = rewrite_path(_PAGE_ . '/slideshow', "index.php?p=slideshow");
+				$slideshowhidden = '<input type="hidden" name="favorites_page" value="1" />' . "\n" . '<input type="hidden" name="title" value="' . $_myFavorites->instance . '" />';
+			}
+		}
+		$numberofimages = getNumImages();
+		$option = getOption('slideshow_mode');
+		switch ($option) {
+			case 'jQuery':
+				if ($numberofimages > 1) {
+					?>
+					<form name="slideshow_<?php echo $slideshow_instance; ?>" method="post"	action="<?php echo zp_apply_filter('getLink', $slideshowlink, 'slideshow.php', NULL); ?>">
+						<?php echo $slideshowhidden; ?>
+						<input type="hidden" name="pagenr" value="<?php echo html_encode($pagenr); ?>" />
+						<input type="hidden" name="albumid" value="<?php echo $albumnr; ?>" />
+						<input type="hidden" name="numberofimages" value="<?php echo $numberofimages; ?>" />
+						<input type="hidden" name="imagenumber" value="<?php echo $imagenumber; ?>" />
+						<input type="hidden" name="imagefile" value="<?php echo html_encode($imagefile); ?>" />
+						<?php if (!empty($linkstyle)) echo '<p style="' . $linkstyle . '">'; ?>
+						<a class="slideshowlink" id="slideshowlink_<?php echo $slideshow_instance; ?>" 	href="javascript:document.slideshow_<?php echo $slideshow_instance; ?>.submit()"><?php echo $linktext; ?></a>
+						<?php if (!empty($linkstyle)) echo '</p>'; ?>
+					</form>
+					<?php
+				}
+				$slideshow_instance++;
+				break;
+			case 'colorbox':
+				$theme = $_zp_gallery->getCurrentTheme();
+				$script = stripSuffix($_zp_gallery_page);
+				if (!getOption('colorbox_' . $theme . '_' . $script)) {
+					setOptionDefault('colorbox_' . $theme . '_' . $script, 1);
+					$themes = $_zp_gallery->getThemes();
+					?>
+					<div class="errorbox"><?php printf(gettext('Slideshow not available because colorbox is not enabled on %1$s <em>%2$s</em> pages.'), $themes[$theme]['name'], $script); ?></div>
+					<?php
+					break;
+				}
+				if ($numberofimages > 1) {
+					if ((in_context(ZP_SEARCH_LINKED) && !in_context(ZP_ALBUM_LINKED)) || in_context(ZP_SEARCH) && is_null($_zp_current_album)) {
+						$images = $_zp_current_search->getImages(0);
+					} else {
+						$images = $_zp_current_album->getImages(0);
+					}
+					$count = '';
+					?>
+					<script type="text/javascript">
+						$(document).ready(function() {
+							$("a[rel='slideshow']").colorbox({
+								slideshow: true,
+								loop: true,
+								transition: '<?php echo getOption('slideshow_colorbox_transition'); ?>',
+								slideshowSpeed: <?php echo getOption('slideshow_speed'); ?>,
+								slideshowStart: '<?php echo gettext("start slideshow"); ?>',
+								slideshowStop: '<?php echo gettext("stop slideshow"); ?>',
+								previous: '<?php echo gettext("prev"); ?>',
+								next: '<?php echo gettext("next"); ?>',
+								close: '<?php echo gettext("close"); ?>',
+								current: '<?php printf(gettext('image %1$s of %2$s'), '{current}', '{total}'); ?>',
+								maxWidth: '98%',
+								maxHeight: '98%',
+								photo: true
+							});
+						});
+					</script>
+					<?php
+					foreach ($images as $image) {
+						if (is_array($image)) {
+							$suffix = getSuffix($image['filename']);
+						} else {
+							$suffix = getSuffix($image);
+						}
+						$suffixes = array('jpg', 'jpeg', 'gif', 'png');
+						if (in_array($suffix, $suffixes)) {
+							$count++;
+							if (is_array($image)) {
+								$albobj = newAlbum($image['folder']);
+								$imgobj = newImage($albobj, $image['filename']);
+							} else {
+								$imgobj = newImage($_zp_current_album, $image);
+							}
+							if (in_context(ZP_SEARCH_LINKED) || $_zp_gallery_page != 'image.php') {
+								if ($count == 1) {
+									$style = '';
+								} else {
+									$style = ' style="display:none"';
+								}
+							} else {
+								if ($_zp_current_image->filename == $image) {
+									$style = '';
+								} else {
+									$style = ' style="display:none"';
+								}
+							}
+							switch (getOption('slideshow_colorbox_imagetype')) {
+								case 'fullimage':
+									$imagelink = getFullImageURL($imgobj);
+									break;
+								case 'sizedimage':
+									$imagelink = $imgobj->getCustomImage(getOption("slideshow_width"), NULL, NULL, NULL, NULL, NULL, NULL, false, NULL);
+									break;
+							}
+							$imagetitle = '';
+							if (getOption('slideshow_colorbox_imagetitle')) {
+								$imagetitle = html_encode(getBare($imgobj->getTitle()));
+							}
+							?>
+							<a href="<?php echo html_encode(pathurlencode($imagelink)); ?>" rel="slideshow"<?php echo $style; ?> title="<?php echo $imagetitle; ?>"><?php echo $linktext; ?></a>
+							<?php
+						}
+					}
+				}
+				break;
 		}
 	}
 
+	/**
+	 * Gets the slideshow using the {@link http://http://www.malsup.com/jquery/cycle/  jQuery plugin Cycle}
+	 *
+	 * NOTE: The jQuery mode does not support movie and audio files anymore. If you need to show them please use the Flash mode.
+	 * Also note that this function is not used for the Colorbox mode!
+	 *
+	 * @param bool $heading set to true (default) to emit the slideshow breadcrumbs in flash mode
+	 * @param bool $speedctl controls whether an option box for controlling transition speed is displayed
+	 * @param obj $albumobj The object of the album to show the slideshow of. If set this overrides the POST data of the printSlideShowLink()
+	 * @param obj $imageobj The object of the image to start the slideshow with. If set this overrides the POST data of the printSlideShowLink(). If not set the slideshow starts with the first image of the album.
+	 * @param int $width The width of the images (jQuery mode). If set this overrides the size the slideshow_width plugin option that otherwise is used.
+	 * @param int $height The heigth of the images (jQuery mode). If set this overrides the size the slideshow_height plugin option that otherwise is used.
+	 * @param bool $crop Set to true if you want images cropped width x height (jQuery mode only)
+	 * @param bool $shuffle Set to true if you want random (shuffled) order
+	 * @param bool $linkslides Set to true if you want the slides to be linked to their image pages (jQuery mode only)
+	 * @param bool $controls Set to true (default) if you want the slideshow controls to be shown (might require theme CSS changes if calling outside the slideshow.php page) (jQuery mode only)
+	 *
+	 */
 
-	echo slideshow::getShow($heading, $speedctl, $albumobj, $imageobj, $width, $height, $crop, $shuffle, $linkslides, $controls, $returnpath, $imagenumber);
+	/**
+	 * Prints the slideshow using the {@link http://http://www.malsup.com/jquery/cycle/  jQuery plugin Cycle}
+	 *
+	 * Two ways to use:
+	 * a) Use on your theme's slideshow.php page and called via printSlideShowLink():
+	 * If called from image.php it starts with that image, called from album.php it starts with the first image (jQuery only)
+	 * To be used on slideshow.php only and called from album.php or image.php.
+	 *
+	 * b) Calling directly via printSlideShow() function (jQuery mode)
+	 * Place the printSlideShow() function where you want the slideshow to appear and set create an album object for $albumobj and if needed an image object for $imageobj.
+	 * The controls are disabled automatically.
+	 *
+	 * NOTE: The jQuery mode does not support movie and audio files anymore. If you need to show them please use the Flash mode.
+	 * Also note that this function is not used for the Colorbox mode!
+	 *
+	 * @param bool $heading set to true (default) to emit the slideshow breadcrumbs in flash mode
+	 * @param bool $speedctl controls whether an option box for controlling transition speed is displayed
+	 * @param obj $albumobj The object of the album to show the slideshow of. If set this overrides the POST data of the printSlideShowLink()
+	 * @param obj $imageobj The object of the image to start the slideshow with. If set this overrides the POST data of the printSlideShowLink(). If not set the slideshow starts with the first image of the album.
+	 * @param int $width The width of the images (jQuery mode). If set this overrides the size the slideshow_width plugin option that otherwise is used.
+	 * @param int $height The heigth of the images (jQuery mode). If set this overrides the size the slideshow_height plugin option that otherwise is used.
+	 * @param bool $crop Set to true if you want images cropped width x height (jQuery mode only)
+	 * @param bool $shuffle Set to true if you want random (shuffled) order
+	 * @param bool $linkslides Set to true if you want the slides to be linked to their image pages (jQuery mode only)
+	 * @param bool $controls Set to true (default) if you want the slideshow controls to be shown (might require theme CSS changes if calling outside the slideshow.php page) (jQuery mode only)
+	 *
+	 */
+	function printSlideShow($heading = true, $speedctl = false, $albumobj = NULL, $imageobj = NULL, $width = NULL, $height = NULL, $crop = false, $shuffle = false, $linkslides = false, $controls = true) {
+		global $_myFavorites, $_zp_conf_vars;
+		if (!isset($_POST['albumid']) AND ! is_object($albumobj)) {
+			return '<div class="errorbox" id="message"><h2>' . gettext('Invalid linking to the slideshow page.') . '</h2></div>';
+		}
+		//getting the image to start with
+		if (!empty($_POST['imagenumber']) AND ! is_object($imageobj)) {
+			$imagenumber = sanitize_numeric($_POST['imagenumber']) - 1; // slideshows starts with 0, but zp with 1.
+		} elseif (is_object($imageobj)) {
+			$imagenumber = $imageobj->getIndex();
+		} else {
+			$imagenumber = 0;
+		}
+		// set pagenumber to 0 if not called via POST link
+		if (isset($_POST['pagenr'])) {
+			$pagenumber = sanitize_numeric($_POST['pagenr']);
+		} else {
+			$pagenumber = 1;
+		}
+		// getting the number of images
+		if (!empty($_POST['numberofimages'])) {
+			$numberofimages = sanitize_numeric($_POST['numberofimages']);
+		} elseif (is_object($albumobj)) {
+			$numberofimages = $albumobj->getNumImages();
+		} else {
+			$numberofimages = 0;
+		}
+		if ($imagenumber < 2 || $imagenumber > $numberofimages) {
+			$imagenumber = 0;
+		}
+		//getting the album to show
+		if (!empty($_POST['albumid']) && !is_object($albumobj)) {
+			$albumid = sanitize_numeric($_POST['albumid']);
+		} elseif (is_object($albumobj)) {
+			$albumid = $albumobj->getID();
+		} else {
+			$albumid = 0;
+		}
+
+		if (isset($_POST['preserve_search_params'])) { // search page
+			$search = new SearchEngine();
+			$params = sanitize($_POST['preserve_search_params']);
+			$search->setSearchParams($params);
+			$searchwords = $search->getSearchWords();
+			$searchdate = $search->getSearchDate();
+			$searchfields = $search->getSearchFields(true);
+			$page = $search->page;
+			$returnpath = getSearchURL($searchwords, $searchdate, $searchfields, $page);
+			$albumobj = new AlbumBase(NULL, false);
+			$albumobj->setTitle(gettext('Search'));
+			$albumobj->images = $search->getImages(0);
+		} else {
+			if (isset($_POST['favorites_page'])) {
+				$albumobj = $_myFavorites;
+				$returnpath = $_myFavorites->getLink($pagenumber);
+			} else {
+				$albumq = query_single_row("SELECT title, folder FROM " . prefix('albums') . " WHERE id = " . $albumid);
+				$albumobj = newAlbum($albumq['folder']);
+				if (empty($_POST['imagenumber'])) {
+					$returnpath = $albumobj->getLink($pagenumber);
+				} else {
+					$image = newImage($albumobj, sanitize($_POST['imagefile']));
+					$returnpath = $image->getLink();
+				}
+			}
+		}
+
+
+		echo slideshow::getShow($heading, $speedctl, $albumobj, $imageobj, $width, $height, $crop, $shuffle, $linkslides, $controls, $returnpath, $imagenumber);
+	}
+
 }
 ?>

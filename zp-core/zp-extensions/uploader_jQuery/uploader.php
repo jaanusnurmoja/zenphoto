@@ -254,7 +254,7 @@ class UploadHandler {
 					file_put_contents($file_path, fopen($uploaded_file, 'r'), FILE_APPEND);
 				} else {
 					move_uploaded_file($uploaded_file, $file_path);
-					if (is_valid_image($name) || is_valid_other_type($name)) {
+					if (Gallery::validImage($name) || Gallery::validImageAlt($name)) {
 						@chmod($targetFile, FILE_MOD);
 						$album = newAlbum($folder);
 						$image = newImage($album, $seoname);
@@ -267,8 +267,7 @@ class UploadHandler {
 						unzip($targetFile, $targetPath);
 						unlink($targetFile);
 					} else {
-						$error = UPLOAD_ERR_EXTENSION; // invalid file uploaded
-						break;
+						$file->error = $error = UPLOAD_ERR_EXTENSION; // invalid file uploaded
 					}
 				}
 			} else {

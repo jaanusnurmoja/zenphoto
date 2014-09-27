@@ -1097,8 +1097,11 @@ class zenphoto_seo {
 				$xlate[$to] = $from;
 			}
 		}
-		$js = "
-			function seoFriendlyJS(fname) {\n";
+		$js = '
+			function seoFriendlyJS(fname) {
+				fname=fname.trim();
+				fname=fname.replace(/\s+\.\s*/,".");
+			';
 
 		foreach ($xlate as $to => $from) {
 			$js .= "				fname = fname.replace(/[" . $from . "]/g, '" . $to . "');\n";
