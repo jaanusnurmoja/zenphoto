@@ -30,6 +30,7 @@ if (!defined('WEBPATH'))
 	<body>
 		<?php zp_apply_filter('theme_body_open'); ?>
 		<div id="main">
+<img id="logo" src="http://www.nurmoja.net.ee/nurmoja_net_ee.png" style="float:left; margin-right:20px;"/>
 			<div id="gallerytitle">
 				<div class="imgnav">
 					<?php
@@ -96,13 +97,14 @@ if (!defined('WEBPATH'))
 				@call_user_func('printSlideShowLink');
 
 				if (getImageMetaData()) {
-					printImageMetadata(NULL, 'colorbox');
+					printImageMetadata('', false);
 					?>
 					<br class="clearall" />
 					<?php
 				}
 				printTags('links', gettext('<strong>Tags:</strong>') . ' ', 'taglist', '');
 				?>
+				<?php if (function_exists('zenFBComments')) { zenFBComments(); } ?>
 				<br class="clearall" />
 
 				<?php 
@@ -113,6 +115,8 @@ if (!defined('WEBPATH'))
 			</div>
 		</div>
 		<div id="credit">
+			<?php if (class_exists('RSS')) printRSSLink('Gallery', '', 'RSS', ' | '); ?>
+			<?php printCustomPageURL(gettext("Archive View"), "archive"); ?> |
 			<?php
 			if (function_exists('printFavoritesURL')) {
 				printFavoritesURL(NULL, '', ' | ', '<br />');

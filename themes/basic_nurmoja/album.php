@@ -1,8 +1,7 @@
 <?php
 // force UTF-8 Ø
 
-if (!defined('WEBPATH'))
-	die();
+if (!defined('WEBPATH')) die();
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,6 +16,7 @@ if (!defined('WEBPATH'))
 	<body>
 		<?php zp_apply_filter('theme_body_open'); ?>
 		<div id="main">
+<img id="logo" src="http://www.nurmoja.net.ee/nurmoja_net_ee.png" style="float:left; margin-right:20px;"/>
 			<div id="gallerytitle">
 				<?php
 				if (getOption('Allow_search')) {
@@ -34,15 +34,17 @@ if (!defined('WEBPATH'))
 				</h2>
 			</div>
 			<div id="padbox">
-				<?php printAlbumDesc(); ?>
+		<p><?php printAlbumZipStream(); ?></p>
+				<p><?php printAlbumDesc(); ?></p>
+				<p><?php printPageListWithNav("« " . gettext("prev"), gettext("next") . " »"); ?></p>
 				<div id="albums">
 					<?php while (next_album()): ?>
 						<div class="album">
 							<div class="thumb">
-								<a href="<?php echo html_encode(getAlbumURL()); ?>" title="<?php echo gettext('View album:'); ?> <?php printAnnotatedAlbumTitle(); ?>"><?php printAlbumThumbImage(getAnnotatedAlbumTitle()); ?></a>
+								<a href="<?php echo html_encode(getAlbumLinkURL()); ?>" title="<?php echo gettext('View album:'); ?> <?php printAnnotatedAlbumTitle(); ?>"><?php printAlbumThumbImage(getAnnotatedAlbumTitle()); ?></a>
 							</div>
 							<div class="albumdesc">
-								<h3><a href="<?php echo html_encode(getAlbumURL()); ?>" title="<?php echo gettext('View album:'); ?> <?php printAnnotatedAlbumTitle(); ?>"><?php printAlbumTitle(); ?></a></h3>
+								<h3><a href="<?php echo html_encode(getAlbumLinkURL()); ?>" title="<?php echo gettext('View album:'); ?> <?php printAnnotatedAlbumTitle(); ?>"><?php printAlbumTitle(); ?></a></h3>
 								<small><?php printAlbumDate(""); ?></small>
 								<div><?php printAlbumDesc(); ?></div>
 							</div>
@@ -50,11 +52,12 @@ if (!defined('WEBPATH'))
 						</div>
 					<?php endwhile; ?>
 				</div>
+							<p style="clear: both; "></p>
 				<div id="images">
 					<?php while (next_image()): ?>
 						<div class="image">
 							<div class="imagethumb">
-								<a href="<?php echo html_encode(getImageURL()); ?>" title="<?php printBareImageTitle(); ?>">
+								<a href="<?php echo html_encode(getImageLinkURL()); ?>" title="<?php printBareImageTitle(); ?>">
 									<?php printImageThumb(getAnnotatedImageTitle()); ?>
 								</a>
 							</div>
@@ -71,8 +74,11 @@ if (!defined('WEBPATH'))
     @call_user_func('printCommentForm'); 
     ?>
 			</div>
+	    <?php if (function_exists('zenFBComments')) { zenFBComments(); } ?>
 		</div>
 		<div id="credit">
+			<?php if (class_exists('RSS')) printRSSLink('Album', '', gettext('Album RSS'), ' | '); ?>
+			<?php printCustomPageURL(gettext("Archive View"), "archive"); ?> |
 			<?php
 			if (function_exists('printFavoritesURL')) {
 				printFavoritesURL(NULL, '', ' | ', '<br />');

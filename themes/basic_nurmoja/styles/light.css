@@ -25,11 +25,23 @@ body {
 	width: 685px;
 	background: #fff;
 	padding: 20px 30px 70px;
-	border-top: 1px solid #E6E6DF;
-	border-right: 1px solid #E6E6DF;
-	border-bottom: 5px solid #E6E6DF;
-	border-left: 1px solid #E6E6DF;
+	border-top: 1px solid #E6E6E6; /*#E6E6DF;*/
+	border-right: 1px solid #E6E6E6; /*#E6E6DF;*/
+	border-bottom: 5px solid #E6E6E6; /*#E6E6DF;*/
+	border-left: 1px solid #E6E6E6; /*#E6E6DF;*/
 }
+#archive_main {
+	text-align: left;
+	margin: 20px auto;
+	width: 90%;
+	background: #fff;
+	padding: 20px 30px 70px;
+	border-top: 1px solid #E6E6E6; /*#E6E6DF;*/
+	border-right: 1px solid #E6E6E6; /*#E6E6DF;*/
+	border-bottom: 5px solid #E6E6E6; /*#E6E6DF;*/
+	border-left: 1px solid #E6E6E6; /*#E6E6DF;*/
+}
+
 #credit, #sort {
 	margin: 0 auto;
 	width: 640px;
@@ -49,18 +61,26 @@ body {
 	text-decoration: none;
 }
 #gallerytitle {
-	border-bottom: 1px solid #E6E6DF;
-	padding-bottom: 14px;
+	border-bottom: 1px solid #E6E6E6;
+	padding-bottom: 10px;
 	margin-bottom: 20px;
 	/*min-height: 40px;
-	_height: 40px;*/
+  _height: 40px;*/
 }
-#gallerytitle h2 {
-	font-weight: normal;
-	font-size: 12pt;
+#gallerytitle h2 { 
+	font-weight: bold; 
+	font-size: 12pt; 
+	margin-top: 0px;
+	width:480px;
+	font-family: "Arial"; 
+}
+#gallerytitle h1 { 
+	font-weight: normal; 
+	font-family: "Impact"; 
+	font-size: 48pt; 
 	margin-top: 18px;
-	width:510px;
 }
+
 
 /* Link Styles
 ------------------------------ */
@@ -79,8 +99,8 @@ h2 {
 	font-weight: bold;
 	color: #002E5B;
 }
-h2 a:link, h2 a:visited {
-	color: #8DB8CF;
+h1 a:link, h1 a:visited, h2 a:link, h2 a:visited {
+	color: #17A;
 	text-decoration: none;
 }
 h2 span {
@@ -223,22 +243,18 @@ span.tags_title {
 
 /* Image Thumbnails
 ------------------------------ */
-#images {
-	float: left;
-	width: 650px;
-	border: 0px solid gray;
-}
 .imagethumb a, .imagethumb a:hover {
 	display: block;
 	padding: 9px;
-	margin: 0px 9px 9px 0px;
+	margin: 3px 3px 3px 3px;
 	line-height: 0px;
+	min-height: 110px;
 		border: 1px solid #e6e6e6;
-		background-color: #f6f6f6;
+		background-color: #FCFCFB;
 }
 .imagethumb a:visited {
-		background-color: #fcfcfc;
-		border: 1px solid #f8f8f8;
+		background-color: #FCFCFB;
+		border: 1px solid #e6e6e6;
 }
 .imagethumb a:hover {
 	background-color: #f3f3f3;
@@ -246,7 +262,8 @@ span.tags_title {
 }
 .imagethumb {
 	float: left;
-	position: relative;
+	min-height: 136px;
+	min-width: 136px;
 }
 .albumdesc2 {
 	line-height: 18px;
@@ -259,14 +276,17 @@ span.tags_title {
 	float: left;
 }
 .album {
-	margin: 0 12px 8px 0;
-	padding: 10px 8px 2px 10px;
+	margin: 3px 9px 9px 3px;
+		padding: 7px 7px 7px 7px;
 	float: left;
 	width: 305px;
-	border: 1px solid #E7F0F5;
-	background: #F7F9FD;
+	max-height: 115px;
+	min-height: 115px;
+	border: 1px solid #F5F5F5; /*#E7F0F5;*/
+/*	background: #F7F9FD;*/
+	background: #FCFCFB;
 	line-height: 100%;
-	position: relative;
+        overflow:hidden;
 }
 .album a img {  }
 .album .thumb {
@@ -286,6 +306,7 @@ span.tags_title {
 .albumdesc small {
 	color: #8DB8CF;
 }
+
 
 /* favorites styles */
 .album .imageFavorites {
@@ -320,10 +341,10 @@ cursor: pointer !important;
 }
 .imgnav {
 	float: right;
-	width: 140px;
+	width: 200px;
 	text-align: center;
 	border: 1px solid #D5E6EE;
-	background: #EEF5F9;
+	background: #FCFCFB;
 	margin-top: -10px;
 }
 .imgnav .imgprevious a, .imgnav .imgnext a {
@@ -441,6 +462,33 @@ label:hover {
 }
 #map {margin-left: -77px;}
 #rating { margin-top: 10px; }
+
+/* Admin Toolbox
+------------------------------ */
+#admin, #admin_data{
+	position: fixed;
+	right: 0px;
+	top: 0px;
+	width: 130px;
+	border-bottom: 1px solid #E6E6DF;
+	border-left: 1px solid #E6E6DF;
+	background: #fff;
+		z-index: 2; 	text-align: left;
+}
+#admin_data{
+	top: 0px;
+	padding-top: 20px;
+	z-index: 1;
+	line-height: 1.6em;
+
+}
+#admin h3 {
+	font-weight: normal;
+	color: #999;
+	margin:0;
+	padding:0; text-align: center;
+}
+#admin h3:hover { color: #036; }
 
 /* Search Box
 ------------------------------ */
@@ -671,9 +719,14 @@ form input[type="submit"],
 form input[type="reset"],
 form input[type="button"],
 a.slideshowlink {
-background-color: #EEF5F9;
+background-color: #17A;
 border: 0;
 font-size: 12px;
+font-weight: bold;
+}
+
+.button {
+color: #fff;
 }
 
 a.slideshowlink { 
