@@ -46,10 +46,11 @@ if (!defined('WEBPATH'))
 								<small><?php printAlbumDate(""); ?></small>
 								<div><?php printAlbumDesc(); ?></div>
 							</div>
-							<p style="clear: both; "></p>
+
 						</div>
 					<?php endwhile; ?>
 				</div>
+				<br class="clearfloat">
 				<div id="images">
 					<?php while (next_image()): ?>
 						<div class="image">
@@ -61,14 +62,15 @@ if (!defined('WEBPATH'))
 						</div>
 					<?php endwhile; ?>
 				</div>
-				<?php 
-    printPageListWithNav("« " . gettext("prev"), gettext("next") . " »"); 
-    if (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_album); 
+				<br class="clearfloat">
+				<?php
+    printPageListWithNav("« " . gettext("prev"), gettext("next") . " »");
+    if (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_album);
     printTags('links', gettext('<strong>Tags:</strong>') . ' ', 'taglist', '');
-    @call_user_func('printGoogleMap'); 
-    @call_user_func('printSlideShowLink'); 
-    @call_user_func('printRating'); 
-    @call_user_func('printCommentForm'); 
+    @call_user_func('printGoogleMap');
+    @call_user_func('printSlideShowLink');
+    @call_user_func('printRating');
+    @call_user_func('printCommentForm');
     ?>
 			</div>
 		</div>
@@ -78,11 +80,11 @@ if (!defined('WEBPATH'))
 				printFavoritesURL(NULL, '', ' | ', '<br />');
 			}
 			?>
-			<?php 
-   if (class_exists('RSS')) printRSSLink('Album', '', gettext('Album RSS'), ' | '); 
-   printCustomPageURL(gettext("Archive View"), "archive"); 
-   printZenphotoLink(); 
-   @call_user_func('printUserLogin_out', " | "); 
+			<?php
+   if (class_exists('RSS')) printRSSLink('Album', '', gettext('Album RSS'), ' | ');
+   printCustomPageURL(gettext("Archive View"), "archive");
+   printZenphotoLink();
+   @call_user_func('printUserLogin_out', " | ");
    ?>
 		</div>
 		<?php

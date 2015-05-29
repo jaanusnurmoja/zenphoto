@@ -923,142 +923,141 @@ function printPageListWithNav($prevtext, $nexttext, $_oneImagePage = false, $nex
 	$current = getCurrentPage();
 	$total = max(1, getTotalPages($_oneImagePage));
 	$nav = getPageNavList($_oneImagePage, $navlen, $firstlast, $current, $total);
-	if (count($nav) < 4) {
-		$class .= ' disabled_nav';
-	}
-	?>
-	<div <?php if ($id) echo ' id="$id"'; ?> class="<?php echo $class; ?>">
-		<ul class="<?php echo $class; ?>">
-			<?php
-			$prev = $nav['prev'];
-			unset($nav['prev']);
-			$next = $nav['next'];
-			unset($nav['next']);
-			if ($nextprev) {
-				?>
-				<li class="prev">
-					<?php
-					if ($prev) {
-						printLinkHTML($prev, html_encode($prevtext), gettext('Previous Page'));
-					} else {
-						?>
-						<span class="disabledlink"><?php echo html_encode($prevtext); ?></span>
-						<?php
-					}
-					?>
-				</li>
+	if ($total > 1) {
+		?>
+		<div <?php if ($id) echo ' id="$id"'; ?> class="<?php echo $class; ?>">
+			<ul class="<?php echo $class; ?>">
 				<?php
-			}
-			$last = NULL;
-			if ($firstlast) {
-				?>
-				<li class="<?php
-				if ($current == 1)
-					echo 'current';
-				else
-					echo 'first';
-				?>">
-							<?php
-							if ($current == 1) {
-								echo '1';
-							} else {
-								printLinkHTML($nav[1], 1, gettext("Page 1"));
-							}
-							?>
-				</li>
-				<?php
-				$last = 1;
-				unset($nav[1]);
-			}
-			foreach ($nav as $i => $link) {
-				$d = $i - $last;
-				if ($d > 2) {
+				$prev = $nav['prev'];
+				unset($nav['prev']);
+				$next = $nav['next'];
+				unset($nav['next']);
+				if ($nextprev) {
 					?>
-					<li>
+					<li class="prev">
 						<?php
-						$k1 = $i - (int) (($i - $last) / 2);
-						printLinkHTML(getPageNumURL($k1, $total), '...', sprintf(ngettext('Page %u', 'Page %u', $k1), $k1));
-						?>
-					</li>
-					<?php
-				} else if ($d == 2) {
-					?>
-					<li>
-						<?php
-						$k1 = $last + 1;
-						printLinkHTML(getPageNumURL($k1, $total), $k1, sprintf(ngettext('Page %u', 'Page %u', $k1), $k1));
-						?>
-					</li>
-					<?php
-				}
-				?>
-				<li<?php if ($current == $i) echo ' class="current"'; ?>>
-					<?php
-					if ($i == $current) {
-						echo $i;
-					} else {
-						$title = sprintf(ngettext('Page %1$u', 'Page %1$u', $i), $i);
-						printLinkHTML($link, $i, $title);
-					}
-					?>
-				</li>
-				<?php
-				$last = $i;
-				unset($nav[$i]);
-				if ($firstlast && count($nav) == 1) {
-					break;
-				}
-			}
-			if ($firstlast) {
-				foreach ($nav as $i => $link) {
-					$d = $i - $last;
-					if ($d > 2) {
-						$k1 = $i - (int) (($i - $last) / 2);
-						?>
-						<li>
-							<?php printLinkHTML(getPageNumURL($k1, $total), '...', sprintf(ngettext('Page %u', 'Page %u', $k1), $k1)); ?>
-						</li>
-						<?php
-					} else if ($d == 2) {
-						$k1 = $last + 1;
-						?>
-						<li>
-							<?php printLinkHTML(getPageNumURL($k1, $total), $k1, sprintf(ngettext('Page %u', 'Page %u', $k1), $k1)); ?>
-						</li>
-						<?php
-					}
-					?>
-					<li class="last<?php if ($current == $i) echo ' current'; ?>">
-						<?php
-						if ($current == $i) {
-							echo $i;
+						if ($prev) {
+							printLinkHTML($prev, html_encode($prevtext), gettext('Previous Page'));
 						} else {
-							printLinkHTML($link, $i, sprintf(ngettext('Page %u', 'Page %u', $i), $i));
+							?>
+							<span class="disabledlink"><?php echo html_encode($prevtext); ?></span>
+							<?php
 						}
 						?>
 					</li>
 					<?php
 				}
-			}
-			if ($nextprev) {
-				?>
-				<li class="next">
+				$last = NULL;
+				if ($firstlast) {
+					?>
+					<li class="<?php
+					if ($current == 1)
+						echo 'current';
+					else
+						echo 'first';
+					?>">
+								<?php
+								if ($current == 1) {
+									echo '1';
+								} else {
+									printLinkHTML($nav[1], 1, gettext("Page 1"));
+								}
+								?>
+					</li>
 					<?php
-					if ($next) {
-						printLinkHTML($next, html_encode($nexttext), gettext('Next Page'));
-					} else {
+					$last = 1;
+					unset($nav[1]);
+				}
+				foreach ($nav as $i => $link) {
+					$d = $i - $last;
+					if ($d > 2) {
 						?>
-						<span class="disabledlink"><?php echo html_encode($nexttext); ?></span>
+						<li>
+							<?php
+							$k1 = $i - (int) (($i - $last) / 2);
+							printLinkHTML(getPageNumURL($k1, $total), '...', sprintf(ngettext('Page %u', 'Page %u', $k1), $k1));
+							?>
+						</li>
+						<?php
+					} else if ($d == 2) {
+						?>
+						<li>
+							<?php
+							$k1 = $last + 1;
+							printLinkHTML(getPageNumURL($k1, $total), $k1, sprintf(ngettext('Page %u', 'Page %u', $k1), $k1));
+							?>
+						</li>
 						<?php
 					}
 					?>
-				</li>
-				<?php
-			}
-			?>
-		</ul>
-	</div>
-	<?php
+					<li<?php if ($current == $i) echo ' class="current"'; ?>>
+						<?php
+						if ($i == $current) {
+							echo $i;
+						} else {
+							$title = sprintf(ngettext('Page %1$u', 'Page %1$u', $i), $i);
+							printLinkHTML($link, $i, $title);
+						}
+						?>
+					</li>
+					<?php
+					$last = $i;
+					unset($nav[$i]);
+					if ($firstlast && count($nav) == 1) {
+						break;
+					}
+				}
+				if ($firstlast) {
+					foreach ($nav as $i => $link) {
+						$d = $i - $last;
+						if ($d > 2) {
+							$k1 = $i - (int) (($i - $last) / 2);
+							?>
+							<li>
+								<?php printLinkHTML(getPageNumURL($k1, $total), '...', sprintf(ngettext('Page %u', 'Page %u', $k1), $k1)); ?>
+							</li>
+							<?php
+						} else if ($d == 2) {
+							$k1 = $last + 1;
+							?>
+							<li>
+								<?php printLinkHTML(getPageNumURL($k1, $total), $k1, sprintf(ngettext('Page %u', 'Page %u', $k1), $k1)); ?>
+							</li>
+							<?php
+						}
+						?>
+						<li class="last<?php if ($current == $i) echo ' current'; ?>">
+							<?php
+							if ($current == $i) {
+								echo $i;
+							} else {
+								printLinkHTML($link, $i, sprintf(ngettext('Page %u', 'Page %u', $i), $i));
+							}
+							?>
+						</li>
+						<?php
+					}
+				}
+				if ($nextprev) {
+					?>
+					<li class="next">
+						<?php
+						if ($next) {
+							printLinkHTML($next, html_encode($nexttext), gettext('Next Page'));
+						} else {
+							?>
+							<span class="disabledlink"><?php echo html_encode($nexttext); ?></span>
+							<?php
+						}
+						?>
+					</li>
+					<?php
+				}
+				?>
+			</ul>
+		</div>
+		<?php
+	}
 }
 
 //*** Album Context ************************
@@ -1221,7 +1220,7 @@ function getAlbumBreadcrumb($title = NULL) {
 				$title = gettext('Album Thumbnails');
 			}
 		}
-		return array('link' => $album->getLink(), 'text' => $title, 'title' => $album->getDesc());
+		return array('link' => $album->getLink(), 'text' => $title, 'title' => getBare($title));
 	}
 	return false;
 }
@@ -1231,7 +1230,7 @@ function getAlbumBreadcrumb($title = NULL) {
  *
  * @param string $before Text to place before the breadcrumb
  * @param string $after Text to place after the breadcrumb
- * @param string $title Text to be used as the URL title tag
+ * @param string $title Text to be used as the URL title attribute and text link
  */
 function printAlbumBreadcrumb($before = '', $after = '', $title = NULL) {
 	if ($breadcrumb = getAlbumBreadcrumb($title)) {
@@ -3418,7 +3417,7 @@ function printTags($option = 'links', $preText = NULL, $class = NULL, $separator
 				$separator = "";
 			}
 			if ($option === "links") {
-				$links1 = "<a href=\"" . html_encode(getSearchURL(search_quote($atag), '', 'tags', 0, array('albums' => $albumlist))) . "\" title=\"" . html_encode($atag) . "\" rel=\"nofollow\">";
+				$links1 = "<a href=\"" . html_encode(getSearchURL(search_quote($atag), '', 'tags', 0, array('albums' => $albumlist))) . "\" title=\"" . html_encode($atag) . "\">";
 				$links2 = "</a>";
 			} else {
 				$links1 = $links2 = '';
@@ -3506,7 +3505,7 @@ function printAllTagsAs($option, $class = '', $sort = NULL, $counter = FALSE, $l
 						$link = getSearchURL(search_quote($key), '', 'tags', 0, array('albums' => $albumlist));
 						?>
 						<li>
-							<a href="<?php echo html_encode($link); ?>" rel="nofollow"<?php echo $size; ?>><?php echo $key . $counter; ?></a>
+							<a href="<?php echo html_encode($link); ?>"<?php echo $size; ?>><?php echo $key . $counter; ?></a>
 						</li>
 						<?php
 					} else {
@@ -3632,7 +3631,7 @@ function printAllDates($class = 'archive', $yearid = 'year', $monthid = 'month',
 		} else {
 			$cl = '';
 		}
-		echo "<li" . $cl . "><a href=\"" . html_encode(getSearchURl('', $datekey, '', 0, array('allbums' => $albumlist))) . "\" rel=\"nofollow\">$month ($val)</a></li>\n";
+		echo "<li" . $cl . "><a href=\"" . html_encode(getSearchURl('', $datekey, '', 0, array('allbums' => $albumlist))) . "\">$month ($val)</a></li>\n";
 	}
 	echo "</ul>\n</li>\n</ul>\n";
 }
@@ -3751,7 +3750,7 @@ function getSearchURL($words, $dates, $fields, $page, $object_list = NULL) {
 			}
 			$words = implode(',', $words);
 		}
-		$words = strtr($words, array('%' => '__25__', '&' => '__26__', '#' => '__23__'));
+		$words = strtr($words, array('%' => '__25__', '&' => '__26__', '#' => '__23__', '/' => '__2F__'));
 		if ($rewrite) {
 			$url .= urlencode($words);
 		} else {
