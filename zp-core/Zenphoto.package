@@ -726,6 +726,11 @@ zp-core/locale/es_ES/LC_MESSAGES
 zp-core/locale/es_ES/LC_MESSAGES/zenphoto.mo
 zp-core/locale/es_ES/LC_MESSAGES/zenphoto.po
 zp-core/locale/es_ES/flag.png
+zp-core/locale/et_EE
+zp-core/locale/et_EE/LC_MESSAGES
+zp-core/locale/et_EE/LC_MESSAGES/zenphoto.mo
+zp-core/locale/et_EE/LC_MESSAGES/zenphoto.po
+zp-core/locale/et_EE/flag.png
 zp-core/locale/fr_FR
 zp-core/locale/fr_FR/LC_MESSAGES
 zp-core/locale/fr_FR/LC_MESSAGES/zenphoto.mo
