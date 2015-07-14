@@ -2,7 +2,7 @@
 
 /**
  *
- * Lets you create arbitrary menus and place them on your theme pages.
+ * Lets you create custom menus and place them on your theme pages.
  *
  * Use the <var>Menu</var> tab to create your menus. Use <var>printCustomMenu()</var> to place them on your pages.
  *
@@ -248,7 +248,7 @@ function getItemTitleAndURL($item) {
 			if(class_exists('zenpage')) {
 				$url = getNewsIndexURL();
 				$array = array("title" => get_language_string($item['title']), "url" => $url, "name" => $url, 'protected' => false);
-			} 
+			}
 			break;
 		case "zenpagecategory":
 			if(class_exists('zenpage')) {
@@ -265,7 +265,7 @@ function getItemTitleAndURL($item) {
 					$protected = 0;
 				}
 				$array = array("title" => $title, "url" => $url, "name" => $item['link'], 'protected' => $protected, 'theme' => $themename);
-			} 
+			}
 			break;
 		case "custompage":
 			$root = SERVERPATH . '/' . THEMEFOLDER . '/' . $themename . '/';
@@ -947,6 +947,45 @@ function createMenuIfNotExists($menuitems, $menuset = 'default') {
 		trigger_error(gettext('createMenuIfNotExists has posted processing errors to your debug log.'), E_USER_NOTICE);
 	}
 	return $success;
+}
+
+/**
+ * Gets the direct child menu items of the current menu item. Returns the array of the items or false.
+ * @param string $menuset current menu set
+ * @param bool $allchilds Set to false (default) for the next level childs, true for childs of all further levels
+ * @return array|false
+ */
+function getMenuItemChilds($menuset = 'default', $allchilds = false) {
+  $sortorder = getCurrentMenuItem($menuset);
+  $items = getMenuItems($menuset, getMenuVisibility());
+  if (count($items) > 0) {
+    if ($sortorder) {
+      $length = strlen($sortorder);
+      $level = explode('-', $sortorder);
+      $level = count($level);
+      $childs = array();
+      foreach ($items as $item) {
+        $itemlevel = explode('-', $item['sort_order']);
+        $itemlevel = count($itemlevel);
+        if ($allchilds) {
+          $is_validchild = true;
+        } else {
+          if ($itemlevel == $level + 1) {
+            $is_validchild = true;
+          } else {
+            $is_validchild = false;
+          }
+        }
+        if (substr($item['sort_order'], 0, $length) == $sortorder && $item['sort_order'] != $sortorder && $is_validchild) {
+          array_push($childs, $item);
+        }
+      }
+      if (!empty($childs)) {
+        return $childs;
+      }
+    }
+  }
+  return false;
 }
 
 /**

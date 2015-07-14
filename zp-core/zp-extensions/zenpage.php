@@ -3,8 +3,8 @@
  * Zenphoto is already the easiest gallery management system available but it does not have any normal page management
  * capability. Therefore many people use Zenphoto in combination with another CMS.
  *
- * With Zenpage you can now extend the easy to use interface to manage an entire site with a news section (blog) for
- * announcements. Considering Zenphoto's image, video and audio management capabilites this is the ideal solution for
+ * With Zenpage you can now extend the easy to use interface to manage an entire site with pages and news (blog)
+ * Considering Zenphoto's image, video and audio management capabilites this is the ideal solution for
  * personal portfolio sites of artists, graphic/web designers, illustrators, musicians, multimedia/video artists,
  * photographers and many more.
  *
@@ -125,14 +125,14 @@ class zenpagecms {
 		$options = array(
       gettext('Enabled Zenpage items') => array(
 										'key'			 => 'enabled-zenpage-items',
-										'type'		 => OPTION_TYPE_RADIO, 
-										'order'		 => 7, 
+										'type'		 => OPTION_TYPE_RADIO,
+										'order'		 => 7,
 										'buttons'	 => array(
 														gettext('Enable news articles and pages') => 'news-and-pages',
 														gettext('Enable news') => 'news',
 														gettext('Enable pages') => 'pages'
 										),
-										'desc'		 => gettext('This enables or disables the admin tabs for pages and/or news articles. To hide news and/or pages content on the front end as well, themes must be setup to use <br><code>if(extensionEnabled("zenpage") && ZP_NEWS_ENABLED) { … }</code> or <br><code>if(extensionEnabled("zenpage") && ZP_PAGES_ENABLED) { … }</code> in appropiate places. Same if disabled items should blocked as they otherwise still can be accessed via direct links. <p class="notebox"><strong>NOTE:</strong> This does not delete content and is not related to management rights.</p>')
+										'desc'		 => gettext('This enables or disables the admin tabs for pages and/or news articles. To hide news and/or pages content on the front end as well, themes must be setup to use <br><code>if(extensionEnabled("zenpage") && ZP_NEWS_ENABLED) { … }</code> or <br><code>if(extensionEnabled("zenpage") && ZP_PAGES_ENABLED) { … }</code> in appropriate places. Same if disabled items should blocked as they otherwise still can be accessed via direct links. <p class="notebox"><strong>NOTE:</strong> This does not delete content and is not related to management rights.</p>')
 						), // The description of the option
       gettext('Articles per page (theme)')					 => array('key'		 => 'zenpage_articles_per_page', 'type'	 => OPTION_TYPE_TEXTBOX,
 										'order'	 => 0,

@@ -113,6 +113,8 @@ function updatePage(&$reports, $newpage = false) {
 		$rslt = query('UPDATE ' . prefix('pages') . ' SET `titlelink`=' . db_quote($titlelink) . ' WHERE `id`=' . $id, false);
 		if (!$rslt) {
 			$titlelink = $oldtitlelink; // force old link so data gets saved
+		} else {
+			SearchEngine::clearSearchCache();
 		}
 	}
 	// update page
@@ -192,6 +194,7 @@ function deletePage($titlelink) {
 			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/admin-pages.php?deleted');
 			exitZP();
 		}
+		SearchEngine::clearSearchCache();
 		return "<p class='messagebox fade-message'>" . gettext("Page successfully deleted!") . "</p>";
 	}
 	return "<p class='errorbox fade-message'>" . gettext("Page delete failed!") . "</p>";
@@ -385,6 +388,8 @@ function updateArticle(&$reports, $newarticle = false) {
 		$rslt = query('UPDATE ' . prefix('news') . ' SET `titlelink`=' . db_quote($titlelink) . ' WHERE `id`=' . $id, false);
 		if (!$rslt) {
 			$titlelink = $oldtitlelink; // force old link so data gets saved
+		} else {
+			SearchEngine::clearSearchCache();
 		}
 	}
 	// update article
@@ -465,6 +470,7 @@ function deleteArticle($titlelink) {
 			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/admin-news-articles.php?deleted');
 			exitZP();
 		}
+		SearchEngine::clearSearchCache();
 		return "<p class='messagebox fade-message'>" . gettext("Article successfully deleted!") . "</p>";
 	}
 	return "<p class='errorbox fade-message'>" . gettext("Article delete failed!") . "</p>";
@@ -556,7 +562,7 @@ function printArticleDatesDropdown() {
 	<form name="AutoListBox1" id="articledatesdropdown" style="float:left; margin-left: 10px;" action="#" >
 		<select name="ListBoxURL" size="1" onchange="gotoLink(this.form)">
 			<?php
-			echo "<option $selected value='admin-news-articles.php" . getNewsAdminOptionPath(array_merge(array('date' => 'all'), $option)) . "'>" . gettext("View all months") . "</option>";
+			echo "<option $selected value='admin-news-articles.php" . getNewsAdminOptionPath(array_merge(array('' => ''), $option)) . "'>" . gettext("View all months") . "</option>";
 			while (list($key, $val) = each($datecount)) {
 				$nr++;
 				if ($key == '0000-00-01') {
@@ -891,6 +897,8 @@ function updateCategory(&$reports, $newcategory = false) {
 		$titleok = query('UPDATE ' . prefix('news_categories') . ' SET `titlelink`=' . db_quote($titlelink) . ' WHERE `id`=' . $id, false);
 		if (!$titleok) {
 			$titlelink = $oldtitlelink; // force old link so data gets saved
+		} else {
+			SearchEngine::clearSearchCache();
 		}
 	}
 	//update category
@@ -953,6 +961,7 @@ function deleteCategory($titlelink) {
 	$obj = new ZenpageCategory($titlelink);
 	$result = $obj->remove();
 	if ($result) {
+		SearchEngine::clearSearchCache();
 		return "<p class='messagebox fade-message'>" . gettext("Category successfully deleted!") . "</p>";
 	}
 	return "<p class='errorbox fade-message'>" . gettext("Category  delete failed!") . "</p>";
@@ -1106,6 +1115,8 @@ function printNestedItemsList($listtype = 'cats-sortablelist', $articleid = '', 
 	switch ($listtype) {
 		case 'cats-checkboxlist':
 		case 'cats-sortablelist':
+   //Without this the order is incorrect until the 2nd page reload…
+   $_zp_zenpage = new Zenpage();
 			$items = $_zp_zenpage->getAllCategories(false);
 			break;
 		case 'pages-sortablelist':
@@ -1166,7 +1177,7 @@ function printNestedItemsList($listtype = 'cats-sortablelist', $articleid = '', 
 					printCategoryCheckboxListEntry($itemobj, $articleid, $option, $class);
 					break;
 				case 'cats-sortablelist':
-					echo str_pad("\t", $indent - 1, "\t") . "<li id=\"id_" . $itemid . "\" class=\"clear-element page-item1 left\">";
+					echo str_pad("\t", $indent - 1, "\t") . "<li id=\"id_" . $itemid . "\">";
 					printCategoryListSortableTable($itemobj, $toodeep);
 					break;
 				case 'pages-sortablelist':
@@ -1273,7 +1284,7 @@ function zenpagePublish($obj, $show) {
  * @return string
  */
 function skipScheduledPublishing($obj) {
-	$obj->setDate(date('Y-m-d H:i:s'));
+	$obj->setDateTime(date('Y-m-d H:i:s'));
 	$obj->setShow(1);
 	$obj->save();
 }
@@ -1639,6 +1650,7 @@ function printPublishIconLink($object, $type, $linkback = '') {
 						switch ($action) {
 							case 'deleteall':
 								$obj->remove();
+								SearchEngine::clearSearchCache();
 								break;
 							case 'addtags':
 								$mytags = array_unique(array_merge($tags, $obj->getTags()));

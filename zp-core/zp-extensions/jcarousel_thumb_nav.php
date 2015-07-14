@@ -1,7 +1,7 @@
 <?php
 /**
  * JavaScript thumb nav plugin with dynamic loading of thumbs on request via JavaScript.
- * Place <var>printThumbNav()</var> on your theme's image.php where you want it to appear.
+ * Place <var>printThumbNav()</var> on your theme's <i>image.php</i> where you want it to appear.
  *
  * Supports theme based custom css files (place <var>jcarousel.css</var> and needed images in your theme's folder).
  *
@@ -30,8 +30,10 @@ class jcarousel {
 			setOptionDefault('jcarousel_cropw', '50');
 			setOptionDefault('jcarousel_fullimagelink', '');
 			setOptionDefault('jcarousel_vertical', 0);
-			cacheManager::deleteThemeCacheSizes('jcarousel_thumb_nav');
-			cacheManager::addThemeCacheSize('jcarousel_thumb_nav', NULL, getOption('jcarousel_width'), getOption('jcarousel_height'), getOption('jcarousel_cropw'), getOption('jcarousel_croph'), NULL, NULL, true, NULL, NULL, NULL);
+			if (class_exists('cacheManager')) {
+				cacheManager::deleteThemeCacheSizes('jcarousel_thumb_nav');
+				cacheManager::addThemeCacheSize('jcarousel_thumb_nav', NULL, getOption('jcarousel_width'), getOption('jcarousel_height'), getOption('jcarousel_cropw'), getOption('jcarousel_croph'), NULL, NULL, true, NULL, NULL, NULL);
+			}
 		}
 	}
 
@@ -175,7 +177,7 @@ if (!$plugin_disable && !OFFSET_PATH && getOption('jcarousel_' . $_zp_gallery->g
 			if (count($jcarousel_items) >= 2) {
 				foreach ($jcarousel_items as $item) {
 					if (is_array($item)) {
-						$imgobj = newImage(newAlbum($item['folder']), $item['filename']);
+						$imgobj = newImage($_zp_current_album, $item['filename']);
 					} else {
 						$imgobj = newImage($_zp_current_album, $item);
 					}

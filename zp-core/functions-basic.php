@@ -105,7 +105,7 @@ if (TEST_RELEASE) {
 }
 set_error_handler("zpErrorHandler");
 set_exception_handler("zpErrorHandler");
-$_configMutex = new Mutex('cF');
+$_configMutex = new zpMutex('cF');
 if (OFFSET_PATH != 2 && !file_exists($const_serverpath . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
 	require_once(dirname(__FILE__) . '/reconfigure.php');
 	reconfigureAction(1);
@@ -127,7 +127,7 @@ if (!defined('SERVERPATH')) {
 	define('SERVERPATH', $const_serverpath);
 }
 unset($const_serverpath);
-$_zp_mutex = new Mutex();
+$_zp_mutex = new zpMutex();
 
 if (OFFSET_PATH != 2 && empty($_zp_conf_vars['mysql_database'])) {
 	require_once(dirname(__FILE__) . '/reconfigure.php');
@@ -136,13 +136,8 @@ if (OFFSET_PATH != 2 && empty($_zp_conf_vars['mysql_database'])) {
 
 require_once(dirname(__FILE__) . '/lib-utf8.php');
 
-if (!defined('FILESYSTEM_CHARSET')) {
-	if (isset($_zp_conf_vars['FILESYSTEM_CHARSET']) && $_zp_conf_vars['FILESYSTEM_CHARSET'] != 'unknown') {
-		define('FILESYSTEM_CHARSET', $_zp_conf_vars['FILESYSTEM_CHARSET']);
-	} else {
-		define('FILESYSTEM_CHARSET', 'ISO-8859-1');
-	}
-}
+
+
 if (!defined('CHMOD_VALUE')) {
 	define('CHMOD_VALUE', fileperms(dirname(__FILE__)) & 0666);
 }
@@ -171,6 +166,18 @@ if (!defined('DATABASE_SOFTWARE') && extension_loaded(strtolower(@$_zp_conf_vars
 if (!$data && OFFSET_PATH != 2) {
 	require_once(dirname(__FILE__) . '/reconfigure.php');
 	reconfigureAction(3);
+}
+
+if (!defined('FILESYSTEM_CHARSET')) {
+	if (isset($_zp_conf_vars['FILESYSTEM_CHARSET']) && $_zp_conf_vars['FILESYSTEM_CHARSET'] != 'unknown') {
+		define('FILESYSTEM_CHARSET', $_zp_conf_vars['FILESYSTEM_CHARSET']);
+	} else {
+		$data = getOption('filesystem_charset');
+		if(!$data) {
+			$data = 'UTF-8';
+		}
+		define('FILESYSTEM_CHARSET', $data);
+	}
 }
 
 $data = getOption('charset');
@@ -341,13 +348,14 @@ function getOption($key) {
  *
  * @param string $key name of the option.
  * @param mixed $value new value of the option.
- * @param bool $persistent set to false if the option is stored in memory only
- * otherwise it is preserved in the database
+ * @param bool $persistent set to false if the option is stored in memory only. Otherwise it is preserved in the database
+ * @param string $creator name of the creator the option belongs to. Normally NULL for backend core options. 
+ *               "zp-core/zp-extensions/<plugin>.php" for official plugin and /plugins/<plugin>.php for user plugin options
  */
-function setOption($key, $value, $persistent = true) {
+function setOption($key, $value, $persistent = true, $creator = NULL) {
 	global $_zp_options;
 	if ($persistent) {
-		$sql = 'INSERT INTO ' . prefix('options') . ' (`name`,`ownerid`,`theme`,`value`) VALUES (' . db_quote($key) . ',0,"",';
+		$sql = 'INSERT INTO ' . prefix('options') . ' (`name`,`ownerid`,`theme`,`value`,`creator`) VALUES (' . db_quote($key) . ',0,"",';
 		$sqlu = ' ON DUPLICATE KEY UPDATE `value`=';
 		if (is_null($value)) {
 			$sql .= 'NULL';
@@ -356,6 +364,13 @@ function setOption($key, $value, $persistent = true) {
 			$sql .= db_quote($value);
 			$sqlu .= db_quote($value);
 		}
+  
+  if (is_null($creator)) {
+			$sql .= ',NULL';
+		} else {
+			$sql .= ','.db_quote($creator);
+		}
+  
 		$sql .= ') ' . $sqlu;
 		$result = query($sql, false);
 	} else {
@@ -1563,7 +1578,7 @@ function zp_session_start() {
  * @author Stephen
  *
  */
-class Mutex {
+class zpMutex {
 
 	private $locked = NULL;
 	private $ignoreUseAbort = NULL;

@@ -192,6 +192,33 @@ class Zenpage {
 		return $all_pages;
 	}
 
+ /**
+   * Returns a list of Zenpage page IDs that the current viewer is not allowed to see
+   * Helper function to be used with getAllTagsUnique() and getAllTagsCount()
+   * Note if the Zenpage plugin is not enabled but items exists this returns no IDs so you need an extra check afterwards!
+   * 
+   * @return array
+   */
+  function getNotViewablePages() {
+    global $_zp_not_viewable_pages_list;
+    if (zp_loggedin(ADMIN_RIGHTS | ALL_PAGES_RIGHTS)) {
+      return array(); //admins can see all
+    }
+    if (is_null($_zp_not_viewable_pages_list)) {
+      $items = $this->getPages(true, false, NULL, NULL, NULL);
+      if (!is_null($items)) {
+        $_zp_not_viewable_pages_list = array();
+        foreach ($items as $item) {
+          $obj = new ZenpageNews($item['titlelink']);
+          if (!$obj->isProtected()) {
+            $_zp_not_viewable_pages_list[] = $obj->getID();
+          }
+        }
+      }
+    }
+    return $_zp_not_viewable_pages_list;
+  }
+ 
 	/*	 * ********************************* */
 	/* general news article functions   */
 	/*	 * ********************************* */
@@ -211,7 +238,7 @@ class Zenpage {
 	 * @param boolean $ignorepagination Since also used for the news loop this function automatically paginates the results if the "page" GET variable is set. To avoid this behaviour if using it directly to get articles set this TRUE (default FALSE)
 	 * @param string $sortorder "date" (default), "title", "id, "popular", "mostrated", "toprated", "random"
 	 * 													This parameter is not used for date archives
-	 * @param bool $sortdirection TRUE for ascending, FALSE for descending. Note: This parameter is not used for date archives
+	 * @param bool $sortdirection TRUE for descending, FALSE for ascending. Note: This parameter is not used for date archives
 	 * @param bool $sticky set to true to place "sticky" articles at the front of the list.
 	 * @return array
 	 */
@@ -404,8 +431,35 @@ class Zenpage {
 		}
 		return $result;
 	}
+ 
+ /**
+   * Returns a list of Zenpage news article IDs that the current viewer is not allowed to see
+   * Helper function to be used with getAllTagsUnique() and getAllTagsCount() or db queries only
+   * Note if the Zenpage plugin is not enabled but items exists this returns no IDs so you need an extra check afterwards!
+   *
+   * @return array
+   */
+  function getNotViewableNews() {
+    global $_zp_not_viewable_news_list;
+    if (zp_loggedin(ADMIN_RIGHTS | ALL_NEWS_RIGHTS)) {
+      return array(); //admins can see all
+    }
+    if (is_null($_zp_not_viewable_news_list)) {
+      $items = $this->getArticles(0, 'published', true, NULL, NULL, NULL, NULL);
+      if (!is_null($items)) {
+        $_zp_not_viewable_news_list = array();
+        foreach ($items as $item) {
+          $obj = new ZenpageNews($item['titlelink']);
+          if ($obj->isProtected()) {
+            $_zp_not_viewable_news_list[] = $obj->getID();
+          }
+        }
+      }
+    }
+    return $_zp_not_viewable_news_list;
+  }
 
-	/**
+  /**
 	 * Returns an article from the album based on the index passed.
 	 *
 	 * @param int $index
@@ -736,7 +790,7 @@ class Zenpage {
 				$counter = "";
 				foreach ($albums as $album) {
 					$counter++;
-					$tempalbum = newAlbum($album['folder']);
+					$tempalbum = $album;
 					$tempalbumthumb = $tempalbum->getAlbumThumbImage();
 					$timestamp = $tempalbum->get('mtime');
 					if ($timestamp == 0) {
@@ -886,12 +940,17 @@ class Zenpage {
 				}
 			}
 		}
-
 		if (!is_null($sorttype) || !is_null($sortdirection)) {
 			if ($sorttype == 'random') {
 				shuffle($structure);
 			} else {
-				$structure = sortMultiArray($structure, $sortorder, $sortdirection, true, false, false);
+     //sortMultiArray descending = true
+     if($sortdirection) {
+       $sortdir = false;
+     } else {
+       $sortdir = true;
+     }
+				$structure = sortMultiArray($structure, $sortorder, $sortdir, true, false, false);
 			}
 		}
 		return $structure;

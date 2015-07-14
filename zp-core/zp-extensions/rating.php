@@ -1,7 +1,7 @@
 <?php
 /**
- * Supports an rating system for images, albums, pages, and news articles
- * using the <i>Star Rating</i> Plugin by Fyneworks.com
+ * Supports a rating system for images, albums, pages, and news articles
+ * using the <i>Star Rating</i> Plugin by {@link http://www.fyneworks.com/jquery/star-rating/ fyneworks.com}
  *
  * An option exists to allow viewers to recast their votes. If not set, a viewer may
  * vote only one time and may not change his mind.
@@ -408,7 +408,7 @@ function printRating($vote = 3, $object = NULL, $text = true) {
  */
 function getRating($object = NULL) {
 	if (is_null($object)) {
-		$object = getCurrentPageObject();
+		$object = jquery_rating::getCurrentPageObject();
 		if (!$object)
 			return NULL;
 	}

@@ -166,18 +166,17 @@ function ksesProcess($input_string, $allowed_tags) {
  * @return type
  */
 function getBare($content) {
-	$content = preg_replace('~<script.*?/script>~is', '', $content);
-	$content = preg_replace('~<style.*?/style>~is', '', $content);
-	$content = preg_replace('~<!--.*?-->~is', '', $content);
-	$content = strip_tags($content);
-	$content = str_replace('&nbsp;', ' ', $content);
-	$content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
-	return $content;
+  $content = preg_replace('~<script.*?/script>~is', '', $content);
+  $content = preg_replace('~<style.*?/style>~is', '', $content);
+  $content = preg_replace('~<!--.*?-->~is', '', $content);
+  $content = strip_tags($content);
+  $content = str_replace('&nbsp;', ' ', $content);
+  return $content;
 }
 
 /** returns a sanitized string for the sanitize function
  * @param string $input_string
- * @param string $sanitize_level
+ * @param string $sanitize_level See sanitize()
  * @return string the sanitized string.
  */
 function sanitize_string($input, $sanitize_level) {
@@ -197,6 +196,7 @@ function sanitize_string($input, $sanitize_level) {
 			case 3:
 				// Full sanitation.  Strips all code.
 				return getBare($input);
+ 
 			case 1:
 				// Text formatting sanititation.
 				$input = sanitize_script($input);
@@ -286,9 +286,11 @@ function db_count($table, $clause = NULL, $field = "*") {
  * triggers an error
  *
  * @param string $message
- * @param bool $fatal set true to fail the script
+ * @param int $type the PHP error type to trigger; default to E_USER_ERROR
  */
 function zp_error($message, $fatal = E_USER_ERROR) {
+	// Print the error message, to be convenient.
+	printf(html_encode($message));
 	trigger_error($message, $fatal);
 }
 
@@ -299,11 +301,11 @@ function html_decode($string) {
 /**
  * encodes a pre-sanitized string to be used in an HTML text-only field (value, alt, title, etc.)
  *
- * @param string $this_string
+ * @param string $str
  * @return string
  */
-function html_encode($this_string) {
-	return htmlspecialchars($this_string, ENT_FLAGS, LOCAL_CHARSET);
+function html_encode($str) {
+	return htmlspecialchars($str, ENT_FLAGS, LOCAL_CHARSET);
 }
 
 /**
@@ -338,11 +340,11 @@ function html_encodeTagged($original, $allowScript = true) {
 		$str = str_replace($tag, '%' . $key . '$s', $str);
 	}
 	//entities
-	preg_match_all('/(&[a-z#]+;)/i', $str, $matches);
+	preg_match_all('/(&[a-z0-9#]+;)/i', $str, $matches);
 	foreach (array_unique($matches[0]) as $key => $entity) {
 		$tags[3]['%' . $key . '$e'] = $entity;
 		$str = str_replace($entity, '%' . $key . '$e', $str);
-	}
+	} 
 	$str = htmlspecialchars($str, ENT_FLAGS, LOCAL_CHARSET);
 	foreach (array_reverse($tags, true) as $taglist) {
 		$str = strtr($str, $taglist);

@@ -679,7 +679,7 @@ class Zenphoto_Authority {
 							exitZP();
 						}
 					}
-					$_zp_login_error = gettext('Sorry, that is not the answer.');
+					if ( !empty($info['challenge']) && !empty($_POST['pass'])) { $_zp_login_error = gettext('Sorry, that is not the answer.'); }
 					$_REQUEST['logon_step'] = 'challenge';
 					break;
 				case 'captcha':
@@ -836,23 +836,11 @@ class Zenphoto_Authority {
 		$info = array('challenge' => '', 'response' => '');
 		if (!empty($requestor)) {
 			$admin = self::getAnAdmin(array('`user`=' => $requestor, '`valid`=' => 1));
-			if (is_object($admin) && rand(0, 4)) {
+			if (is_object($admin)) {
 				if ($admin->getEmail()) {
 					$star = $showCaptcha;
 				}
 				$info = $admin->getChallengePhraseInfo();
-			}
-			if (empty($info['challenge'])) {
-				$questions = array(gettext("What is your father’s middle name?"),
-								gettext("What street did your Grandmother live on?"),
-								gettext("Who was your favorite singer?"),
-								gettext("When did you first get a computer?"),
-								gettext("How much wood could a woodchuck chuck if a woodchuck could chuck wood?"),
-								gettext("What is the date of the Ides of March?")
-				);
-				$v = (int) md5($requestor);
-				$v = $v % count($questions);
-				$info = array('challenge' => $questions[$v], 'response' => 0x00);
 			}
 		}
 		if (!$star) {
@@ -919,9 +907,12 @@ class Zenphoto_Authority {
 								<input class="textfield" name="user" id="user" type="text" size="35" value="<?php echo html_encode($requestor); ?>" />
 							</fieldset>
 							<?php
-							if ($requestor) {
+							if ($requestor && $admin) {
+								if (!empty($info['challenge'])) {
 								?>
-								<p class="logon_form_text"><?php echo gettext('Supply the correct response to the question below and you will be directed to a page where you can change your password.'); ?></p>
+								<p class="logon_form_text"><?php echo gettext('Supply the correct response to the question below and you will be directed to a page where you can change your password.'); ?>
+								<?php if ( $admin->getEmail() ) { echo gettext('<br />You may also use the link below to request a reset by e-mail.'); } ?>
+								</p>
 								<fieldset><legend><?php echo gettext('Challenge question:') ?></legend>
 									<?php
 									echo html_encode($info['challenge']);
@@ -931,12 +922,19 @@ class Zenphoto_Authority {
 									<input class="textfield" name="pass" id="pass" type="text" size="35" />
 								</fieldset>
 								<br />
+								<?php } else {
+										if ( !$admin->getEmail() ) { ?>
+											<fieldset><p class="logon_form_text errorbox"><?php echo gettext('A password reset is not possible.'); ?></p></fieldset>
+									<?php } else { ?>
+											<p class="logon_form_text"><?php echo gettext('Please request a reset by e-mail by clicking the link below.'); ?></p>
 								<?php
+									}
+								}
 							} else {
 								?>
 								<p class="logon_form_text">
 									<?php
-									echo gettext('Enter your User ID and press <code>Refresh</code> to get your challenge question.');
+									echo gettext('Enter your User ID and press <code>Refresh</code> to get your challenge question and/or get a link to request a reset by e-mail.');
 									?>
 								</p>
 								<?php
@@ -951,7 +949,7 @@ class Zenphoto_Authority {
 						</fieldset>
 						<br />
 						<?php
-						if ($star) {
+						if ( $star && (!empty($requestor) && $admin->getEmail()) ) {
 							?>
 							<p class="logon_link">
 								<a href="javascript:launchScript('<?php echo WEBPATH . '/' . ZENFOLDER; ?>/admin.php',['logon_step=captcha', 'ref='+$('#user').val()]);" >
@@ -1140,11 +1138,12 @@ class Zenphoto_Authority {
 						$(displays).html('<?php echo gettext('password strength strong'); ?>');
 					}
 					if (strength < <?php echo (int) getOption('password_strength'); ?>) {
-						$(inputb).attr('disabled', 'disabled');
+						$(inputb).prop('disabled',true);
 						$(displays).css('color', '#ff0000');
 						$(displays).html('<?php echo gettext('password strength too weak'); ?>');
 					} else {
-						$(inputb).removeAttr('disabled');
+      $(inputb).parent().removeClass('ui-state-disabled');
+      $(inputb).prop('disabled',false);  
 						passwordMatch(id);
 					}
 					var url = 'url(<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/strengths/strength' + strength + '.png)';
@@ -1263,6 +1262,23 @@ class Zenphoto_Authority {
 		}
 		# Return derived key of correct length
 		return substr($dk, 0, $kl);
+	}
+	
+	/**
+	 * Checks if the email address being set is already used by another user
+	 * 
+	 * @param string $email_to_check email address to check
+	 * @param type $current_user user id of the user trying to set this email address
+	 * @return boolean
+	 */
+	function checkUniqueMailaddress($email_to_check, $current_user) {
+		$all_users = $this->getAdministrators('users');
+		foreach ($all_users as $user) {
+			if ($user['user'] != $current_user && $user['email'] == $email_to_check) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
@@ -1448,8 +1464,7 @@ class Zenphoto_Administrator extends PersistentObject {
 		$result = array();
 		foreach ($this->objects as $object) {
 			if ($object['type'] == $what) {
-				$result[$object['name']] = $object['data'];
-				break;
+				$result[get_language_string($object['name'])] = $object['data'];
 			}
 		}
 		return $result;

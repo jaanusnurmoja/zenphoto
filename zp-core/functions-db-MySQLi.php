@@ -11,8 +11,8 @@
 // force UTF-8 Ø
 
 define('DATABASE_SOFTWARE', 'MySQLi');
-Define('DATABASE_MIN_VERSION', '5.0.0');
-Define('DATABASE_DESIRED_VERSION', '5.5.0');
+define('DATABASE_MIN_VERSION', '5.0.0');
+define('DATABASE_DESIRED_VERSION', '5.5.0');
 
 /**
  * Connect to the database server and select the database.
@@ -135,9 +135,14 @@ function query_full_array($sql, $errorstop = true, $key = NULL) {
  * @param string $string
  * @return string
  */
-function db_quote($string) {
+function db_quote($string, $addquotes = true) {
 	global $_zp_DB_connection;
-	return "'" . $_zp_DB_connection->real_escape_string($string) . "'";
+	$escaped = $_zp_DB_connection->real_escape_string($string);
+	if ($addquotes) {
+		return "'" . $escaped . "'";
+	} else {
+		return $escaped;
+	}
 }
 
 /*

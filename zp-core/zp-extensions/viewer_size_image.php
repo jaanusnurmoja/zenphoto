@@ -9,15 +9,15 @@
  * a cookie and used as the default for future image viewing.
  *
  * Sizes as used for the default size and the allowed size list are strings with the
- * The form is <var>$s=<i>size</i></var> or <var>$h=<i>heigh</i>; $w=<i>width</i>;</var>.... See printCustomSizedImage() for
+ * The form is <var>$s=<i>size</i></var> or <var>$h=<i>heigh</i>; $w=<i>width</i>;</var>.... See <i>printCustomSizedImage()</i> for
  * information about how these values are used.
  *
- * If <var>$s</var> is present, the plugin will use printCustomSizedImage() to display the image. Otherwise
- * both <var>$w</var> and <var>$h</var> must be present. Then printCustomSizedImageMaxSpace() is used for
+ * If <var>$s</var> is present, the plugin will use <i>printCustomSizedImage()</i> to display the image. Otherwise
+ * both <var>$w</var> and <var>$h</var> must be present. Then <i>printCustomSizedImageMaxSpace()</i> is used for
  * displaying the image.
  *
  * You must place calls on <var>printUserSizeSelector()</var> and <var>printUserSizeImage()</var> at appropriate
- * places in your theme's image.php script to activate these features.
+ * places in your theme's image.php to activate these features.
  *
  * @author Stephen Billard (sbillard)
  * @package plugins
@@ -40,12 +40,14 @@ class viewer_size_image_options {
 			setOptionDefault('viewer_size_image_sizes', '$s=' . ($default - 200) . '; $s=' . ($default - 100) . '; $s=' . ($default) . '; $s=' . ($default + 100) . '; $s=' . ($default + 200) . ';');
 			setOptionDefault('viewer_size_image_default', '$s=' . $default);
 			setOptionDefault('viewer_size_image_radio', 2);
-			cacheManager::deleteThemeCacheSizes('viewer_size_image');
-			cacheManager::addThemeCacheSize('viewer_size_image', $default - 200, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-			cacheManager::addThemeCacheSize('viewer_size_image', $default - 100, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-			cacheManager::addThemeCacheSize('viewer_size_image', $default, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-			cacheManager::addThemeCacheSize('viewer_size_image', $default + 100, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-			cacheManager::addThemeCacheSize('viewer_size_image', $default + 200, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+			if (class_exists('cacheManager')) {
+				cacheManager::deleteThemeCacheSizes('viewer_size_image');
+				cacheManager::addThemeCacheSize('viewer_size_image', $default - 200, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+				cacheManager::addThemeCacheSize('viewer_size_image', $default - 100, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+				cacheManager::addThemeCacheSize('viewer_size_image', $default, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+				cacheManager::addThemeCacheSize('viewer_size_image', $default + 100, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+				cacheManager::addThemeCacheSize('viewer_size_image', $default + 200, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+			}
 		}
 	}
 

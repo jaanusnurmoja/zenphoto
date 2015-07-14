@@ -10,10 +10,10 @@ define('OFFSET_PATH', 2);
 require_once('setup-functions.php');
 require_once(dirname(dirname(__FILE__)) . '/admin-functions.php');
 
-$iMutex = new Mutex('i', getOption('imageProcessorConcurrency'));
+$iMutex = new zpMutex('i', getOption('imageProcessorConcurrency'));
 $iMutex->lock();
 
-$theme = sanitize(sanitize($_REQUEST['theme']));
+$theme = sanitize($_REQUEST['theme']);
 setupLog(sprintf(gettext('Theme:%s setup started'), $theme), true);
 $requirePath = getPlugin('themeoptions.php', $theme);
 if (!empty($requirePath)) {

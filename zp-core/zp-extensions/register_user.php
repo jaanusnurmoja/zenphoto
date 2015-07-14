@@ -5,7 +5,7 @@
  * Options are provided for setting the required registration details and the default
  * user rights that will be granted.
  *
- * Place a call on printRegistrationForm() where you want the form to appear.
+ * Place a call on <i>printRegistrationForm()</i> where you want the form to appear.
  * Probably the best use is to create a new <i>custom page</i> script just for handling these
  * user registrations. Then put a link to that script on your index page so that people
  * who wish to register will click on the link and be taken to the registration page.
@@ -219,17 +219,26 @@ class register_user {
 		if (empty($admin_n)) {
 			$_notify = 'incomplete';
 		}
+		$user = trim(sanitize($_POST['user']));
+		if (getOption('register_user_email_is_id')) {
+			$mail_duplicate = $_zp_authority->checkUniqueMailaddress($user, $user);
+			if ($mail_duplicate) {
+				$_notify = 'exists';
+			}
+		} 
 		if (isset($_POST['admin_email'])) {
 			$admin_e = trim(sanitize($_POST['admin_email']));
+			$mail_duplicate = $_zp_authority->checkUniqueMailaddress($admin_e, $user);
+			if($mail_duplicate) {
+				$_notify = 'duplicateemail';
+			}
 		} else {
-			$admin_e = trim(sanitize($_POST['user']));
+			$admin_e = $user;
 		}
 		if (!is_valid_email_zp($admin_e)) {
 			$_notify = 'invalidemail';
 		}
-
 		$pass = trim(sanitize($_POST['pass']));
-		$user = trim(sanitize($_POST['user']));
 		if (empty($pass)) {
 			$_notify = 'empty';
 		} else if (!empty($user) && !(empty($admin_n)) && !empty($admin_e)) {
@@ -287,7 +296,12 @@ class register_user {
 						}
 					} else {
 						$userobj->save();
-						$_link = PROTOCOL . "://" . $_SERVER['HTTP_HOST'] . register_user::getLink() . '?verify=' . bin2hex(serialize(array('user' => $user, 'email' => $admin_e)));
+						if (MOD_REWRITE) {
+							$verify = '?verify=';
+						} else {
+							$verify ='&verify=';
+						}
+						$_link = PROTOCOL . "://" . $_SERVER['HTTP_HOST'] . register_user::getLink() . $verify . bin2hex(serialize(array('user' => $user, 'email' => $admin_e)));
 						$_message = sprintf(get_language_string(getOption('register_user_text')), $_link, $admin_n, $user, $pass);
 						$_notify = zp_mail(get_language_string(gettext('Registration confirmation')), $_message, array($user => $admin_e));
 						if (empty($_notify)) {
@@ -431,7 +445,14 @@ function printRegistrationForm($thanks = NULL) {
 				?>
 				<div class="errorbox fade-message">
 					<h2><?php echo gettext("Registration failed."); ?></h2>
-					<p><?php printf(gettext('The user ID <em>%s</em> is already in use.'), $admin_e); ?></p>
+					<?php 
+						if(getOption('register_user_email_is_id')) { 
+							$idnote = $admin_e;
+						} else {
+							$idnote = $user;
+						} 
+					?>
+					<p><?php printf(gettext('The user ID <em>%s</em> is already in use.'), $idnote); ?></p>
 				</div>
 				<?php
 				break;
@@ -472,6 +493,14 @@ function printRegistrationForm($thanks = NULL) {
 				<div class="errorbox fade-message">
 					<h2><?php echo gettext("Registration failed."); ?></h2>
 					<p><?php echo gettext('Enter a valid email address.'); ?></p>
+				</div>
+				<?php
+				break;
+			case 'duplicateemail':
+				?>
+				<div class="errorbox fade-message">
+					<h2><?php echo gettext("Registration failed."); ?></h2>
+					<p><?php echo gettext('The email address entered is already used.'); ?></p>
 				</div>
 				<?php
 				break;

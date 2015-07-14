@@ -62,7 +62,10 @@ if (!defined('WEBPATH'))
 				<div id="header">
 					<div id="logo-floater">
 						<div>
-							<h1 class="title"><a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a></h1>
+							<h1 class="title">
+								<a href="<?php echo html_encode(getSiteHomeURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a>
+							</h1>
+							<span id="galleryDescription"><?php printGalleryDesc(); ?></span>
 						</div>
 					</div>
 				</div>
@@ -79,8 +82,7 @@ if (!defined('WEBPATH'))
 								<!-- begin content -->
 								<div class="main section" id="main">
 									<h2 id="gallerytitle">
-										<?php printHomeLink('', ' » '); ?>
-										<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a> » <?php printSearchBreadcrumb(' » '); ?>
+										<?php printHomeLink('', ' » '); printGalleryIndexURL(' » '); printSearchBreadcrumb(' » '); ?>
 									</h2>
 
 									<?php
@@ -104,7 +106,7 @@ if (!defined('WEBPATH'))
 										?>
 										<div id="garland_search">
 											<?php
-											if ($numpages > 0) {
+											if ($numpages > 0 && ZP_PAGES_ENABLED) {
 												?>
 												<div id="garland_searchhead_pages">
 													<h3><?php printf(gettext('Pages (%s)'), $numpages); ?></h3>
@@ -135,7 +137,7 @@ if (!defined('WEBPATH'))
 												</div>
 												<?php
 											}
-											if ($numnews > 0) {
+											if ($numnews > 0 && ZP_NEWS_ENABLED) {
 												if ($numpages > 0)
 													echo '<br />';
 												?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Support for the jPlayer jQuery/Flash 2.0.0 multimedia player (jplayer.org). It will play natively via HTML5 in capable browser
- * if the appropiate multimedia formats are provided. This is not an adaption of the existing 3rd party plugin zenjPlayer but a full featured plugin.
+ * if the appropiate multimedia formats are provided.
 
  * Audio: <var>.mp3</var>, <var>.m4a</var>, <var>.fla</var> - Counterpart formats <var>.oga</var> and <var>.webma</var> supported (see note below!)<br>
  * Video: <var>.m4v</var>/<var>.mp4</var>, <var>.flv</var> - Counterpart formats <var>.ogv</var> and <var>.webmv</var> supported (see note below!)
@@ -23,14 +23,14 @@
  * If you have problems with any format being recognized, you might need to tell your server about the mime types first:
  * See examples on {@link http://jplayer.org/latest/developer-guide/#jPlayer-server-response the jplayer site}.
  *
- * Note on POPCORN Support (http://popcornjs.org)
+ * NOTE on POPCORN Support (http://popcornjs.org):
  * jPlayer has support for this interactive libary and its plugin is included but currently not loaded or implemented. You need to customize the plugin or your theme to use it.
  * Please refer to http://jplayer.org/latest/developer-guide/ and http://popcornjs.org to learn about this extra functionality.
  *
  * NOTE ON PLAYER SKINS:<br>
  * The look of the player is determined by a pure HTML/CSS based skin (theme). There may occur display issues with themes.
  * Only the Zenphoto's own default skins <var>zenphotolight</var> and <var>zenphotodark</var>
- * have been tested with the standard themes (and not even with all it works perfectly). Those two themes are also have a responsive width.
+ * have been tested with the standard themes (and it does not work perfectly for all)). Those two themes are also have a responsive width.
  * So you might need to adjust the skin yourself to work with your theme. It is recommended that
  * you place your custom skins within the root /plugins folder like:
  *
@@ -58,8 +58,8 @@
  * [MEDIAPLAYER album1 video.mp4]
  *
  * If you are using more than one player on a page you need to pass a 2nd parameter with for example an unique number:<br>
- * [MEDIAPLAYER album1 video1.mp4 1]<br>
- * [MEDIAPLAYER album2 video2.mp4 2]
+ * [MEDIAPLAYER album1 video1.mp4 <var>1</var>]<br>
+ * [MEDIAPLAYER album2 video2.mp4 <var>2</var>]
  *
  * <b>NOTE:</b> This player does not support external albums!
  *
@@ -339,10 +339,15 @@ class jPlayer {
 			width: "100%",
 			height: "' . $this->height . 'px",
 			cssClass: "' . $this->playersize . '"
-		}';
+		},';
+		} else {
+			$playerconfig .= ',';
 		}
 
 		$playerconfig .= '
+			useStateClassSkin: true,
+			remainingDuration: true,
+			toggleDuration: true
 			});
 		});
 	//]]>
@@ -352,12 +357,12 @@ class jPlayer {
 		// This will also make it easier and more convenient to spot any html changes the jplayer developer might come up with later on (as he did from 2.0 to 2.1!)
 		if ($this->mode == 'video' || !empty($videoThumb)) {
 			$playerconfig .= '
-			<div id="jp_container_' . $count . '" class="jp-video ' . $this->playersize . '">
+			<div id="jp_container_' . $count . '" class="jp-video ' . $this->playersize . '" role="application" aria-label="media player">
 			<div class="jp-type-single">
 				<div id="jquery_jplayer_' . $count . '" class="jp-jplayer"></div>
 				<div class="jp-gui">
 					<div class="jp-video-play">
-						<a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
+						<button class="jp-video-play-icon" role="button" tabindex="0">' . gettext('play') . '</button>
 					</div>
 					<div class="jp-interface">
 						<div class="jp-progress">
@@ -365,28 +370,30 @@ class jPlayer {
 								<div class="jp-play-bar"></div>
 							</div>
 						</div>
-						<div class="jp-current-time"></div>
-						<div class="jp-duration"></div>
+						<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+						<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
 						<div class="jp-controls-holder">';
 			$playerconfig .= $this->getPlayerHTMLparts($this->mode, 'controls');
 			$playerconfig .= '
+						<div class="jp-volume-controls">
+							<button class="jp-mute" role="button" tabindex="0">' . gettext('mute') . '</button>
+							<button class="jp-volume-max" role="button" tabindex="0">' . gettext('max volume') . '</button>
 							<div class="jp-volume-bar">
 								<div class="jp-volume-bar-value"></div>
-							</div>';
+							</div>
+						</div>';
 			$playerconfig .= $this->getPlayerHTMLparts($this->mode, 'toggles');
 			$playerconfig .= '
 						</div>';
+			$playerconfig .= '
+						</div>
+					</div>';
 			if (getOption('jplayer_showtitle')) {
 				$playerconfig .= '
-						<div class="jp-title">
-							<ul>
-								<li>' . html_encode($movietitle) . '</li>
-							</ul>
-						</div>';
+					<div class="jp-details">
+						<div class="jp-title" aria-label="title">' . html_encode($movietitle) . '</div>
+					</div>';
 			}
-			$playerconfig .= '
-					</div>
-				</div>';
 			$playerconfig .= $this->getPlayerHTMLparts($this->mode, 'no-solution');
 			$playerconfig .= '
 			</div>
@@ -395,7 +402,7 @@ class jPlayer {
 		} else { // audio
 			$playerconfig .= '
 		<div id="jquery_jplayer_' . $count . '" class="jp-jplayer"></div>
-		<div id="jp_container_' . $count . '" class="jp-audio">
+		<div id="jp_container_' . $count . '" class="jp-audio" role="application" aria-label="media player">
 			<div class="jp-type-single">
 				<div class="jp-gui jp-interface">';
 			$playerconfig .= $this->getPlayerHTMLparts($this->mode, 'controls');
@@ -405,23 +412,25 @@ class jPlayer {
 							<div class="jp-play-bar"></div>
 						</div>
 					</div>
-					<div class="jp-volume-bar">
-						<div class="jp-volume-bar-value"></div>
+					<div class="jp-volume-controls">
+						<button class="jp-mute" role="button" tabindex="0">' . gettext('mute') . '</button>
+						<button class="jp-volume-max" role="button" tabindex="0">' . gettext('max volume') . '</button>
+						<div class="jp-volume-bar">
+							<div class="jp-volume-bar-value"></div>
+						</div>
 					</div>
 					<div class="jp-time-holder">
-						<div class="jp-current-time"></div>
-						<div class="jp-duration"></div>';
+						<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+						<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>';
 			$playerconfig .= $this->getPlayerHTMLparts($this->mode, 'toggles');
 			$playerconfig .= '
 					</div>
 				</div>';
 			if (getOption('jplayer_showtitle')) {
 				$playerconfig .= '
-						<div class="jp-title">
-							<ul>
-								<li>' . html_encode($movietitle) . '</li>
-							</ul>
-						</div>';
+					<div class="jp-details">
+						<div class="jp-title" aria-label="title">' . html_encode($movietitle) . '</div>
+					</div>';
 			}
 			$playerconfig .= $this->getPlayerHTMLparts($this->mode, 'no-solution');
 			$playerconfig .= '
@@ -458,44 +467,28 @@ class jPlayer {
 		switch ($part) {
 			case 'controls':
 			case 'controls-playlist':
-				$htmlpart = '
-			<ul class="jp-controls">';
-
+				$htmlpart = '<div class="jp-controls">';
 				if ($part == 'controls-playlist') {
-					$htmlpart .= '<li><a href="javascript:;" class="jp-previous" tabindex="1">' . gettext('previous') . '</a></li>';
+					$htmlpart .= '<button class="jp-previous" role="button" tabindex="0">' . gettext('previous') . '</button>';
 				}
-				$htmlpart .= '
-				<li><a href="javascript:;" class="jp-play" tabindex="1">' . gettext('play') . '</a></li>
-				<li><a href="javascript:;" class="jp-pause" tabindex="1">' . gettext('pause') . '</a></li>';
+				$htmlpart .= '<button class="jp-play" role="button" tabindex="0">' . gettext('play') . '</button>';
 				if ($part == 'controls-playlist') {
-					$htmlpart .= '<li><a href="javascript:;" class="jp-next" tabindex="1">' . gettext('next') . '</a></li>	';
+					$htmlpart .= '<button class="jp-next" role="button" tabindex="0">' . gettext('next') . '</button>	';
 				}
-				$htmlpart .= '
-				<li><a href="javascript:;" class="jp-stop" tabindex="1">' . gettext('stop') . '</a></li>
-				<li><a href="javascript:;" class="jp-mute" tabindex="1" title="' . gettext('mute') . '">' . gettext('mute') . '</a></li>
-				<li><a href="javascript:;" class="jp-unmute" tabindex="1" title="' . gettext('unmute') . '">' . gettext('unmute') . '</a></li>
-				<li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="' . gettext('max volume') . '">' . gettext('max volume') . '</a></li>
-			</ul>';
+				$htmlpart .= '<button class="jp-stop" role="button" tabindex="0">' . gettext('stop') . '</button>';
+				$htmlpart .= '</div>';
 				break;
 			case 'toggles':
 			case 'toggles-playlist':
-				$htmlpart = '<ul class="jp-toggles">';
-				if ($mode == 'video') {
-					$htmlpart .= '
-					<li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="' . gettext('full screen') . '">' . gettext('full screen') . '</a></li>
-					<li><a href="javascript:;" class="jp-restore-screen" tabindex="1" title="' . gettext('restore screen') . '">' . gettext('restore screen') . '</a></li>';
-				}
-
+				$htmlpart = '<div class="jp-toggles">';
+				$htmlpart .= '<button class="jp-repeat" role="button" tabindex="0">' . gettext('repeat') . '</button>';
 				if ($part == 'toggles-playlist') {
-					$htmlpart .= '
-					<li><a href="javascript:;" class="jp-shuffle" tabindex="1" title="' . gettext('shuffle') . '">' . gettext('shuffle') . '</a></li>
-					<li><a href="javascript:;" class="jp-shuffle-off" tabindex="1" title="' . gettext('shuffle off') . '">' . gettext('shuffle off') . '</a></li>
-					';
+					$htmlpart .= '<button class="jp-shuffle" role="button" tabindex="0">' . gettext('shuffle') . '</button>';
 				}
-				$htmlpart .= '
-			<li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">' . gettext('repeat') . '</a></li>
-			<li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">' . gettext('repeat off') . '</a></li>
-			</ul>';
+				if ($mode == 'video') {
+					$htmlpart .= '<button class="jp-full-screen" role="button" tabindex="0">' . gettext('full screen') . '</button>';
+				}
+				$htmlpart .= '</div>';
 				break;
 			case 'no-solution':
 				$htmlpart = '
@@ -691,9 +684,7 @@ class jPlayer {
 					}
 					$playtime = '';
 					if (getOption('jplayer_playlist_playtime')) {
-						if (!empty($playtime)) {
 							$playtime = ' (' . $video->get('VideoPlaytime') . ')';
-						}
 					}
 					?>
 						{
@@ -716,21 +707,27 @@ class jPlayer {
 			?>
 				], {
 				swfPath: "<?php echo WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER; ?>/jplayer/js",
-								solution: "flash,html",
-			<?php if ($option == 'playlist') { ?>
-					supplied: "m4v, mp4, m4a, mp3, fla, flv<?php echo $this->supplied_counterparts; ?>"
-			<?php } else { ?>
-					supplied: "m4a, mp3, fla<?php echo $this->supplied_counterparts; ?>"
+				solution: "flash,html",
+				<?php if ($option == 'playlist') { ?>
+					supplied: "m4v, mp4, m4a, mp3, fla, flv<?php echo $this->supplied_counterparts; ?>",
+				<?php } else { ?>
+					supplied: "m4a, mp3, fla<?php echo $this->supplied_counterparts; ?>",
 				<?php
-			}
-			if ($option != 'playlist-audio') {
+				}
+				if ($option != 'playlist-audio') {
 				?>
-					, size: {
+				size: {
 					width: "<?php echo $this->width; ?>px",
-									height: "<?php echo $this->height; ?>px",
-									cssClass: "<?php echo $this->playersize; ?>"
-					}
-			<?php } ?>
+					height: "<?php echo $this->height; ?>px",
+					cssClass: "<?php echo $this->playersize; ?>"
+					},
+				<?php } ?>
+				useStateClassSkin: true,
+				autoBlur: false,
+				smoothPlayBar: true,
+				keyEnabled: true,
+				remainingDuration: true,
+				toggleDuration: true
 				});
 				});
 								//]]>
@@ -738,12 +735,12 @@ class jPlayer {
 			<?php
 			if ($option == 'playlist') {
 				?>
-				<div id="jp_container_<?php echo $id; ?>" class="jp-video <?php echo $this->playersize; ?>">
+				<div id="jp_container_<?php echo $id; ?>" class="jp-video <?php echo $this->playersize; ?>" role="application" aria-label="media player">
 					<div class="jp-type-playlist">
 						<div id="jquery_jplayer_<?php echo $id; ?>" class="jp-jplayer"></div>
 						<div class="jp-gui">
 							<div class="jp-video-play">
-								<a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
+								<button class="jp-video-play-icon" role="button" tabindex="0"><?php echo gettext('play'); ?></button>
 							</div>
 							<div class="jp-interface">
 								<div class="jp-progress">
@@ -751,26 +748,28 @@ class jPlayer {
 										<div class="jp-play-bar"></div>
 									</div>
 								</div>
-								<div class="jp-current-time"></div>
-								<div class="jp-duration"></div>
+								<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+								<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
 								<div class="jp-controls-holder">
 									<?php echo $this->getPlayerHTMLparts('video', 'controls-playlist'); ?>
-									<div class="jp-volume-bar">
-										<div class="jp-volume-bar-value"></div>
+									<div class="jp-volume-controls">
+										<button class="jp-mute" role="button" tabindex="0"><?php echo gettext('mute'); ?></button>
+										<button class="jp-volume-max" role="button" tabindex="0"><?php echo gettext('max volume'); ?></button>
+										<div class="jp-volume-bar">
+											<div class="jp-volume-bar-value"></div>
+										</div>
 									</div>
 									<?php echo $this->getPlayerHTMLparts('video', 'toggles-playlist'); ?>
 								</div>
-								<div class="jp-title">
-									<ul>
-										<li></li>
-									</ul>
+								<div class="jp-details">
+									<div class="jp-title" aria-label="title">&nbsp;</div>
 								</div>
 							</div>
 						</div>
 						<div class="jp-playlist">
 							<ul>
 								<!-- The method Playlist.displayPlaylist() uses this unordered list -->
-								<li></li>
+								<li>&nbsp;</li>
 							</ul>
 						</div>
 						<?php echo $this->getPlayerHTMLparts('video', 'no-solution'); ?>
@@ -780,7 +779,7 @@ class jPlayer {
 			} else { // playlist-audio
 				?>
 				<div id="jquery_jplayer_<?php echo $id; ?>" class="jp-jplayer"></div>
-				<div id="jp_container_<?php echo $id; ?>" class="jp-audio">
+				<div id="jp_container_<?php echo $id; ?>" class="jp-audio" role="application" aria-label="media player">
 					<div class="jp-type-playlist">
 						<div class="jp-gui jp-interface">
 							<?php echo $this->getPlayerHTMLparts('audio', 'controls-playlist'); ?>
@@ -789,18 +788,22 @@ class jPlayer {
 									<div class="jp-play-bar"></div>
 								</div>
 							</div>
-							<div class="jp-volume-bar">
-								<div class="jp-volume-bar-value"></div>
+							<div class="jp-volume-controls">
+								<button class="jp-mute" role="button" tabindex="0"><?php echo gettext('mute'); ?></button>
+								<button class="jp-volume-max" role="button" tabindex="0"><?php echo gettext('max volume'); ?></button>
+								<div class="jp-volume-bar">
+									<div class="jp-volume-bar-value"></div>
+								</div>
 							</div>
 							<div class="jp-time-holder">
-								<div class="jp-current-time"></div>
-								<div class="jp-duration"></div>
+								<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+								<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
 							</div>
 							<?php echo $this->getPlayerHTMLparts('audio', 'toggles-playlist'); ?>
 						</div>
 						<div class="jp-playlist">
 							<ul>
-								<li></li>
+								<li>&nbsp;</li>
 							</ul>
 						</div>
 						<?php echo $this->getPlayerHTMLparts('audio', 'no-solution'); ?>

@@ -259,17 +259,17 @@ function lookupSortKey($sorttype, $default, $table) {
 		case 'random':
 			return 'RAND()';
 		case "manual":
-			return '`sort_order`';
+			return 'sort_order';
 		case "filename":
 			switch ($table) {
 				case 'images':
-					return '`filename`';
+					return 'filename';
 				case 'albums':
-					return '`folder`';
+					return 'folder';
 			}
 		default:
 			if (empty($sorttype)) {
-				return '`' . $default . '`';
+				return $default;
 			}
 			if (substr($sorttype, 0) == '(') {
 				return $sorttype;
@@ -288,12 +288,16 @@ function lookupSortKey($sorttype, $default, $table) {
 			}
 			$sorttype = strtolower($sorttype);
 			$list = explode(',', $sorttype);
+			$fields = array();
+			// Critical for preventing SQL injection: only return parts of 
+			// the custom sort that are exactly equal to database fields.
 			foreach ($list as $key => $field) {
+				$field = trim($field);
 				if (array_key_exists($field, $dbfields)) {
-					$list[$key] = '`' . trim($dbfields[$field]) . '`';
+					$fields[$key] = trim($dbfields[$field]);
 				}
 			}
-			return implode(',', $list);
+			return implode(',', $fields);
 	}
 }
 
@@ -1069,43 +1073,161 @@ function setupTheme($album = NULL) {
 /**
  * Returns an array of unique tag names
  *
+ * @param bool $checkaccess Set to true if you wish to exclude tags that are assigned to items (or are not assigned at all) the visitor is not allowed to see
+ * Beware that this may cause overhead on large sites. Usage of the static_html_cache plugin is strongely recommended.
  * @return array
  */
-function getAllTagsUnique() {
-	global $_zp_unique_tags;
-	if (!is_null($_zp_unique_tags))
-		return $_zp_unique_tags; // cache them.
-	$_zp_unique_tags = array();
-	$sql = "SELECT DISTINCT `name` FROM " . prefix('tags') . ' ORDER BY `name`';
-	$unique_tags = query($sql);
-	if ($unique_tags) {
-		while ($tagrow = db_fetch_assoc($unique_tags)) {
-			$_zp_unique_tags[] = $tagrow['name'];
-		}
-		db_free_result($unique_tags);
-	}
-	return $_zp_unique_tags;
+function getAllTagsUnique($checkaccess = false) {
+  global $_zp_unique_tags, $_zp_unique_tags_excluded;
+  if(zp_loggedin(VIEW_ALL_RIGHTS)) {
+    $checkaccess = false;
+  }
+  //need to cache all and filtered tags indiviually
+  if ($checkaccess) {
+    if (!is_null($_zp_unique_tags_excluded)) {
+      return $_zp_unique_tags_excluded; // cache them.
+    }
+  } else {
+    if (!is_null($_zp_unique_tags)) {
+      return $_zp_unique_tags; // cache them.
+    }
+  }
+  $all_unique_tags = array();
+  $sql = "SELECT DISTINCT `name`, `id` FROM " . prefix('tags') . ' ORDER BY `name`';
+  $unique_tags = query($sql);
+  if ($unique_tags) {
+    while ($tagrow = db_fetch_assoc($unique_tags)) {
+      if ($checkaccess) {
+        if (getTagCountByAccess($tagrow) != 0) {
+          $all_unique_tags[] = $tagrow['name'];
+        }
+      } else {
+        $all_unique_tags[] = $tagrow['name'];
+      }
+    }
+    db_free_result($unique_tags);
+  }
+  if ($checkaccess) {
+    $_zp_unique_tags_excluded = $all_unique_tags;
+    return $_zp_unique_tags_excluded;
+  } else {
+    $_zp_unique_tags = $all_unique_tags;
+    return $_zp_unique_tags;
+  }
 }
 
 /**
  * Returns an array indexed by 'tag' with the element value the count of the tag
  *
+ * @param bool $exclude_unassigned Set to true if you wish to exclude tags that are not assigne to any item
+ * @param bool $checkaccess Set to true if you wish to exclude tags that are assigned to items (or are not assigned at all) the visitor is not allowed to see
+ * If set to true it overrides the $exclude_unassigned parameter.
+ * Beware that this may cause overhead on large sites. Usage of the static_html_cache plugin is strongely recommended.
  * @return array
  */
-function getAllTagsCount() {
-	global $_zp_count_tags;
-	if (!is_null($_zp_count_tags))
-		return $_zp_count_tags;
-	$_zp_count_tags = array();
-	$sql = "SELECT DISTINCT tags.name, tags.id, (SELECT COUNT(*) FROM " . prefix('obj_to_tag') . " as object WHERE object.tagid = tags.id) AS count FROM " . prefix('tags') . " as tags ORDER BY `name`";
-	$tagresult = query($sql);
-	if ($tagresult) {
-		while ($tag = db_fetch_assoc($tagresult)) {
-			$_zp_count_tags[$tag['name']] = $tag['count'];
-		}
-		db_free_result($tagresult);
-	}
-	return $_zp_count_tags;
+function getAllTagsCount($exclude_unassigned = false, $checkaccess = false) {
+  global $_zp_count_tags;
+  if (!is_null($_zp_count_tags)) {
+    return $_zp_count_tags;
+  }
+  if(zp_loggedin(VIEW_ALL_RIGHTS)) {
+    $exclude_unassigned = false;
+    $checkaccess = false;
+  }
+  $_zp_count_tags = array();
+  $sql = "SELECT DISTINCT tags.name, tags.id, (SELECT COUNT(*) FROM " . prefix('obj_to_tag') . " as object WHERE object.tagid = tags.id) AS count FROM " . prefix('tags') . " as tags ORDER BY `name`";
+  $tagresult = query($sql);
+  if ($tagresult) {
+    while ($tag = db_fetch_assoc($tagresult)) {
+      if($checkaccess) {
+        $count = getTagCountByAccess($tag);
+        if($count != 0) {
+          $_zp_count_tags[$tag['name']] = $count;
+        }
+      } else {
+        if($exclude_unassigned) {
+          if($tag['count'] != 0) {
+            $_zp_count_tags[$tag['name']] = $tag['count'];
+          }
+        } else {
+          $_zp_count_tags[$tag['name']] = $tag['count'];
+        }
+      }
+    }
+    db_free_result($tagresult);
+  }
+  return $_zp_count_tags;
+}
+
+/**
+ * Checks if a tag is assigned at all and if it can be viewed by the current visitor and returns the corrected count
+ * Helper function used optionally within getAllTagsCount() and getAllTagsUnique()
+ *
+ * @global obj $_zp_zenpage
+ * @param array $tag Array representing a tag containing at least its name and id
+ * @return int
+ */
+function getTagCountByAccess($tag) {
+  global $_zp_zenpage, $_zp_object_to_tags;
+  if (array_key_exists('count', $tag) && $tag['count'] == 0) {
+    return $tag['count'];
+  }
+  $hidealbums = getNotViewableAlbums();
+  $hideimages = getNotViewableImages();
+  $hidenews = array();
+  $hidepages = array();
+  if (extensionEnabled('Zenpage')) {
+    $hidenews = $_zp_zenpage->getNotViewableNews();
+    $hidepages = $_zp_zenpage->getNotViewablePages();
+  }
+  //skip checks if there are no unviewable items at all
+  if (empty($hidealbums) && empty($hideimages) && empty($hidenews) && empty($hidepages)) {
+    if (array_key_exists('count', $tag)) {
+      return $tag['count'];
+    }
+    return 0;
+  } 
+  if (is_null($_zp_object_to_tags)) {
+    $sql = "SELECT tagid, type, objectid FROM " . prefix('obj_to_tag') . " ORDER BY tagid";
+    $_zp_object_to_tags = query_full_array($sql); 
+  }
+  $count = '';
+  if ($_zp_object_to_tags) {
+    foreach($_zp_object_to_tags as $tagcheck) {
+      if ($tagcheck['tagid'] == $tag['id']) {
+        switch ($tagcheck['type']) {
+          case 'albums':
+            if (!in_array($tagcheck['objectid'], $hidealbums)) {
+              $count++;
+            }
+            break;
+          case 'images':
+            if (!in_array($tagcheck['objectid'], $hideimages)) {
+              $count++;
+            }
+            break;
+          case 'news':
+            if (extensionEnabled('Zenpage') && ZP_NEWS_ENABLED) {
+              if (!in_array($tagcheck['objectid'], $hidenews)) {
+                $count++;
+              }
+            }
+            break;
+          case 'pages':
+            if (extensionEnabled('Zenpage') && ZP_PAGES_ENABLED) {
+              if (!in_array($tagcheck['objectid'], $hidepages)) {
+                $count++;
+              }
+            }
+            break;
+        }
+      }
+    }
+  }
+  if (empty($count)) {
+    $count = 0;
+  }
+  return $count;
 }
 
 /**
@@ -1385,10 +1507,9 @@ function sortMultiArray($array, $index, $descending = false, $natsort = true, $c
  * @return array
  */
 function getNotViewableAlbums() {
-	global $_zp_not_viewable_album_list, $_zp_gallery;
+	global $_zp_not_viewable_album_list;
 	if (zp_loggedin(ADMIN_RIGHTS | MANAGE_ALL_ALBUM_RIGHTS))
 		return array(); //admins can see all
-	$hint = '';
 	if (is_null($_zp_not_viewable_album_list)) {
 		$sql = 'SELECT `folder`, `id`, `password`, `show` FROM ' . prefix('albums') . ' WHERE `show`=0 OR `password`!=""';
 		$result = query($sql);
@@ -1411,6 +1532,34 @@ function getNotViewableAlbums() {
 }
 
 /**
+ * Returns a list of image IDs that the current viewer is not allowed to see
+ *
+ * @return array
+ */
+function getNotViewableImages() {
+  global $_zp_not_viewable_image_list;
+  if (zp_loggedin(ADMIN_RIGHTS | MANAGE_ALL_ALBUM_RIGHTS)) {
+    return array(); //admins can see all
+  }
+  $hidealbums = getNotViewableAlbums();
+  $where = '';
+  if (!is_null($hidealbums)) {
+    $where = implode(',', $hidealbums);
+  }
+  if (is_null($_zp_not_viewable_image_list)) {
+    $sql = 'SELECT DISTINCT `id` FROM ' . prefix('images') . ' WHERE `show` = 0 OR `albumid` in (' . $where . ')';
+    $result = query($sql);
+    if ($result) {
+      $_zp_not_viewable_image_list = array();
+      while ($row = db_fetch_assoc($result)) {
+        $_zp_not_viewable_image_list[] = $row['id'];
+      }
+    }
+  }
+  return $_zp_not_viewable_image_list;
+}
+
+  /**
  * Checks to see if a URL is valid
  *
  * @param string $url the URL being checked
@@ -1684,13 +1833,14 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 	// Handle the login form.
 	if (DEBUG_LOGIN)
 		debugLog("zp_handle_password: \$authType=$authType; \$check_auth=$check_auth; \$check_user=$check_user; ");
+
 	if (isset($_POST['password']) && isset($_POST['pass'])) { // process login form
 		if (isset($_POST['user'])) {
 			$post_user = sanitize($_POST['user']);
 		} else {
 			$post_user = '';
 		}
-		$post_pass = sanitize($_POST['pass']);
+		$post_pass = $_POST['pass']; // We should not sanitize the password
 
 		foreach (Zenphoto_Authority::$hashList as $hash => $hi) {
 			$auth = Zenphoto_Authority::passwordHash($post_user, $post_pass, $hi);
@@ -2313,6 +2463,45 @@ function getMacros() {
 	return $_zp_content_macros;
 }
 
+/**
+ * generates a nested list of albums for the album tab sorting
+ * Returns an array of "albums" each element contains:
+ * 								'name' which is the folder name
+ * 								'sort_order' which is an array of the sort order set
+ *
+ * @param $subalbum root level album (NULL is the gallery)
+ * @param $levels how far to nest
+ * @param $checkalbumrights TRUE (Default) for album rights for backend usage, FALSE to skip for frontend usage 
+ * @param $level internal for keeping the sort order elements
+ * @return array
+ */
+function getNestedAlbumList($subalbum, $levels, $checkalbumrights = true, $level = array()) {
+	global $_zp_gallery;
+	$cur = count($level);
+	$levels--; // make it 0 relative to sync with $cur
+	if (is_null($subalbum)) {
+		$albums = $_zp_gallery->getAlbums();
+	} else {
+		$albums = $subalbum->getAlbums();
+	}
+	$list = array();
+	foreach ($albums as $analbum) {
+		$albumobj = newAlbum($analbum);
+  $accessallowed = true;
+  if($checkalbumrights) {
+    $accessallowed = $albumobj->isMyItem(ALBUM_RIGHTS);
+  } 
+		if (!is_null($subalbum) || $accessallowed) {
+			$level[$cur] = sprintf('%03u', $albumobj->getSortOrder());
+			$list[] = array('name' => $analbum, 'sort_order' => $level);
+			if ($cur < $levels && ($albumobj->getNumAlbums()) && !$albumobj->isDynamic()) {
+				$list = array_merge($list, getNestedAlbumList($albumobj, $levels + 1, $checkalbumrights, $level));
+			}
+		}
+	}
+	return $list;
+}
+
 class zpFunctions {
 
 	/**
@@ -2356,6 +2545,10 @@ class zpFunctions {
 			$text = @$_locale_Subdomains[zp_getCookie('dynamic_locale')];
 		} else {
 			$text = @$_locale_Subdomains[$loc];
+			//en_US always is always empty here so so urls in dynamic locale or html_meta_tags are wrong (Quickfix)
+			if(empty($text)) {
+				$text = $loc; 
+			}
 		}
 		if (!is_null($separator)) {
 			$text = str_replace('_', $separator, $text);

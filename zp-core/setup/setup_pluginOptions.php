@@ -11,10 +11,10 @@ require_once('setup-functions.php');
 require_once(dirname(dirname(__FILE__)) . '/admin-globals.php');
 require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/cacheManager.php');
 
-$iMutex = new Mutex('i', getOption('imageProcessorConcurrency'));
+$iMutex = new zpMutex('i', getOption('imageProcessorConcurrency'));
 $iMutex->lock();
 
-$extension = sanitize(sanitize($_REQUEST['plugin']));
+$extension = sanitize($_REQUEST['plugin']);
 setupLog(sprintf(gettext('Plugin:%s setup started'), $extension), true);
 $option_interface = NULL;
 $plugin_is_filter = 5 | THEME_PLUGIN;

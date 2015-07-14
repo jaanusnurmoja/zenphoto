@@ -1,8 +1,13 @@
 <?php
 
 /**
- * The plugin usses general existing Zenphoto info like <i>gallery description</i>, <i>tags</i> or Zenpage <i>news categories</i>.
- * It also has support for <var><link rel="canonical" href="" /></var>
+ * The plugin creates:
+ * <ul>
+ * <li><meta> tags using general existing Zenphoto info like <i>gallery description</i>, <i>tags</i> or Zenpage <i>news categories</i>.</li>
+ * <li>Support for <var><link rel="canonical" href="..." /></var></li>
+ * <li>Open Graph tags for social sharing</li>
+ * <li>Pinterest sharing tag</li>
+ * </ul>
  *
  * Just enable the plugin and the meta data will be inserted into your <var><head></var> section.
  * Use the plugin's options to choose which tags you want printed.
@@ -55,6 +60,8 @@ class htmlmetatags {
 		setOptionDefault('htmlmeta_sitelogo', '');
 		setOptionDefault('htmlmeta_twittercard', '');
 		setOptionDefault('htmlmeta_twittername', '');
+		setOptionDefault('htmlmeta_ogimage_width', 1280);
+		setOptionDefault('htmlmeta_ogimage_height', 900);
 	}
 
 	// Gettext calls are removed because some terms like "noindex" are fixed terms that should not be translated so user know what setting they make.
@@ -85,6 +92,10 @@ class htmlmetatags {
 										'desc' => gettext("Enter the full url to a specific site logo image. Facebook, Google+ and others will use that as the thumb shown in link previews within posts. For image or album pages the default size album or image thumb is used automatically.")),
 						gettext('Twitter name')					 => array('key'	 => 'htmlmeta_twittername', 'type' => OPTION_TYPE_TEXTBOX,
 										'desc' => gettext("If you enabled Twitter card meta tags, you need to enter your Twitter user name here.")),
+						gettext('Open graph image - width')							 => array('key'	 => 'htmlmeta_ogimage_width', 'type' => OPTION_TYPE_TEXTBOX,
+										'desc' => gettext("Max width of the open graph image used for sharing to social networks if enabled.")),
+						gettext('Open graph image - height')							 => array('key'	 => 'htmlmeta_ogimage_height', 'type' => OPTION_TYPE_TEXTBOX,
+										'desc' => gettext("Max height of the open graph image used for sharing to social networks if enabled.")),
 						gettext('HTML meta tags')				 => array('key'				 => 'htmlmeta_tags', 'type'			 => OPTION_TYPE_CHECKBOX_UL,
 										"checkboxes" => array(
 														"http-equiv='cache-control'"					 => "htmlmeta_http-equiv-cache-control",
@@ -147,7 +158,7 @@ class htmlmetatags {
 	static function getHTMLMetaData() {
 		global $_zp_gallery, $_zp_galley_page, $_zp_current_album, $_zp_current_image, $_zp_current_zenpage_news,
 		$_zp_current_zenpage_page, $_zp_gallery_page, $_zp_current_category, $_zp_authority, $_zp_conf_vars, $_myFavorites,
-		$htmlmetatags_need_cache;
+		$htmlmetatags_need_cache, $_zp_page;
 		zp_register_filter('image_processor_uri', 'htmlmetatags::ipURI');
 		$host = sanitize("http://" . $_SERVER['HTTP_HOST']);
 		$url = $host . getRequestURI();
@@ -163,20 +174,33 @@ class htmlmetatags {
 		if (getOption('htmlmeta_sitelogo')) {
 			$thumb = getOption('htmlmeta_sitelogo');
 		}
+		if (getOption('htmlmeta_og-image') || getOption('htmlmeta_twittercard')) {
+			$ogimage_width = getOption('htmlmeta_ogimage_width');
+			$ogimage_height = getOption('htmlmeta_ogimage_height');
+			if (empty($ogimage_width)) {
+				$ogimage_width = 1280;
+			}
+			if (empty($ogimage_height)) {
+				$ogimage_height = 900;
+			}
+		}
 		$type = 'article';
 		switch ($_zp_gallery_page) {
 			case 'index.php':
 				$desc = getBareGalleryDesc();
-				$canonicalurl = $host . getGalleryIndexURL();
+				//$canonicalurl = $host . getGalleryIndexURL();
+				$canonicalurl = $host . getPageNumURL($_zp_page);
 				$type = 'website';
 				break;
 			case 'album.php':
 				$pagetitle = getBareAlbumTitle() . " - ";
 				$date = getAlbumDate();
 				$desc = getBareAlbumDesc();
-				$canonicalurl = $host . getAlbumURL();
+				$canonicalurl = $host . getPageNumURL($_zp_page);
 				if (getOption('htmlmeta_og-image') || getOption('htmlmeta_twittercard')) {
-					$thumb = $host . getAlbumThumb();
+					$thumbimg = $_zp_current_album->getAlbumThumbImage();
+					getMaxSpaceContainer($ogimage_width, $ogimage_height, $thumbimg, false);
+					$thumb = $host . html_encode(pathurlencode($thumbimg->getCustomImage(NULL, $ogimage_width, $ogimage_height, NULL, NULL, NULL, NULL, false, NULL)));
 				}
 				break;
 			case 'image.php':
@@ -185,7 +209,7 @@ class htmlmetatags {
 				$desc = getBareImageDesc();
 				$canonicalurl = $host . getImageURL();
 				if (getOption('htmlmeta_og-image') || getOption('htmlmeta_twittercard')) {
-					$thumb = $host . getImageThumb();
+					$thumb = $host . html_encode(pathurlencode(getCustomSizedImageMaxSpace($ogimage_width, $ogimage_height)));
 				}
 				break;
 			case 'news.php':
@@ -206,6 +230,9 @@ class htmlmetatags {
 						$desc = '';
 						$canonicalurl = $host . getNewsIndexURL();
 						$type = 'website';
+					}
+					if ($_zp_page != 1) {
+						$canonicalurl .= '/' . $_zp_page;
 					}
 				}
 				break;
@@ -228,7 +255,11 @@ class htmlmetatags {
 				}
 				$desc = '';
 				$canonicalurl = $host . getCustomPageURL($custompage);
+				if ($_zp_page != 1) {
+					$canonicalurl .= '/'. $_zp_page;
+				}
 				break;
+				
 		}
 		// shorten desc to the allowed 200 characters if necesssary.
 		$desc = html_encode(trim(substr(getBare($desc), 0, 160)));
@@ -270,14 +301,17 @@ class htmlmetatags {
 		if (getOption('htmlmeta_name-rights')) {
 			$meta .= '<meta name="rights" content="' . $author . '">' . "\n";
 		}
+		if (getOption('htmlmeta_name-generator')) {
+			$meta .= '<meta name="generator" content="Zenphoto ' . ZENPHOTO_VERSION . '">' . "\n";
+		}
 		if (getOption('htmlmeta_name-revisit-after')) {
 			$meta .= '<meta name="revisit-after" content="' . getOption("htmlmeta_revisit_after") . '">' . "\n";
 		}
 		if (getOption('htmlmeta_name-expires')) {
-				$expires = getOption("htmlmeta_expires");
-				if ($expires == (int) $expires)
-					$expires = preg_replace('|\s\-\d+|', '', date('r', time() + $expires)) . ' GMT';
-				$meta .= '<meta name="expires" content="' . $expires . '">' . "\n";
+			$expires = getOption("htmlmeta_expires");
+			if ($expires == (int) $expires)
+				$expires = preg_replace('|\s\-\d+|', '', date('r', time() + $expires)) . ' GMT';
+			$meta .= '<meta name="expires" content="' . $expires . '">' . "\n";
 		}
 
 		// OpenGraph meta
@@ -333,9 +367,13 @@ class htmlmetatags {
 							}
 							switch ($_zp_gallery_page) {
 								case 'index.php':
+									$altlink .= '/';
+									break;
+								case 'gallery.php':
+									$altlink .= '/'. _PAGE_ . '/gallery';
 									break;
 								case 'album.php':
-									$altlink .= '/' . html_encode($_zp_current_album->name);
+									$altlink .= '/' . html_encode($_zp_current_album->name) . '/';
 									break;
 								case 'image.php':
 									$altlink .= '/' . html_encode($_zp_current_album->name) . '/' . html_encode($_zp_current_image->filename) . IM_SUFFIX;
@@ -355,10 +393,10 @@ class htmlmetatags {
 									$altlink .= '/' . _PAGES_ . '/' . html_encode($_zp_current_zenpage_page->getTitlelink());
 									break;
 								case 'archive.php':
-									$altlink .= '/' . $_zp_conf_vars['special_pages']['archive']['rewrite'] . '/';
+									$altlink .= '/' . _ARCHIVE_ ;
 									break;
 								case 'search.php':
-									$altlink .= '/' . $_zp_conf_vars['special_pages']['search']['rewrite'] . '/';
+									$altlink .= '/' . _SEARCH_ . '/';
 									break;
 								case 'contact.php':
 									$altlink .= '/' . _PAGE_ . '/contact';
@@ -367,11 +405,31 @@ class htmlmetatags {
 									$altlink .= '/' . _PAGE_ . '/' . html_encode($pagetitle);
 									break;
 							} // switch
+							
+							//append page number if needed
+							switch ($_zp_gallery_page) {
+								case 'index.php':
+								case 'album.php':
+									if ($_zp_page != 1) {
+										$altlink .= _PAGE_ . '/' . $_zp_page . '/';
+									}
+									break;
+								case 'gallery.php':
+								case 'news.php':
+									if ($_zp_page != 1) {
+										$altlink .= '/' . $_zp_page;
+									}
+									break;
+							}
 							$meta .= '<link rel="alternate" hreflang="' . $langcheck . '" href="' . $altlink . '">' . "\n";
 						} // if lang
 					} // foreach
 				} // if count
 			} // if option
+				
+		
+			
+			
 		} // if canonical
 		if (!empty($htmlmetatags_need_cache)) {
 			$meta .= '<script type="text/javascript">' . "\n";
@@ -407,7 +465,7 @@ class htmlmetatags {
 			$tags = getTags();
 			$words .= htmlmetatags::getMetaAlbumAndImageTags($tags, "gallery");
 		} else if ($_zp_gallery_page === "index.php") {
-			$tags = array_keys(getAllTagsCount()); // get all if no specific item is set
+			$tags = array_keys(getAllTagsCount(true)); // get all if no specific item is set
 			$words .= htmlmetatags::getMetaAlbumAndImageTags($tags, "gallery");
 		}
 		if (extensionEnabled('zenpage')) {
@@ -461,5 +519,4 @@ class htmlmetatags {
 	}
 
 }
-
 ?>

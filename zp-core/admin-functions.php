@@ -833,60 +833,66 @@ function printAdminHeader($tab, $subtab = NULL) {
 	}
 
 	function processCustomOptionSave($returntab, $themename = NULL, $themealbum = NULL) {
-		$customHandlers = array();
-		foreach ($_POST as $postkey => $value) {
-			if (preg_match('/^' . CUSTOM_OPTION_PREFIX . '/', $postkey)) { // custom option!
-				$key = substr($postkey, strpos($postkey, '-') + 1);
-				$switch = substr($postkey, strlen(CUSTOM_OPTION_PREFIX), -strlen($key) - 1);
-				switch ($switch) {
-					case 'text':
-						$value = process_language_string_save($key, 1);
-						break;
-					case 'cleartext':
-						if (isset($_POST[$key])) {
-							$value = sanitize($_POST[$key], 0);
-						} else {
-							$value = '';
-						}
-						break;
-					case 'chkbox':
-						$value = (int) isset($_POST[$key]);
-						break;
-					case 'save':
-						$customHandlers[] = array('whom' => $key, 'extension' => sanitize($_POST[$postkey]));
-						continue;
-						break;
-					default:
-						if (isset($_POST[$key])) {
-							$value = sanitize($_POST[$key], 1);
-						} else {
-							$value = '';
-						}
-						break;
-				}
-				if ($themename) {
-					setThemeOption($key, $value, $themealbum, $themename);
-				} else {
-					setOption($key, $value);
-				}
-			} else {
-				if (strpos($postkey, 'show-') === 0) {
-					if ($value)
-						$returntab .= '&' . $postkey;
-				}
-			}
-		}
-		foreach ($customHandlers as $custom) {
-			if ($extension = $custom['extension']) {
-				require_once(getPlugin($extension . '.php'));
-			}
-			$whom = new $custom['whom']();
-			$returntab = $whom->handleOptionSave($themename, $themealbum) . $returntab;
-		}
-		return $returntab;
-	}
+  $customHandlers = array();
+  foreach ($_POST as $postkey => $value) {
+    if (preg_match('/^' . CUSTOM_OPTION_PREFIX . '/', $postkey)) { // custom option!
+      $key = substr($postkey, strpos($postkey, '-') + 1);
+      $switch = substr($postkey, strlen(CUSTOM_OPTION_PREFIX), -strlen($key) - 1);
+      switch ($switch) {
+        case 'text':
+          $value = process_language_string_save($key, 1);
+          break;
+        case 'cleartext':
+          if (isset($_POST[$key])) {
+            $value = sanitize($_POST[$key], 0);
+          } else {
+            $value = '';
+          }
+          break;
+        case 'chkbox':
+          $value = (int) isset($_POST[$key]);
+          break;
+        case 'save':
+          $customHandlers[] = array('whom' => $key, 'extension' => sanitize($_POST[$postkey]));
+          continue;
+          break;
+        default:
+          if (isset($_POST[$key])) {
+            $value = sanitize($_POST[$key], 1);
+          } else {
+            $value = '';
+          }
+          break;
+      }
+      if ($themename) {
+        setThemeOption($key, $value, $themealbum, $themename);
+      } else {
+        $creator = NULL;
+        if(isset($_GET['single'])) { // single plugin save
+          $ext = sanitize($_GET['single'],1);
+          $pl = getPlugin($ext . '.php',false,true);
+          $creator = str_replace(WEBPATH.'/','',$pl);
+        } 
+        setOption($key, $value, true, $creator);
+      }
+    } else {
+      if (strpos($postkey, 'show-') === 0) {
+        if ($value)
+          $returntab .= '&' . $postkey;
+      }
+    }
+  }
+  foreach ($customHandlers as $custom) {
+    if ($extension = $custom['extension']) {
+      require_once(getPlugin($extension . '.php'));
+    }
+    $whom = new $custom['whom']();
+    $returntab = $whom->handleOptionSave($themename, $themealbum) . $returntab;
+  }
+  return $returntab;
+}
 
-	/**
+/**
 	 *
 	 * Set defaults for standard theme options incase the theme has not done so
 	 * @param string $theme
@@ -912,7 +918,7 @@ function printAdminHeader($tab, $subtab = NULL) {
 	 * @param string $str
 	 */
 	function postIndexEncode($str) {
-		return strtr(urlencode($str), array('.' => '__2E__', '+' => '__20__', '%' => '__25__', '&' => '__26__', "'" => '__27__'));
+		return strtr(urlencode($str), array('.' => '__2E__', '+' => '__20__', '%' => '__25__', '&' => '__26__', "'" => '__27__', '(' => '__28__', ')' => '__29__'));
 	}
 
 	/**
@@ -922,7 +928,7 @@ function printAdminHeader($tab, $subtab = NULL) {
 	 * @return string
 	 */
 	function postIndexDecode($str) {
-		return urldecode(strtr($str, array('__2E__' => '.', '__20__' => '+', '__25__' => '%', '__26__' => '&', '__27__' => "'")));
+		return urldecode(strtr($str, array('__2E__' => '.', '__20__' => '+', '__25__' => '%', '__26__' => '&', '__27__' => "'", '__28__' => '(', '__29__' => ')')));
 	}
 
 	/**
@@ -1109,7 +1115,9 @@ function printAdminHeader($tab, $subtab = NULL) {
 				<a href="javascript:addNewTag('<?php echo $postit; ?>');" title="<?php echo gettext('add tag'); ?>">
 					<img src="images/add.png" title="<?php echo gettext('add tag'); ?>"/>
 				</a>
-				<input class="tagsuggest <?php echo $class; ?> " type="text" value="" name="newtag_<?php echo $postit; ?>" id="newtag_<?php echo $postit; ?>" />
+				<span class="tagSuggestContainer">
+					<input class="tagsuggest <?php echo $class; ?> " type="text" value="" name="newtag_<?php echo $postit; ?>" id="newtag_<?php echo $postit; ?>" />
+				</span>
 			</span>
 
 			<?php
@@ -1148,7 +1156,7 @@ function printAdminHeader($tab, $subtab = NULL) {
 	 * @since 1.1.3
 	 */
 	function printAlbumEditForm($index, $album, $buttons = true) {
-		global $sortby, $_zp_gallery, $mcr_albumlist, $_zp_albumthumb_selector, $_zp_current_admin_obj;
+		global $_zp_sortby, $_zp_gallery, $mcr_albumlist, $_zp_albumthumb_selector, $_zp_current_admin_obj;
 		$isPrimaryAlbum = '';
 		if (!zp_loggedin(MANAGE_ALL_ALBUM_RIGHTS)) {
 			$myalbum = $_zp_current_admin_obj->getAlbum();
@@ -1200,7 +1208,13 @@ function printAdminHeader($tab, $subtab = NULL) {
 							<img src="images/folder.png" alt="" />
 							<strong><?php echo gettext('New subalbum'); ?></strong>
 						</button>
-						<?php
+      <?php if(!$album->isDynamic()) { ?>
+         <button type="button" title="<?php echo addslashes(gettext('New dynamic subalbum')); ?>" onclick="javascript:newDynAlbum('<?php echo pathurlencode($album->name); ?>', false);">
+           <img src="images/folder.png" alt="" />
+											<strong><?php echo gettext('New dynamic subalbum'); ?></strong>
+								 </button>
+       <?php 
+      } 
 					}
 					?>
 					<a href="<?php echo WEBPATH . "/index.php?album=" . html_encode(pathurlencode($album->getFileName())); ?>">
@@ -1391,7 +1405,7 @@ function printAdminHeader($tab, $subtab = NULL) {
 						} else {
 							echo $custom;
 						}
-						$sort = $sortby;
+						$sort = $_zp_sortby;
 						if (!$album->isDynamic()) {
 							$sort[gettext('Manual')] = 'manual';
 						}
@@ -1449,7 +1463,9 @@ function printAdminHeader($tab, $subtab = NULL) {
 								<span id="album_custom_div<?php echo $suffix; ?>" class="customText" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
 									<br />
 									<?php echo gettext('custom fields:') ?>
-									<input id="customalbumsort<?php echo $suffix; ?>" class="customalbumsort" name="<?php echo $prefix; ?>customalbumsort" type="text" value="<?php echo html_encode($cvt); ?>" />
+									<span class="tagSuggestContainer">
+										<input id="customalbumsort<?php echo $suffix; ?>" class="customalbumsort" name="<?php echo $prefix; ?>customalbumsort" type="text" value="<?php echo html_encode($cvt); ?>" />
+									</span>
 								</span>
 							</td>
 						</tr>
@@ -1505,7 +1521,9 @@ function printAdminHeader($tab, $subtab = NULL) {
 								<span id="image_custom_div<?php echo $suffix; ?>" class="customText" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
 									<br />
 									<?php echo gettext('custom fields:') ?>
-									<input id="customimagesort<?php echo $suffix; ?>" class="customimagesort" name="<?php echo $prefix; ?>customimagesort" type="text" value="<?php echo html_encode($cvt); ?>" />
+									<span class="tagSuggestContainer">
+										<input id="customimagesort<?php echo $suffix; ?>" class="customimagesort" name="<?php echo $prefix; ?>customimagesort" type="text" value="<?php echo html_encode($cvt); ?>" />
+									</span>
 								</span>
 							</td>
 						</tr>
@@ -1950,7 +1968,13 @@ function printAdminHeader($tab, $subtab = NULL) {
 							<img src="images/folder.png" alt="" />
 							<strong><?php echo gettext('New subalbum'); ?></strong>
 						</button>
-						<?php
+					<?php if(!$album->isDynamic()) { ?>
+         <button type="button" title="<?php echo addslashes(gettext('New dynamic subalbum')); ?>" onclick="javascript:newDynAlbum('<?php echo pathurlencode($album->name); ?>', false);">
+           <img src="images/folder.png" alt="" />
+											<strong><?php echo gettext('New dynamic subalbum'); ?></strong>
+								 </button>
+       <?php 
+      } 
 					}
 					?>
 					<a href="<?php echo WEBPATH . "/index.php?album=" . html_encode(pathurlencode($album->getFileName())); ?>">
@@ -2381,6 +2405,7 @@ function printAdminHeader($tab, $subtab = NULL) {
 				}
 				if ($e = $album->move($dest)) {
 					$notify = "&mcrerr=" . $e;
+					SearchEngine::clearSearchCache();
 				} else {
 					$redirectto = $dest;
 				}
@@ -2427,8 +2452,10 @@ function printAdminHeader($tab, $subtab = NULL) {
   * Process the image edit form posted
   * @param obj $image Image object
   * @param type $index Index of the image if within the images list or 0 if single image edit
+  * @param boolean $massedit Whether editing single image (false) or multiple images at once (true). Note: to determine whether to process additional fields in single image edit mode.
   */
- function processImageEdit($image, $index) {
+ function processImageEdit($image, $index, $massedit=true) {
+
   $notify = '';
   if (isset($_POST[$index . '-MoveCopyRename'])) {
     $movecopyrename_action = sanitize($_POST[$index . '-MoveCopyRename'], 3);
@@ -2456,12 +2483,6 @@ function printAdminHeader($tab, $subtab = NULL) {
     $image->setExpireDate(sanitize($_POST['expirationdate-' . $index]));
     $image->setTitle(process_language_string_save("$index-title", 2));
     $image->setDesc(process_language_string_save("$index-desc", EDITOR_SANITIZE_LEVEL));
-    $image->setLocation(process_language_string_save("$index-location", 3));
-    $image->setCity(process_language_string_save("$index-city", 3));
-    $image->setState(process_language_string_save("$index-state", 3));
-    $image->setCountry(process_language_string_save("$index-country", 3));
-    $image->setCredit(process_language_string_save("$index-credit", 1));
-    $image->setCopyright(process_language_string_save("$index-copyright", 1));
     if (isset($_POST[$index . '-oldrotation']) && isset($_POST[$index . '-rotation'])) {
       $oldrotation = (int) $_POST[$index . '-oldrotation'];
       $rotation = (int) $_POST[$index . '-rotation'];
@@ -2472,20 +2493,32 @@ function printAdminHeader($tab, $subtab = NULL) {
         Gallery::clearCache(SERVERCACHE . '/' . $album->name);
       }
     }
-    $tagsprefix = 'tags_' . $index . '-';
-    $tags = array();
-    $l = strlen($tagsprefix);
-    foreach ($_POST as $key => $value) {
-      $key = postIndexDecode($key);
-      if (substr($key, 0, $l) == $tagsprefix) {
-        if ($value) {
-          $tags[] = sanitize(substr($key, $l));
-        }
-      }
-    }
-    $tags = array_unique($tags);
-    $image->setTags($tags);
-
+	if (!$massedit) {
+		$image->setLocation(process_language_string_save("$index-location", 3));
+		$image->setCity(process_language_string_save("$index-city", 3));
+		$image->setState(process_language_string_save("$index-state", 3));
+		$image->setCountry(process_language_string_save("$index-country", 3));
+		$image->setCredit(process_language_string_save("$index-credit", 1));
+		$image->setCopyright(process_language_string_save("$index-copyright", 1));
+		$tagsprefix = 'tags_' . $index . '-';
+		$tags = array();
+		$l = strlen($tagsprefix);
+		foreach ($_POST as $key => $value) {
+			$key = postIndexDecode($key);
+			if (substr($key, 0, $l) == $tagsprefix) {
+				if ($value) {
+					$tags[] = sanitize(substr($key, $l));
+				}
+			}
+		}
+		$tags = array_unique($tags);
+		$image->setTags($tags);
+		if (zp_loggedin(CODEBLOCK_RIGHTS)) {
+			$image->setCodeblock(processCodeblockSave($index));
+		}
+		$custom = process_language_string_save("$index-custom_data", 1);
+		$image->setCustomData(zp_apply_filter('save_image_custom_data', $custom, $index));
+	}
     $image->setDateTime(sanitize($_POST["$index-date"]));
     $image->setShow(isset($_POST["$index-Visible"]));
     $image->setCommentsAllowed(isset($_POST["$index-allowcomments"]));
@@ -2502,23 +2535,21 @@ function printAdminHeader($tab, $subtab = NULL) {
     if (isset($_POST['wm_full-' . $index]))
       $wmuse = $wmuse | WATERMARK_FULL;
     $image->setWMUse($wmuse);
-    if (zp_loggedin(CODEBLOCK_RIGHTS)) {
-      $image->setCodeblock(processCodeblockSave($index));
-    }
+    
     if (isset($_POST[$index . '-owner']))
       $image->setOwner(sanitize($_POST[$index . '-owner']));
     $image->set('filesize', filesize($image->localpath));
 
-    $custom = process_language_string_save("$index-custom_data", 1);
-    $image->setCustomData(zp_apply_filter('save_image_custom_data', $custom, $index));
     zp_apply_filter('save_image_utilities_data', $image, $index);
     $image->save();
 
     // Process move/copy/rename
+    $folder = $image->getAlbumName();
     if ($movecopyrename_action == 'move') {
       $dest = sanitize_path($_POST[$index . '-albumselect']);
       if ($dest && $dest != $folder) {
         if ($e = $image->move($dest)) {
+					SearchEngine::clearSearchCache();
           $notify = "&mcrerr=" . $e;
         }
       } else {
@@ -2539,6 +2570,7 @@ function printAdminHeader($tab, $subtab = NULL) {
     } else if ($movecopyrename_action == 'rename') {
       $renameto = sanitize_path($_POST[$index . '-renameto']);
       if ($e = $image->rename($renameto)) {
+				SearchEngine::clearSearchCache();
         $notify = "&mcrerr=" . $e;
       }
     }
@@ -3513,87 +3545,52 @@ function processOrder($orderstr) {
  *
  */
 function postAlbumSort($parentid) {
-	if (isset($_POST['order']) && !empty($_POST['order'])) {
-		$order = processOrder(sanitize($_POST['order']));
-		$sortToID = array();
-		foreach ($order as $id => $orderlist) {
-			$id = str_replace('id_', '', $id);
-			$sortToID[implode('-', $orderlist)] = $id;
-		}
-		foreach ($order as $item => $orderlist) {
-			$item = str_replace('id_', '', $item);
-			$currentalbum = query_single_row('SELECT * FROM ' . prefix('albums') . ' WHERE `id`=' . $item);
-			$sortorder = array_pop($orderlist);
-			if (count($orderlist) > 0) {
-				$newparent = $sortToID[implode('-', $orderlist)];
-			} else {
-				$newparent = $parentid;
-			}
-			if ($newparent == $currentalbum['parentid']) {
-				$sql = 'UPDATE ' . prefix('albums') . ' SET `sort_order`=' . db_quote($sortorder) . ' WHERE `id`=' . $item;
-				query($sql);
-			} else { // have to do a move
-				$albumname = $currentalbum['folder'];
-				$album = newAlbum($albumname);
-				if (strpos($albumname, '/') !== false) {
-					$albumname = basename($albumname);
-				}
-				if (is_null($newparent)) {
-					$dest = $albumname;
-				} else {
-					$parent = query_single_row('SELECT * FROM ' . prefix('albums') . ' WHERE `id`=' . $newparent);
-					if ($parent['dynamic']) {
-						return "&mcrerr=5";
-					} else {
-						$dest = $parent['folder'] . '/' . $albumname;
-					}
-				}
-				if ($e = $album->move($dest)) {
-					return "&mcrerr=" . $e;
-				} else {
-					$album->setSortOrder($sortorder);
-					$album->save();
-				}
-			}
-		}
-		return true;
-	}
-	return false;
-}
-
-/**
- * generates a nested list of albums for the album tab sorting
- * Returns an array of "albums" each element contains:
- * 								'name' which is the folder name
- * 								'album' which is an album object for the album
- * 								'sort_order' which is an array of the sort order set
- *
- * @param $subalbum root level album (NULL is the gallery)
- * @param $levels how far to nest
- * @param $level internal for keeping the sort order elements
- * @return array
- */
-function getNestedAlbumList($subalbum, $levels, $level = array()) {
-	global $_zp_gallery;
-	$cur = count($level);
-	$levels--; // make it 0 relative to sync with $cur
-	if (is_null($subalbum)) {
-		$albums = $_zp_gallery->getAlbums();
-	} else {
-		$albums = $subalbum->getAlbums();
-	}
-	$list = array();
-	foreach ($albums as $analbum) {
-		$albumobj = newAlbum($analbum);
-		if (!is_null($subalbum) || $albumobj->isMyItem(ALBUM_RIGHTS)) {
-			$level[$cur] = sprintf('%03u', $albumobj->getSortOrder());
-			$list[] = array('name' => $analbum, 'sort_order' => $level);
-			if ($cur < $levels && ($albumobj->getNumAlbums()) && !$albumobj->isDynamic()) {
-				$list = array_merge($list, getNestedAlbumList($albumobj, $levels + 1, $level));
-			}
-		}
-	}
-	return $list;
+  if (isset($_POST['order']) && !empty($_POST['order'])) {
+    $order = processOrder(sanitize($_POST['order']));
+    $sortToID = array();
+    foreach ($order as $id => $orderlist) {
+      $id = str_replace('id_', '', $id);
+      $sortToID[implode('-', $orderlist)] = $id;
+    }
+    foreach ($order as $item => $orderlist) {
+      $item = str_replace('id_', '', $item);
+      $currentalbum = query_single_row('SELECT * FROM ' . prefix('albums') . ' WHERE `id`=' . $item);
+      $sortorder = array_pop($orderlist);
+      if (count($orderlist) > 0) {
+        $newparent = $sortToID[implode('-', $orderlist)];
+      } else {
+        $newparent = $parentid;
+      }
+      if ($newparent == $currentalbum['parentid']) {
+        $sql = 'UPDATE ' . prefix('albums') . ' SET `sort_order`=' . db_quote($sortorder) . ' WHERE `id`=' . $item;
+        query($sql);
+      } else { // have to do a move
+        $albumname = $currentalbum['folder'];
+        $album = newAlbum($albumname);
+        if (strpos($albumname, '/') !== false) {
+          $albumname = basename($albumname);
+        }
+        if (is_null($newparent)) {
+          $dest = $albumname;
+        } else {
+          $parent = query_single_row('SELECT * FROM ' . prefix('albums') . ' WHERE `id`=' . $newparent);
+          if ($parent['dynamic']) {
+            return "&mcrerr=5";
+          } else {
+            $dest = $parent['folder'] . '/' . $albumname;
+          }
+        }
+        if ($e = $album->move($dest)) {
+          return "&mcrerr=" . $e;
+        } else {
+          $album->setSortOrder($sortorder);
+          $album->save();
+        }
+      }
+    }
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -3968,6 +3965,7 @@ function processAlbumBulkActions() {
 				switch ($action) {
 					case 'deleteallalbum':
 						$albumobj->remove();
+						SearchEngine::clearSearchCache();
 						break;
 					case 'showall':
 						$albumobj->setShow(1);
@@ -4053,6 +4051,7 @@ function processImageBulkActions($album) {
 				switch ($action) {
 					case 'deleteall':
 						$imageobj->remove();
+						SearchEngine::clearSearchCache();
 						break;
 					case 'showall':
 						$imageobj->set('show', 1);
@@ -4083,6 +4082,7 @@ function processImageBulkActions($album) {
 						break;
 					case 'moveimages':
 						if ($e = $imageobj->move($dest)) {
+							SearchEngine::clearSearchCache();
 							return "&mcrerr=" . $e;
 						}
 						break;
@@ -4873,4 +4873,22 @@ function clonedFrom() {
 		return dirname($zen);
 	}
 }
+
+/**
+ * Make sure the albumimagesort is only an allowed value. Otherwise returns nothing.
+ * @global array $_zp_sortby
+ * @param string $val
+ * @return string
+ */
+function checkAlbumimagesort($val) {
+  global $_zp_sortby;
+	$sortcheck = $_zp_sortby;
+	$sortcheck[gettext('Manual')] = 'manual';
+  foreach ($sortcheck as $sort) {
+    if ($val == $sort || $val == $sort . '_desc') {
+      return $val;
+    }
+  }
+}
+
 ?>

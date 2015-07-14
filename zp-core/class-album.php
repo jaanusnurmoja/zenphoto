@@ -654,9 +654,8 @@ class AlbumBase extends MediaObject {
 				return 4;
 			}
 		}
-		$filemask = substr($this->localpath, 0, -1) . '.*';
+  $filemask = substr($this->localpath, 0, -1) . '.*';
 		$perms = FOLDER_MOD;
-
 		@chmod($this->localpath, 0777);
 		$success = @rename(rtrim($this->localpath, '/'), $dest);
 		@chmod($dest, $perms);
@@ -917,7 +916,12 @@ class AlbumBase extends MediaObject {
 	 * @return string
 	 */
 	function getAlbumTheme() {
-		return $this->get('album_theme');
+		global $_zp_gallery;
+		if (in_context(ZP_SEARCH_LINKED)) {
+			return $_zp_gallery->getCurrentTheme();
+		} else {
+			return $this->get('album_theme');
+		}
 	}
 
 	/**
@@ -1222,7 +1226,7 @@ class Album extends AlbumBase {
 	 */
 	protected function setDefaults() {
 		global $_zp_gallery;
-// Set default data for a new Album (title and parent_id)
+		// Set default data for a new Album (title and parent_id)
 		parent::setDefaults();
 		$parentalbum = $this->getParent();
 		$this->set('mtime', filemtime($this->localpath));
@@ -1364,6 +1368,9 @@ class Album extends AlbumBase {
 			}
 			@chmod($this->localpath, 0777);
 			$rslt = @rmdir($this->localpath) && $success;
+   $cachepath = SERVERCACHE.'/'.pathurlencode($this->name).'/';
+   @chmod($cachepath, 0777);
+   @rmdir($cachepath);
 		}
 		clearstatcache();
 		return $rslt;
@@ -1377,16 +1384,17 @@ class Album extends AlbumBase {
 	 *
 	 */
 	function move($newfolder) {
+  $oldfolder = $this->name;
 		$rslt = $this->_move($newfolder);
 		if (!$rslt) {
-// Then: go through the db and change the album (and subalbum) paths. No ID changes are necessary for a move.
-// Get the subalbums.
-			$sql = "SELECT id, folder FROM " . prefix('albums') . " WHERE folder LIKE " . db_quote(db_LIKE_escape($this->name) . '/%');
+			// Then: go through the db and change the album (and subalbum) paths. No ID changes are necessary for a move.
+			// Get the subalbums.
+			$sql = "SELECT id, folder FROM " . prefix('albums') . " WHERE folder LIKE " . db_quote(db_LIKE_escape($oldfolder) . '/%');
 			$result = query($sql);
 			if ($result) {
 				while ($subrow = db_fetch_assoc($result)) {
 					$newsubfolder = $subrow['folder'];
-					$newsubfolder = $newfolder . substr($newsubfolder, strlen($this->name));
+					$newsubfolder = $newfolder . substr($newsubfolder, strlen($oldfolder));
 					$sql = "UPDATE " . prefix('albums') . " SET folder=" . db_quote($newsubfolder) . " WHERE id=" . $subrow['id'];
 					query($sql);
 				}
@@ -1787,7 +1795,7 @@ class dynamicAlbum extends AlbumBase {
 	 * @return int 0 on success and error indicator on failure.
 	 *
 	 */
-	function move($newfolder) {
+	function move($newfolder,$oldfolder="") {
 		return $this->_move($newfolder);
 	}
 
@@ -1820,6 +1828,17 @@ class dynamicAlbum extends AlbumBase {
 
 	function isDynamic() {
 		return 'alb';
+	}
+	
+	/**
+	 * Sets default values for a new album
+	 *
+	 * @return bool
+	 */
+	protected function setDefaults() {
+		global $_zp_gallery;
+		parent::setDefaults();
+		return true;
 	}
 
 }
