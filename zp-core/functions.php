@@ -259,17 +259,17 @@ function lookupSortKey($sorttype, $default, $table) {
 		case 'random':
 			return 'RAND()';
 		case "manual":
-			return '`sort_order`';
+			return 'sort_order';
 		case "filename":
 			switch ($table) {
 				case 'images':
-					return '`filename`';
+					return 'filename';
 				case 'albums':
-					return '`folder`';
+					return 'folder';
 			}
 		default:
 			if (empty($sorttype)) {
-				return '`' . $default . '`';
+				return $default;
 			}
 			if (substr($sorttype, 0) == '(') {
 				return $sorttype;
@@ -288,12 +288,16 @@ function lookupSortKey($sorttype, $default, $table) {
 			}
 			$sorttype = strtolower($sorttype);
 			$list = explode(',', $sorttype);
+			$fields = array();
+			// Critical for preventing SQL injection: only return parts of 
+			// the custom sort that are exactly equal to database fields.
 			foreach ($list as $key => $field) {
+				$field = trim($field);
 				if (array_key_exists($field, $dbfields)) {
-					$list[$key] = '`' . trim($dbfields[$field]) . '`';
+					$fields[$key] = trim($dbfields[$field]);
 				}
 			}
-			return implode(',', $list);
+			return implode(',', $fields);
 	}
 }
 
@@ -496,7 +500,7 @@ function sortByMultilingual($dbresult, $field, $descending) {
 	}
 	$result = array();
 	foreach ($temp as $key => $v) {
-		$result[$key] = $dbresult[$key];
+		$result[] = $dbresult[$key];
 	}
 	return $result;
 }
@@ -1138,7 +1142,6 @@ function getAllTagsCount($exclude_unassigned = false, $checkaccess = false) {
       if($checkaccess) {
         $count = getTagCountByAccess($tag);
         if($count != 0) {
-          echo $tag['name']." included<br>";
           $_zp_count_tags[$tag['name']] = $count;
         }
       } else {
@@ -1541,12 +1544,10 @@ function getNotViewableImages() {
   $hidealbums = getNotViewableAlbums();
   $where = '';
   if (!is_null($hidealbums)) {
-    foreach ($hidealbums as $id) {
-      $where .= ' AND `albumid` = ' . $id;
-    }
+    $where = implode(',', $hidealbums);
   }
   if (is_null($_zp_not_viewable_image_list)) {
-    $sql = 'SELECT `id` FROM ' . prefix('images') . ' WHERE `show`= 0' . $where;
+    $sql = 'SELECT DISTINCT `id` FROM ' . prefix('images') . ' WHERE `show` = 0 OR `albumid` in (' . $where . ')';
     $result = query($sql);
     if ($result) {
       $_zp_not_viewable_image_list = array();
@@ -2544,6 +2545,10 @@ class zpFunctions {
 			$text = @$_locale_Subdomains[zp_getCookie('dynamic_locale')];
 		} else {
 			$text = @$_locale_Subdomains[$loc];
+			//en_US always is always empty here so so urls in dynamic locale or html_meta_tags are wrong (Quickfix)
+			if(empty($text)) {
+				$text = $loc; 
+			}
 		}
 		if (!is_null($separator)) {
 			$text = str_replace('_', $separator, $text);

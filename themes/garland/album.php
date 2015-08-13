@@ -25,8 +25,9 @@ $map = function_exists('printGoogleMap');
 					<div id="logo-floater">
 						<div>
 							<h1 class="title">
-								<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo getGalleryTitle(); ?></a>
+								<a href="<?php echo html_encode(getSiteHomeURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a>
 							</h1>
+							<span id="galleryDescription"><?php printGalleryDesc(); ?></span>
 						</div>
 					</div>
 				</div><!-- header -->
@@ -41,8 +42,7 @@ $map = function_exists('printGoogleMap');
 							<div class="left-corner"><!-- begin content -->
 								<div class="main section" id="main">
 									<h2 id="gallerytitle">
-										<?php printHomeLink('', ' » '); ?>
-										<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php printGalleryTitle(); ?></a> » <?php printParentBreadcrumb("", " » ", " » "); ?><?php echo html_encode(getAlbumTitle()); ?>
+										<?php printHomeLink('', ' » '); printGalleryIndexURL(' » '); printParentBreadcrumb("", " » ", " » "); echo html_encode(getAlbumTitle()); ?>
 									</h2>
 									<?php printAlbumDesc(); ?>
 									<?php printCodeblock(1); ?>

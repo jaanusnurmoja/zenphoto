@@ -20,10 +20,10 @@ if (class_exists('Zenpage') && ZP_PAGES_ENABLED) {
 					<div id="header">
 						<div id="logo-floater">
 							<div>
-								<h1 class="title"><a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a></h1>
-
-								<?php echo getGalleryIndexURL(); ?>
-
+								<h1 class="title">
+									<a href="<?php echo html_encode(getSiteHomeURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a>
+								</h1>
+								<span id="galleryDescription"><?php printGalleryDesc(); ?></span>
 							</div>
 						</div>
 					</div>
@@ -41,9 +41,7 @@ if (class_exists('Zenpage') && ZP_PAGES_ENABLED) {
 									<!-- begin content -->
 									<div class="main section" id="main">
 										<h2 id="gallerytitle">
-											<?php printHomeLink('', ' » '); ?>
-											<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Gallery Index'); ?>"><?php echo html_encode(getGalleryTitle()); ?></a>
-											<?php printZenpageItemsBreadcrumb(" » ", ""); ?><?php printPageTitle(" » "); ?>
+											<?php printHomeLink('', ' » '); printGalleryIndexURL(' » '); printZenpageItemsBreadcrumb("", " » "); printPageTitle(""); ?>
 										</h2>
 										<h3><?php printPageTitle(); ?></h3>
 										<div id="pagetext">

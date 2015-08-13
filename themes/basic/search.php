@@ -28,9 +28,8 @@ if (!defined('WEBPATH'))
 				?>
 				<h2>
 					<span>
-						<?php printHomeLink('', ' | '); ?>
-						<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo ('Gallery Index'); ?>"><?php printGalleryTitle(); ?></a>
-					</span> |
+						<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle()); ?></a>
+					</span>
 					<?php printSearchBreadcrumb(' | '); ?>
 				</h2>
 			</div>
