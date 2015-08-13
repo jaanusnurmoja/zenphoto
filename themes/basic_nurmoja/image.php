@@ -135,9 +135,8 @@ if (!defined('WEBPATH'))
 			}
 			?>
 			<?php
-			if (function_exists('printFavoritesLink')) {
-				printFavoritesLink();
-				?> | <?php
+			if (function_exists('printFavoritesURL')) {
+				printFavoritesURL(NULL, '', ' | ', '<br />');
 			}
 			?>
 			<?php printZenphotoLink(); ?> | 

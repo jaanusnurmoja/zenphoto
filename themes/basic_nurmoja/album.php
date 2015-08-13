@@ -27,9 +27,7 @@ if (!defined('WEBPATH'))
 				?>
 				<h2>
 					<span>
-						<?php printHomeLink('', ' | '); ?>
-						<a href="<?php echo html_encode(getGalleryIndexURL()); ?>" title="<?php echo gettext('Albums Index'); ?>"><?php printGalleryTitle(); ?></a> |
-						<?php printParentBreadcrumb(); ?>
+						<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle()); printParentBreadcrumb(); ?>
 					</span>
 					<?php printAlbumTitle(); ?>
 				</h2>
@@ -101,9 +99,8 @@ if (!defined('WEBPATH'))
 			}
 			?>
 			<?php
-			if (function_exists('printFavoritesLink')) {
-				printFavoritesLink();
-				?> | <?php
+			if (function_exists('printFavoritesURL')) {
+				printFavoritesURL(NULL, '', ' | ', '<br />');
 			}
 			?>
 			<?php printZenphotoLink(); ?>
