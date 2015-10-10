@@ -62,6 +62,10 @@ class htmlmetatags {
 		setOptionDefault('htmlmeta_twittername', '');
 		setOptionDefault('htmlmeta_ogimage_width', 1280);
 		setOptionDefault('htmlmeta_ogimage_height', 900);
+		if (class_exists('cacheManager')) {
+			cacheManager::deleteThemeCacheSizes('html_meta_tags');
+			cacheManager::addThemeCacheSize('html_meta_tags', NULL, getOption('htmlmeta_ogimage_width'), getOption('htmlmeta_ogimage_height'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, true);
+		}
 	}
 
 	// Gettext calls are removed because some terms like "noindex" are fixed terms that should not be translated so user know what setting they make.
@@ -399,7 +403,7 @@ class htmlmetatags {
 									$altlink .= '/' . _SEARCH_ . '/';
 									break;
 								case 'contact.php':
-									$altlink .= '/' . _PAGE_ . '/contact';
+									$altlink .= '/' . _CONTACT_ . '/';
 									break;
 								default: // for all other possible none standard custom pages
 									$altlink .= '/' . _PAGE_ . '/' . html_encode($pagetitle);

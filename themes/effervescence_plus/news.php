@@ -7,9 +7,9 @@ if (class_exists('Zenpage') && ZP_NEWS_ENABLED) {
 	<!DOCTYPE html>
 	<html>
 		<head>
+			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<?php zp_apply_filter('theme_head'); ?>
 			<?php printHeadTitle(); ?>
-			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<?php if (class_exists('RSS')) printRSSHeaderLink("News", "Zenpage news", ""); ?>
 		</head>
 
@@ -23,13 +23,7 @@ if (class_exists('Zenpage') && ZP_NEWS_ENABLED) {
 					<div id="logo">
 						<?php
 						if (getOption('Allow_search')) {
-							if (is_NewsCategory()) {
-								$catlist = array('news' => array($_zp_current_category->getTitlelink()), 'albums' => '0', 'images' => '0', 'pages' => '0');
-								printSearchForm(NULL, 'search', $_zp_themeroot . '/images/search.png', gettext('Search within category'), NULL, NULL, $catlist);
-							} else {
-								$catlist = array('news' => '1', 'albums' => '0', 'images' => '0', 'pages' => '0');
-								printSearchForm(NULL, 'search', $_zp_themeroot . '/images/search.png', gettext('Search news'), NULL, NULL, $catlist);
-							}
+							printSearchForm(NULL, 'search', $_zp_themeroot . '/images/search.png', gettext('Search'));
 						}
 						printLogo();
 						?>

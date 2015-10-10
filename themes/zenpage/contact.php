@@ -8,8 +8,8 @@ if (function_exists('printContactForm')) {
 	<!DOCTYPE html>
 	<html>
 		<head>
+			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<?php zp_apply_filter('theme_head'); ?>
-			<?php printHeadTitle(); ?>
 			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
 		</head>
@@ -19,8 +19,12 @@ if (function_exists('printContactForm')) {
 			<div id="main">
 
 				<div id="header">
-
 					<h1><?php printGalleryTitle(); ?></h1>
+						<?php
+						if (getOption('Allow_search')) {
+							printSearchForm("", "search", "", gettext("Search"));
+						}
+						?>
 				</div>
 
 				<div id="content">

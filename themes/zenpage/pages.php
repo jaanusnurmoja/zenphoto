@@ -7,8 +7,8 @@ if (class_exists('Zenpage') && ZP_PAGES_ENABLED) {
 	<!DOCTYPE html>
 	<html>
 		<head>
-			<?php printHeadTitle(); ?>
 			<meta charset="<?php echo LOCAL_CHARSET; ?>">
+			<?php printHeadTitle(); ?>
 			<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
 			<?php if (class_exists('RSS')) printRSSHeaderLink("News", "Zenpage news", ""); ?>
 			<?php zp_apply_filter('theme_head'); ?>
@@ -23,7 +23,7 @@ if (class_exists('Zenpage') && ZP_PAGES_ENABLED) {
 					<h1><?php printGalleryTitle(); ?></h1>
 					<?php
 					if (getOption('Allow_search')) {
-						printSearchForm("", "search", "", gettext("Search gallery"));
+						printSearchForm("", "search", "", gettext("Search"));
 					}
 					?>
 				</div>

@@ -7,9 +7,9 @@ if (!defined('WEBPATH'))
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<?php zp_apply_filter('theme_head'); ?>
 		<?php printHeadTitle(); ?>
-		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 		<link rel="stylesheet" href="<?php echo pathurlencode(dirname(dirname($zenCSS))); ?>/common.css" type="text/css" />
 		<?php if (class_exists('RSS')) printRSSHeaderLink('Album', getAlbumTitle()); ?>
@@ -20,8 +20,7 @@ if (!defined('WEBPATH'))
 			<div id="gallerytitle">
 				<?php
 				if (getOption('Allow_search')) {
-					$album_list = array('albums' => array($_zp_current_album->name), 'pages' => '0', 'news' => '0');
-					printSearchForm('', 'search', gettext('Search within album'), gettext('Search'), NULL, NULL, $album_list);
+					printSearchForm();
 				}
 				?>
 				<h2>
@@ -80,7 +79,7 @@ if (!defined('WEBPATH'))
 			?>
 			<?php
    if (class_exists('RSS')) printRSSLink('Album', '', gettext('Album RSS'), ' | ');
-   printCustomPageURL(gettext("Archive View"), "archive");
+   printCustomPageURL(gettext("Archive View"), "archive", '', '', ' | ');
    printZenphotoLink();
    @call_user_func('printUserLogin_out', " | ");
    ?>

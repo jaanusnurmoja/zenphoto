@@ -935,7 +935,7 @@ class SearchEngine {
 				if (empty($sorttype)) {
 					$key = '`date` DESC';
 				} else {
-					$key = trim('`'.$sorttype . '` ' . $sortdirection);
+					$key = trim($sorttype . ' ' . $sortdirection);
 				}
 				break;
 			case 'pages':
@@ -960,7 +960,7 @@ class SearchEngine {
 					}
 				} else {
 					list($key, $sortdirection) = $this->sortKey($sorttype, $sortdirection, 'title', 'albums');
-					$key = trim('`' . $key . '` ' . $sortdirection);
+					$key = trim($key . ' ' . $sortdirection);
 				}
 				break;
 			default:
@@ -988,7 +988,7 @@ class SearchEngine {
 					}
 				} else {
 					list($key, $sortdirection) = $this->sortKey($sorttype, $sortdirection, 'title', 'images');
-					$key = trim('`'. $key . '` ' . $sortdirection);
+					$key = trim($key . ' ' . $sortdirection);
 				}
 				break;
 		}
@@ -1278,7 +1278,7 @@ class SearchEngine {
 					if (empty($sorttype)) {
 						$key = '`date` DESC';
 					} else {
-						$key = trim($sorttype . ' ' . $sortdirection);
+						$key = trim($sorttype . $sortdirection);
 					}
 					if ($show) {
 						$show .= '`date`<=' . db_quote(date('Y-m-d H:i:s')) . ' AND ';
@@ -1349,7 +1349,6 @@ class SearchEngine {
 					}
 					break;
 			}
-
 			$sql .= "FROM " . prefix($tbl) . " WHERE " . $show;
 			$sql .= '(' . self::compressedIDList($idlist) . ')';
 			$sql .= " ORDER BY " . $key;
@@ -1547,7 +1546,6 @@ class SearchEngine {
 			} else {
 				$search_result = query($search_query);
 			}
-			
 			$albums_seen = $images = array();
 			if ($search_result) {
 				while ($row = db_fetch_assoc($search_result)) {
@@ -1830,7 +1828,6 @@ class SearchEngine {
 			} else {
 				$search_query = $this->searchDate($searchstring, $searchdate, 'news', $sorttype, $sortdirection, $this->whichdates);
 			}
-			
 			if (empty($search_query)) {
 				$search_result = false;
 			} else {
