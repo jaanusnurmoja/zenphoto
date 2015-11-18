@@ -658,7 +658,7 @@ if (!zp_loggedin()) {
 								$t = $_zp_gallery->getNumImages();
 								$c = $t - $_zp_gallery->getNumImages(true);
 								if ($c > 0) {
-									printf(ngettext('<strong>%1$u</strong> Image (%2$u un-published)', '<strong>%1$u</strong> Images (%2$u un-published)', $t), $t, $c);
+									printf(ngettext('<strong>%1$u</strong> Image (%2$u un-published)', '<strong>%1$u</strong> Images (<strong>%2$u</strong> un-published)', $t), $t, $c);
 								} else {
 									printf(ngettext('<strong>%u</strong> Image', '<strong>%u</strong> Images', $t), $t);
 								}
@@ -669,7 +669,7 @@ if (!zp_loggedin()) {
 								$t = $_zp_gallery->getNumAlbums(true);
 								$c = $t - $_zp_gallery->getNumAlbums(true, true);
 								if ($c > 0) {
-									printf(ngettext('<strong>%1$u</strong> Album (%2$u un-published)', '<strong>%1$u</strong> Albums (%2$u un-published)', $t), $t, $c);
+									printf(ngettext('<strong>%1$u</strong> Album (%2$u un-published)', '<strong>%1$u</strong> Albums (<strong>%2$u</strong> un-published)', $t), $t, $c);
 								} else {
 									printf(ngettext('<strong>%u</strong> Album', '<strong>%u</strong> Albums', $t), $t);
 								}
@@ -680,7 +680,7 @@ if (!zp_loggedin()) {
 								$t = $_zp_gallery->getNumComments(true);
 								$c = $t - $_zp_gallery->getNumComments(false);
 								if ($c > 0) {
-									printf(ngettext('<strong>%1$u</strong> Comment (%2$u in moderation)', '<strong>%1$u</strong> Comments (%2$u in moderation)', $t), $t, $c);
+									printf(ngettext('<strong>%1$u</strong> Comment (%2$u in moderation)', '<strong>%1$u</strong> Comments (<strong>%2$u</strong> in moderation)', $t), $t, $c);
 								} else {
 									printf(ngettext('<strong>%u</strong> Comment', '<strong>%u</strong> Comments', $t), $t);
 								}
@@ -690,30 +690,13 @@ if (!zp_loggedin()) {
 							if (extensionEnabled('zenpage')) {
 								?>
 								<li>
-									<?php
-									list($total, $type, $unpub) = getNewsPagesStatistic("pages");
-									if (empty($unpub)) {
-										printf(ngettext('<strong>%1$u</strong> Page', '<strong>%1$u</strong> Pages', $total), $total, $type);
-									} else {
-										printf(ngettext('<strong>%1$u</strong> Page (%2$u un-published)', '<strong>%1$u</strong> Pages (%2$u un-published)', $total), $total, $unpub);
-									}
-									?>
+									<?php printPagesStatistic(); ?>
 								</li>
 								<li>
-									<?php
-									list($total, $type, $unpub) = getNewsPagesStatistic("news");
-									if (empty($unpub)) {
-										printf(ngettext('<strong>%1$u</strong> News', '<strong>%1$u</strong> News', $total), $total);
-									} else {
-										printf(ngettext('<strong>%1$u</strong> News (%2$u un-published)', '<strong>%1$u</strong> News (%2$u un-published)', $total), $total, $unpub);
-									}
-									?>
+									<?php printNewsStatistic(); ?>
 								</li>
 								<li>
-									<?php
-									list($total, $type, $unpub) = getNewsPagesStatistic("categories");
-									printf(ngettext('<strong>%1$u</strong> Category', '<strong>%1$u</strong> Categories', $total), $total);
-									?>
+									<?php printCategoriesStatistic(); ?>
 								</li>
 								<?php
 							}
