@@ -810,7 +810,7 @@ function getPageNumURL($page, $total = null) {
 			$pagination1 = '/';
 			$pagination2 = 'index.php';
 			if ($page > 1) {
-				$pagination1 .= _PAGE_ . '/' . $page;
+				$pagination1 .= _PAGE_ . '/' . $page . '/';
 				$pagination2 .= '?page=' . $page;
 			}
 		} else {
@@ -822,7 +822,7 @@ function getPageNumURL($page, $total = null) {
 		$pagination1 = '/' . _PAGE_ . '/' . $pg . '/';
 		$pagination2 = 'index.php?p=' . $pg;
 		if ($page > 1) {
-			$pagination1 .= $page;
+			$pagination1 .= $page . '/';
 			$pagination2 .= '&page=' . $page;
 		}
 	}
@@ -990,7 +990,7 @@ function printPageListWithNav($prevtext, $nexttext, $_oneImagePage = false, $nex
 	$nav = getPageNavList($_oneImagePage, $navlen, $firstlast, $current, $total);
 	if ($total > 1) {
 		?>
-		<div <?php if ($id) echo ' id="$id"'; ?> class="<?php echo $class; ?>">
+		<div <?php if ($id) echo ' id="'.$id.'"'; ?> class="<?php echo $class; ?>">
 			<ul class="<?php echo $class; ?>">
 				<?php
 				$prev = $nav['prev'];
@@ -1411,7 +1411,8 @@ function getParentBreadcrumb() {
 	$n = count($parents);
 	if ($n > 0) {
 		foreach ($parents as $parent) {
-			$url = $parent->getLink();
+			$page = $_zp_current_album->getGalleryPage();
+			$url = $parent->getLink($page);
 //cleanup things in description for use as attribute tag
 			$desc = getBare(preg_replace('|</p\s*>|i', '</p> ', preg_replace('|<br\s*/>|i', ' ', $parent->getDesc())));
 			$output[] = array('link' => html_encode($url), 'title' => $desc, 'text' => $parent->getTitle());
@@ -3712,9 +3713,9 @@ function printAllDates($class = 'archive', $yearid = 'year', $monthid = 'month',
 function getCustomPageURL($page, $q = '') {
 	global $_zp_current_album, $_zp_conf_vars;
 	if (array_key_exists($page, $_zp_conf_vars['special_pages'])) {
-		$result_r = preg_replace('~^_PAGE_/~', _PAGE_ . '/', $_zp_conf_vars['special_pages'][$page]['rewrite']);
+		$result_r = preg_replace('~^_PAGE_/~', _PAGE_ . '/', $_zp_conf_vars['special_pages'][$page]['rewrite']) . '/';
 	} else {
-		$result_r = '/' . _PAGE_ . '/' . $page;
+		$result_r = '/' . _PAGE_ . '/' . $page . '/';
 	}
 	$result = "index.php?p=$page";
 

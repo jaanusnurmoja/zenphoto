@@ -16,6 +16,7 @@
  * @package plugins
  * @subpackage seo
  */
+$plugin_is_filter = 5 | THEME_PLUGIN;
 $plugin_description = gettext("A plugin to print the most common HTML meta tags to the head of your site’s pages.");
 $plugin_author = "Malte Müller (acrylian)";
 
@@ -39,6 +40,16 @@ class htmlmetatags {
 		setOptionDefault('htmlmeta_revisit_after', '10 Days');
 		setOptionDefault('htmlmeta_expires', '43200');
 		setOptionDefault('htmlmeta_tags', '');
+		
+		if(getOption('htmlmeta_og-title')) { // assume this will be set
+			setOptionDefault('htmlmeta_opengraph', 1);
+		}
+		//remove obsolete old options
+		purgeOption('htmlmeta_og-title');
+		purgeOption('htmlmeta_og-image');
+		purgeOption('htmlmeta_og-description');
+		purgeOption('htmlmeta_og-url');
+		purgeOption('htmlmeta_og-type');
 
 		// the html meta tag selector prechecked ones
 		setOptionDefault('htmlmeta_htmlmeta_tags', '1');
@@ -123,6 +134,7 @@ class htmlmetatags {
 														"property='og:description'"						 => "htmlmeta_og-description",
 														"property='og:url'"										 => "htmlmeta_og-url",
 														"property='og:type'"									 => "htmlmeta_og-type",
+														"OpenGraph (og:)"											 => "htmlmeta_opengraph",
 														"name='pinterest' content='nopin'"		 => "htmlmeta_name-pinterest",
 														"twitter:card"												 => "htmlmeta_twittercard"
 										),
@@ -187,6 +199,7 @@ class htmlmetatags {
 			if (empty($ogimage_height)) {
 				$ogimage_height = 900;
 			}
+			$twittercard_type = 'summary';
 		}
 		$type = 'article';
 		switch ($_zp_gallery_page) {
@@ -205,6 +218,7 @@ class htmlmetatags {
 					$thumbimg = $_zp_current_album->getAlbumThumbImage();
 					getMaxSpaceContainer($ogimage_width, $ogimage_height, $thumbimg, false);
 					$thumb = $host . html_encode(pathurlencode($thumbimg->getCustomImage(NULL, $ogimage_width, $ogimage_height, NULL, NULL, NULL, NULL, false, NULL)));
+					$twittercard_type = 'summary_large_image';
 				}
 				break;
 			case 'image.php':
@@ -214,6 +228,7 @@ class htmlmetatags {
 				$canonicalurl = $host . getImageURL();
 				if (getOption('htmlmeta_og-image') || getOption('htmlmeta_twittercard')) {
 					$thumb = $host . html_encode(pathurlencode(getCustomSizedImageMaxSpace($ogimage_width, $ogimage_height)));
+					$twittercard_type = 'summary_large_image';
 				}
 				break;
 			case 'news.php':
@@ -319,19 +334,13 @@ class htmlmetatags {
 		}
 
 		// OpenGraph meta
-		if (getOption('htmlmeta_og-title')) {
+		if (getOption('htmlmeta_opengraph')) {
 			$meta .= '<meta property="og:title" content="' . $pagetitle . '">' . "\n";
-		}
-		if (getOption('htmlmeta_og-image') && !empty($thumb)) {
-			$meta .= '<meta property="og:image" content="' . $thumb . '">' . "\n";
-		}
-		if (getOption('htmlmeta_og-description')) {
+			if (!empty($thumb)) {
+				$meta .= '<meta property="og:image" content="' . $thumb . '">' . "\n";
+			}
 			$meta .= '<meta property="og:description" content="' . $desc . '">' . "\n";
-		}
-		if (getOption('htmlmeta_og-url')) {
 			$meta .= '<meta property="og:url" content="' . html_encode($url) . '">' . "\n";
-		}
-		if (getOption('htmlmeta_og-type')) {
 			$meta .= '<meta property="og:type" content="' . $type . '">' . "\n";
 		}
 
@@ -342,13 +351,13 @@ class htmlmetatags {
 		// Twitter card
 		$twittername = getOption('htmlmeta_twittername');
 		if (getOption('htmlmeta_twittercard') || !empty($twittername)) {
-			$meta .= '<meta property="twitter:creator" content="' . $twittername . '">' . "\n";
-			$meta .= '<meta property="twitter:site" content="' . $twittername . '">' . "\n";
-			$meta .= '<meta property="twitter:card" content="summary">' . "\n";
-			$meta .= '<meta property="twitter:title" content="' . $pagetitle . '">' . "\n";
-			$meta .= '<meta property="twitter:description" content="' . $desc . '">' . "\n";
+			$meta .= '<meta name="twitter:creator" content="' . $twittername . '">' . "\n";
+			$meta .= '<meta name="twitter:site" content="' . $twittername . '">' . "\n";
+			$meta .= '<meta name="twitter:card" content="' . $twittercard_type . '">' . "\n";
+			$meta .= '<meta name="twitter:title" content="' . $pagetitle . '">' . "\n";
+			$meta .= '<meta name="twitter:description" content="' . $desc . '">' . "\n";
 			if (!empty($thumb)) {
-				$meta .= '<meta property="twitter:image" content="' . $thumb . '">' . "\n";
+				$meta .= '<meta name="twitter:image" content="' . $thumb . '">' . "\n";
 			}
 		}
 
