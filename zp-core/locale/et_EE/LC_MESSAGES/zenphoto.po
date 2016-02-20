@@ -125,7 +125,7 @@ msgstr "eelmine"
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/jplayer.php:476 C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/slideshow.php:592
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/slideshow2.php:272 C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/slideshow2.php:589
 msgid "next"
-msgstr "järgmne"
+msgstr "järgmine"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/basic/album.php:67 C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/basic/image.php:110
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zenpage/album.php:75 C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zenpage/favorites.php:73
