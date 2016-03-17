@@ -206,10 +206,7 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 				$short = mb_substr($short, 0, $open);
 			}
 			if (class_exists('tidy')) {
-				$tidy = new tidy();
-				$tidy->parseString($short . $shortenindicator, array('show-body-only' => true), 'utf8');
-				$tidy->cleanRepair();
-				$short = trim($tidy);
+				$short = zpFunctions::tidyHTML($short . $shortenindicator);
 			} else {
 				$short = trim(cleanHTML($short . $shortenindicator));
 			}
@@ -2819,6 +2816,47 @@ class zpFunctions {
 		if (empty($class))
 			$class[] = 'theme';
 		debugLog(sprintf('    ' . $extension . '(%s:%u)=>%.4fs', implode('|', $class), $priority & PLUGIN_PRIORITY, $end - $start));
+	}
+	
+	/**
+	 * Removes a trailing slash from a string if one exists, otherwise just returns the string
+	 * Used primarily within date and tag searches and news date archive results
+	 * 
+	 * @param string $string
+	 * @return string
+	 * @since 1.4.12
+	 */
+	static function removeTrailingSlash($string) {
+		if (substr($string, -1) == '/') {
+			$length = strlen($string) - 1;
+			return substr($string, 0, $length);
+		}
+		return $string;
+	}
+	
+	/**
+	 * Wrapper for the native PHP tidy() to balance out invalid html if existing on the server
+	 * Covers newer HTML5 elements
+	 * 
+	 * @param string $html The html to tidy, typical from a description or content field of items
+	 * @param string $shortenindicator If you are using this on truncated text
+	 * @return string
+	 * @since 1.4.12
+	 */
+	static function tidyHTML($html) {
+		if (class_exists('tidy')) {
+			$options = array(
+					'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header main nav section source summary template track video',
+					'new-empty-tags' => 'command embed keygen source track wbr',
+					'new-inline-tags' => 'audio command datalist embed keygen mark menuitem meter output progress source time video wbr',
+					'show-body-only' => true
+			);
+			$tidy = new tidy();
+			$tidy->parseString($html, $options, 'utf8');
+			$tidy->cleanRepair();
+			return trim($tidy);
+		}
+		return $html;
 	}
 
 }

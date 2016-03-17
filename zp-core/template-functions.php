@@ -64,7 +64,7 @@ function printZenJavascripts() {
 function adminToolbox() {
 	global $_zp_current_album, $_zp_current_image, $_zp_current_search, $_zp_gallery_page, $_zp_gallery, $_zp_current_admin_obj, $_zp_loggedin;
 	if (zp_loggedin()) {
-		$zf = PROTOCOL . '://' . $_SERVER['HTTP_HOST'] . WEBPATH . "/" . ZENFOLDER;
+		$zf = FULLWEBPATH . "/" . ZENFOLDER;
 		$page = getCurrentPage();
 		ob_start();
 		?>
@@ -79,13 +79,16 @@ function adminToolbox() {
 			// ]]> -->
 		</script>
 		<div id="zp__admin_module">
-			<a id="zp__admin_link" href="javascript:toggle('zp__admin_data');">
-				<span>ZP</span>
-				<h3><?php echo $_zp_current_admin_obj->getUser(); ?></h3>
-			</a>
+			<div id="zp__admin_info">
+				<span class="zp_logo">ZP</span>
+				<span class="zp_user"> <?php echo $_zp_current_admin_obj->getUser(); ?></span>
+			</div>
+			<button type="button" id="zp__admin_link" onclick="javascript:toggle('zp__admin_data');">
+				<?php echo gettext('Admin'); ?>
+			</button>
 			<div id="zp__admin_data" style="display: none;">
 
-				<ul style="list-style-type: none;" >
+				<ul>
 				<?php
 				$outputA = ob_get_contents();
 				ob_end_clean();
@@ -537,22 +540,22 @@ function getGalleryIndexURL() {
     internal_deprecations::getGalleryIndexURL();
   }
 	$custom_index = getOption('custom_index_page');
-	if($custom_index) {
-		$link = rewrite_path( '/' . _PAGE_ . '/' . $custom_index, "/index.php?p=" .$custom_index);
+	if ($custom_index) {
+		$link = rewrite_path('/' . _PAGE_ . '/' . $custom_index . '/', "/index.php?p=" . $custom_index);
 	} else {
 		$link = WEBPATH . "/";
 	}
-  if (in_context(ZP_ALBUM) && $_zp_gallery_page != 'index.php') {
-    $album = getUrAlbum($_zp_current_album);
-    if (($page = $album->getGalleryPage()) > 1) {
-			if($custom_index) {
-				$link = rewrite_path( '/' . _PAGE_ . '/' . $custom_index. '/' . $page, "/index.php?p=" .$custom_index. "&amp;page=" . $page);
+	if (in_context(ZP_ALBUM) && $_zp_gallery_page != 'index.php') {
+		$album = getUrAlbum($_zp_current_album);
+		if (($page = $album->getGalleryPage()) > 1) {
+			if ($custom_index) {
+				$link = rewrite_path('/' . _PAGE_ . '/' . $custom_index . '/' . $page . '/', "/index.php?p=" . $custom_index . "&amp;page=" . $page);
 			} else {
-				$link = rewrite_path('/' . _PAGE_  . '/' . $page, "/index.php?" . "page=" . $page);
+				$link = rewrite_path('/' . _PAGE_ . '/' . $page . '/', "/index.php?" . "page=" . $page);
 			}
-    }
-  }
-  return zp_apply_filter('getLink', $link, 'index.php', NULL);
+		}
+	}
+	return zp_apply_filter('getLink', $link, 'index.php', NULL);
 }
 
 /**
@@ -3818,7 +3821,7 @@ function getSearchURL($words, $dates, $fields, $page, $object_list = NULL) {
 		}
 		$words = strtr($words, array('%' => '__25__', '&' => '__26__', '#' => '__23__', '/' => '__2F__'));
 		if ($rewrite) {
-			$url .= urlencode($words);
+			$url .= urlencode($words) . '/';
 		} else {
 			$url .= "&words=" . urlencode($words);
 		}
@@ -3828,14 +3831,14 @@ function getSearchURL($words, $dates, $fields, $page, $object_list = NULL) {
 			$dates = implode(',', $dates);
 		}
 		if ($rewrite) {
-			$url .= $dates;
+			$url .= $dates . '/';
 		} else {
 			$url .= "&date=$dates";
 		}
 	}
 	if ($page > 1) {
 		if ($rewrite) {
-			$url .= "/$page";
+			$url .= "$page/";
 		} else {
 			if ($urls) {
 				$urls .= '&';
