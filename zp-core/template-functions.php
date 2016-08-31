@@ -561,33 +561,34 @@ function getGalleryIndexURL() {
 /**
  * If a custom gallery index page is set this first prints a link to the actual site index (home page = index.php)
  * followed by the gallery index page link. Otherwise just the gallery index link
- * 
+ *
  * @since 1.4.9
  * @param string $after Text to append after and outside the link for breadcrumbs
  * @param string $text Name of the link, if NULL "Gallery" is used
+ * @param bool $printHomeURL In case of a custom gallery index, display breadcrumb with home link (default is true)
  */
-function printGalleryIndexURL($after = NULL, $text = NULL) {
-	global $_zp_gallery_page;
-	if(is_null($text)) {
-		$text = gettext('Gallery');
-	} 
-	$customgalleryindex = getOption('custom_index_page');
-	if($customgalleryindex) {
-		printSiteHomeURL($after);
-	}
-	if ($_zp_gallery_page == getOption('custom_index_page').'.php') {
-		$after = NULL;
-	}
-	if(!$customgalleryindex || ($customgalleryindex && in_array($_zp_gallery_page, array('image.php', 'album.php', 'gallery.php')))) {
-		printLinkHTML(getGalleryIndexURL(), $text, $text, 'galleryindexurl'); echo $after;
-	}
+function printGalleryIndexURL($after = NULL, $text = NULL, $printHomeURL = true) {
+    global $_zp_gallery_page;
+    if(is_null($text)) {
+        $text = gettext('Gallery');
+    }
+    $customgalleryindex = getOption('custom_index_page');
+    if($customgalleryindex && $printHomeURL) {
+        printSiteHomeURL($after);
+    }
+    if ($_zp_gallery_page == getOption('custom_index_page').'.php') {
+        $after = NULL;
+    }
+    if(!$customgalleryindex || ($customgalleryindex && in_array($_zp_gallery_page, array('image.php', 'album.php', 'gallery.php')))) {
+        printLinkHTML(getGalleryIndexURL(), $text, $text, 'galleryindexurl'); echo $after;
+    }
 }
 
 
 /**
 	 * Returns the home page link (WEBPATH) to the Zenphoto theme index.php page
 	 * Use in breadcrumbs if the theme uses a custom gallery index page so the gallery is not the site's home page
-	 * 
+	 *
 	 * @since 1.4.9
 	 * @global string $_zp_gallery_page
 	 * @return string
@@ -599,7 +600,7 @@ function printGalleryIndexURL($after = NULL, $text = NULL) {
 	/**
 	 * Prints the home page link (WEBPATH with trailing slash) to a Zenphoto theme index.php page
 	 * Use in breadcrumbs if the theme uses a custom gallery index page so the gallery is not the site's home page
-	 * 
+	 *
 	 * @param string $after Text after and outside the link for breadcrumbs
 		 * @param string $text Text of the link, if NULL "Home"
 	 */
@@ -610,7 +611,7 @@ function printGalleryIndexURL($after = NULL, $text = NULL) {
 		}
 		if (is_null($text)) {
 			$text= gettext('Home');
-		} 
+		}
 		printLinkHTML(getSiteHomeURL(), $text, $text, 'homeurl'); echo $after;
 	}
 
@@ -1413,12 +1414,16 @@ function getParentBreadcrumb() {
 	}
 	$n = count($parents);
 	if ($n > 0) {
+		array_push($parents, $_zp_current_album);
+		$index = -1;
 		foreach ($parents as $parent) {
-			$page = $_zp_current_album->getGalleryPage();
-			$url = $parent->getLink($page);
-//cleanup things in description for use as attribute tag
-			$desc = getBare(preg_replace('|</p\s*>|i', '</p> ', preg_replace('|<br\s*/>|i', ' ', $parent->getDesc())));
-			$output[] = array('link' => html_encode($url), 'title' => $desc, 'text' => $parent->getTitle());
+			$index++;
+			if($index != 0) {
+				$parentparent = $parents[$index-1];
+				$page = $parent->getGalleryPage();
+				$url = $parentparent->getLink($page);
+				$output[] = array('link' => html_encode($url), 'title' => $parentparent->getTitle(), 'text' => $parentparent->getTitle());
+			}
 		}
 	}
 	return $output;
@@ -1493,7 +1498,7 @@ function printHomeLink($before = '', $after = '', $title = NULL, $class = NULL, 
 		}
 		if ($site != SEO_FULLWEBPATH) {
 			if ($before) {
-				echo '<span class="beforetext">' . html_encode(before) . '</span>';
+				echo '<span class="beforetext">' . html_encode($before) . '</span>';
 			}
 			printLinkHTML($site, $name, $title, $class, $id);
 			if ($after) {
@@ -4318,8 +4323,8 @@ function printPasswordForm($_password_hint, $_password_showuser = NULL, $_passwo
 
 	if (is_null($_password_redirect))
 		$_password_redirect = getPageRedirect();
-		
-	if (is_null($_password_showuser))	
+
+	if (is_null($_password_showuser))
 		$_password_showuser = $_zp_gallery->getUserLogonField();
 	?>
 	<div id="passwordform">

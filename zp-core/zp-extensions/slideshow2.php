@@ -351,11 +351,11 @@ class cycle {
       if ($linkslides) {
         $url = pathurlencode($imgobj->getFullImageURL());
       } else {
-        $url = pathurlencode($imgobj->getLink());
+        $url = $imgobj->getLink();
       }
       $slidecontent .= '<a href="' . $url . '">' . "\n";
     } else if (!$carousel && $linkslides) {
-      $slidecontent .= '<a href="' . pathurlencode($imgobj->getLink()) . '">' . "\n";
+      $slidecontent .= '<a href="' . $imgobj->getLink() . '">' . "\n";
     }
     $active = '';
     if ($carousel && !is_null($_zp_current_image)) {
@@ -456,8 +456,8 @@ class cycle {
 			$css = WEBPATH . '/' . THEMEFOLDER . '/' . $theme . '/slideshow2.css';
 		} else {
 			$css = WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/slideshow2/slideshow2.css';
-		}	
-		?>				
+		}
+		?>
 		<link rel="stylesheet" type="text/css" href="<?php echo $css ?>" />
 		<!--[if lte IE 7]>
 			<link rel="stylesheet" type="text/css" href="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER ?>/slideshow2/fonts/ie7.css" />
@@ -520,7 +520,7 @@ if (extensionEnabled('slideshow2')) {
 			$imagenumber = '';
 			$imagefile = '';
 			$albumnr = 0;
-			$slideshowlink = rewrite_path(_PAGE_ . '/slideshow', "index.php?p=slideshow");
+			$slideshowlink = rewrite_path(_PAGE_ . '/slideshow/', "index.php?p=slideshow");
 			$slideshowhidden = '<input type="hidden" name="preserve_search_params" value="' . html_encode($_zp_current_search->getSearchParams()) . '" />';
 		} else {
 			if (in_context(ZP_IMAGE)) {
@@ -537,7 +537,7 @@ if (extensionEnabled('slideshow2')) {
 				$albumnr = $_zp_current_album->getID();
 			}
 			if ($albumnr) {
-				$slideshowlink = rewrite_path(pathurlencode($_zp_current_album->getFolder()) . '/' . _PAGE_ . '/slideshow', "index.php?p=slideshow&amp;album=" . urlencode($_zp_current_album->getFolder()));
+				$slideshowlink = rewrite_path(pathurlencode($_zp_current_album->getFolder()) . '/' . _PAGE_ . '/slideshow/', "index.php?p=slideshow&amp;album=" . urlencode($_zp_current_album->getFolder()));
 			} else {
 				$slideshowlink = rewrite_path(_PAGE_ . '/slideshow', "index.php?p=slideshow");
 				$slideshowhidden = '<input type="hidden" name="favorites_page" value="1" />' . "\n" . '<input type="hidden" name="title" value="' . $_myFavorites->instance . '" />';
@@ -644,7 +644,7 @@ if (extensionEnabled('slideshow2')) {
 								$imagetitle = html_encode(getBare($imgobj->getTitle()));
 							}
 							?>
-							<a href="<?php echo html_encode(pathurlencode($imagelink)); ?>" rel="slideshow"<?php echo $style; ?> title="<?php echo $imagetitle; ?>"><?php echo $linktext; ?></a>
+							<a class="slideshowlink" href="<?php echo html_encode(pathurlencode($imagelink)); ?>" rel="slideshow"<?php echo $style; ?> title="<?php echo $imagetitle; ?>"><?php echo $linktext; ?></a>
 							<?php
 						}
 					}

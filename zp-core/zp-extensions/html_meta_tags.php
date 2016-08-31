@@ -40,7 +40,7 @@ class htmlmetatags {
 		setOptionDefault('htmlmeta_revisit_after', '10 Days');
 		setOptionDefault('htmlmeta_expires', '43200');
 		setOptionDefault('htmlmeta_tags', '');
-		
+
 		if(getOption('htmlmeta_og-title')) { // assume this will be set
 			setOptionDefault('htmlmeta_opengraph', 1);
 		}
@@ -172,8 +172,8 @@ class htmlmetatags {
 	 *
 	 */
 	static function getHTMLMetaData() {
-		global $_zp_gallery, $_zp_galley_page, $_zp_current_album, $_zp_current_image, $_zp_current_zenpage_news,
-		$_zp_current_zenpage_page, $_zp_gallery_page, $_zp_current_category, $_zp_authority, $_zp_conf_vars, $_myFavorites,
+		global $_zp_gallery, $_zp_gallery_page, $_zp_current_album, $_zp_current_image, $_zp_current_zenpage_news,
+		$_zp_current_zenpage_page, $_zp_current_category, $_zp_authority, $_zp_conf_vars, $_myFavorites,
 		$htmlmetatags_need_cache, $_zp_page;
 		zp_register_filter('image_processor_uri', 'htmlmetatags::ipURI');
 		$host = sanitize("http://" . $_SERVER['HTTP_HOST']);
@@ -278,7 +278,7 @@ class htmlmetatags {
 					$canonicalurl .= '/'. $_zp_page;
 				}
 				break;
-				
+
 		}
 		// shorten desc to the allowed 200 characters if necesssary.
 		$desc = html_encode(trim(substr(getBare($desc), 0, 160)));
@@ -349,10 +349,12 @@ class htmlmetatags {
 			$meta .= '<meta name="pinterest" content="nopin">' . "\n";
 		} // dissalow users to pin images on Pinterest
 		// Twitter card
-		$twittername = getOption('htmlmeta_twittername');
-		if (getOption('htmlmeta_twittercard') || !empty($twittername)) {
-			$meta .= '<meta name="twitter:creator" content="' . $twittername . '">' . "\n";
-			$meta .= '<meta name="twitter:site" content="' . $twittername . '">' . "\n";
+		if (getOption('htmlmeta_twittercard')) {
+			$twittername = getOption('htmlmeta_twittername');
+			if (!empty($twittername)) {
+				$meta .= '<meta name="twitter:creator" content="' . $twittername . '">' . "\n";
+				$meta .= '<meta name="twitter:site" content="' . $twittername . '">' . "\n";
+			}
 			$meta .= '<meta name="twitter:card" content="' . $twittercard_type . '">' . "\n";
 			$meta .= '<meta name="twitter:title" content="' . $pagetitle . '">' . "\n";
 			$meta .= '<meta name="twitter:description" content="' . $desc . '">' . "\n";
@@ -418,7 +420,7 @@ class htmlmetatags {
 									$altlink .= '/' . _PAGE_ . '/' . html_encode($pagetitle);
 									break;
 							} // switch
-							
+
 							//append page number if needed
 							switch ($_zp_gallery_page) {
 								case 'index.php':
@@ -439,10 +441,10 @@ class htmlmetatags {
 					} // foreach
 				} // if count
 			} // if option
-				
-		
-			
-			
+
+
+
+
 		} // if canonical
 		if (!empty($htmlmetatags_need_cache)) {
 			$meta .= '<script type="text/javascript">' . "\n";
