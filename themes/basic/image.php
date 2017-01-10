@@ -54,7 +54,7 @@ if (!defined('WEBPATH'))
 				</div>
 				<h2>
 					<span>
-						<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle()); 
+						<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle());
 						printParentBreadcrumb("", " | ", " | ");
 						printAlbumBreadcrumb("", " | ");
 						?>
@@ -111,10 +111,10 @@ if (!defined('WEBPATH'))
 				?>
 				<br class="clearall" />
 
-				<?php 
-    @call_user_func('printGoogleMap'); 
-    @call_user_func('printRating'); 
-    @call_user_func('printCommentForm'); 
+				<?php
+    @call_user_func('printGoogleMap');
+    @call_user_func('printRating');
+    @call_user_func('printCommentForm');
     ?>
 			</div>
 		</div>
@@ -124,11 +124,11 @@ if (!defined('WEBPATH'))
 				printFavoritesURL(NULL, '', ' | ', '<br />');
 			}
 			?>
-			<?php 
-   if (class_exists('RSS')) printRSSLink('Gallery', '', 'RSS', ' | '); 
+			<?php
+   if (class_exists('RSS')) printRSSLink('Gallery', '', 'RSS', ' | ');
    printCustomPageURL(gettext("Archive View"), "archive"); ?> |
-			<?php printZenphotoLink(); 
-   @call_user_func('printUserLogin_out', " | "); 
+			<?php printZenphotoLink();
+   @call_user_func('printUserLogin_out', " | ");
    ?>
 		</div>
 		<?php

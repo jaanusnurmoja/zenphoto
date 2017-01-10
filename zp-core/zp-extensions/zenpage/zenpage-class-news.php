@@ -150,7 +150,7 @@ class ZenpageNews extends ZenpageItems {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * returns true if the article resides only in protected categories
 	 */
@@ -177,7 +177,8 @@ class ZenpageNews extends ZenpageItems {
 		}
 		return true;
 	}
-
+	
+	
 	/**
 	 * See if a guest is logged on to the news category.
 	 * Note: If any belonging category is plublic or he is logged on, then success.
@@ -192,16 +193,24 @@ class ZenpageNews extends ZenpageItems {
 		if (empty($categories)) { //	cannot be protected!
 			return 'zp_public_access';
 		} else {
+			$access = array();
 			foreach ($categories as $cat) {
 				$catobj = new ZenpageCategory($cat['titlelink']);
 				$guestaccess = $catobj->checkforGuest($hint, $show);
-				if ($guestaccess) {
-					return $guestaccess;
+				if($guestaccess) {
+					$access[] = 1;
+				} else {
+					$access[] = 0;
 				}
+			}
+			if(in_array(0, $access)) { // if there is only one protected category, no public access
+				return false;
+			} else {
+				return 'zp_public_access';
 			}
 		}
 		return false;
-	}
+	} 
 
 	/**
 	 * Checks if user is news author
@@ -221,7 +230,7 @@ class ZenpageNews extends ZenpageItems {
 			if ($_zp_current_admin_obj->getUser() == $this->getAuthor()) {
 				return true; //	he is the author
 			}
-			if ($this->getShow() && $action == LIST_RIGHTS) {
+			if ($this->getShow() && $action == LIST_RIGHTS && !$this->isProtected() && $this->categoryIsVisible()) {
 				return true;
 			}
 			$mycategories = $_zp_current_admin_obj->getObjects('news');

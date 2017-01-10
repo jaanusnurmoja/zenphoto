@@ -319,7 +319,6 @@ class ZenpageCategory extends ZenpageRoot {
 
 	/**
 	 * Checks if a category is protected and returns TRUE or FALSE
-	 * NOTE: This function does only check if a password is set not if it has been entered! Use $this->checkforGuest() for that.
 	 *
 	 * @return bool
 	 */

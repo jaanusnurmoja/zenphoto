@@ -225,7 +225,11 @@ $curdir = getcwd();
 chdir(dirname(dirname(__FILE__)));
 // Important. when adding new database support this switch may need to be extended,
 $engines = array();
+
 $preferences = array('mysqli' => 1, 'pdo_mysql' => 2, 'mysql' => 3);
+if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
+	unset($preferences['mysql']);
+}
 $cur = 999999;
 $preferred = NULL;
 foreach (setup_glob('functions-db-*.php') as $key => $engineMC) {
@@ -1423,7 +1427,7 @@ if ($c <= 0) {
 								}
 
 								$ch = !empty($vr) && ($vr == HTACCESS_VERSION);
-								$d = str_replace('\\', '/', dirname(dirname(dirname($_SERVER['SCRIPT_NAME']))));
+								$d = str_replace('\\', '/', dirname(dirname(dirname($_SERVER['SCRIPT_NAME'])))) . '/';
 								$d = str_replace(' ', '%20', $d); //	apache appears to trip out if there is a space in the rewrite base
 								if (!$ch) { // wrong version
 									$oht = trim(@file_get_contents(SERVERPATH . '/' . ZENFOLDER . '/oldhtaccess'));
@@ -1441,6 +1445,7 @@ if ($c <= 0) {
 										if ($closed) {
 											$ht = close_site($ht);
 										}
+										
 										$htu = strtoupper($ht);
 										@chmod($htfile, 0777);
 										@unlink($htfile);

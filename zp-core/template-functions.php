@@ -3283,7 +3283,10 @@ function getRandomImages($daily = false) {
  * @return object
  */
 function getRandomImagesAlbum($rootAlbum = NULL, $daily = false) {
-	global $_zp_current_album, $_zp_gallery, $_zp_current_search;
+	global $_zp_current_album, $_zp_gallery;
+	if (empty($rootAlbum) && !in_context(ZP_ALBUM)) {
+		return null;
+	}
 	if (empty($rootAlbum)) {
 		$album = $_zp_current_album;
 	} else {
@@ -3321,19 +3324,23 @@ function getRandomImagesAlbum($rootAlbum = NULL, $daily = false) {
 			$imageWhere = " AND " . prefix('images') . ".show=1";
 			$albumInWhere = prefix('albums') . ".show=1";
 		}
-
 		$query = "SELECT id FROM " . prefix('albums') . " WHERE ";
-		if ($albumInWhere)
+		if ($albumInWhere) {
 			$query .= $albumInWhere . ' AND ';
+		}
 		$query .= "folder LIKE " . db_quote(db_LIKE_escape($albumfolder) . '%');
 		$result = query($query);
 		if ($result) {
-			$albumInWhere = prefix('albums') . ".id IN (";
+			$albumids = array();
 			while ($row = db_fetch_assoc($result)) {
-				$albumInWhere = $albumInWhere . $row['id'] . ", ";
+				$albumids[] = $row['id'];
+			}
+			if (empty($albumids)) {
+				$albumInWhere = ' AND ' . $albumInWhere;
+			} else {
+				$albumInWhere = ' AND ' . prefix('albums') . ".id IN (" . implode(',', $albumids) . ')';
 			}
 			db_free_result($result);
-			$albumInWhere = ' AND ' . substr($albumInWhere, 0, -2) . ')';
 			$sql = 'SELECT `folder`, `filename` ' .
 							' FROM ' . prefix('images') . ', ' . prefix('albums') .
 							' WHERE ' . prefix('albums') . '.folder!="" AND ' . prefix('images') . '.albumid = ' .
@@ -3659,7 +3666,7 @@ function printAllDates($class = 'archive', $yearid = 'year', $monthid = 'month',
 		$classactive = 'archive_active';
 	} else {
 		$classactive = $class . '_active';
-		$class = "class=\"$class\"";
+		$class = 'class="' . $class . '"';
 	}
 	if ($_zp_gallery_page == 'search.php') {
 		$activedate = getSearchDate('%Y-%m');
@@ -3667,10 +3674,10 @@ function printAllDates($class = 'archive', $yearid = 'year', $monthid = 'month',
 		$activedate = '';
 	}
 	if (!empty($yearid)) {
-		$yearid = "class=\"$yearid\"";
+		$yearid = 'class="' . $yearid . '"';
 	}
 	if (!empty($monthid)) {
-		$monthid = "class=\"$monthid\"";
+		$monthid = 'class="' . $monthid . '"';
 	}
 	$datecount = getAllDates($order);
 	$lastyear = "";
@@ -3705,7 +3712,7 @@ function printAllDates($class = 'archive', $yearid = 'year', $monthid = 'month',
 		} else {
 			$cl = '';
 		}
-		echo "<li" . $cl . "><a href=\"" . html_encode(getSearchURl('', $datekey, '', 0, array('allbums' => $albumlist))) . "\">$month ($val)</a></li>\n";
+		echo '<li' . $cl . '><a href="' . html_encode(getSearchURL('', $datekey, '', 0, array('albums' => $albumlist))) . '">' . $month . ' (' . $val . ')</a></li>' . "\n";
 	}
 	echo "</ul>\n</li>\n</ul>\n";
 }

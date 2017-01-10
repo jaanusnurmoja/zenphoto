@@ -215,6 +215,7 @@ class ZenpagePage extends ZenpageItems {
 		return $this->getPages();
 	}
 
+
 	/**
 	 * Checks if user is allowed to access the page
 	 * @param $hint
@@ -252,7 +253,7 @@ class ZenpagePage extends ZenpageItems {
 			}
 		}
 	}
-
+	
 	/**
 	 * Checks if a page is protected and returns TRUE or FALSE
 	 * NOTE: This function does only check if a password is set not if it has been entered! Use $this->checkforGuest() for that.
