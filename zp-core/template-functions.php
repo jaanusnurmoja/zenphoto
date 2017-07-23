@@ -39,10 +39,10 @@ function printZenJavascripts() {
 	global $_zp_current_album;
 	?>
 	<script type="text/javascript" src="<?php echo WEBPATH . "/" . ZENFOLDER; ?>/js/jquery.js"></script>
-	<script type="text/javascript" src="<?php echo WEBPATH . "/" . ZENFOLDER; ?>/js/zenphoto.js"></script>
 	<?php
-	if (zp_loggedin()) {
+	if(zp_loggedin()) {
 		?>
+		<script type="text/javascript" src="<?php echo WEBPATH . "/" . ZENFOLDER; ?>/js/zenphoto.js"></script>
 		<script type="text/javascript">
 			// <!-- <![CDATA[
 			var deleteAlbum1 = "<?php echo gettext("Are you sure you want to delete this entire album?"); ?>";
@@ -2558,7 +2558,7 @@ function printImageMetadata($title = NULL, $toggle = true, $id = 'imagemetadata'
 		$refa = '</a>';
 		$style = ' style="display:none"';
 	} else if ($toggle) {
-		$refh = '<a href="javascript:toggle(\'' . $dataid . '\');" title="' . $title . '">';
+		$refh = '<a class="metadata_toggle" href="#" title="' . $title . '">';
 		$refa = '</a>';
 		$style = ' style="display:none"';
 	}
@@ -2566,6 +2566,14 @@ function printImageMetadata($title = NULL, $toggle = true, $id = 'imagemetadata'
 	<span id="<?php echo $span; ?>" class="metadata_title">
 		<?php echo $refh; ?><?php echo $title; ?><?php echo $refa; ?>
 	</span>
+	<?php if($toggle) { ?>
+		<script>
+			$(".metadata_toggle").click(function(event) {
+				event.preventDefault();
+				$("#<?php echo $dataid; ?>").toggle();
+			});
+		</script>
+	<?php } ?>
 	<div id="<?php echo $dataid; ?>"<?php echo $style; ?>>
 		<div<?php echo $id . $class; ?>>
 			<table>
@@ -4003,7 +4011,13 @@ function printSearchForm($prevtext = NULL, $id = 'search', $buttonSource = NULL,
 					<input type="text" name="words" value="" id="search_input" size="10" />
 				</span>
 				<?php if (count($fields) > 1 || $searchwords) { ?>
-					<a href="javascript:toggle('searchextrashow');" ><img src="<?php echo $iconsource; ?>" title="<?php echo gettext('search options'); ?>" alt="<?php echo gettext('fields'); ?>" id="searchfields_icon" /></a>
+					<a class="toggle_searchextrashow" href="#"><img src="<?php echo $iconsource; ?>" title="<?php echo gettext('search options'); ?>" alt="<?php echo gettext('fields'); ?>" id="searchfields_icon" /></a>
+					<script>
+						$(".toggle_searchextrashow").click(function(event) {
+							event.preventDefault();
+							$("#searchextrashow").toggle();
+						});
+					</script>
 				<?php } ?>
 				<input type="<?php echo $type; ?>" <?php echo $button; ?> class="button buttons" id="search_submit" <?php echo $buttonSource; ?> data-role="none" />
 				<?php
@@ -4276,6 +4290,9 @@ function checkAccess(&$hint = NULL, &$show = NULL) {
 function getPageRedirect() {
   global $_zp_login_error, $_zp_password_form_printed, $_zp_current_search, $_zp_gallery_page,
   $_zp_current_album, $_zp_current_image, $_zp_current_zenpage_news;
+	if($_zp_login_error !== 2) {
+		return false;
+	}
   switch ($_zp_gallery_page) {
     case 'index.php':
       $action = '/index.php';
@@ -4300,7 +4317,7 @@ function getPageRedirect() {
       if ($action == '/' . _PAGE_ . '/password' || $action == '/index.php?p=password') {
         $action = '/index.php';
       }
-      break;
+      break; 
     default:
       if (in_context(ZP_SEARCH)) {
         $action = '/index.php?userlog=1&p=search' . $_zp_current_search->getSearchParams();
@@ -4373,22 +4390,24 @@ function printZenphotoLink() {
  */
 function exposeZenPhotoInformations($obj = '', $plugins = '', $theme = '') {
 	global $_zp_filters;
-
 	$a = basename($obj);
 	if ($a != 'full-image.php') {
-		echo "\n<!-- zenphoto version " . ZENPHOTO_VERSION . " [" . ZENPHOTO_FULL_RELEASE . "]";
-		echo " THEME: " . $theme . " (" . $a . ")";
-		$graphics = zp_graphicsLibInfo();
-		$graphics = sanitize(str_replace('<br />', ', ', $graphics['Library_desc']), 3);
-		echo " GRAPHICS LIB: " . $graphics . " { memory: " . INI_GET('memory_limit') . " }";
-		echo ' PLUGINS: ';
-		if (count($plugins) > 0) {
-			sort($plugins);
-			foreach ($plugins as $plugin) {
-				echo $plugin . ' ';
+		echo "\n<!-- zenphoto version " . ZENPHOTO_VERSION;
+		if (TEST_RELEASE) {
+			echo " [" . ZENPHOTO_FULL_RELEASE . "]";
+			echo " THEME: " . $theme . " (" . $a . ")";
+			$graphics = zp_graphicsLibInfo();
+			$graphics = sanitize(str_replace('<br />', ', ', $graphics['Library_desc']), 3);
+			echo " GRAPHICS LIB: " . $graphics . " { memory: " . INI_GET('memory_limit') . " }";
+			echo ' PLUGINS: ';
+			if (count($plugins) > 0) {
+				sort($plugins);
+				foreach ($plugins as $plugin) {
+					echo $plugin . ' ';
+				}
+			} else {
+				echo 'none ';
 			}
-		} else {
-			echo 'none ';
 		}
 		echo " -->";
 	}

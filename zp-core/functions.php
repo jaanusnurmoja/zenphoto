@@ -621,6 +621,7 @@ function getPluginFiles($pattern, $folder = '', $stripsuffix = true) {
  */
 function getPlugin($plugin, $inTheme = false, $webpath = false) {
 	global $_zp_gallery;
+	$plugin = ltrim($plugin,'./\\');
 	$pluginFile = NULL;
 	if ($inTheme === true) {
 		$inTheme = $_zp_gallery->getCurrentTheme();
@@ -2056,21 +2057,42 @@ function commentsAllowed($type) {
  * Returns the viewer's IP address
  * Deals with transparent proxies
  *
+ * @param bool $anonymize_ip If null (default) the backend option setting is used. Override with true or false.
  * @return string
  */
-function getUserIP() {
+function getUserIP($anonymize_ip = null) {
+	if (is_null($anonymize_ip)) {
+		$anonymize_ip = (bool) getOption('anonymize_ip');
+	}
 	$pattern = '~^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$~';
 	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		$ip = sanitize($_SERVER['HTTP_X_FORWARDED_FOR']);
 		if (preg_match($pattern, $ip)) {
+			if ($anonymize_ip) {
+				$ip = getAnonymIp($ip);
+			}
 			return $ip;
 		}
 	}
 	$ip = sanitize($_SERVER['REMOTE_ADDR']);
 	if (preg_match($pattern, $ip)) {
+		if ($anonymize_ip) {
+			$ip = getAnonymIp($ip);
+		}
 		return $ip;
 	}
 	return NULL;
+}
+
+/**
+ * Replaces the last chunk of an ip address with 0 for privacy concerns.
+ * 
+ * @author Ralf Kerkhoff
+ * @param string $ip IP address
+ * @return string
+ */
+function getAnonymIp($ip) {
+	return preg_replace('/[0-9]+\z/', '0', $ip);
 }
 
 /**

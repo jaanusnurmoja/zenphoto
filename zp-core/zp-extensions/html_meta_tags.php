@@ -129,11 +129,6 @@ class htmlmetatags {
 														"name='revisit-after'"								 => "htmlmeta_name-revisit-after",
 														"name='expires'"											 => "htmlmeta_name-expires",
 														"name='date'"													 => "htmlmeta_name-date",
-														"property='og:title'"									 => "htmlmeta_og-title",
-														"property='og:image'"									 => "htmlmeta_og-image",
-														"property='og:description'"						 => "htmlmeta_og-description",
-														"property='og:url'"										 => "htmlmeta_og-url",
-														"property='og:type'"									 => "htmlmeta_og-type",
 														"OpenGraph (og:)"											 => "htmlmeta_opengraph",
 														"name='pinterest' content='nopin'"		 => "htmlmeta_name-pinterest",
 														"twitter:card"												 => "htmlmeta_twittercard"
@@ -176,7 +171,7 @@ class htmlmetatags {
 		$_zp_current_zenpage_page, $_zp_current_category, $_zp_authority, $_zp_conf_vars, $_myFavorites,
 		$htmlmetatags_need_cache, $_zp_page;
 		zp_register_filter('image_processor_uri', 'htmlmetatags::ipURI');
-		$host = sanitize("http://" . $_SERVER['HTTP_HOST']);
+		$host = sanitize(PROTOCOL . "://" . $_SERVER['HTTP_HOST']);
 		$url = $host . getRequestURI();
 
 		// Convert locale shorttag to allowed html meta format
@@ -267,7 +262,7 @@ class htmlmetatags {
 				if (is_object($_myFavorites)) {
 					$standard['favorites'] = gettext('My favorites');
 				}
-				If (array_key_exists($custompage, $standard)) {
+				if (array_key_exists($custompage, $standard)) {
 					$pagetitle = $standard[$custompage] . " - ";
 				} else {
 					$pagetitle = $custompage . " - ";

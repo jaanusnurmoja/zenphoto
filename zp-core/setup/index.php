@@ -107,6 +107,7 @@ if (file_exists($oldconfig = SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE))
 
 $zptime = filemtime($oldconfig = SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 @copy(dirname(dirname(__FILE__)) . '/dataaccess', $serverpath . '/' . DATA_FOLDER . '/.htaccess');
+@copy(dirname(dirname(__FILE__)) . '/dataaccess', $serverpath . '/' . BACKUPFOLDER . '/.htaccess'); 
 @chmod($serverpath . '/' . DATA_FOLDER . '/.htaccess', 0444);
 
 if (session_id() == '') {
@@ -1427,7 +1428,7 @@ if ($c <= 0) {
 								}
 
 								$ch = !empty($vr) && ($vr == HTACCESS_VERSION);
-								$d = str_replace('\\', '/', dirname(dirname(dirname($_SERVER['SCRIPT_NAME'])))) . '/';
+								$d = rtrim(str_replace('\\', '/', dirname(dirname(dirname($_SERVER['SCRIPT_NAME'])))), '/') . '/';
 								$d = str_replace(' ', '%20', $d); //	apache appears to trip out if there is a space in the rewrite base
 								if (!$ch) { // wrong version
 									$oht = trim(@file_get_contents(SERVERPATH . '/' . ZENFOLDER . '/oldhtaccess'));
@@ -1445,7 +1446,7 @@ if ($c <= 0) {
 										if ($closed) {
 											$ht = close_site($ht);
 										}
-										
+
 										$htu = strtoupper($ht);
 										@chmod($htfile, 0777);
 										@unlink($htfile);
