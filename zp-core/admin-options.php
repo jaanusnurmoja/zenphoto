@@ -131,7 +131,6 @@ if (isset($_GET['action'])) {
 					setOption($matches[1] . '_log_mail', (int) isset($_POST['log_mail_' . $matches[1]]));
 				}
 			}
-			setOption('anonymize_ip', (int) isset($_POST['anonymize_ip']));
 		}
 
 		/*		 * * Gallery options ** */
@@ -194,9 +193,11 @@ if (isset($_GET['action'])) {
 			setOption('search_no_pages', (int) isset($_POST['search_no_pages']));
 			setOption('search_no_news', (int) isset($_POST['search_no_news']));
 			setOption('search_within', (int) ($_POST['search_within'] && true));
-			$sorttype = strtolower(sanitize($_POST['sortby'], 3));
+			
+			// image default sort order + direction
+			$sorttype = strtolower(sanitize($_POST['search_image_sort_type'], 3));
 			if ($sorttype == 'custom') {
-				$sorttype = unquote(strtolower(sanitize($_POST['customimagesort'], 3)));
+				$sorttype = unquote(strtolower(sanitize($_POST['custom_image_sort'], 3)));
 			}
 			setOption('search_image_sort_type', $sorttype);
 			if ($sorttype == 'random') {
@@ -205,18 +206,48 @@ if (isset($_GET['action'])) {
 				if (empty($sorttype)) {
 					$direction = 0;
 				} else {
-					$direction = isset($_POST['image_sortdirection']);
+					$direction = isset($_POST['search_image_sort_direction']);
 				}
 				setOption('search_image_sort_direction', $direction);
 			}
-			$sorttype = strtolower(sanitize($_POST['subalbumsortby'], 3));
-			if ($sorttype == 'custom')
-				$sorttype = strtolower(sanitize($_POST['customalbumsort'], 3));
+			
+			// album default sort order + direction
+			$sorttype = strtolower(sanitize($_POST['search_album_sort_type'], 3));
+			if ($sorttype == 'custom') {
+				$sorttype = strtolower(sanitize($_POST['custom_album_sort'], 3));
+			}
 			setOption('search_album_sort_type', $sorttype);
 			if ($sorttype == 'random') {
 				setOption('search_album_sort_direction', 0);
 			} else {
-				setOption('search_album_sort_direction', isset($_POST['album_sortdirection']));
+				setOption('search_album_sort_direction', isset($_POST['search_album_sort_direction']));
+			}
+			
+			if (ZP_NEWS_ENABLED) {
+				// Zenpage news articles default sort order + direction
+				$sorttype = strtolower(sanitize($_POST['search_newsarticle_sort_type'], 3));
+				if ($sorttype == 'custom') {
+					$sorttype = strtolower(sanitize($_POST['custom_newsarticle_sort'], 3));
+				}
+				setOption('search_newsarticle_sort_type', $sorttype);
+				if ($sorttype == 'random') {
+					setOption('search_newsarticle_sort_direction', 0);
+				} else {
+					setOption('search_newsarticle_sort_direction', isset($_POST['search_newsarticle_sort_direction']));
+				}
+			}
+			
+			if (ZP_PAGES_ENABLED) {
+				// Zenpage pages default sort order + direction
+				$sorttype = strtolower(sanitize($_POST['search_page_sort_type'], 3));
+				if ($sorttype == 'custom')
+					$sorttype = strtolower(sanitize($_POST['custom_page_sort'], 3));
+				setOption('search_page_sort_type', $sorttype);
+				if ($sorttype == 'random') {
+					setOption('search_page_sort_direction', 0);
+				} else {
+					setOption('search_page_sort_direction', isset($_POST['search_page_sort_direction']));
+				}
 			}
 			$returntab = "&tab=search";
 		}
@@ -438,6 +469,13 @@ if (isset($_GET['action'])) {
 			setOption('obfuscate_cache', (int) isset($_POST['obfuscate_cache']));
 			setOption('image_processor_flooding_protection', (int) isset($_POST['image_processor_flooding_protection']));
 			$_zp_gallery->save();
+			setOption('anonymize_ip', sanitize_numeric($_POST['anonymize_ip']));
+			setOption('dataprivacy_policy_notice', process_language_string_save('dataprivacy_policy_notice', 3));
+			setOption('dataprivacy_policy_custompage', sanitize($_POST['dataprivacy_policy_custompage']));
+			if(extensionEnabled('zenpage') && ZP_PAGES_ENABLED) {
+				setOption('dataprivacy_policy_zenpage', sanitize($_POST['dataprivacy_policy_zenpage']));
+			}
+			setOption('dataprivacy_policy_customlinktext', process_language_string_save('dataprivacy_policy_customlinktext', 3));
 			$returntab = "&tab=security";
 		}
 		/*		 * * custom options ** */
@@ -788,7 +826,8 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td width="350">
 										<select id="date_format_list" name="date_format_list" onchange="showfield(this, 'customTextBox')">
 											<?php
-											$formatlist = array(gettext('Custom')												 => 'custom',
+											$formatlist = array(
+															gettext('Custom')												 => 'custom',
 															gettext('Preferred date representation') => '%x',
 															gettext('02/25/08 15:30')								 => '%d/%m/%y %H:%M',
 															gettext('02/25/08')											 => '%d/%m/%y',
@@ -962,7 +1001,7 @@ Zenphoto_Authority::printPasswordFormJS();
 												<?php
 												echo gettext('Duration');
 												?>
-												<input type="text" name="cookie_persistence" value="<?php echo COOKIE_PESISTENCE; ?>" />
+												<input type="text" name="cookie_persistence" value="<?php echo COOKIE_PERSISTENCE; ?>" />
 											</p>
 											<?php
 										}
@@ -1054,20 +1093,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									</td>
 									<td><?php echo gettext('Logs will be "rolled" over when they exceed the specified size. If checked, the administrator will be e-mailed when this occurs.') ?></td>
 								</tr>
-								<tr>
-									<td width="175">
-										<p><?php echo gettext('Anonym IP'); ?></p>
-									</td>
-									<td width="350">
-										<label>
-											<input type="checkbox" size="5" id="anonymize_ip" name="anonymize_ip"  value="1" <?php checked('1', getOption('anonymize_ip')); ?> />
-											<?php echo gettext("Anonymize IP"); ?>
-										</label>
-									</td>
-									<td width="175">
-										<p><?php echo gettext('Zenphoto stores the IP address of visitors on several occasions (e.g. rating, spam filtering). In some countries\'s laws (e.g. EU countries) the IP address is considered private information and therefore it is require to not store the full address. Enable this so the last part of the IP address is replacd by 0.'); ?></p>
-									</td>
-								</tr>
+								
 								<?php zp_apply_filter('admin_general_data'); ?>
 								<tr>
 									<td colspan="3">
@@ -1170,6 +1196,7 @@ Zenphoto_Authority::printPasswordFormJS();
 										<td>
 											<p>
 											<input type="text" size="<?php echo TEXT_INPUT_SIZE; ?>"
+														 class="dirtyignore" 
 														 onkeydown="passwordClear('');"
 														 id="user_name"  name="user"
 														 value="<?php echo html_encode($_zp_gallery->getUser()); ?>" />
@@ -1198,17 +1225,19 @@ Zenphoto_Authority::printPasswordFormJS();
 											?>
 											<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 											<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
+														 class="dirtyignore" 
 														 id="pass" name="pass"
 														 onkeydown="passwordClear('');"
 														 onkeyup="passwordStrength('');"
-														 value="<?php echo $x; ?>" />
+														 value="<?php echo $x; ?>" autocomplete="off" />
 											<br />
 											<span class="password_field_">
 												<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
+															 class="dirtyignore" 
 															 id="pass_r" name="pass_r" disabled="disabled"
 															 onkeydown="passwordClear('');"
 															 onkeyup="passwordMatch('');"
-															 value="<?php echo $x; ?>" />
+															 value="<?php echo $x; ?>" autocomplete="off" />
 											</span>
 											<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');" /><?php echo gettext('Show password'); ?></label>
 
@@ -1504,9 +1533,10 @@ Zenphoto_Authority::printPasswordFormJS();
 										</td>
 										<td>
 											<input type="text" size="<?php echo TEXT_INPUT_SIZE; ?>"
+														 class="dirtyignore" 
 														 onkeydown="passwordClear('');"
 														 id="user_name"  name="user"
-														 value="<?php echo html_encode(getOption('search_user')); ?>" />
+														 value="<?php echo html_encode(getOption('search_user')); ?>" autocomplete="off" />
 											<br />
 
 										</td>
@@ -1532,17 +1562,19 @@ Zenphoto_Authority::printPasswordFormJS();
 											?>
 											<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 											<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
+														 class="dirtyignore" 
 														 id="pass" name="pass"
 														 onkeydown="passwordClear('');"
 														 onkeyup="passwordStrength('');"
-														 value="<?php echo $x; ?>" />
+														 value="<?php echo $x; ?>" autocomplete="off" />
 											<br />
 											<span class="password_field_">
 												<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
+															 class="dirtyignore" 
 															 id="pass_r" name="pass_r" disabled="disabled"
 															 onkeydown="passwordClear('');"
 															 onkeyup="passwordMatch('');"
-															 value="<?php echo $x; ?>" />
+															 value="<?php echo $x; ?>" autocomplete="off" />
 											</span>
 											<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');" /><?php echo gettext('Show password'); ?></label>
 										</td>
@@ -1620,8 +1652,6 @@ Zenphoto_Authority::printPasswordFormJS();
 									<p>
 										<?php
 										echo gettext('Default search');
-
-
 										generateRadiobuttonsFromArray(getOption('search_within'), array(gettext('<em>New</em>') => '0', gettext('<em>Within</em>') => '1'), 'search_within', false, false);
 										?>
 									</p>
@@ -1682,15 +1712,16 @@ Zenphoto_Authority::printPasswordFormJS();
 										<?php echo gettext('Search will remember the results of particular searches so that it can quickly serve multiple pages, etc. Over time this remembered result can become obsolete, so it should be refreshed. This option lets you decide how long before a search will be considered obsolete and thus re-executed. Setting the option to <em>zero</em> disables caching of searches.'); ?>
 									</td>
 								</tr>
-								<?php
-								$sort = $_zp_sortby;
-								$sort[gettext('Custom')] = 'custom';
+								<?php 
+									$sort = $_zp_sortby;
+									$sort[gettext('Custom')] = 'custom'; 
+									$sort[gettext('Manual')] = 'sort_order'; 
 								?>
 								<tr>
 									<td class="leftcolumn"><?php echo gettext("Sort albums by"); ?> </td>
 									<td colspan="2">
 										<span class="nowrap">
-											<select id="albumsortselect" name="subalbumsortby" onchange="update_direction(this, 'album_direction_div', 'album_custom_div');">
+											<select id="album_sort_select" name="search_album_sort_type" onchange="update_direction(this, 'album_direction_div', 'album_custom_div');">
 												<?php
 												$cvt = $type = strtolower(getOption('search_album_sort_type'));
 												if ($type && !in_array($type, $sort)) {
@@ -1710,7 +1741,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											?>
 											<label id="album_direction_div" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
 												<?php echo gettext("Descending"); ?>
-												<input type="checkbox" name="album_sortdirection" value="1"
+												<input type="checkbox" name="search_album_sort_direction" value="1"
 												<?php
 												if (getOption('search_album_sort_direction')) {
 													echo "CHECKED";
@@ -1730,7 +1761,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<br />
 											<?php echo gettext('custom fields:') ?>
 											<span class="tagSuggestContainer">
-												<input id="customalbumsort" class="customalbumsort" name="customalbumsort" type="text" value="<?php echo html_encode($cvt); ?>" />
+												<input id="custom_album_sort" class="custom_album_sort" name="custom_album_sort" type="text" value="<?php echo html_encode($cvt); ?>" />
 											</span>
 										</span>
 									</td>
@@ -1741,7 +1772,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td class="leftcolumn"><?php echo gettext("Sort images by"); ?> </td>
 									<td colspan="2">
 										<span class="nowrap">
-											<select id="imagesortselect" name="sortby" onchange="update_direction(this, 'image_direction_div', 'image_custom_div')">
+											<select id="image_sort_select" name="search_image_sort_type" onchange="update_direction(this, 'image_direction_div', 'image_custom_div')">
 												<?php
 												$cvt = $type = strtolower(getOption('search_image_sort_type'));
 												if ($type && !in_array($type, $sort)) {
@@ -1761,7 +1792,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											?>
 											<label id="image_direction_div" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
 												<?php echo gettext("Descending"); ?>
-												<input type="checkbox" name="image_sortdirection" value="1"
+												<input type="checkbox" name="search_image_sort_direction" value="1"
 												<?php
 												if (getOption('search_image_sort_direction')) {
 													echo ' checked="checked"';
@@ -1781,12 +1812,127 @@ Zenphoto_Authority::printPasswordFormJS();
 											<br />
 											<?php echo gettext('custom fields:') ?>
 											<span class="tagSuggestContainer">
-												<input id="customimagesort" class="customimagesort" name="customimagesort" type="text" value="<?php echo html_encode($cvt); ?>" />
+												<input id="custom_image_sort" class="custom_image_sort" name="custom_image_sort" type="text" value="<?php echo html_encode($cvt); ?>" />
 											</span>
 										</span>
 									</td>
-
 								</tr>
+								<?php
+								$zenpage_sort = array(
+										gettext('Title') => 'title',
+										gettext('TitleLink') => 'titlelink',
+										gettext('ID') => 'id',
+										gettext('Date') => 'date',
+										gettext('Published') => 'show',
+										gettext('Author') => 'author'
+								);
+								if (ZP_NEWS_ENABLED) {
+								?>
+									<tr>
+										<td class="leftcolumn"><?php echo gettext("Sort news articles by"); ?> </td>
+										<td colspan="2">
+											<span class="nowrap">
+												<select id="newsarticle_sort_select" name="search_newsarticle_sort_type" onchange="update_direction(this, 'newsarticle_direction_div', 'newsarticle_custom_div')">
+													<?php
+													$cvt = $type = strtolower(getOption('search_newsarticle_sort_type'));
+													if ($type && !in_array($type, $zenpage_sort)) {
+														$cv = array('custom');
+													} else {
+														$cv = array($type);
+													}
+													generateListFromArray($cv, $zenpage_sort, false, true);
+													?>
+												</select>
+												<?php
+												if (($type == 'random') || ($type == '')) {
+													$dsp = 'none';
+												} else {
+													$dsp = 'inline';
+												}
+												?>
+												<label id="newsarticle_direction_div" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
+													<?php echo gettext("Descending"); ?>
+													<input type="checkbox" name="search_newsarticle_sort_direction" value="1"
+													<?php
+													if (getOption('search_newsarticle_sort_direction')) {
+														echo ' checked="checked"';
+													}
+													?> />
+												</label>
+											</span>
+											<?php
+											$flip = array_flip($zenpage_sort);
+											if (empty($type) || isset($flip[$type])) {
+												$dsp = 'none';
+											} else {
+												$dsp = 'block';
+											}
+											?>
+											<span id="newsarticle_custom_div" class="customText" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
+												<br />
+												<?php echo gettext('custom fields:') ?>
+												<span class="tagSuggestContainer">
+													<input id="custom_newsarticle_sort" class="custom_newsarticle_sort" name="custom_newsarticle_sort" type="text" value="<?php echo html_encode($cvt); ?>" />
+												</span>
+											</span>
+										</td>
+									</tr>
+								<?php 
+								} 
+								if (ZP_PAGES_ENABLED) {
+									$zenpage_sort[gettext('Manual')] = 'sort_order';
+								?>
+									<tr>
+										<td class="leftcolumn"><?php echo gettext("Sort pages by"); ?> </td>
+										<td colspan="2">
+											<span class="nowrap">
+												<select id="page_sort_select" name="search_page_sort_type" onchange="update_direction(this, 'page_direction_div', 'page_custom_div')">
+													<?php
+													$cvt = $type = strtolower(getOption('search_page_sort_type'));
+													if ($type && !in_array($type, $zenpage_sort)) {
+														$cv = array('custom');
+													} else {
+														$cv = array($type);
+													}
+													generateListFromArray($cv, $zenpage_sort, false, true);
+													?>
+												</select>
+												<?php
+												if (($type == 'random') || ($type == '')) {
+													$dsp = 'none';
+												} else {
+													$dsp = 'inline';
+												}
+												?>
+												<label id="page_direction_div" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
+													<?php echo gettext("Descending"); ?>
+													<input type="checkbox" name="search_page_sort_direction" value="1"
+													<?php
+													if (getOption('search_page_sort_direction')) {
+														echo ' checked="checked"';
+													}
+													?> />
+												</label>
+											</span>
+											<?php
+											$flip = array_flip($zenpage_sort);
+											if (empty($type) || isset($flip[$type])) {
+												$dsp = 'none';
+											} else {
+												$dsp = 'block';
+											}
+											?>
+											<span id="page_custom_div" class="customText" style="display:<?php echo $dsp; ?>;white-space:nowrap;">
+												<br />
+												<?php echo gettext('custom fields:') ?>
+												<span class="tagSuggestContainer">
+													<input id="custom_page_sort" class="custom_page_sort" name="custom_page_sort" type="text" value="<?php echo html_encode($cvt); ?>" />
+												</span>
+											</span>
+										</td>
+									</tr>
+								<?php } ?>
+					
 								<tr>
 									<td colspan="3">
 										<p class="buttons">
@@ -2264,9 +2410,10 @@ Zenphoto_Authority::printPasswordFormJS();
 													</td>
 													<td style="margin:0; padding:0">
 														<input type="text" size="30"
+																	 class="dirtyignore" 
 																	 onkeydown="passwordClear('');"
 																	 id="user_name"  name="user"
-																	 value="<?php echo html_encode(getOption('protected_image_user')); ?>" />
+																	 value="<?php echo html_encode(getOption('protected_image_user')); ?>" autocomplete="off" />
 
 													</td>
 												</tr>
@@ -2288,17 +2435,19 @@ Zenphoto_Authority::printPasswordFormJS();
 														?>
 														<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 														<input type="password" size="30"
+																	 class="dirtyignore" 
 																	 id="pass" name="pass"
 																	 onkeydown="passwordClear('');"
 																	 onkeyup="passwordStrength('');"
-																	 value="<?php echo $x; ?>" />
+																	 value="<?php echo $x; ?>" autocomplete="off" />
 														<br />
 														<span class="password_field_">
 															<input type="password" size="30"
+																		 class="dirtyignore" 
 																		 id="pass_r" name="pass_r" disabled="disabled"
 																		 onkeydown="passwordClear('');"
 																		 onkeyup="passwordMatch('');"
-																		 value="<?php echo $x; ?>" />
+																		 value="<?php echo $x; ?>" autocomplete="off" />
 														</span>
 														<br />
 														<label><input type="checkbox" name="disclose_password" id="disclose_password" onclick="passwordClear(''); togglePassword('');" /><?php echo gettext('Show password'); ?></label>
@@ -3076,13 +3225,15 @@ Zenphoto_Authority::printPasswordFormJS();
 										</select>
 									</td>
 									<td>
-										<p><?php echo gettext("Normally this option should be set to <em>http</em>. If you are running a secure server, change this to <em>https</em>. Select <em>secure admin</em> if you need only to insure secure access to <code>admin</code> pages."); ?></p>
+										<p><?php echo gettext("Normally this option should be set to <em>http</em>. If you are running a secure server, change this to <em>https</em>. Select <em>secure admin</em> if you need only to insure secure access to <code>admin</code> pages. However, if your server supports <em>https</em> there is no reason to use for the admin only!"); ?></p>
 										<p class="notebox"><?php
-											echo gettext("<strong>Note:</strong>" .
-															"<br /><br />Login from the front-end user login form is secure only if <em>https</em> is selected." .
-															"<br /><br />If you select <em>https</em> or <em>secure admin</em> your server <strong>MUST</strong> support <em>https</em>.  " .
-															"If you set either of these on a server which does not support <em>https</em> you will not be able to access the <code>admin</code> pages to reset the option! " .
-															'Your only possibility then is to change the option named <span class="inlinecode">server_protocol</span> in the <em>options</em> table of your database.');
+											echo gettext('<strong>Note:</strong> Login from the front-end user login form is secure only if <em>https</em> is selected.');
+											?>
+										</p>
+										<p class="warningbox"><?php
+											echo gettext('<strong>Warning:</strong> If you select <em>https</em> or <em>secure admin</em> your server <strong>MUST</strong> support <em>https</em>.  ' .
+															'If you set either of these on a server which does not support <em>https</em> you will not be able to access the <code>admin</code> pages to reset the option! ' .
+															'Your only possibility then is to set or add <code>$conf["server_protocol"] = "http";</code> to your <code>zenphoto.cfg.php</code> file .');
 											?>
 										</p>
 									</td>
@@ -3165,6 +3316,113 @@ Zenphoto_Authority::printPasswordFormJS();
 									<?php
 								}
 								?>
+								<tr>
+									<td width="175">
+										<p><?php echo gettext('Anonymize IP'); ?></p>
+									</td>
+									<td width="350">
+										<label>
+											<?php 
+												$anonymize_ip = getOption('anonymize_ip');
+												$anonymize_ip_levels = array(
+													gettext('0 - No anonymizing') => 0,
+													gettext('1 - Last fourth anonymized') => 1,
+													gettext('2 - Last half anonymized') => 2,
+													gettext('3 - Last three fourths anonymized') => 3,
+													gettext('4 - Full anonymization, no IP stored') => 4
+												);
+											?>
+											<select id="anonymize_ip" name="anonymize_ip">
+												<?php	generateListFromArray(array($anonymize_ip), $anonymize_ip_levels, false, true); ?>
+											</select>
+											<?php echo gettext('Anonymize level'); ?>
+										</label>
+									</td>
+									<td width="175">
+										<p><?php echo gettext('Zenphoto stores the IP address of visitors on several occasions (e.g. rating, spam filtering, comment posting). '
+														. 'In some jurisdictions like the EU and its GDPR the IP address is considered private information and therefore it is required to not store the full IP address or no IP at all.'
+														. 'Choose your level of anonymization so parts are replaced by 0. This covers both IPv4 (1.1.1.0) and IPv6 (1:1:1:1:1:1:0:0) addresses.'); ?>
+										</p>
+									</td>
+								</tr>
+								<?php 
+								$data_policy_sharedtext = gettext('This is used by the official plugins <em>comment_form</em>, <em>contact_form</em> and <em>register_user</em> plugins if the data usage confirmation is enabled. Other plugins or usages must implement <code>getDataUsageNotice()/printDataUsageNotice()</code> specifially.'); 
+								?>
+								<tr>
+									<td width="175">
+										<p><?php echo gettext('Data privacy usage notice'); ?></p>
+									</td>
+									<td width="350">
+										 <?php print_language_string_list(getOption('dataprivacy_policy_notice'), 'dataprivacy_policy_notice', true); ?>
+									</td>
+									<td width="175">
+										<p><?php echo gettext('Here you can define the data usage confirmation notice that is recommended if your site is using forms submitting data in some jurisdictions like the EU and its GDPR. Leave empty to use the default text:'); ?></p>
+										<blockquote><?php echo gettext('By using this form you agree with the storage and handling of your data by this website.'); ?></blockquote>
+										<p class="notebox">
+											<?php echo $data_policy_sharedtext; ?>
+										</p>
+									</td>
+								</tr>
+								<tr>
+									<td width="175">
+										<p><?php echo gettext('Data privacy policy page'); ?></p>
+									</td>
+									<td width="350">
+										<p><label><input type="text" name="dataprivacy_policy_custompage" id="dataprivacy_policy_custompage" value="<?php echo html_encode(getOption('dataprivacy_policy_custompage')); ?>"> <?php echo gettext('Custom page url'); ?></label></p>
+										<?php
+										if(extensionEnabled('zenpage') && ZP_PAGES_ENABLED) {
+											$datapolicy_zenpage = getOption('dataprivacy_policy_zenpage');
+											$zenpageobj = new Zenpage();
+											$zenpagepages = $zenpageobj->getPages(false, false, null, 'sortorder', false);
+											$privacypages = array();
+											$privacypages[gettext('None')] = 'none'; 
+											foreach($zenpagepages as $zenpagepage) {
+												$pageobj = new Zenpagepage($zenpagepage['titlelink']);
+												if(!$pageobj->isProtected()) {
+													$unpublished_note = '';
+													if(!$pageobj->getShow()) {
+														$unpublished_note = '*';
+													}
+													$sublevel = '';
+													$level = count(explode('-', $pageobj->getSortorder()));
+													if($level != 1) {
+														for($l = 1; $l < $level; $l++) {
+															$sublevel .= '-'; 
+														}
+													}
+													$privacypages[$sublevel . get_language_string($zenpagepage['title']) . $unpublished_note] = $zenpagepage['titlelink'];
+												}
+											}
+											if($privacypages) {
+												unset($zenpagepages);
+												?>
+												<label>
+													<select id="dataprivacy_policy_zenpage" name="dataprivacy_policy_zenpage">
+													<?php	generateListFromArray(array($datapolicy_zenpage), $privacypages, null, true); ?>
+													</select>
+													<br><?php echo gettext('Select a Zenpage page. * denotes unpublished page.'); ?>
+												</label>
+												<?php 
+											}  else {
+												echo '<p><em>' . gettext('No suitable Zenpage pages available') . '</em></p>';
+											}
+										} 
+									  ?>	
+										<p>
+											<label>
+											<?php print_language_string_list(getOption('dataprivacy_policy_customlinktext'), 'dataprivacy_policy_customlinktext'); ?>
+											<?php echo gettext('Custom link text'); ?>
+										</label>
+										</p>
+									</td>
+									<td width="175">
+										<p><?php echo gettext('Here you can define your data policy statement page that is recommended to have in jurisdictions like the EU and its GDPR.'); ?></p>
+										<p><?php echo gettext('If the Zenpage CMS plugin is enabled and also its pages feature you can select one of its pages, otherwise enter a full custom page url manually which would also override the Zenpage page selection.'); ?></p>
+										<p><?php echo gettext('Additionally you can define a custom text for the page link. If not set the default text <em>More info on our data privacy policy.</em> is used.'); ?></p>
+										<p class="notebox">
+											<?php echo $data_policy_sharedtext; ?>
+										</p>
+									</td>
 								<tr>
 									<?php
 									$supportedOptions = $_zp_authority->getOptionsSupported();

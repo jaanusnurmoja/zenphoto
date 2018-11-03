@@ -58,6 +58,7 @@
  *
  * @author Stephen Billard (sbillard)
  * @package plugins
+ * @subpackage class-textobject
  *
  */
 class TextObject extends Image {
@@ -171,11 +172,6 @@ class TextObject extends Image {
 		$args = getImageParameters(array($ts, $sw, $sh, $cw, $ch, $cx, $cy, NULL, true, true, true, $wmt, NULL, NULL), $this->album->name);
 		$cachefilename = getImageCacheFilename($alb = $this->album->name, $this->filename, $args);
 		return getImageURI($args, $alb, $filename, $mtime);
-	}
-
-	function getBody($w = NULL, $h = NULL) {
-		TextObject_deprecated_functions::getBody();
-		$this->getContent($w, $h);
 	}
 
 	/**

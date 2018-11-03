@@ -132,24 +132,6 @@ function getAuthor($fullname = false) {
  */
 function getLatestNews($number = 2, $category = '', $sticky = true, $sortdirection = 'desc') {
 	global $_zp_zenpage, $_zp_current_zenpage_news;
-	//check if things are deprecated
-	$args = func_get_args();
-	$deprecated = array(
-					"none",
-					"with_latest_images",
-					"with_latest_images_date",
-					"with_latest_images_mtime",
-					"with_latest_images_publishdate",
-					"with_latest_albums",
-					"with_latest_albums_date",
-					"with_latest_albums_mtime",
-					"with_latest_albums_publishdate",
-					"with_latestupdated_albums");
-	if (in_array($category, $deprecated)) {
-		// there must be the old options parameter!
-		Zenpage_internal_deprecations::getLatestNews();
-		list($number, $category, $sticky, $sortdirection ) = array_merge($args, array(NULL, NULL, NULL, NULL, NULL));
-	}
 	$sortdir = strtolower($sortdirection) != 'asc';
 	if (empty($category)) {
 		$latest = $_zp_zenpage->getArticles($number, NULL, true, NULL, $sortdir, $sticky, NULL);
@@ -177,25 +159,6 @@ function getLatestNews($number = 2, $category = '', $sticky = true, $sortdirecti
  */
 function printLatestNews($number = 5, $category = '', $showdate = true, $showcontent = true, $contentlength = 70, $showcat = true, $readmore = NULL, $sticky = true) {
 	global $_zp_gallery, $_zp_current_zenpage_news;
-	//check if things are deprecated
-	$args = func_get_args();
-	$deprecated = array(
-					"none",
-					"with_latest_images",
-					"with_latest_images_date",
-					"with_latest_images_mtime",
-					"with_latest_images_publishdate",
-					"with_latest_albums",
-					"with_latest_albums_date",
-					"with_latest_albums_mtime",
-					"with_latest_albums_publishdate",
-					"with_latestupdated_albums");
-	if (in_array($category, $deprecated)) {
-		// there must be the old options parameter!
-		Zenpage_internal_deprecations::printLatestNews();
-		list($number, $option, $category, $showdate, $showcontent, $contentlength, $showcat, $readmore, $sticky) = array_merge($args, array(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL));
-	}
-
 	$latest = getLatestNews($number, $category, $sticky);
 	echo "\n<ul id=\"latestnews\">\n";
 	$count = "";
@@ -271,11 +234,6 @@ function getNumNews($total = false) {
  */
 function next_news() {
 	global $_zp_zenpage, $_zp_current_zenpage_news, $_zp_current_zenpage_news_restore, $_zp_zenpage_articles, $_zp_current_category, $_zp_gallery, $_zp_current_search;
-	if (func_num_args() != 0) {
-		//	These parameters are deprecated
-		Zenpage_internal_deprecations::next_news();
-	}
-
 	if (is_null($_zp_zenpage_articles)) {
 		if (in_context(ZP_SEARCH)) {
 			//note: we do not know how to paginate the search page, so for now we will return all news articles
@@ -723,7 +681,7 @@ function printNewsArchive($class = 'archive', $yearclass = 'year', $monthclass =
 	$lastyear = "";
 	$nr = "";
 	echo "\n<ul $class>\n";
-	while (list($key, $val) = each($datecount)) {
+	foreach($datecount as $key => $val) {
 		$nr++;
 		if ($key == '0000-00-01') {
 			$year = "no date";
@@ -931,17 +889,27 @@ function getNewsPathNav($page) {
 }
 
 /**
+ * Returns true there is a previous news page
+ * 
+ * @global int $_zp_page
+ * @return bool
+ */
+function hasPrevNewsPage() {
+	global $_zp_page;
+	return $_zp_page > 1;
+}
+
+/**
  * Returns the url to the previous news page
  *
  * @return string
  */
 function getPrevNewsPageURL() {
 	global $_zp_page;
-	if ($_zp_page > 1) {
+	if (hasPrevNewsPage()) {
 		return getNewsPathNav($_zp_page - 1);
-	} else {
-		return false;
-	}
+	} 
+	return false;
 }
 
 /**
@@ -962,18 +930,29 @@ function printPrevNewsPageLink($prev = '« prev', $class = 'disabledlink') {
 }
 
 /**
+ * Returns true if there is a next news page
+ * 
+ * @global obj $_zp_zenpage
+ * @global int $_zp_page
+ * @return bool
+ */
+function hasNextNewsPage() {
+	global $_zp_zenpage, $_zp_page;
+	$total_pages = $_zp_zenpage->getTotalNewsPages();
+	return $_zp_page < $total_pages;
+}
+
+/**
  * Returns the url to the next news page
  *
  * @return string
  */
 function getNextNewsPageURL() {
-	global $_zp_zenpage, $_zp_page;
-	$total_pages = ceil($_zp_zenpage->getTotalArticles() / ZP_ARTICLES_PER_PAGE);
-	if ($_zp_page < $total_pages) {
+	global $_zp_page;
+	if (hasNextNewsPage()) {
 		return getNewsPathNav($_zp_page + 1);
-	} else {
-		return false;
 	}
+	return false;
 }
 
 /**
@@ -986,8 +965,8 @@ function getNextNewsPageURL() {
  */
 function printNextNewsPageLink($next = 'next »', $class = 'disabledlink') {
 	global $_zp_page;
-	if (getNextNewsPageURL()) {
-		echo "<a href='" . getNextNewsPageURL() . "' title='" . gettext("Next page") . " " . ($_zp_page + 1) . "'>" . html_encode($next) . "</a>\n";
+	if ($link = getNextNewsPageURL()) {
+		echo "<a href='" . html_encode($link) . "' title='" . gettext("Next page") . " " . ($_zp_page + 1) . "'>" . html_encode($next) . "</a>\n";
 	} else {
 		echo "<span class=\"$class\">" . html_encode($next) . "</span>\n";
 	}
@@ -1086,7 +1065,7 @@ function printNewsPageListWithNav($next, $prev, $nextprev = true, $class = 'page
 
 function getTotalNewsPages() {
 	global $_zp_zenpage;
-	return ceil($_zp_zenpage->getTotalArticles() / ZP_ARTICLES_PER_PAGE);
+	return$_zp_zenpage->getTotalNewsPages();
 }
 
 /* * ********************************************************************* */
@@ -1105,36 +1084,21 @@ function getTotalNewsPages() {
  */
 function getNextPrevNews($option = '') {
 	global $_zp_zenpage, $_zp_current_zenpage_news;
- if (func_num_args() != 1) {
-   Zenpage_internal_deprecations::getNextPrevNews();
- }
 	if (!empty($option)) {
 		switch ($option) {
 			case "prev":
-				$article = $_zp_current_zenpage_news->getPrevArticle();
-				if (!$article)
-					return false;
-				return array("link" => $article->getLink(), "title" => $article->getTitle());
+				if ($article = $_zp_current_zenpage_news->getPrevArticle()) {
+					return array("link" => $article->getLink(), "title" => $article->getTitle());
+				}
+				break;
 			case "next":
-				$article = $_zp_current_zenpage_news->getNextArticle();
-				if (!$article)
-					return false;
-				return array("link" => $article->getLink(), "title" => $article->getTitle());
+				if ($article = $_zp_current_zenpage_news->getNextArticle()) {
+					return array("link" => $article->getLink(), "title" => $article->getTitle());
+				}
+				break;
 		}
 	}
 	return false;
-}
-
-/**
- * Returns the title and the titlelink of the next article in single news article pagination as an array
- * Returns false if there is none (or option is empty)
- *
- * NOTE: This is not available if using the CombiNews feature
- *
- * @return mixed
- */
-function getNextNewsURL() {
-	return getNextPrevNews("next");
 }
 
 /**
@@ -1147,6 +1111,18 @@ function getNextNewsURL() {
  */
 function getPrevNewsURL() {
 	return getNextPrevNews("prev");
+}
+
+/**
+ * Returns the title and the titlelink of the next article in single news article pagination as an array
+ * Returns false if there is none (or option is empty)
+ *
+ * NOTE: This is not available if using the CombiNews feature
+ *
+ * @return mixed
+ */
+function getNextNewsURL() {
+	return getNextPrevNews("next");
 }
 
 /**
@@ -1700,7 +1676,11 @@ function printZenpageItemsBreadcrumb($before = NULL, $after = NULL) {
 		if (is_NewsArticle()) {
 			$page = $_zp_current_zenpage_news->getNewsLoopPage();
 		}
-		printNewsIndexURL(NULL, '', '', $page);
+		$archive = '';
+		if(is_NewsArchive()) {
+			$archive = null;
+		}
+		printNewsIndexURL(NULL, '', $archive, $page);
 	}
 	if (is_Pages() || is_NewsCategory()) {
 		$parentitems = array();
@@ -1775,11 +1755,6 @@ function getNumPages($total = false) {
  */
 function next_page() {
 	global $_zp_zenpage, $_zp_next_pagelist, $_zp_current_search, $_zp_current_zenpage_page, $_zp_current_page_restore;
-	if (func_num_args() != 0) {
-		//	These parameters are deprecated
-		Zenpage_internal_deprecations::next_page();
-	}
-
 	if (is_null($_zp_next_pagelist)) {
 		if (in_context(ZP_SEARCH)) {
 			$_zp_next_pagelist = $_zp_current_search->getPages(NULL, false, NULL, NULL, NULL);
@@ -1825,7 +1800,12 @@ function getPageTitle() {
  * @return string
  */
 function printPageTitle($before = NULL) {
-	echo html_encodeTagged($before) . html_encode(getPageTitle());
+	if ($title = getPageTitle()) {
+		if ($before) {
+			echo '<span class="beforetext">' . html_encode($before) . '</span>';
+		}
+		echo html_encode($title);
+	}
 }
 
 /**

@@ -4,7 +4,8 @@
  * basic functions used by zenphoto i.php
  * Keep this file to the minimum to allow the largest available memory for processing images!
  * Headers not sent yet!
- * @package functions
+ * @package core
+ * @subpackage functions\functions-basic
  *
  */
 // force UTF-8 Ø
@@ -22,6 +23,7 @@ require_once(dirname(__FILE__) . '/functions-common.php');
 global $_zp_conf_vars;
 $const_webpath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 $const_serverpath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_FILENAME']));
+
 /**
  * see if we are executing out of any of the known script folders. If so we know how to adjust the paths
  * if not we presume the script is in the root of the installation. If it is not the script better have set
@@ -59,7 +61,6 @@ if ($const_webpath == '/' || $const_webpath == '.') {
 if (defined('SERVERPATH')) {
 	$const_serverpath = SERVERPATH;
 }
-
 
 // Contexts (Bitwise and combinable)
 define("ZP_INDEX", 1);
@@ -99,24 +100,14 @@ switch (PHP_MAJOR_VERSION) {
 }
 
 // Set error reporting.
+@ini_set('display_errors', '0'); // try to disable in case set
 if (TEST_RELEASE) {
 	error_reporting(E_ALL | E_STRICT);
-	@ini_set('display_errors', 1);
-}
+	@ini_set('display_errors', '1');
+} 
 set_error_handler("zpErrorHandler");
 set_exception_handler("zpErrorHandler");
 $_configMutex = new zpMutex('cF');
-if (OFFSET_PATH != 2 && !file_exists($const_serverpath . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
-	require_once(dirname(__FILE__) . '/reconfigure.php');
-	reconfigureAction(1);
-}
-// Including the config file more than once is OK, and avoids $conf missing.
-eval('?>' . file_get_contents($const_serverpath . '/' . DATA_FOLDER . '/' . CONFIGFILE));
-if (!isset($_zp_conf_vars['special_pages'])) {
-	$_zp_conf_vars['special_pages'] = array();
-}
-
-define('DATABASE_PREFIX', $_zp_conf_vars['mysql_prefix']);
 
 if (!defined('WEBPATH')) {
 	define('WEBPATH', $const_webpath);
@@ -127,6 +118,44 @@ if (!defined('SERVERPATH')) {
 	define('SERVERPATH', $const_serverpath);
 }
 unset($const_serverpath);
+
+// Including the config file more than once is OK, and avoids $conf missing.
+eval('?>' . file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE));
+
+// If the server protocol is not set, set it to the default.
+if (!isset($_zp_conf_vars['server_protocol'])) {
+	$_zp_conf_vars['server_protocol'] = 'http';
+}
+
+//NOTE: SERVER_PROTOCOL is the option, PROTOCOL is what should be used in links
+define('SERVER_PROTOCOL', $_zp_conf_vars['server_protocol']);
+switch (SERVER_PROTOCOL) {
+	case 'https':
+		define('PROTOCOL', 'https');
+		break;
+	default:
+		if (secureServer()) {
+			define('PROTOCOL', 'https');
+		} else {
+			define('PROTOCOL', 'http');
+		}
+		break;
+}
+if (OFFSET_PATH != 2 && !file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
+	require_once(dirname(__FILE__) . '/reconfigure.php');
+	reconfigureAction(1);
+}
+
+
+// Silently setup default rewrite tokens if missing completely or partly from current config file
+if (!isset($_zp_conf_vars['special_pages'])) {
+	$_zp_conf_vars['special_pages'] = getDefaultRewriteTokens(null);
+} else {
+	addMissingDefaultRewriteTokens();
+}
+
+define('DATABASE_PREFIX', $_zp_conf_vars['mysql_prefix']);
+
 $_zp_mutex = new zpMutex();
 
 if (OFFSET_PATH != 2 && empty($_zp_conf_vars['mysql_database'])) {
@@ -136,20 +165,17 @@ if (OFFSET_PATH != 2 && empty($_zp_conf_vars['mysql_database'])) {
 
 require_once(dirname(__FILE__) . '/lib-utf8.php');
 
-
-
 if (!defined('CHMOD_VALUE')) {
 	define('CHMOD_VALUE', fileperms(dirname(__FILE__)) & 0666);
 }
 define('FOLDER_MOD', CHMOD_VALUE | 0311);
 define('FILE_MOD', CHMOD_VALUE & 0666);
 define('DATA_MOD', fileperms(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE) & 0777);
-
-// If the server protocol is not set, set it to the default.
-if (!isset($_zp_conf_vars['server_protocol'])) {
-	$_zp_conf_vars['server_protocol'] = 'http';
+if(file_exists(SERVERPATH . '/' . DATA_FOLDER . '/setup.log')) {
+	define('LOGS_MOD', fileperms(SERVERPATH . '/' . DATA_FOLDER . '/setup.log') & 0600);
+} else {
+	define('LOGS_MOD', DATA_MOD);
 }
-
 if (!defined('DATABASE_SOFTWARE') && extension_loaded(strtolower(@$_zp_conf_vars['db_software']))) {
 	require_once(dirname(__FILE__) . '/functions-db-' . $_zp_conf_vars['db_software'] . '.php');
 	$data = db_connect(array_intersect_key($_zp_conf_vars, array('db_software' => '', 'mysql_user' => '', 'mysql_pass' => '', 'mysql_host' => '', 'mysql_database' => '', 'mysql_prefix' => '', 'UTF-8' => '')), false);
@@ -235,26 +261,11 @@ foreach ($_zp_cachefileSuffix as $key => $type) {
 
 require_once(dirname(__FILE__) . '/lib-encryption.php');
 
-//NOTE: SERVER_PROTOCOL is the option PROTOCOL is what should be used in links!!!!
-define('SERVER_PROTOCOL', getOption('server_protocol'));
-switch (SERVER_PROTOCOL) {
-	case 'https':
-		define('PROTOCOL', 'https');
-		break;
-	default:
-		if (secureServer()) {
-			define('PROTOCOL', 'https');
-		} else {
-			define('PROTOCOL', 'http');
-		}
-		break;
-}
-
-if (!defined('COOKIE_PESISTENCE')) {
+if (!defined('COOKIE_PERSISTENCE')) {
 	$persistence = getOption('cookie_persistence');
 	if (!$persistence)
 		$persistence = 5184000;
-	define('COOKIE_PESISTENCE', $persistence);
+	define('COOKIE_PERSISTENCE', $persistence);
 	unset($persistence);
 }
 if ($c = getOption('zenphoto_cookie_path')) {
@@ -263,8 +274,9 @@ if ($c = getOption('zenphoto_cookie_path')) {
 	define('COOKIE_PATH', WEBPATH);
 }
 
+define('SERVER_HTTP_HOST', PROTOCOL . "://" . $_SERVER['HTTP_HOST']);
 define('SAFE_MODE', preg_match('#(1|ON)#i', ini_get('safe_mode')));
-define('FULLWEBPATH', PROTOCOL . "://" . $_SERVER['HTTP_HOST'] . WEBPATH);
+define('FULLWEBPATH', SERVER_HTTP_HOST . WEBPATH);
 define('SAFE_MODE_ALBUM_SEP', '__');
 define('SERVERCACHE', SERVERPATH . '/' . CACHEFOLDER);
 define('MOD_REWRITE', getOption('mod_rewrite'));
@@ -288,7 +300,11 @@ define('UTF8_IMAGE_URI', getOption('UTF8_image_URI'));
 define('MEMBERS_ONLY_COMMENTS', getOption('comment_form_members_only'));
 
 define('HASH_SEED', getOption('extra_auth_hash_text'));
+define("CACHE_HASH_LENGTH", strlen(sha1(HASH_SEED))); //Zenphoto 1.5.1 moved from cacheManager/functions.php 
 define('IP_TIED_COOKIES', getOption('IP_tied_cookies'));
+
+define('MENU_TRUNCATE_STRING', getOption('menu_truncate_string'));
+define('MENU_TRUNCATE_INDICATOR', getOption('menu_truncate_indicator'));
 
 /**
  * Decodes HTML Special Characters.
@@ -773,7 +789,6 @@ function getImageParameters($args, $album = NULL) {
  */
 function getImageProcessorURI($args, $album, $image) {
 	list($size, $width, $height, $cw, $ch, $cx, $cy, $quality, $thumb, $crop, $thumbstandin, $passedWM, $adminrequest, $effects) = $args;
-	$args[8] = NULL; // not used by image processor
 	$uri = WEBPATH . '/' . ZENFOLDER . '/i.php?a=' . $album;
 	if (is_array($image)) {
 		$uri .= '&i=' . $image['name'] . '&z=' . ($z = $image['source']);
@@ -923,6 +938,63 @@ function getImageArgs($set) {
 }
 
 /**
+ * Extracts the image processor URI from an existing cache filename
+ * 
+ * @param string $match
+ * @param array $watermarks
+ * @return array
+ * 
+ * @since Zenphoto 1.5.1 Moved from cacheManager/functions.php
+ */
+function getImageProcessorURIFromCacheName($match, $watermarks) {
+	$set = array();
+	$done = false;
+	$params = explode('_', stripSuffix($match));
+	while (!$done && count($params) > 1) {
+		$check = array_pop($params);
+		if (is_numeric($check)) {
+			$set['s'] = $check;
+			break;
+		}
+		$c = substr($check, 0, 1);
+		if ($c == 'w' || $c == 'h') {
+			if (is_numeric($v = substr($check, 1))) {
+				$set[$c] = (int) $v;
+				continue;
+			}
+		}
+		if ($c == 'c') {
+			$c = substr($check, 0, 2);
+			if (is_numeric($v = substr($check, 2))) {
+				$set[$c] = (int) $v;
+				continue;
+			}
+		}
+		if (!isset($set['w']) && !isset($set['h']) && !isset($set['s'])) {
+			if (!isset($set['wm']) && in_array($check, $watermarks)) {
+				$set['wmk'] = $check;
+			} else if ($check == 'thumb') {
+				$set['t'] = true;
+			} else {
+				$set['effects'] = $check;
+			}
+		} else {
+			array_push($params, $check);
+			break;
+		}
+	}
+	if (!isset($set['wmk'])) {
+		$set['wmk'] = '!';
+	}
+	$image = preg_replace('~.*/' . CACHEFOLDER . '/~', '', implode('_', $params)) . '.' . getSuffix($match);
+	//	strip out the obfustication
+	$album = dirname($image);
+	$image = preg_replace('~^[0-9a-f]{' . CACHE_HASH_LENGTH . '}\.~', '', basename($image));
+	$image = $album . '/' . $image;
+	return array($image, getImageArgs($set));
+}
+
+/**
  *
  * Returns an URI to the image:
  *
@@ -942,7 +1014,7 @@ function getImageArgs($set) {
 function getImageURI($args, $album, $image, $mtime) {
 	$cachefilename = getImageCacheFilename($album, $image, $args);
 	if (OPEN_IMAGE_CACHE && file_exists(SERVERCACHE . $cachefilename) && (!$mtime || filemtime(SERVERCACHE . $cachefilename) >= $mtime)) {
-		return WEBPATH . '/' . CACHEFOLDER . imgSrcURI($cachefilename);
+		return WEBPATH . '/' . CACHEFOLDER . imgSrcURI($cachefilename) . '?cached=' . filemtime(SERVERCACHE . $cachefilename);
 	} else {
 		return getImageProcessorURI($args, $album, $image);
 	}
@@ -1222,25 +1294,25 @@ function debugLog($message, $reset = false) {
 			}
 			$f = fopen($path, 'w');
 			if ($f) {
-				if (!class_exists('zpFunctions') || zpFunctions::hasPrimaryScripts()) {
+				if (!class_exists('zpFunctions') || hasPrimaryScripts()) {
 					$clone = '';
 				} else {
 					$clone = ' ' . gettext('clone');
 				}
-				fwrite($f, '{' . $me . ':' . gmdate('D, d M Y H:i:s') . " GMT} Zenphoto v" . ZENPHOTO_VERSION . '[' . ZENPHOTO_FULL_RELEASE . ']' . $clone . "\n");
+				fwrite($f, '{' . $me . ':' . gmdate('D, d M Y H:i:s') . " GMT} Zenphoto v" . ZENPHOTO_VERSION . $clone . "\n");
 			}
 		} else {
 			$f = fopen($path, 'a');
 			if ($f) {
 				fwrite($f, '{' . $me . ':' . gmdate('D, d M Y H:i:s') . " GMT}\n");
-			}
+			}	
 		}
 		if ($f) {
 			fwrite($f, "  " . $message . "\n");
 			fclose($f);
 			clearstatcache();
-			if (defined('DATA_MOD')) {
-				@chmod($path, DATA_MOD);
+			if (defined('LOGS_MOD')) {
+				@chmod($path, LOGS_MOD);
 			}
 		}
 		if (is_object($_zp_mutex))
@@ -1418,11 +1490,23 @@ function getWatermarkPath($wm) {
 
 /**
  * Checks to see if access was through a secure protocol
- *
+ * 
+ * @since Zenphoto 1.5.1 Extended/adapted from WordPress' `is_ssl()` function: https://developer.wordpress.org/reference/functions/is_ssl/
+ * 
  * @return bool
  */
 function secureServer() {
-	return isset($_SERVER['HTTPS']) && strpos(strtolower($_SERVER['HTTPS']), 'on') === 0;
+	if (isset($_SERVER['HTTPS'])) {
+		if ('on' == strtolower($_SERVER['HTTPS'])) {
+			return true;
+		}
+		if ('1' == $_SERVER['HTTPS']) {
+			return true;
+		}
+	} elseif (isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] )) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -1493,14 +1577,12 @@ function safe_glob($pattern, $flags = 0) {
  * Check to see if the setup script needs to be run
  */
 function checkInstall() {
-	preg_match('|([^-]*)|', ZENPHOTO_VERSION, $version);
 	if ($i = getOption('zenphoto_install')) {
 		$install = getSerializedArray($i);
 	} else {
-		$install = array('ZENPHOTO' => '0.0.0[0000]');
+		$install = array('ZENPHOTO' => '0.0.0');
 	}
-	preg_match('|([^-]*).*\[(.*)\]|', $install['ZENPHOTO'], $matches);
-	if (isset($matches[1]) && isset($matches[2]) && $matches[1] != $version[1] || $matches[2] != ZENPHOTO_RELEASE || ((time() & 7) == 0) && OFFSET_PATH != 2 && $i != serialize(installSignature())) {
+	if ($install['ZENPHOTO'] && $install['ZENPHOTO'] != ZENPHOTO_VERSION || ((time() & 7) == 0) && OFFSET_PATH != 2 && $i != serialize(installSignature())) {
 		require_once(dirname(__FILE__) . '/reconfigure.php');
 		reconfigureAction(0);
 	}
@@ -1523,14 +1605,19 @@ function exitZP() {
  * @return string
  */
 function installSignature() {
-	$testFiles = array('template-functions.php'	 => filesize(SERVERPATH . '/' . ZENFOLDER . '/template-functions.php'),
-					'functions-filter.php'		 => filesize(SERVERPATH . '/' . ZENFOLDER . '/functions-filter.php'),
-					'lib-auth.php'						 => filesize(SERVERPATH . '/' . ZENFOLDER . '/lib-auth.php'),
-					'lib-utf8.php'						 => filesize(SERVERPATH . '/' . ZENFOLDER . '/lib-utf8.php'),
-					'functions.php'						 => filesize(SERVERPATH . '/' . ZENFOLDER . '/functions.php'),
-					'functions-basic.php'			 => filesize(SERVERPATH . '/' . ZENFOLDER . '/functions-basic.php'),
-					'functions-controller.php' => filesize(SERVERPATH . '/' . ZENFOLDER . '/functions-controller.php'),
-					'functions-image.php'			 => filesize(SERVERPATH . '/' . ZENFOLDER . '/functions-image.php'));
+	$all_algos = hash_algos();
+	$algo = 'sha256';
+	if(!in_array($algo, $all_algos)) { // make sure we have the algo
+		$algo = 'sha1';
+	}
+	$testFiles = array('template-functions.php'	 => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/template-functions.php'),
+					'functions-filter.php'		 => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/functions-filter.php'),
+					'lib-auth.php'						 => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/lib-auth.php'),
+					'lib-utf8.php'						 => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/lib-utf8.php'),
+					'functions.php'						 => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/functions.php'),
+					'functions-basic.php'			 => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/functions-basic.php'),
+					'functions-controller.php' => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/functions-controller.php'),
+					'functions-image.php'			 => hash_file($algo, SERVERPATH . '/' . ZENFOLDER . '/functions-image.php'));
 
 	if (isset($_SERVER['SERVER_SOFTWARE'])) {
 		$s = $_SERVER['SERVER_SOFTWARE'];
@@ -1543,12 +1630,15 @@ function installSignature() {
 	if ($i !== false) {
 		$version = substr($version, 0, $i);
 	}
-	return array_merge($testFiles, array('SERVER_SOFTWARE'	 => $s,
-					'ZENPHOTO'				 => $version . '[' . ZENPHOTO_RELEASE . ']',
-					'FOLDER'					 => dirname(SERVERPATH . '/' . ZENFOLDER),
-					'DATABASE'				 => $dbs['application'] . ' ' . $dbs['version']
+	$signature_array = array_merge($testFiles, array(
+			'SERVER_SOFTWARE' => $s,
+			'ZENPHOTO' => $version,
+			'FOLDER' => dirname(SERVERPATH . '/' . ZENFOLDER),
+			'DATABASE' => $dbs['application'] . ' ' . $dbs['version']
 					)
 	);
+	$signature_array['SIGNATURE_HASH'] = hash($algo, implode(array_values($signature_array))); 
+	return $signature_array;
 }
 
 /**
@@ -1575,6 +1665,79 @@ function zp_session_destroy() {
 		$_SESSION = array();
 		session_destroy();
 	}
+}
+
+/**
+ * Reads the core default rewrite token define array from the config template file `zenphoto_cfg.txt`.
+ * Used primarily in case it is missing from the current config file as silent fallback and within the rewriteToken plugin
+ * 
+ * @param string $token The token to get, e.g. "gallery". If the token is not existing or NULL the whole definition array is returned
+ * @return array
+ */
+function getDefaultRewriteTokens($token = null) {
+	global $_zp_default_rewritetokens; 
+	if(!is_array($_zp_default_rewritetokens)) {
+		$zp_cfg = file_get_contents(SERVERPATH . '/' . ZENFOLDER . '/zenphoto_cfg.txt');
+		$i = strpos($zp_cfg, "\$conf['special_pages']");
+		$j = strpos($zp_cfg, '//', $i);
+		eval(substr($zp_cfg, $i, $j - $i));
+		$_zp_default_rewritetokens = $conf['special_pages'];
+		unset($conf);
+	}
+	if(isset($_zp_default_rewritetokens[$token])) {
+		return $_zp_default_rewritetokens[$token];
+	} else {
+		return $_zp_default_rewritetokens;
+	}
+}
+
+/**
+ * Adds missing individual default rewrite tokens to $_zp_conf_vars['special_pages'] 
+ * @global array $_zp_conf_vars
+ */
+function addMissingDefaultRewriteTokens() {
+	global $_zp_conf_vars;
+	$tokens = array_keys(getDefaultRewriteTokens(null));
+	foreach($tokens as $token) {
+		if (!isset($_zp_conf_vars['special_pages'][$token])) {
+			$_zp_conf_vars['special_pages'][$token] = getDefaultRewriteTokens($token);
+		}
+	}
+}
+
+/**
+ * Sends a cURL request to i.php to generate the image requested without printing it.
+ * Returns the uri to the cache version of the image on success or false. 
+ * It also returns false if cURL is not available.
+ * 
+ * @param string $imageuri The image processor uri to this image
+ * @return mixed
+ */
+function generateImageCacheFile($imageuri) {
+	$uri = $imageuri;
+	if (strpos($imageuri, SERVER_HTTP_HOST) === false) {
+		$uri = SERVER_HTTP_HOST . pathurlencode($uri) . '&returnmode';
+	}
+	if (function_exists('curl_init')) {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $uri);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 2000);
+		$curl_exec = curl_exec($ch);
+		if ($curl_exec === false) {
+			debuglog(gettext('ERROR: Image generation via cURL failed: ') . curl_error($ch));
+			return false;
+		} else if (empty(trim($curl_exec))) {
+			debuglog(gettext('ERROR: Image generation returned no image url.'));
+			return false;
+		} else {
+			// this should be the cache image uri if all worked out…
+			return $curl_exec;
+		}
+		curl_close($ch);
+	}
+	debuglog(gettext('ERROR: generateImage() does not work because the PHP extension cURL is not available.'));
+	return false;
 }
 
 /**
@@ -1657,5 +1820,3 @@ class zpMutex {
 	}
 
 }
-
-?>

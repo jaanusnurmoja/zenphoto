@@ -4,8 +4,8 @@
  * @package setup
  */
 // force UTF-8 Ø
-Define('PHP_MIN_VERSION', '5.2.0');
-Define('PHP_DESIRED_VERSION', '5.4.0');
+Define('PHP_MIN_VERSION', '5.3.0');
+Define('PHP_DESIRED_VERSION', '7.1.0');
 
 // leave this as the first executable statement to avoid problems with PHP not having gettext support.
 if (!function_exists("gettext")) {
@@ -23,8 +23,8 @@ if (version_compare(PHP_VERSION, PHP_MIN_VERSION, '<')) {
 }
 require_once(dirname(dirname(__FILE__)) . '/global-definitions.php');
 
-$session = session_start();
 session_cache_limiter('nocache');
+$session = session_start();
 
 header('Content-Type: text/html; charset=UTF-8');
 header("HTTP/1.0 200 OK");
@@ -253,6 +253,9 @@ if (file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
 	unset($_zp_conf_vars);
 	require(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 	if (isset($_zp_conf_vars) && !isset($conf) && isset($_zp_conf_vars['special_pages'])) {
+		if(!isset($_zp_conf_vars['special_pages']['gallery'])) {
+			$updatezp_config = true;
+		}
 		if (isset($_zp_conf_vars['db_software'])) {
 			$confDB = $_zp_conf_vars['db_software'];
 			if (empty($_POST) && empty($_GET) && ($confDB === 'MySQL' || $preferred != 'MySQL')) {
@@ -381,7 +384,7 @@ if ($setup_checked) {
 		} else {
 			$setup_cookie = '';
 		}
-		if ($setup_cookie == ZENPHOTO_RELEASE) {
+		if ($setup_cookie == ZENPHOTO_VERSION) {
 			setupLog(gettext('Setup cookie test successful'));
 			setcookie('setup_test_cookie', '', time() - 368000, '/');
 		} else {
@@ -403,7 +406,7 @@ if ($setup_checked) {
 		} else {
 			$clone = ' ' . gettext('clone');
 		}
-		setupLog(sprintf(gettext('Zenphoto Setup v%1$s[%2$s]%3$s: %4$s'), ZENPHOTO_VERSION, ZENPHOTO_RELEASE, $clone, date('r')), true, true); // initialize the log file
+		setupLog(sprintf(gettext('Zenphoto Setup v%1$s %2$s: %3$s'), ZENPHOTO_VERSION, $clone, date('r')), true, true); // initialize the log file
 	}
 	if ($environ) {
 		setupLog(gettext("Full environment"));
@@ -413,7 +416,7 @@ if ($setup_checked) {
 			setupLog(sprintf(gettext("Query error: %s"), $connectDBErr), true);
 		}
 	}
-	setcookie('setup_test_cookie', ZENPHOTO_RELEASE, time() + 3600, '/');
+	setcookie('setup_test_cookie', ZENPHOTO_VERSION, time() + 3600, '/');
 }
 
 if (!isset($_zp_setupCurrentLocale_result) || empty($_zp_setupCurrentLocale_result)) {
@@ -474,6 +477,9 @@ if (empty($prevRel)) {
 	if ($prevRel[0] == 1 && $prevRel[1] <= 3) {
 		$c = $c - 8; // there were only two 1.3.x releases
 	}
+	if ($prevRel[0] == 1 && $prevRel[1] <= 4) {
+		$c = $c - 10; // there were 14 1.4.x releases
+	} 
 	switch ($c) {
 		case 1:
 			$check = 1;
@@ -590,8 +596,8 @@ if ($c <= 0) {
 							}
 							checkMark($p, sprintf(gettext('<em>%s</em> security'), DATA_FOLDER), sprintf(gettext('<em>%s</em> security [is compromised]'), DATA_FOLDER), sprintf(gettext('Zenphoto suggests you make the sensitive files in the %1$s folder accessable by <em>owner</em> only (permissions = 0600). The file permissions for <em>%2$s</em> are %3$04o which may allow unauthorized access.'), DATA_FOLDER, $file, $permission));
 
-							$err = versionCheck(PHP_MIN_VERSION, PHP_DESIRED_VERSION, PHP_VERSION);
-							$good = checkMark($err, sprintf(gettext("PHP version %s"), PHP_VERSION), "", sprintf(gettext('PHP Version %1$s or greater is required. Version %2$s or greater is strongly recommended. Use earlier versions at your own risk.'), PHP_MIN_VERSION, PHP_DESIRED_VERSION), false) && $good;
+							$err = versionCheck('5.6.0', PHP_DESIRED_VERSION, PHP_VERSION);
+							$good = checkMark($err, sprintf(gettext("PHP version %s"), PHP_VERSION), "", sprintf(gettext('PHP Version %1$s or greater is required. Version %2$s or greater is strongly recommended. Use earlier versions at your own risk. Zenphoto is developed on PHP 7.1+ and in any case not tested below 5.6. There will be no fixes if you encounter any issues below 5.6. Please contact your webhost about a PHP upgrade on your server.'), '5.6.0', PHP_DESIRED_VERSION), false) && $good;
 
 							if ($session && session_id()) {
 								checkmark(true, gettext('PHP <code>Sessions</code>.'), gettext('PHP <code>Sessions</code> [appear to not be working].'), '', true);
@@ -1319,7 +1325,7 @@ if ($c <= 0) {
 							foreach ($installed_files as $extra) {
 								$filelist .= filesystemToInternal(str_replace($base, '', $extra) . '<br />');
 							}
-							if (class_exists('zpFunctions') && zpFunctions::hasPrimaryScripts() && count($installed_files) > 0) {
+							if (class_exists('zpFunctions') && hasPrimaryScripts() && count($installed_files) > 0) {
 								if (defined('TEST_RELEASE') && TEST_RELEASE) {
 									$msg1 = gettext("Zenphoto core files [This is a <em>debug</em> build. Some files are missing or seem wrong]");
 								} else {
@@ -2505,6 +2511,7 @@ if ($c <= 0) {
 								} else {
 									$link = sprintf(gettext('You can now <a href="%1$s">administer your gallery.</a>'), WEBPATH . '/' . ZENFOLDER . '/admin.php');
 								}
+								setOption('setup_unprotected_by_adminrequest', 0, true, null);
 								?>
 								<p id="golink" class="delayshow" style="display:none;"><?php echo $link; ?></p>
 								<?php

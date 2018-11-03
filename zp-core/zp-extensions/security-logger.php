@@ -14,11 +14,12 @@
  *
  * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage admin
+ * @subpackage security-logger
  */
 $plugin_is_filter = 100 | CLASS_PLUGIN;
 $plugin_description = gettext('Logs selected security events.');
 $plugin_author = "Stephen Billard (sbillard)";
+$plugin_category = gettext('Admin');
 
 $option_interface = 'security_logger';
 
@@ -127,12 +128,15 @@ class security_logger {
 				break;
 			case 'setup_install':
 				$type = gettext('Install');
-				$addl = gettext('version') . ' ' . ZENPHOTO_VERSION . '[' . ZENPHOTO_RELEASE . "]";
-				if (!zpFunctions::hasPrimaryScripts()) {
+				$addl = gettext('version') . ' ' . ZENPHOTO_VERSION;
+				if (!hasPrimaryScripts()) {
 					$addl .= ' ' . gettext('clone');
 				}
 				break;
-			case 'setup_proptect':
+			case 'setup_ignore_setup':
+				$type = gettext('Setup run request skipped.');
+				break;
+			case 'setup_protect':
 				$type = gettext('Protect setup scripts');
 				break;
 			case 'user_new':
@@ -205,13 +209,13 @@ class security_logger {
 			fclose($f);
 			clearstatcache();
 			if (!$preexists) {
-				@chmod($file, 0660 & CHMOD_VALUE);
+				@chmod($file, LOGS_MOD);
 				if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
 					$permission = fileperms($file) & 0700; //	on Windows owner==group==public
-					$check = $permission != 0600 & CHMOD_VALUE;
+					$check = $permission != LOGS_MOD;
 				} else {
 					$permission = fileperms($file) & 0777;
-					$check = $permission != 0660 & CHMOD_VALUE;
+					$check = $permission != LOGS_MOD;
 				}
 				if ($check) {
 					$f = fopen($file, 'a');

@@ -2,7 +2,8 @@
 
 /**
  * Image Class
- * @package classes
+ * @package core
+ * @subpackage classes\objects
  */
 // force UTF-8 Ø
 
@@ -643,7 +644,7 @@ class Image extends MediaObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -666,7 +667,7 @@ class Image extends MediaObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -676,7 +677,7 @@ class Image extends MediaObject {
 	 * @param string $city text for the city
 	 */
 	function setCity($city) {
-		$this->set('city', zpFunctions::tagURLs($city));
+		$this->set('city', tagURLs($city));
 	}
 
 	/**
@@ -689,7 +690,7 @@ class Image extends MediaObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -699,7 +700,7 @@ class Image extends MediaObject {
 	 * @param string $state text for the state
 	 */
 	function setState($state) {
-		$this->set('state', zpFunctions::tagURLs($state));
+		$this->set('state', tagURLs($state));
 	}
 
 	/**
@@ -712,7 +713,7 @@ class Image extends MediaObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -722,7 +723,7 @@ class Image extends MediaObject {
 	 * @param string $country text for the country filed
 	 */
 	function setCountry($country) {
-		$this->set('country', zpFunctions::tagURLs($country));
+		$this->set('country', tagURLs($country));
 	}
 
 	/**
@@ -735,7 +736,7 @@ class Image extends MediaObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -745,7 +746,7 @@ class Image extends MediaObject {
 	 * @param string $credit text for the credit field
 	 */
 	function setCredit($credit) {
-		$this->set('credit', zpFunctions::tagURLs($credit));
+		$this->set('credit', tagURLs($credit));
 	}
 
 	/**
@@ -758,7 +759,7 @@ class Image extends MediaObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -768,7 +769,7 @@ class Image extends MediaObject {
 	 * @param string $copyright text for the copyright field
 	 */
 	function setCopyright($copyright) {
-		$this->set('copyright', zpFunctions::tagURLs($copyright));
+		$this->set('copyright', tagURLs($copyright));
 	}
 
 	/**
@@ -921,16 +922,6 @@ class Image extends MediaObject {
 	}
 
 	/**
-	 * Returns a path urlencoded image page link for the image
-	 * @return string
-	 * @deprecated since version 1.4.6
-	 */
-	function getImageLink() {
-		internal_deprecations::getImageLink();
-		return $this->getLink();
-	}
-
-	/**
 	 * Returns a path to the original image in the original folder.
 	 *
 	 * @param string $path the "path" to the image. Defaults to the simple WEBPATH
@@ -1072,7 +1063,9 @@ class Image extends MediaObject {
 	function getThumbCropping($ts, $sw, $sh) {
 		$cy = $this->get('thumbY');
 		if (is_null($cy)) {
-			$custom = $cx = $cw = $ch = NULL;
+			$custom = $cx = NULL;
+			$cw = $sw;
+			$ch = $sh;
 		} else {
 			$custom = true;
 			$cx = $this->get('thumbX');
@@ -1095,7 +1088,7 @@ class Image extends MediaObject {
 		}
 		return array($custom, $cw, $ch, $cx, $cy);
 	}
-
+	
 	/**
 	 * Get a default-sized thumbnail of this image.
 	 *
@@ -1108,15 +1101,12 @@ class Image extends MediaObject {
 			$sh = getOption('thumb_crop_height');
 			list($custom, $cw, $ch, $cx, $cy) = $this->getThumbCropping($ts, $sw, $sh);
 			if ($custom) {
-				return $this->getCustomImage(NULL, $sw, $sh, $cw, $ch, $cx, $cy, true);
+				$ts = null;
 			}
 		} else {
-			$sw = $sh = NULL;
+			$sw = $sh = $cw = $ch = $cx = $cy = null;
 		}
-		$wmt = getWatermarkParam($this, WATERMARK_THUMB);
-		$args = getImageParameters(array($ts, NULL, NULL, $sw, $sh, NULL, NULL, NULL, true, NULL, true, $wmt, NULL, NULL), $this->album->name);
-
-		return getImageURI($args, $this->album->name, $this->filename, $this->filemtime);
+		return $this->getCustomImage($ts, $sw, $sh, $cw, $ch, $cx, $cy, true);
 	}
 
 	/**

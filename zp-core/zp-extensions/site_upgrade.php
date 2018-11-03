@@ -31,13 +31,13 @@
  *
  * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage admin
+ * @subpackage site-upgrade
  */
 $plugin_is_filter = 1000 | ADMIN_PLUGIN | FEATURE_PLUGIN;
 $plugin_description = gettext('Utility to divert access to the gallery to a screen saying the site is upgrading.');
 $plugin_author = "Stephen Billard (sbillard)";
 $plugin_notice = (MOD_REWRITE) ? false : gettext('<em>mod_rewrite</em> is not enabled. This plugin may not work without rewrite redirection if the upgrade is significantly different than the running release.');
-
+$plugin_category = gettext('Admin');
 switch (OFFSET_PATH) {
 	case 0:
 		$state = @$_zp_conf_vars['site_upgrade_state'];
@@ -206,42 +206,6 @@ switch (OFFSET_PATH) {
 			$xml = ob_get_contents();
 			ob_end_clean();
 			file_put_contents(SERVERPATH . '/' . USER_PLUGIN_FOLDER . '/site_upgrade/rss-closed.xml', $xml);
-		}
-		if (isset($_REQUEST['refreshHTML']) || !file_exists(SERVERPATH . '/' . USER_PLUGIN_FOLDER . '/site_upgrade/externalFeed_closed.xml')) {
-			require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/externalFeed.php');
-
-			class setupexternalFeed extends externalFeed {
-
-				public function getitems() {
-					$this->feedtype = 'setup';
-					$items = array();
-					$items[] = array('title'						 => gettext('externalFeed suspended'),
-									'link'						 => '',
-									'enclosure'				 => '',
-									'category'				 => '',
-									'media_content'		 => '',
-									'media_thumbnail'	 => '',
-									'pubdate'					 => date("r", time()),
-									'desc'						 => gettext('The external feed is currently not available.'));
-					return $items;
-				}
-
-				protected function startCache() {
-
-				}
-
-				protected function endCache() {
-
-				}
-
-			}
-
-			$obj = new setupexternalFeed(array('external' => 'site_closed'));
-			ob_start();
-			$obj->printFeed();
-			$xml = ob_get_contents();
-			ob_end_clean();
-			file_put_contents(SERVERPATH . '/' . USER_PLUGIN_FOLDER . '/site_upgrade/externalFeed-closed.xml', $xml);
 		}
 		setOptionDefault('zp_plugin_site_upgrade', $plugin_is_filter);
 		break;

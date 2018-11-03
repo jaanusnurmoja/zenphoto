@@ -15,7 +15,12 @@ if (isset($_GET['_zp_login_error'])) {
 	$_zp_login_error = sanitize($_GET['_zp_login_error']);
 }
 
-checkInstall();
+if (!isset($_GET['action']) || (isset($_GET['action']) && sanitize($_GET['action']) != 'ignore_setup')) {
+	checkInstall();
+}
+if(!getOption('setup_unprotected_by_adminrequest')) {
+	protectSetupFiles();
+}
 if (time() > getOption('last_garbage_collect') + 864000) {
 	$_zp_gallery->garbageCollect();
 }
@@ -28,6 +33,23 @@ if (isset($_GET['report'])) {
 if (extensionEnabled('zenpage')) {
 	require_once(dirname(__FILE__) . '/' . PLUGIN_FOLDER . '/zenpage/zenpage-admin-functions.php');
 }
+$redirected_from = NULL;
+if (zp_loggedin() && !empty($zenphoto_tabs)) {
+	if (!$_zp_current_admin_obj->getID() || empty($msg) && !zp_loggedin(OVERVIEW_RIGHTS)) {
+		// admin access without overview rights, redirect to first tab
+		$tab = array_shift($zenphoto_tabs);
+		$link = $tab['link'];
+		header('location:' . $link);
+		exitZP();
+	}
+} else {
+	if (isset($_GET['from'])) {
+		$redirected_from = sanitizeRedirect($_GET['from']);
+	} else {
+		$redirected_from = urldecode(currentRelativeURL());
+	}
+}
+
 if (zp_loggedin()) { /* Display the admin pages. Do action handling first. */
 	if (isset($_GET['action'])) {
 		$action = sanitize($_GET['action']);
@@ -80,8 +102,9 @@ if (zp_loggedin()) { /* Display the admin pages. Do action handling first. */
 				/*				 * *************************************************************************** */
 				case 'restore_setup':
 					XSRFdefender('restore_setup');
-					checkSignature(true);
+					unprotectSetupFiles();
 					zp_apply_filter('log_setup', true, 'protect', gettext('enabled'));
+					setOption('setup_unprotected_by_adminrequest', 1, true, null);
 					$class = 'messagebox';
 					$msg = gettext('Setup files restored.');
 					break;
@@ -90,19 +113,8 @@ if (zp_loggedin()) { /* Display the admin pages. Do action handling first. */
 				/*				 * *************************************************************************** */
 				case 'protect_setup':
 					XSRFdefender('protect_setup');
-					chdir(SERVERPATH . '/' . ZENFOLDER . '/setup/');
-					$list = safe_glob('*.php');
-					$rslt = array();
-					foreach ($list as $component) {
-						@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, 0777);
-						if (@rename(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component . '.xxx')) {
-							@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component . '.xxx', FILE_MOD);
-						} else {
-							@chmod(SERVERPATH . '/' . ZENFOLDER . '/setup/' . $component, FILE_MOD);
-							$rslt[] = '../setup/' . $component;
-						}
-					}
-					zp_apply_filter('log_setup', true, 'protect', gettext('protected'));
+					protectSetupFiles();
+					setOption('setup_unprotected_by_adminrequest', 0, true, null);
 					$class = 'messagebox';
 					$msg = gettext('Setup files protected.');
 					break;
@@ -141,32 +153,15 @@ if (zp_loggedin()) { /* Display the admin pages. Do action handling first. */
 			$msg = sprintf(gettext('You do not have proper rights to %s.'), $msg);
 		}
 	} else {
-		if (isset($_GET['from'])) {
+		if (!is_null($redirected_from)) {
 			$class = 'errorbox';
-			$msg = sprintf(gettext('You do not have proper rights to access %s.'), html_encode(sanitize($_GET['from'])));
+			$msg = sprintf(gettext('You do not have proper rights to access %s.'), html_encode(sanitize($redirected_from)));
 		}
 	}
 
 	/*	 * ********************************************************************************* */
 	/** End Action Handling ************************************************************ */
 	/*	 * ********************************************************************************* */
-}
-$from = NULL;
-if (zp_loggedin() && !empty($zenphoto_tabs)) {
-	if (!$_zp_current_admin_obj->getID() || empty($msg) && !zp_loggedin(OVERVIEW_RIGHTS)) {
-		// admin access without overview rights, redirect to first tab
-		$tab = array_shift($zenphoto_tabs);
-		$link = $tab['link'];
-		header('location:' . $link);
-		exitZP();
-	}
-} else {
-	if (isset($_GET['from'])) {
-		$from = sanitize($_GET['from']);
-		$from = urldecode($from);
-	} else {
-		$from = urldecode(currentRelativeURL());
-	}
 }
 
 // Print our header
@@ -190,7 +185,7 @@ if (!zp_loggedin()) {
 	// If they are not logged in, display the login form and exit
 	?>
 	<body style="background-image: none">
-		<?php $_zp_authority->printLoginForm($from); ?>
+		<?php $_zp_authority->printLoginForm($redirected_from); ?>
 	</body>
 	<?php
 	echo "\n</html>";
@@ -243,66 +238,67 @@ if (!zp_loggedin()) {
 					unset($buttonlist[$key]);
 				}
 			}
-			list($diff, $needs) = checkSignature(false);
-			if (zpFunctions::hasPrimaryScripts()) {
+			if (hasPrimaryScripts() && zp_loggedin(ADMIN_RIGHTS)) {
 				//	button to restore setup files if needed
-				if (!empty($needs)) {
+				if (isSetupProtected()) {
 					$buttonlist[] = array(
-									'XSRFTag'			 => 'restore_setup',
-									'category'		 => gettext('Admin'),
-									'enable'			 => true,
-									'button_text'	 => gettext('Setup » restore scripts'),
-									'formname'		 => 'restore_setup.php',
-									'action'			 => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=restore_setup',
-									'icon'				 => 'images/lock_open.png',
-									'alt'					 => '',
-									'title'				 => gettext('Restores setup files so setup can be run.'),
-									'hidden'			 => '<input type="hidden" name="action" value="restore_setup" />',
-									'rights'			 => ADMIN_RIGHTS
+							'XSRFTag' => 'restore_setup',
+							'category' => gettext('Admin'),
+							'enable' => true,
+							'button_text' => gettext('Setup » restore scripts'),
+							'formname' => 'restore_setup.php',
+							'action' => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=restore_setup',
+							'icon' => 'images/lock_open.png',
+							'alt' => '',
+							'title' => gettext('Restores setup files so setup can be run.'),
+							'hidden' => '<input type="hidden" name="action" value="restore_setup" />',
+							'rights' => ADMIN_RIGHTS
 					);
+					
 				} else {
-					if (zp_loggedin(ADMIN_RIGHTS)) {
-						?>
-						<div class="warningbox">
-							<h2><?php echo gettext('Your Setup scripts are not protected.'); ?></h2>
-							<?php echo gettext('The Setup environment is not totally secure, you should protect the scripts to thwart hackers. Use the <strong>Setup » protect scripts</strong> button in the <em>Admin</em> section of the <em>Utility functions</em>. '); ?>
-						</div>
-						<?php
-					}
 					$buttonlist[] = array(
-									'XSRFTag'			 => 'protect_setup',
-									'category'		 => gettext('Admin'),
-									'enable'			 => true,
-									'button_text'	 => gettext('Setup » protect scripts'),
-									'formname'		 => 'restore_setup.php',
-									'action'			 => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=protect_setup',
-									'icon'				 => 'images/lock_2.png',
-									'alt'					 => '',
-									'title'				 => gettext('Protects setup files so setup cannot be run.'),
-									'hidden'			 => '<input type="hidden" name="action" value="protect_setup" />',
-									'rights'			 => ADMIN_RIGHTS
+							'XSRFTag' => 'protect_setup',
+							'category' => gettext('Admin'),
+							'enable' => true,
+							'button_text' => gettext('Setup » protect scripts'),
+							'formname' => 'restore_setup.php',
+							'action' => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=protect_setup',
+							'icon' => 'images/lock_2.png',
+							'alt' => '',
+							'title' => gettext('Protects setup files so setup cannot be run.'),
+							'hidden' => '<input type="hidden" name="action" value="protect_setup" />',
+							'rights' => ADMIN_RIGHTS
 					);
+					
 				}
 			}
-			if (empty($needs)) {
+			if (zp_loggedin(ADMIN_RIGHTS)) {
 				$buttonlist[] = array(
-								'category'		 => gettext('Admin'),
-								'enable'			 => true,
-								'button_text'	 => gettext('Run setup'),
-								'formname'		 => 'run_setup.php',
-								'action'			 => WEBPATH . '/' . ZENFOLDER . '/setup.php',
-								'icon'				 => 'images/Zp.png',
-								'alt'					 => '',
-								'title'				 => gettext('Run the setup script.'),
-								'hidden'			 => '',
-								'rights'			 => ADMIN_RIGHTS
+						'category' => gettext('Admin'),
+						'enable' => true,
+						'button_text' => gettext('Run setup'),
+						'formname' => 'run_setup.php',
+						'action' => WEBPATH . '/' . ZENFOLDER . '/setup.php',
+						'icon' => 'images/Zp.png',
+						'alt' => '',
+						'title' => gettext('Run the setup script.'),
+						'hidden' => '',
+						'rights' => ADMIN_RIGHTS
 				);
 			}
 
-			$buttonlist = sortMultiArray($buttonlist, array('category', 'button_text'), false);
 
+			$buttonlist = sortMultiArray($buttonlist, array('category', 'button_text'), false);
+			
 			if (zp_loggedin(OVERVIEW_RIGHTS)) {
-				?>
+				if ((zp_loggedin(ADMIN_RIGHTS)) && !isSetupProtected()) {
+					?>
+					<div class="warningbox">
+							<h2><?php echo gettext('Your Setup scripts are not protected.'); ?></h2>
+							<?php echo gettext('The Setup environment is not totally secure, you should protect the scripts to thwart hackers. Use the <strong>Setup » protect scripts</strong> button in the <em>Admin</em> section of the <em>Utility functions</em>. '); ?>
+						</div>
+					<?php 
+				} ?>
 				<div id="overviewboxes">
 
 					<?php
@@ -317,7 +313,7 @@ if (!zp_loggedin()) {
 								} else {
 									$official = gettext('Official build');
 								}
-								if (zpFunctions::hasPrimaryScripts()) {
+								if (hasPrimaryScripts()) {
 									$source = '';
 								} else {
 									$clone = clonedFrom();
@@ -337,7 +333,7 @@ if (!zp_loggedin()) {
 								?>
 								<li>
 									<?php
-									printf(gettext('Zenphoto version <strong>%1$s [%2$s] (%3$s)</strong>'), ZENPHOTO_VERSION, '<a title="' . ZENPHOTO_FULL_RELEASE . '">' . ZENPHOTO_RELEASE . '</a>', $official);
+									printf(gettext('Zenphoto version <strong>%1$s (%2$s)</strong>'), ZENPHOTO_VERSION, $official);
 									echo $source;
 									if (extensionEnabled('check_for_update') && TEST_RELEASE) {
 										if (is_connected() && class_exists('DOMDocument')) {

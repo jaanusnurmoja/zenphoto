@@ -6,14 +6,24 @@
  * 		markerClustererPlus library 2.0.15 (http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/)
  * 		overlappingMarkerSpiderfier library 0.3 (https://github.com/jawj/OverlappingMarkerSpiderfier)
  *
- * @author Stephen Billard (sbillard) & Vincent Bourganel (vincent3569)
- * @package plugins
+ * <b>NOTE:</b> To calculate the correct geolocation of images, this plugin needs to process certain EXIF values in pairs.
  *
+ * This means that you have to enable the following Metadata fields in <i>Options => Image => Metadata:</i>
+ * <ul>
+ * <li>Latitude 	+	Latitude Reference</li>
+ * <li>Longitude 	+	Longitude Reference</li>
+ * <li>(and optionally Altitude 	+	Altitude Reference)</li>
+ * </ul>
+ *
+ * @author Stephen Billard (sbillard), Vincent Bourganel (vincent3569)
+ * @package plugins
+ * @subpackage googlemap
  */
 $plugin_is_filter = 5 | THEME_PLUGIN;
 $plugin_description = gettext('Display Google Maps based on <em>latitude</em> and <em>longitude</em> metadata in the images.');
 $plugin_notice = sprintf(gettext('<strong>Note</strong>: Google does place limits on the use of its <a href="%s"><em>Maps API</em></a>. Please review these to be sure your site is in compliance.'), 'http://googlegeodevelopers.blogspot.com/2011/10/introduction-of-usage-limits-to-maps.html');
-$plugin_author = 'Stephen Billard (sbillard) & Vincent Bourganel (vincent3569)';
+$plugin_author = 'Stephen Billard (sbillard), Vincent Bourganel (vincent3569)';
+$plugin_category = gettext('Misc');
 
 
 $option_interface = 'GoogleMap';
@@ -46,8 +56,8 @@ class GoogleMap {
 		}
 		setOptionDefault('gmap_display', 'show');
 		if (class_exists('cacheManager')) {
-			cacheManager::deleteThemeCacheSizes('GoogleMap');
-			cacheManager::addThemeCacheSize('GoogleMap', 150, NULL, NULL, NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
+			cacheManager::deleteCacheSizes('GoogleMap');
+			cacheManager::addCacheSize('GoogleMap', 150, NULL, NULL, NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
 		}
 	}
 

@@ -20,14 +20,14 @@
  * <var>ADMIN</var> privileges or if he is the manager of an album being viewed or whose images are
  * being viewed. Likewise, Zenpage News and Pages are not cached when viewed by the author.
  *
- * @author Malte Müller (acrylian)
+ * @author Malte Müller (acrylian), Stephen Billard (sbillard)
  * @package plugins
- * @subpackage admin
+ * @subpackage static-html-cache
  */
 $plugin_is_filter = 400 | CLASS_PLUGIN;
 $plugin_description = gettext("Adds static HTML cache functionality to Zenphoto.");
 $plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard)";
-
+$plugin_category = gettext('Admin');
 $option_interface = 'static_html_cache';
 
 $cache_path = SERVERPATH . '/' . STATIC_CACHE_FOLDER . "/";
@@ -36,7 +36,7 @@ if (!file_exists($cache_path)) {
 		die(gettext("Static HTML Cache folder could not be created. Please try to create it manually via FTP with chmod 0777."));
 	}
 }
-$cachesubfolders = array("albums", "images", "pages");
+$cachesubfolders = array('index', 'albums', 'images', 'pages', 'news');
 foreach ($cachesubfolders as $cachesubfolder) {
 	$cache_folder = $cache_path . $cachesubfolder . '/';
 	if (!file_exists($cache_folder)) {
@@ -223,7 +223,7 @@ class static_html_cache {
 	 */
 	function createCacheFilepath($accessType) {
 		global $_zp_current_image, $_zp_current_album, $_zp_gallery_page, $_zp_authority,
-		$_zp_current_zenpage_news, $_zp_current_category, $_zp_current_zenpage_page, $_zp_gallery, $_zp_page, $_zp_current_search;
+		$_zp_current_zenpage_news, $_zp_zenpage, $_zp_current_category, $_zp_current_zenpage_page, $_zp_gallery, $_zp_page, $_zp_current_search;
 		// just make sure these are really empty
 		$cachefilepath = $_zp_gallery->getCurrentTheme() . '_' . str_replace('zp_', '', $accessType) . '_';
 		$album = "";
@@ -240,8 +240,10 @@ class static_html_cache {
 		}
 		switch ($_zp_gallery_page) {
 			case 'index.php':
-				$cachesubfolder = "pages";
+				$cachesubfolder = "index";
 				$cachefilepath .= "index";
+				$cachefilepath .= '_sortype-' . $_zp_gallery->getSortType();
+				$cachefilepath .= '_sortdir-' . $_zp_gallery->getSortDirection();
 				break;
 			case 'album.php':
 			case 'image.php':
@@ -252,6 +254,12 @@ class static_html_cache {
 					$image = "-" . $_zp_current_image->filename;
 				}
 				$cachefilepath .= $album . $image;
+				if($_zp_gallery_page == 'album.php') {
+					$cachefilepath .= '_albsortype-' . $_zp_current_album->getSortType('album');
+					$cachefilepath .= '_albsortdir-' . $_zp_current_album->getSortDirection('album');
+					$cachefilepath .= '_imgsortype-' . $_zp_current_album->getSortType('image');
+					$cachefilepath .= '_imgsortdir-' . $_zp_current_album->getSortDirection('image');
+				}
 				if (in_context(ZP_SEARCH_LINKED)) {
 					$cachefilepath .= '_search_' . stripcslashes($_zp_current_search->codifySearchString());
 				} 
@@ -261,14 +269,21 @@ class static_html_cache {
 				$cachefilepath .= 'page-' . $_zp_current_zenpage_page->getTitlelink();
 				break;
 			case 'news.php':
-				$cachesubfolder = "pages";
+				$cachesubfolder = "news";
+				$cachefilepath .= 'news';
 				if (is_object($_zp_current_zenpage_news)) {
 					$title = "-" . $_zp_current_zenpage_news->getTitlelink();
+				} 
+				if (!is_object($_zp_current_category) && !is_object($_zp_current_zenpage_news)) {
+					$cachefilepath .= '_sortype-' . $_zp_zenpage->getSortType();
+					$cachefilepath .= '_sortdir-' . $_zp_zenpage->getSortDirection();
 				}
 				if (is_object($_zp_current_category)) {
 					$category = "_cat-" . $_zp_current_category->getTitlelink();
-				}
-				$cachefilepath .= 'news' . $category . $title;
+					$category .= '_catsortype-' . $_zp_current_category->getSortType();
+					$category .= '_catsortdir-' . $_zp_current_category->getSortDirection();
+				} 
+				$cachefilepath .= $category . $title;
 				break;
 			default:
 				// custom pages
@@ -306,12 +321,12 @@ class static_html_cache {
 	 */
 	static function clearHTMLCache($folder = NULL) {
 		if (is_null($folder)) {
-			$cachesubfolders = array("index", "albums", "images", "pages");
+			$cachesubfolders = array('index', 'albums', 'images', 'pages', 'news');
 			foreach ($cachesubfolders as $cachesubfolder) {
-				zpFunctions::removeDir(SERVERPATH . '/' . STATIC_CACHE_FOLDER . "/" . $cachesubfolder, true);
+				removeDir(SERVERPATH . '/' . STATIC_CACHE_FOLDER . "/" . $cachesubfolder, true);
 			}
 		} else {
-			zpFunctions::removeDir(SERVERPATH . '/' . STATIC_CACHE_FOLDER . "/" . $folder);
+			removeDir(SERVERPATH . '/' . STATIC_CACHE_FOLDER . "/" . $folder);
 		}
 	}
 

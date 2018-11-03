@@ -9,9 +9,11 @@
  *
  * @author Malte Müller (acrylian), Stephen Billard (sbillard), gjr
  * @package plugins
+ * @subpackage image-album-statistiscs
  */
 $plugin_description = gettext("Functions that provide various statistics about images and albums in the gallery.");
-$plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard)";
+$plugin_author = "Malte Müller (acrylian), Stephen Billard (sbillard), gjr";
+$plugin_category = gettext('Statistics');
 
 require_once(dirname(dirname(__FILE__)) . '/template-functions.php');
 
@@ -579,7 +581,7 @@ function printImageStatistic($number, $option, $albumfolder = '', $showtitle = f
 				break;
 			case 1:
 				$sizes = getSizeCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, $image);
-				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($image->getTitle()) . "\" width=\"" . $width . "\" height=\"" . $height . "\" /></a>\n";
+				echo '<img src="' . html_encode(pathurlencode($image->getCustomImage(NULL, $width, $height, $width, $height, NULL, NULL, TRUE))) . '" width="' . $sizes[0] . '" height="' . $sizes[1] . '" alt="' . html_encode($image->getTitle()) . "\" /></a>\n";
 				break;
 			case 2:
 				$sizes = getSizeDefaultThumb($image);

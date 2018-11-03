@@ -2,14 +2,16 @@
 
 /**
  * Translates characters with diacritical marks to simple equivalents
+ * 
+ * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage seo
+ * @subpackage seo-zenphoto
  */
 $plugin_is_filter = 5 | ADMIN_PLUGIN;
 $plugin_description = gettext("SEO filter to translate extended characters into their basic alpha-numeric equivalents.");
 $plugin_author = "Stephen Billard (sbillard)";
 $plugin_disable = (zp_has_filter('seoFriendly') && !extensionEnabled('seo_zenphoto')) ? sprintf(gettext('Only one SEO filter plugin may be enabled. <a href="#%1$s"><code>%1$s</code></a> is already enabled.'), stripSuffix(get_filterScript('seoFriendly'))) : '';
-
+$plugin_category = gettext('SEO');
 $option_interface = 'zenphoto_seo';
 
 if ($plugin_disable) {
@@ -75,7 +77,6 @@ class zenphoto_seo {
 					"Ẳ"	 => "A",
 					"Ẵ"	 => "A",
 					"Ặ"	 => "A",
-					"Å"	 => "A",
 					"Ä"	 => "AE",
 					"Æ"	 => "AE",
 					"Ǽ"	 => "AE",
@@ -163,7 +164,6 @@ class zenphoto_seo {
 					"Į"	 => "I",
 					"Ȋ"	 => "I",
 					"Ḭ"	 => "I",
-					"Ḭ"	 => "I",
 					"Ɨ"	 => "I",
 					"Ḯ"	 => "I",
 					"Ĵ"	 => "J",
@@ -174,7 +174,6 @@ class zenphoto_seo {
 					"Ḳ"	 => "K",
 					"Ķ"	 => "K",
 					"Ḻ"	 => "L",
-					"Ḷ"	 => "L",
 					"Ḷ"	 => "L",
 					"Ļ"	 => "L",
 					"Ḽ"	 => "L",
@@ -228,7 +227,6 @@ class zenphoto_seo {
 					"Ǭ"	 => "O",
 					"Ộ"	 => "O",
 					"Ɔ"	 => "O",
-					"Ø"	 => "OE",
 					"Ǿ"	 => "OE",
 					"Œ"	 => "OE",
 					"Ṕ"	 => "P",
@@ -574,7 +572,6 @@ class zenphoto_seo {
 					"ǖ"	 => "u",
 					"ǜ"	 => "u",
 					"ǘ"	 => "u",
-					"ǖ"	 => "u",
 					"ǚ"	 => "u",
 					"ừ"	 => "u",
 					"ứ"	 => "u",
@@ -866,9 +863,6 @@ class zenphoto_seo {
 					"ῥ"	 => "r",
 					"რ"	 => "r",
 					"Ῥ"	 => "R",
-					"ŕ"	 => "r",
-					"ř"	 => "r",
-					"ŗ"	 => "r",
 					"ს"	 => "s",
 					"შ"	 => "sh",
 					"ſ"	 => "ss",
@@ -877,9 +871,6 @@ class zenphoto_seo {
 					"ც"	 => "ts",
 					"წ"	 => "ts",
 					"უ"	 => "u",
-					"ü"	 => "u",
-					"ü"	 => "u",
-					"Ü"	 => "Ue",
 					"ვ"	 => "v",
 					"ὐ"	 => "y",
 					"ὑ"	 => "y",
@@ -1084,7 +1075,7 @@ class zenphoto_seo {
 			$string = strtolower($string);
 		$string = preg_replace("/\s+/", "-", $string);
 		$string = preg_replace("/[^a-zA-Z0-9_.-]/", "-", $string);
-		$string = str_replace(array('---', '--'), '-', $string);
+		$string = preg_replace("/--+/", "-", $string);
 		return $string;
 	}
 
@@ -1120,5 +1111,3 @@ class zenphoto_seo {
 	}
 
 }
-
-?>

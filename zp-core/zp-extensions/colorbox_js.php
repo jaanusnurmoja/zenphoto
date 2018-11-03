@@ -18,14 +18,14 @@
  * to use a custom Colorbox theme.
  *
  * @author Stephen Billard (sbillard)
- *
  * @package plugins
- * @subpackage media
+ * @subpackage colorbox-js
  */
 $plugin_is_filter = 800 | THEME_PLUGIN;
 $plugin_description = gettext('Loads Colorbox JS and CSS scripts for selected theme page scripts.');
 $plugin_notice = gettext('Note that this plugin does not attach Colorbox to any element. You need to do this on your theme yourself.');
 $plugin_author = 'Stephen Billard (sbillard)';
+$plugin_category = gettext('Media');
 $option_interface = 'colorbox';
 
 if (OFFSET_PATH) {
@@ -58,7 +58,7 @@ class colorbox {
 										'desc'			 => gettext("The Colorbox script comes with 5 example themes you can select here. If you select <em>custom (within theme)</em> you need to place a folder <em>colorbox_js</em> containing a <em>colorbox.css</em> file and a folder <em>images</em> within the current theme to override to use a custom Colorbox theme."))
 		);
 		$c = 1;
-		foreach (getThemeFiles(array('404.php', 'themeoptions.php', 'theme_description.php')) as $theme => $scripts) {
+		foreach (getThemeFiles(array('404.php', 'functions.php', 'themeoptions.php', 'theme_description.php')) as $theme => $scripts) {
 			$list = array();
 			foreach ($scripts as $script) {
 				$list[$script] = 'colorbox_' . $theme . '_' . stripSuffix($script);

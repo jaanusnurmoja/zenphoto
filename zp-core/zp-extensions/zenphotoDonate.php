@@ -2,12 +2,14 @@
 /**
  * Provides a donation button to solicit contributions to Zenphoto
  *
+ * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage admin
+ * @subpackage zenphotodonate
  */
 $plugin_is_filter = 9 | ADMIN_PLUGIN;
 $plugin_description = gettext('Adds a Zenphoto donations block to the admin overview page.');
 $plugin_author = "Stephen Billard (sbillard)";
+$plugin_category = gettext('Admin');
 
 zp_register_filter('admin_overview', 'zenphotoDonate::donate');
 

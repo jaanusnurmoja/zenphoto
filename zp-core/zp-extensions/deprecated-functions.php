@@ -27,11 +27,13 @@
  *
  * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage development
+ * @subpackage deprecated-functions
  */
 $plugin_description = gettext("Provides deprecated Zenphoto functions.");
+$plugin_author = "Stephen Billard (sbillard)";
 $plugin_notice = gettext("This plugin is <strong>NOT</strong> required for the Zenphoto distributed functions.");
 $option_interface = 'deprecated_functions';
+$plugin_category = gettext('Development');
 $plugin_is_filter = 900 | CLASS_PLUGIN;
 
 if (OFFSET_PATH == 2)
@@ -106,7 +108,7 @@ class deprecated_functions {
 				$tabs['development'] = array('text'		 => gettext("development"),
 								'subtabs'	 => NULL);
 			}
-			$tabs['development']['subtabs'][gettext("deprecated")] = PLUGIN_FOLDER . '/deprecated-functions/admin_tab.php?page=deprecated&tab=' . gettext('deprecated');
+			$tabs['development']['subtabs'][gettext("deprecated")] = WEBPATH . "/" . ZENFOLDER .  "/" . PLUGIN_FOLDER . '/deprecated-functions/admin_tab.php?page=deprecated&tab=' . gettext('deprecated');
 			$named = array_flip($tabs['development']['subtabs']);
 			natcasesort($named);
 			$tabs['development']['subtabs'] = $named = array_flip($named);

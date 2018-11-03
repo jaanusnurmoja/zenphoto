@@ -10,7 +10,7 @@ if (function_exists('printContactForm')) {
 		<head>
 			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<?php zp_apply_filter('theme_head'); ?>
-			<meta charset="<?php echo LOCAL_CHARSET; ?>">
+			<?php printHeadTitle(); ?>
 			<link rel="stylesheet" href="<?php echo $_zp_themeroot; ?>/style.css" type="text/css" />
 		</head>
 		<body>

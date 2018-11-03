@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Config functions
+ * 
+ * @package core
+ * @subpackage functions\functions-config
+ */
 /**
  * Updates an item in the configuration file
  * @param unknown_type $item
@@ -32,7 +37,6 @@ function updateConfigItem($item, $value, $zp_cfg, $quote = true) {
  * @param string $zp_cfg
  */
 function storeConfig($zp_cfg) {
-	debugLogBacktrace(gettext('Updating the configuration file'));
 	$mod = fileperms(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE) & 0777;
 	@rename(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE, $backkup = SERVERPATH . '/' . DATA_FOLDER . '/' . stripSuffix(CONFIGFILE) . '.bak.php');
 	@chmod($backup, $mod);

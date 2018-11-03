@@ -4,13 +4,15 @@
  *
  * This plugin provides an HTTP based image upload handler for the <i>upload/images</i> admin tab.
  *
+ * @author Stephen Billard (sbillard)
  * @package plugins
- * @subpackage uploader
+ * @subpackage uploader-http
  *
  */
 $plugin_is_filter = 5 | ADMIN_PLUGIN;
 $plugin_description = gettext('<em>http</em> image upload handler.');
 $plugin_author = 'Stephen Billard (sbillard)';
+$plugin_category = gettext('Uploader');
 
 if (OFFSET_PATH == 2)
 	setoptiondefault('zp_plugin_uploader_http', $plugin_is_filter);
@@ -27,7 +29,7 @@ function httpUploadHandler($uploadHandlers) {
 
 function httpUploadHandler_admin_tabs($tabs) {
 	$me = sprintf(gettext('images (%s)'), 'http');
-	$mylink = 'admin-upload.php?page=upload&tab=http&type=' . gettext('images');
+	$mylink = WEBPATH . "/" . ZENFOLDER . '/admin-upload.php?page=upload&tab=http&type=' . gettext('images');
 	if (is_null($tabs['upload'])) {
 		$tabs['upload'] = array('text'		 => gettext("upload"),
 						'link'		 => WEBPATH . "/" . ZENFOLDER . '/admin-upload.php',

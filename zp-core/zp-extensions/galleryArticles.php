@@ -5,11 +5,12 @@
  *
  * @package plugins
  * @author Stephen Billard (sbillard)
- * @subpackage misc
+ * @subpackage galleryarticles
  */
 $plugin_is_filter = 600 | THEME_PLUGIN | ADMIN_PLUGIN;
 $plugin_description = gettext('Create news articles when a gallery item is published.');
 $plugin_author = "Stephen Billard (sbillard)";
+$plugin_category = gettext('Misc');
 $plugin_disable = extensionEnabled('zenpage') ? '' : gettext('Gallery Articles requires Zenpage to be enabled.');
 
 $option_interface = 'galleryArticles';
@@ -43,8 +44,8 @@ class galleryArticles {
 			setOptionDefault('galleryArticles_size', 80);
 			setOptionDefault('galleryArticles_protected', 0);
 			if (class_exists('cacheManager')) {
-				cacheManager::deleteThemeCacheSizes('galleryArticles');
-				cacheManager::addThemeCacheSize('galleryArticles', getOption('galleryArticles_size'), NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+				cacheManager::deleteCacheSizes('galleryArticles');
+				cacheManager::addCacheSize('galleryArticles', getOption('galleryArticles_size'), NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
 			}
 		}
 	}

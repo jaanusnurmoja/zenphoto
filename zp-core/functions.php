@@ -3,6 +3,7 @@
  * basic functions used by zenphoto
  *
  * @package core
+ * @subpackage functions\functions-main
  *
  */
 // force UTF-8 Ø
@@ -17,6 +18,9 @@ if (!function_exists("json_encode")) {
 require_once(dirname(__FILE__) . '/functions-basic.php');
 require_once(dirname(__FILE__) . '/functions-filter.php');
 require_once(SERVERPATH . '/' . ZENFOLDER . '/lib-kses.php');
+if (!class_exists('tidy')) {
+	require_once dirname(__FILE__) . '/lib-htmLawed.php';
+}
 
 $_zp_captcha = new _zp_captcha(); // this will be overridden by the plugin if enabled.
 $_zp_HTML_cache = new _zp_HTML_cache(); // this will be overridden by the plugin if enabled.
@@ -28,7 +32,6 @@ if (GALLERY_SESSION) {
 }
 
 define('ZENPHOTO_LOCALE', setMainDomain());
-define('SITE_LOCALE', getOptionFromDB('locale'));
 
 require_once(dirname(__FILE__) . '/load_objectClasses.php');
 
@@ -43,6 +46,22 @@ $_zp_albumthumb_selector = array(array('field' => '', 'direction' => '', 'desc' 
 
 $_zp_missing_album = new AlbumBase(gettext('missing'), false);
 $_zp_missing_image = new Transientimage($_zp_missing_album, SERVERPATH . '/' . ZENFOLDER . '/images/err-imagenotfound.png');
+
+if (extensionEnabled('zenpage')) {
+	if (getOption('enabled-zenpage-items') == 'news-and-pages' || getOption('enabled-zenpage-items') == 'news') {
+		define('ZP_NEWS_ENABLED', true);
+	} else {
+		define('ZP_NEWS_ENABLED', false);
+	}
+	if (getOption('enabled-zenpage-items') == 'news-and-pages' || getOption('enabled-zenpage-items') == 'pages') {
+		define('ZP_PAGES_ENABLED', true);
+	} else {
+		define('ZP_PAGES_ENABLED', false);
+	}
+} else {
+	define('ZP_NEWS_ENABLED', false);
+	define('ZP_PAGES_ENABLED', false);
+}
 
 /**
  * parses the allowed HTML tags for use by htmLawed
@@ -126,35 +145,28 @@ function truncate_string($string, $length, $elipsis = '...') {
 }
 
 /**
- *
- * fixes unbalanced HTML tags. Used by shortenContent when PHP tidy is not present
+ * Fixes unbalanced HTML tags. Uses the library htmlawed or if available the native PHP extension tidy
+ * 
  * @param string $html
  * @return string
  */
-function cleanHTML($html) {
-
-	preg_match_all('#<(?!meta|img|br|hr|input\b)\b([a-z]+)(?: .*)?(?<![/|/ ])>#iU', $html, $result);
-	$openedtags = $result[1];
-
-	preg_match_all('#</([a-z]+)>#iU', $html, $result);
-	$closedtags = $result[1];
-
-	$len_opened = count($openedtags);
-
-	if (count($closedtags) == $len_opened) {
-		return $html;
+function tidyHTML($html) {
+	if (class_exists('tidy')) {
+		$options = array(
+				'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header main nav section source summary template track video',
+				'new-empty-tags' => 'command embed keygen source track wbr',
+				'new-inline-tags' => 'audio command datalist embed keygen mark menuitem meter output progress source time video wbr srcset sizes',
+				'show-body-only' => true,
+				'indent' => true,
+				'wrap' => 0
+		);
+		$tidy = new tidy();
+		$tidy->parseString($html, $options, 'utf8');
+		$tidy->cleanRepair();
+		return trim($tidy);
+	} else {
+		return trim(htmLawed($html, array('tidy' => '2s2n')));
 	}
-
-	$openedtags = array_reverse($openedtags);
-	for ($i = 0; $i < $len_opened; $i++) {
-		if (!in_array($openedtags[$i], $closedtags)) {
-			$html .= '</' . $openedtags[$i] . '>';
-		} else {
-			unset($closedtags[array_search($openedtags[$i], $closedtags)]);
-		}
-	}
-
-	return $html;
 }
 
 /**
@@ -170,8 +182,10 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 	global $_user_tags;
 	if ($shorten && ($forceindicator || (mb_strlen($articlecontent) > $shorten))) {
 		$allowed_tags = getAllowedTags('allowed_tags');
+		$articlecontent = html_decode($articlecontent);
 		//remove script to be replaced later
 		$articlecontent = preg_replace('~<script.*?/script>~is', '', $articlecontent);
+		
 		//remove HTML comments
 		$articlecontent = preg_replace('~<!--.*?-->~is', '', $articlecontent);
 		$short = mb_substr($articlecontent, 0, $shorten);
@@ -199,18 +213,14 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 			$shorten = $l1;
 		}
 		$short = truncate_string($articlecontent, $shorten, '');
-		if ($short != $articlecontent) { //	we actually did remove some stuff
+		if ($short != $articlecontent || $forceindicator) { //	we actually did remove some stuff
 			// drop open tag strings
-			$open = mb_strrpos($short, '<');
-			if ($open > mb_strrpos($short, '>')) {
+			$open = mb_strrpos($short, '</');
+			if ($open) {
 				$short = mb_substr($short, 0, $open);
 			}
-			if (class_exists('tidy')) {
-				$short = zpFunctions::tidyHTML($short . $shortenindicator);
-			} else {
-				$short = trim(cleanHTML($short . $shortenindicator));
-			}
-		}
+			$short = tidyHTML($short . $shortenindicator);
+		} 
 		$articlecontent = $short;
 	}
 	if (isset($matches)) {
@@ -904,13 +914,15 @@ function getAllSubAlbumIDs($albumfolder = '') {
  */
 function handleSearchParms($what, $album = NULL, $image = NULL) {
 	global $_zp_current_search, $zp_request, $_zp_last_album, $_zp_current_album,
-	$_zp_current_zenpage_news, $_zp_current_zenpage_page, $_zp_gallery, $_zp_loggedin;
+	$_zp_current_zenpage_news, $_zp_current_zenpage_page, $_zp_gallery, $_zp_loggedin, $_zp_gallery_page;
 	$_zp_last_album = zp_getCookie('zenphoto_last_album');
 	if (is_object($zp_request) && get_class($zp_request) == 'SearchEngine') { //	we are are on a search
+		zp_setCookie('zenphoto_searchparent', 'searchresults');
 		return $zp_request->getAlbumList();
 	}
 	$params = zp_getCookie('zenphoto_search_params');
 	if (!empty($params)) {
+		$searchparent = zp_getCookie('zenphoto_searchparent');
 		$context = get_context();
 		$_zp_current_search = new SearchEngine();
 		$_zp_current_search->setSearchParams($params);
@@ -927,6 +939,9 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 		if (!is_null($album)) {
 			$albumname = $album->name;
 			zp_setCookie('zenphoto_last_album', $albumname);
+			if ($_zp_gallery_page == 'album.php') {
+				$searchparent = 'searchresults_album'; // so we know we are in an album search result so any of its images that are also results don't throw us out of context
+			}
 			if (hasDynamicAlbumSuffix($albumname) && !is_dir(ALBUM_FOLDER_SERVERPATH . $albumname)) {
 				$albumname = stripSuffix($albumname); // strip off the suffix as it will not be reflected in the search path
 			}
@@ -937,11 +952,17 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 			$_zp_loggedin = $save_logon;
 			foreach ($search_album_list as $searchalbum) {
 				if (strpos($albumname, $searchalbum) !== false) {
-					$context = $context | ZP_SEARCH_LINKED | ZP_ALBUM_LINKED;
+					if($searchparent == 'searchresults_album' && $_zp_last_album == $albumname) {
+						$context = $context | ZP_SEARCH_LINKED | ZP_ALBUM_LINKED;
+					} else {
+						$context = $context | ZP_SEARCH_LINKED | ZP_IMAGE_LINKED;
+					}
 					break;
 				}
 			}
+			zp_setCookie('zenphoto_searchparent', $searchparent);
 		} else {
+			zp_clearCookie('zenphoto_searchparent');
 			zp_clearCookie('zenphoto_last_album');
 		}
 		if (!is_null($_zp_current_zenpage_page)) {
@@ -1201,14 +1222,14 @@ function getTagCountByAccess($tag) {
             }
             break;
           case 'news':
-            if (extensionEnabled('Zenpage') && ZP_NEWS_ENABLED) {
+            if (ZP_NEWS_ENABLED) {
               if (!in_array($tagcheck['objectid'], $hidenews)) {
                 $count++;
               }
             }
             break;
           case 'pages':
-            if (extensionEnabled('Zenpage') && ZP_PAGES_ENABLED) {
+            if (ZP_PAGES_ENABLED) {
               if (!in_array($tagcheck['objectid'], $hidepages)) {
                 $count++;
               }
@@ -1299,24 +1320,30 @@ function readTags($id, $tbl) {
  *
  * @param array $currentValue list of items to be flagged as checked
  * @param array $list the elements of the select list
- * @param bool $descending set true for a reverse order sort
+ * @param bool $descending set true for a ascending order sort. Set to null to keep the array as it is passed.
+ * @param bool $localize set true if the keys as description should be listed instead of the plain values
  */
 function generateListFromArray($currentValue, $list, $descending, $localize) {
 	if ($localize) {
 		$list = array_flip($list);
-		if ($descending) {
-			arsort($list);
-		} else {
-			natcasesort($list);
+		if(!is_null($descending)) {
+			if ($descending) {
+				arsort($list);
+			} else {
+				natcasesort($list);
+			}
 		}
 		$list = array_flip($list);
 	} else {
-		if ($descending) {
-			rsort($list);
-		} else {
-			natcasesort($list);
+		if(!is_null($descending)) {
+			if ($descending) {
+				rsort($list);
+			} else {
+				natcasesort($list);
+			}
 		}
 	}
+	
 	foreach ($list as $key => $item) {
 		echo '<option value="' . html_encode($item) . '"';
 		if (in_array($item, $currentValue)) {
@@ -1336,7 +1363,7 @@ function generateListFromArray($currentValue, $list, $descending, $localize) {
  * @param strig $currentValue the current value of the selector
  * @param string $root directory path to search
  * @param string $suffix suffix to select for
- * @param bool $descending set true to get a reverse order sort
+ * @param bool $descending set true to get a reverse order sort. Set to null to keep the array as it is passed.
  */
 function generateListFromFiles($currentValue, $root, $suffix, $descending = false) {
 	if (is_dir($root)) {
@@ -1735,23 +1762,21 @@ function restore_context() {
 }
 
 /**
- *
- * Sanitizes a "redirect" post
+ * Sanitizes a "redirect" post to always be within the site
  * @param string $redirectTo
  * @return string
  */
-function sanitizeRedirect($redirectTo, $forceHost = false) {
+function sanitizeRedirect($redirectTo) {
 	$redirect = NULL;
 	if ($redirectTo && $redir = parse_url($redirectTo)) {
 		if (isset($redir['scheme']) && isset($redir['host'])) {
-			$redirect .= $redir['scheme'] . '://' . sanitize($redir['host']);
-		} else {
-			if ($forceHost) {
-				$redirect .= PROTOCOL . '://' . $_SERVER['HTTP_HOST'];
-				if (WEBPATH && strpos($redirectTo, WEBPATH) === false) {
-					$redirect .= WEBPATH;
-				}
-			}
+			$redirect = $redir['scheme'] . '://' . sanitize($redir['host']);
+		}
+		if ($redirect != SERVER_HTTP_HOST) {
+			$redirect = SERVER_HTTP_HOST;
+		}
+		if (WEBPATH && strpos($redirectTo, WEBPATH) === false) {
+			$redirect .= WEBPATH . '/';
 		}
 		if (isset($redir['path'])) {
 			$redirect .= urldecode(sanitize($redir['path']));
@@ -1910,7 +1935,7 @@ function zp_handle_password_single($authType = NULL, $check_auth = NULL, $check_
 				debugLog("zp_handle_password: valid credentials");
 			zp_setCookie($authType, $auth);
 			if (isset($_POST['redirect'])) {
-				$redirect_to = sanitizeRedirect($_POST['redirect'], true);
+				$redirect_to = sanitizeRedirect($_POST['redirect']);
 				if (!empty($redirect_to)) {
 					header("Location: " . $redirect_to);
 					exitZP();
@@ -2057,42 +2082,73 @@ function commentsAllowed($type) {
  * Returns the viewer's IP address
  * Deals with transparent proxies
  *
- * @param bool $anonymize_ip If null (default) the backend option setting is used. Override with true or false.
+ * @param bool $anonymize If null (default) the backend option setting is used. Override with anonymize levels 
+ * - 0 (No anonymizing)
+ * - 1 (Last fourth anonymized)
+ * - 2 (Last half anonymized)
+ * - 3 (Last three fourths anonymized)
+ * - 4 (Full anonymization, no IP stored)
  * @return string
  */
-function getUserIP($anonymize_ip = null) {
-	if (is_null($anonymize_ip)) {
-		$anonymize_ip = (bool) getOption('anonymize_ip');
-	}
-	$pattern = '~^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$~';
+function getUserIP($anonymize = null) {
 	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		$ip = sanitize($_SERVER['HTTP_X_FORWARDED_FOR']);
-		if (preg_match($pattern, $ip)) {
-			if ($anonymize_ip) {
-				$ip = getAnonymIp($ip);
-			}
-			return $ip;
+		if (filter_var($ip, FILTER_VALIDATE_IP)) {
+			return getAnonymIP($ip, $anonymize);
 		}
 	}
 	$ip = sanitize($_SERVER['REMOTE_ADDR']);
-	if (preg_match($pattern, $ip)) {
-		if ($anonymize_ip) {
-			$ip = getAnonymIp($ip);
-		}
-		return $ip;
+	if (filter_var($ip, FILTER_VALIDATE_IP)) {
+		return getAnonymIP($ip, $anonymize);
 	}
 	return NULL;
 }
 
 /**
- * Replaces the last chunk of an ip address with 0 for privacy concerns.
+ * Anonymizing of IP addresses
+ * @param bool $anonymize If null (default) the backend option setting is used. Override with anonymize levels 
+ * - 0 (No anonymizing)
+ * - 1 (Last fourth anonymized)
+ * - 2 (Last half anonymized)
+ * - 3 (Last three fourths anonymized)
+ * - 4 (Full anonymization, no IP stored)
  * 
- * @author Ralf Kerkhoff
- * @param string $ip IP address
  * @return string
  */
-function getAnonymIp($ip) {
-	return preg_replace('/[0-9]+\z/', '0', $ip);
+function getAnonymIP($ip, $anonymize = null) {
+	if (is_null($anonymize)) {
+		$anonymize = getOption('anonymize_ip');
+	}
+	$is_ipv6 = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+	switch ($anonymize) {
+		case 0; // No anonymizing
+			return $ip;
+		default:
+		case 1; // Last fourth anonymized
+			if ($is_ipv6) {
+				return preg_replace('~[0-9a-zA-Z]*:[0-9a-zA-Z]+$~', '0:0', $ip);
+			} else {
+				return preg_replace('~[0-9a-zA-Z]+$~', '0', $ip);
+			}
+		case 2: // Last half anonymized
+			if ($is_ipv6) {
+				return preg_replace('~[0-9a-zA-Z]*:[0-9a-zA-Z]*:[0-9a-zA-Z]*:[0-9a-zA-Z]+$~', '0:0:0:0', $ip);
+			} else {
+				return preg_replace('~[0-9a-zA-Z]*.[0-9a-zA-Z]+$~', '0.0', $ip);
+			}
+		case 3: // Last three fourths anonymized
+			if ($is_ipv6) {
+				return preg_replace('~[0-9a-zA-Z]*:[0-9a-zA-Z]*:[0-9a-zA-Z]*:[0-9a-zA-Z]*:[0-9a-zA-Z]*:[0-9a-zA-Z]+$~', '0:0:0:0:0:0', $ip);
+			} else {
+				return preg_replace('~[0-9a-zA-Z]*.[0-9a-zA-Z]*.[0-9a-zA-Z]+$~', '0.0.0', $ip);
+			}
+		case 4: // Full anonymization, no IP stored
+			if ($is_ipv6) {
+				return '0:0:0:0:0:0:0:0';
+			} else {
+				return '0.0.0.0';
+			}
+	}
 }
 
 /**
@@ -2198,12 +2254,30 @@ function debug404($album, $image, $theme) {
 }
 
 /**
+ * Checks for Cross Site Request Forgeries
+ * @param string $action
+ */
+function XSRFdefender($action) {
+	$token = getXSRFToken($action);
+	if (!isset($_REQUEST['XSRFToken']) || $_REQUEST['XSRFToken'] != $token) {
+		zp_apply_filter('admin_XSRF_access', false, $action);
+		header("HTTP/1.0 302 Found");
+		header("Status: 302 Found");
+		header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?action=external&error&msg=' . sprintf(gettext('“%s” Cross Site Request Forgery blocked.'), $action));
+		exitZP();
+	}
+	unset($_REQUEST['XSRFToken']);
+	unset($_POST['XSRFToken']);
+	unset($_GET['XSRFToken']);
+}
+
+/**
  * returns an XSRF token
  * @param striong $action
  */
 function getXSRFToken($action) {
 	global $_zp_current_admin_obj;
-	return sha1($action . prefix(ZENPHOTO_RELEASE) . serialize($_zp_current_admin_obj) . session_id());
+	return sha1($action . prefix(ZENPHOTO_VERSION) . serialize($_zp_current_admin_obj) . session_id());
 }
 
 /**
@@ -2575,370 +2649,342 @@ function getNestedAlbumList($subalbum, $levels, $checkalbumrights = true, $level
 	return $list;
 }
 
-class zpFunctions {
-
-	/**
+/**
+ * initializes the $_zp_exifvars array display state
+ *
+ */
+function setexifvars() {
+	global $_zp_exifvars;
+	/*
+	 * Note: If fields are added or deleted, setup should be run or the new data won't be stored
+	 * (but existing fields will still work; nothing breaks).
 	 *
-	 * creates an SEO language prefix list
+	 * This array should be ordered by logical associations as it will be the order that EXIF information
+	 * is displayed
 	 */
-	static function LanguageSubdomains() {
-		$domains = array();
-		$langs = generateLanguageList();
-		$domains = array();
-		foreach ($langs as $value) {
-			$domains[substr($value, 0, 2)][] = $value;
+	$_zp_exifvars = array(
+			// Database Field       		 => array('source', 'Metadata Key', 'ZP Display Text', Display?	size,	enabled, type)
+			'EXIFMake' => array('IFD0', 'Make', gettext('Camera Maker'), true, 52, true, 'string'),
+			'EXIFModel' => array('IFD0', 'Model', gettext('Camera Model'), true, 52, true, 'string'),
+			'EXIFDescription' => array('IFD0', 'ImageDescription', gettext('Image Title'), false, 52, true, 'string'),
+			'IPTCObjectName' => array('IPTC', 'ObjectName', gettext('Object Name'), false, 256, true, 'string'),
+			'IPTCImageHeadline' => array('IPTC', 'ImageHeadline', gettext('Image Headline'), false, 256, true, 'string'),
+			'IPTCImageCaption' => array('IPTC', 'ImageCaption', gettext('Image Caption'), false, 2000, true, 'string'),
+			'IPTCImageCaptionWriter' => array('IPTC', 'ImageCaptionWriter', gettext('Image Caption Writer'), false, 32, true, 'string'),
+			'EXIFDateTime' => array('SubIFD', 'DateTime', gettext('Time Taken'), true, 52, true, 'time'),
+			'EXIFDateTimeOriginal' => array('SubIFD', 'DateTimeOriginal', gettext('Original Time Taken'), true, 52, true, 'time'),
+			'EXIFDateTimeDigitized' => array('SubIFD', 'DateTimeDigitized', gettext('Time Digitized'), true, 52, true, 'time'),
+			'IPTCDateCreated' => array('IPTC', 'DateCreated', gettext('Date Created'), false, 8, true, 'time'),
+			'IPTCTimeCreated' => array('IPTC', 'TimeCreated', gettext('Time Created'), false, 11, true, 'time'),
+			'IPTCDigitizeDate' => array('IPTC', 'DigitizeDate', gettext('Digital Creation Date'), false, 8, true, 'time'),
+			'IPTCDigitizeTime' => array('IPTC', 'DigitizeTime', gettext('Digital Creation Time'), false, 11, true, 'time'),
+			'EXIFArtist' => array('IFD0', 'Artist', gettext('Artist'), false, 52, true, 'string'),
+			'IPTCImageCredit' => array('IPTC', 'ImageCredit', gettext('Image Credit'), false, 32, true, 'string'),
+			'IPTCByLine' => array('IPTC', 'ByLine', gettext('Byline'), false, 32, true, 'string'),
+			'IPTCByLineTitle' => array('IPTC', 'ByLineTitle', gettext('Byline Title'), false, 32, true, 'string'),
+			'IPTCSource' => array('IPTC', 'Source', gettext('Image Source'), false, 32, true, 'string'),
+			'IPTCContact' => array('IPTC', 'Contact', gettext('Contact'), false, 128, true, 'string'),
+			'EXIFCopyright' => array('IFD0', 'Copyright', gettext('Copyright Holder'), false, 128, true, 'string'),
+			'IPTCCopyright' => array('IPTC', 'Copyright', gettext('Copyright Notice'), false, 128, true, 'string'),
+			'IPTCKeywords' => array('IPTC', 'Keywords', gettext('Keywords'), false, 0, true, 'string'),
+			'EXIFExposureTime' => array('SubIFD', 'ExposureTime', gettext('Shutter Speed'), true, 52, true, 'string'),
+			'EXIFFNumber' => array('SubIFD', 'FNumber', gettext('Aperture'), true, 52, true, 'number'),
+			'EXIFISOSpeedRatings' => array('SubIFD', 'ISOSpeedRatings', gettext('ISO Sensitivity'), true, 52, true, 'number'),
+			'EXIFExposureBiasValue' => array('SubIFD', 'ExposureBiasValue', gettext('Exposure Compensation'), true, 52, true, 'string'),
+			'EXIFMeteringMode' => array('SubIFD', 'MeteringMode', gettext('Metering Mode'), true, 52, true, 'string'),
+			'EXIFFlash' => array('SubIFD', 'Flash', gettext('Flash Fired'), true, 52, true, 'string'),
+			'EXIFImageWidth' => array('SubIFD', 'ExifImageWidth', gettext('Original Width'), false, 52, true, 'number'),
+			'EXIFImageHeight' => array('SubIFD', 'ExifImageHeight', gettext('Original Height'), false, 52, true, 'number'),
+			'EXIFOrientation' => array('IFD0', 'Orientation', gettext('Orientation'), false, 52, true, 'string'),
+			'EXIFSoftware' => array('IFD0', 'Software', gettext('Software'), false, 999, true, 'string'),
+			'EXIFContrast' => array('SubIFD', 'Contrast', gettext('Contrast Setting'), false, 52, true, 'string'),
+			'EXIFSharpness' => array('SubIFD', 'Sharpness', gettext('Sharpness Setting'), false, 52, true, 'string'),
+			'EXIFSaturation' => array('SubIFD', 'Saturation', gettext('Saturation Setting'), false, 52, true, 'string'),
+			'EXIFWhiteBalance' => array('SubIFD', 'WhiteBalance', gettext('White Balance'), false, 52, true, 'string'),
+			'EXIFSubjectDistance' => array('SubIFD', 'SubjectDistance', gettext('Subject Distance'), false, 52, true, 'number'),
+			'EXIFFocalLength' => array('SubIFD', 'FocalLength', gettext('Focal Length'), true, 52, true, 'number'),
+			'EXIFLensType' => array('SubIFD', 'LensType', gettext('Lens Type'), false, 52, true, 'string'),
+			'EXIFLensInfo' => array('SubIFD', 'LensInfo', gettext('Lens Info'), false, 52, true, 'string'),
+			'EXIFFocalLengthIn35mmFilm' => array('SubIFD', 'FocalLengthIn35mmFilm', gettext('35mm Focal Length Equivalent'), false, 52, true, 'string'),
+			'IPTCCity' => array('IPTC', 'City', gettext('City'), false, 32, true, 'string'),
+			'IPTCSubLocation' => array('IPTC', 'SubLocation', gettext('Sub-location'), false, 32, true, 'string'),
+			'IPTCState' => array('IPTC', 'State', gettext('Province/State'), false, 32, true, 'string'),
+			'IPTCLocationCode' => array('IPTC', 'LocationCode', gettext('Country/Primary Location Code'), false, 3, true, 'string'),
+			'IPTCLocationName' => array('IPTC', 'LocationName', gettext('Country/Primary Location Name'), false, 64, true, 'string'),
+			'IPTCContentLocationCode' => array('IPTC', 'ContentLocationCode', gettext('Content Location Code'), false, 3, true, 'string'),
+			'IPTCContentLocationName' => array('IPTC', 'ContentLocationName', gettext('Content Location Name'), false, 64, true, 'string'),
+			'EXIFGPSLatitude' => array('GPS', 'Latitude', gettext('Latitude'), false, 52, true, 'number'),
+			'EXIFGPSLatitudeRef' => array('GPS', 'Latitude Reference', gettext('Latitude Reference'), false, 52, true, 'string'),
+			'EXIFGPSLongitude' => array('GPS', 'Longitude', gettext('Longitude'), false, 52, true, 'number'),
+			'EXIFGPSLongitudeRef' => array('GPS', 'Longitude Reference', gettext('Longitude Reference'), false, 52, true, 'string'),
+			'EXIFGPSAltitude' => array('GPS', 'Altitude', gettext('Altitude'), false, 52, true, 'number'),
+			'EXIFGPSAltitudeRef' => array('GPS', 'Altitude Reference', gettext('Altitude Reference'), false, 52, true, 'string'),
+			'IPTCOriginatingProgram' => array('IPTC', 'OriginatingProgram', gettext('Originating Program '), false, 32, true, 'string'),
+			'IPTCProgramVersion' => array('IPTC', 'ProgramVersion', gettext('Program Version'), false, 10, true, 'string'),
+			'VideoFormat' => array('VIDEO', 'fileformat', gettext('Video File Format'), false, 32, true, 'string'),
+			'VideoSize' => array('VIDEO', 'filesize', gettext('Video File Size'), false, 32, true, 'number'),
+			'VideoArtist' => array('VIDEO', 'artist', gettext('Video Artist'), false, 256, true, 'string'),
+			'VideoTitle' => array('VIDEO', 'title', gettext('Video Title'), false, 256, true, 'string'),
+			'VideoBitrate' => array('VIDEO', 'bitrate', gettext('Bitrate'), false, 32, true, 'number'),
+			'VideoBitrate_mode' => array('VIDEO', 'bitrate_mode', gettext('Bitrate_Mode'), false, 32, true, 'string'),
+			'VideoBits_per_sample' => array('VIDEO', 'bits_per_sample', gettext('Bits per sample'), false, 32, true, 'number'),
+			'VideoCodec' => array('VIDEO', 'codec', gettext('Codec'), false, 32, true, 'string'),
+			'VideoCompression_ratio' => array('VIDEO', 'compression_ratio', gettext('Compression Ratio'), false, 32, true, 'number'),
+			'VideoDataformat' => array('VIDEO', 'dataformat', gettext('Video Dataformat'), false, 32, true, 'string'),
+			'VideoEncoder' => array('VIDEO', 'encoder', gettext('File Encoder'), false, 10, true, 'string'),
+			'VideoSamplerate' => array('VIDEO', 'Samplerate', gettext('Sample rate'), false, 32, true, 'number'),
+			'VideoChannelmode' => array('VIDEO', 'channelmode', gettext('Channel mode'), false, 32, true, 'string'),
+			'VideoFormat' => array('VIDEO', 'format', gettext('Format'), false, 10, true, 'string'),
+			'VideoChannels' => array('VIDEO', 'channels', gettext('Channels'), false, 10, true, 'number'),
+			'VideoFramerate' => array('VIDEO', 'framerate', gettext('Frame rate'), false, 32, true, 'number'),
+			'VideoResolution_x' => array('VIDEO', 'resolution_x', gettext('X Resolution'), false, 32, true, 'number'),
+			'VideoResolution_y' => array('VIDEO', 'resolution_y', gettext('Y Resolution'), false, 32, true, 'number'),
+			'VideoAspect_ratio' => array('VIDEO', 'pixel_aspect_ratio', gettext('Aspect ratio'), false, 32, true, 'number'),
+			'VideoPlaytime' => array('VIDEO', 'playtime_string', gettext('Play Time'), false, 10, true, 'number'),
+			'XMPrating' => array('XMP', 'rating', gettext('XMP Rating'), false, 10, true, 'string'),
+	);
+	foreach ($_zp_exifvars as $key => $item) {
+		if (!is_null($disable = getOption($key . '-disabled'))) {
+			$_zp_exifvars[$key][5] = !$disable;
 		}
-		$langs = array();
-		foreach ($domains as $simple => $full) {
-			if (count($full) > 1) {
-				foreach ($full as $loc) {
-					$langs[$loc] = $loc;
-				}
-			} else {
-				$langs[$full[0]] = $simple;
-			}
-		}
-		if (isset($langs[SITE_LOCALE])) {
-			$langs[SITE_LOCALE] = '';
-		}
-		return $langs;
+		$_zp_exifvars[$key][3] = getOption($key);
 	}
+}
 
-	/**
-	 * Returns a canonical language name string for the location
-	 *
-	 * @param string $loc the location. If NULL use the current cookie
-	 * @param string separator will be used between the major and qualifier parts, e.g. en_US
-	 *
-	 * @return string
-	 */
-	static function getLanguageText($loc = NULL, $separator = NULL) {
-		global $_locale_Subdomains;
-		if (is_null($loc)) {
-			$text = @$_locale_Subdomains[zp_getCookie('dynamic_locale')];
+/**
+ *
+ * Returns true if the install is not a "clone"
+ */
+function hasPrimaryScripts() {
+	if (!defined('PRIMARY_INSTALLATION')) {
+		if (function_exists('readlink') && ($zen = str_replace('\\', '/', @readlink(SERVERPATH . '/' . ZENFOLDER)))) {
+			// no error reading the link info
+			$os = strtoupper(PHP_OS);
+			$sp = SERVERPATH;
+			if (substr($os, 0, 3) == 'WIN' || $os == 'DARWIN') { // canse insensitive file systems
+				$sp = strtolower($sp);
+				$zen = strtolower($zen);
+			}
+			define('PRIMARY_INSTALLATION', $sp == dirname($zen));
 		} else {
-			$text = @$_locale_Subdomains[$loc];
-			//en_US always is always empty here so so urls in dynamic locale or html_meta_tags are wrong (Quickfix)
-			if(empty($text)) {
-				$text = $loc;
-			}
-		}
-		if (!is_null($separator)) {
-			$text = str_replace('_', $separator, $text);
-		}
-		return $text;
-	}
-
-	/**
-	 * initializes the $_zp_exifvars array display state
-	 *
-	 */
-	static function setexifvars() {
-		global $_zp_exifvars;
-		/*
-		 * Note: If fields are added or deleted, setup should be run or the new data won't be stored
-		 * (but existing fields will still work; nothing breaks).
-		 *
-		 * This array should be ordered by logical associations as it will be the order that EXIF information
-		 * is displayed
-		 */
-		$_zp_exifvars = array(
-						// Database Field       		 => array('source', 'Metadata Key', 'ZP Display Text', Display?	size,	enabled, type)
-						'EXIFMake'									 => array('IFD0', 'Make', gettext('Camera Maker'), true, 52, true, 'string'),
-						'EXIFModel'									 => array('IFD0', 'Model', gettext('Camera Model'), true, 52, true, 'string'),
-						'EXIFDescription'						 => array('IFD0', 'ImageDescription', gettext('Image Title'), false, 52, true, 'string'),
-						'IPTCObjectName'						 => array('IPTC', 'ObjectName', gettext('Object Name'), false, 256, true, 'string'),
-						'IPTCImageHeadline'					 => array('IPTC', 'ImageHeadline', gettext('Image Headline'), false, 256, true, 'string'),
-						'IPTCImageCaption'					 => array('IPTC', 'ImageCaption', gettext('Image Caption'), false, 2000, true, 'string'),
-						'IPTCImageCaptionWriter'		 => array('IPTC', 'ImageCaptionWriter', gettext('Image Caption Writer'), false, 32, true, 'string'),
-						'EXIFDateTime'							 => array('SubIFD', 'DateTime', gettext('Time Taken'), true, 52, true, 'time'),
-						'EXIFDateTimeOriginal'			 => array('SubIFD', 'DateTimeOriginal', gettext('Original Time Taken'), true, 52, true, 'time'),
-						'EXIFDateTimeDigitized'			 => array('SubIFD', 'DateTimeDigitized', gettext('Time Digitized'), true, 52, true, 'time'),
-						'IPTCDateCreated'						 => array('IPTC', 'DateCreated', gettext('Date Created'), false, 8, true, 'time'),
-						'IPTCTimeCreated'						 => array('IPTC', 'TimeCreated', gettext('Time Created'), false, 11, true, 'time'),
-						'IPTCDigitizeDate'					 => array('IPTC', 'DigitizeDate', gettext('Digital Creation Date'), false, 8, true, 'time'),
-						'IPTCDigitizeTime'					 => array('IPTC', 'DigitizeTime', gettext('Digital Creation Time'), false, 11, true, 'time'),
-						'EXIFArtist'								 => array('IFD0', 'Artist', gettext('Artist'), false, 52, true, 'string'),
-						'IPTCImageCredit'						 => array('IPTC', 'ImageCredit', gettext('Image Credit'), false, 32, true, 'string'),
-						'IPTCByLine'								 => array('IPTC', 'ByLine', gettext('Byline'), false, 32, true, 'string'),
-						'IPTCByLineTitle'						 => array('IPTC', 'ByLineTitle', gettext('Byline Title'), false, 32, true, 'string'),
-						'IPTCSource'								 => array('IPTC', 'Source', gettext('Image Source'), false, 32, true, 'string'),
-						'IPTCContact'								 => array('IPTC', 'Contact', gettext('Contact'), false, 128, true, 'string'),
-						'EXIFCopyright'							 => array('IFD0', 'Copyright', gettext('Copyright Holder'), false, 128, true, 'string'),
-						'IPTCCopyright'							 => array('IPTC', 'Copyright', gettext('Copyright Notice'), false, 128, true, 'string'),
-						'IPTCKeywords'							 => array('IPTC', 'Keywords', gettext('Keywords'), false, 0, true, 'string'),
-						'EXIFExposureTime'					 => array('SubIFD', 'ExposureTime', gettext('Shutter Speed'), true, 52, true, 'string'),
-						'EXIFFNumber'								 => array('SubIFD', 'FNumber', gettext('Aperture'), true, 52, true, 'number'),
-						'EXIFISOSpeedRatings'				 => array('SubIFD', 'ISOSpeedRatings', gettext('ISO Sensitivity'), true, 52, true, 'number'),
-						'EXIFExposureBiasValue'			 => array('SubIFD', 'ExposureBiasValue', gettext('Exposure Compensation'), true, 52, true, 'string'),
-						'EXIFMeteringMode'					 => array('SubIFD', 'MeteringMode', gettext('Metering Mode'), true, 52, true, 'string'),
-						'EXIFFlash'									 => array('SubIFD', 'Flash', gettext('Flash Fired'), true, 52, true, 'string'),
-						'EXIFImageWidth'						 => array('SubIFD', 'ExifImageWidth', gettext('Original Width'), false, 52, true, 'number'),
-						'EXIFImageHeight'						 => array('SubIFD', 'ExifImageHeight', gettext('Original Height'), false, 52, true, 'number'),
-						'EXIFOrientation'						 => array('IFD0', 'Orientation', gettext('Orientation'), false, 52, true, 'string'),
-						'EXIFSoftware'							 => array('IFD0', 'Software', gettext('Software'), false, 999, true, 'string'),
-						'EXIFContrast'							 => array('SubIFD', 'Contrast', gettext('Contrast Setting'), false, 52, true, 'string'),
-						'EXIFSharpness'							 => array('SubIFD', 'Sharpness', gettext('Sharpness Setting'), false, 52, true, 'string'),
-						'EXIFSaturation'						 => array('SubIFD', 'Saturation', gettext('Saturation Setting'), false, 52, true, 'string'),
-						'EXIFWhiteBalance'					 => array('SubIFD', 'WhiteBalance', gettext('White Balance'), false, 52, true, 'string'),
-						'EXIFSubjectDistance'				 => array('SubIFD', 'SubjectDistance', gettext('Subject Distance'), false, 52, true, 'number'),
-						'EXIFFocalLength'						 => array('SubIFD', 'FocalLength', gettext('Focal Length'), true, 52, true, 'number'),
-						'EXIFLensType'							 => array('SubIFD', 'LensType', gettext('Lens Type'), false, 52, true, 'string'),
-						'EXIFLensInfo'							 => array('SubIFD', 'LensInfo', gettext('Lens Info'), false, 52, true, 'string'),
-						'EXIFFocalLengthIn35mmFilm'	 => array('SubIFD', 'FocalLengthIn35mmFilm', gettext('35mm Focal Length Equivalent'), false, 52, true, 'string'),
-						'IPTCCity'									 => array('IPTC', 'City', gettext('City'), false, 32, true, 'string'),
-						'IPTCSubLocation'						 => array('IPTC', 'SubLocation', gettext('Sub-location'), false, 32, true, 'string'),
-						'IPTCState'									 => array('IPTC', 'State', gettext('Province/State'), false, 32, true, 'string'),
-						'IPTCLocationCode'					 => array('IPTC', 'LocationCode', gettext('Country/Primary Location Code'), false, 3, true, 'string'),
-						'IPTCLocationName'					 => array('IPTC', 'LocationName', gettext('Country/Primary Location Name'), false, 64, true, 'string'),
-						'IPTCContentLocationCode'		 => array('IPTC', 'ContentLocationCode', gettext('Content Location Code'), false, 3, true, 'string'),
-						'IPTCContentLocationName'		 => array('IPTC', 'ContentLocationName', gettext('Content Location Name'), false, 64, true, 'string'),
-						'EXIFGPSLatitude'						 => array('GPS', 'Latitude', gettext('Latitude'), false, 52, true, 'number'),
-						'EXIFGPSLatitudeRef'				 => array('GPS', 'Latitude Reference', gettext('Latitude Reference'), false, 52, true, 'string'),
-						'EXIFGPSLongitude'					 => array('GPS', 'Longitude', gettext('Longitude'), false, 52, true, 'number'),
-						'EXIFGPSLongitudeRef'				 => array('GPS', 'Longitude Reference', gettext('Longitude Reference'), false, 52, true, 'string'),
-						'EXIFGPSAltitude'						 => array('GPS', 'Altitude', gettext('Altitude'), false, 52, true, 'number'),
-						'EXIFGPSAltitudeRef'				 => array('GPS', 'Altitude Reference', gettext('Altitude Reference'), false, 52, true, 'string'),
-						'IPTCOriginatingProgram'		 => array('IPTC', 'OriginatingProgram', gettext('Originating Program '), false, 32, true, 'string'),
-						'IPTCProgramVersion'				 => array('IPTC', 'ProgramVersion', gettext('Program Version'), false, 10, true, 'string'),
-						'VideoFormat'								 => array('VIDEO', 'fileformat', gettext('Video File Format'), false, 32, true, 'string'),
-						'VideoSize'									 => array('VIDEO', 'filesize', gettext('Video File Size'), false, 32, true, 'number'),
-						'VideoArtist'								 => array('VIDEO', 'artist', gettext('Video Artist'), false, 256, true, 'string'),
-						'VideoTitle'								 => array('VIDEO', 'title', gettext('Video Title'), false, 256, true, 'string'),
-						'VideoBitrate'							 => array('VIDEO', 'bitrate', gettext('Bitrate'), false, 32, true, 'number'),
-						'VideoBitrate_mode'					 => array('VIDEO', 'bitrate_mode', gettext('Bitrate_Mode'), false, 32, true, 'string'),
-						'VideoBits_per_sample'			 => array('VIDEO', 'bits_per_sample', gettext('Bits per sample'), false, 32, true, 'number'),
-						'VideoCodec'								 => array('VIDEO', 'codec', gettext('Codec'), false, 32, true, 'string'),
-						'VideoCompression_ratio'		 => array('VIDEO', 'compression_ratio', gettext('Compression Ratio'), false, 32, true, 'number'),
-						'VideoDataformat'						 => array('VIDEO', 'dataformat', gettext('Video Dataformat'), false, 32, true, 'string'),
-						'VideoEncoder'							 => array('VIDEO', 'encoder', gettext('File Encoder'), false, 10, true, 'string'),
-						'VideoSamplerate'						 => array('VIDEO', 'Samplerate', gettext('Sample rate'), false, 32, true, 'number'),
-						'VideoChannelmode'					 => array('VIDEO', 'channelmode', gettext('Channel mode'), false, 32, true, 'string'),
-						'VideoFormat'								 => array('VIDEO', 'format', gettext('Format'), false, 10, true, 'string'),
-						'VideoChannels'							 => array('VIDEO', 'channels', gettext('Channels'), false, 10, true, 'number'),
-						'VideoFramerate'						 => array('VIDEO', 'framerate', gettext('Frame rate'), false, 32, true, 'number'),
-						'VideoResolution_x'					 => array('VIDEO', 'resolution_x', gettext('X Resolution'), false, 32, true, 'number'),
-						'VideoResolution_y'					 => array('VIDEO', 'resolution_y', gettext('Y Resolution'), false, 32, true, 'number'),
-						'VideoAspect_ratio'					 => array('VIDEO', 'pixel_aspect_ratio', gettext('Aspect ratio'), false, 32, true, 'number'),
-						'VideoPlaytime'							 => array('VIDEO', 'playtime_string', gettext('Play Time'), false, 10, true, 'number'),
-						'XMPrating'									 => array('XMP', 'rating', gettext('XMP Rating'), false, 10, true, 'string'),
-		);
-		foreach ($_zp_exifvars as $key => $item) {
-			if (!is_null($disable = getOption($key . '-disabled'))) {
-				$_zp_exifvars[$key][5] = !$disable;
-			}
-			$_zp_exifvars[$key][3] = getOption($key);
+			define('PRIMARY_INSTALLATION', true);
 		}
 	}
+	return PRIMARY_INSTALLATION;
+}
 
-	/**
-	 *
-	 * Returns true if the install is not a "clone"
-	 */
-	static function hasPrimaryScripts() {
-		if (!defined('PRIMARY_INSTALLATION')) {
-			if (function_exists('readlink') && ($zen = str_replace('\\', '/', @readlink(SERVERPATH . '/' . ZENFOLDER)))) {
-				// no error reading the link info
-				$os = strtoupper(PHP_OS);
-				$sp = SERVERPATH;
-				if (substr($os, 0, 3) == 'WIN' || $os == 'DARWIN') { // canse insensitive file systems
-					$sp = strtolower($sp);
-					$zen = strtolower($zen);
-				}
-				define('PRIMARY_INSTALLATION', $sp == dirname($zen));
-			} else {
-				define('PRIMARY_INSTALLATION', true);
-			}
-		}
-		return PRIMARY_INSTALLATION;
-	}
-
-	/**
-	 *
-	 * Recursively clears and removes a folder
-	 * @param string $path
-	 * @return boolean
-	 */
-	static function removeDir($path, $within = false) {
-		if (($dir = @opendir($path)) !== false) {
-			while (($file = readdir($dir)) !== false) {
-				if ($file != '.' && $file != '..') {
-					if ((is_dir($path . '/' . $file))) {
-						if (!zpFunctions::removeDir($path . '/' . $file)) {
-							return false;
-						}
-					} else {
-						@chmod($path . $file, 0777);
-						if (!@unlink($path . '/' . $file)) {
-							return false;
-						}
+/**
+ *
+ * Recursively clears and removes a folder
+ * @param string $path
+ * @return boolean
+ */
+function removeDir($path, $within = false) {
+	if (($dir = @opendir($path)) !== false) {
+		while (($file = readdir($dir)) !== false) {
+			if ($file != '.' && $file != '..') {
+				if ((is_dir($path . '/' . $file))) {
+					if (!removeDir($path . '/' . $file)) {
+						return false;
 					}
-				}
-			}
-			closedir($dir);
-			if (!$within) {
-				@chmod($path, 0777);
-				if (!@rmdir($path)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * inserts location independent WEB path tags in place of site path tags
-	 * @param string $text
-	 */
-	static function tagURLs($text) {
-		if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
-			$text = getSerializedArray($text);
-			$serial = true;
-		} else {
-			$serial = false;
-		}
-		if (is_array($text)) {
-			foreach ($text as $key => $textelement) {
-				$text[$key] = self::TagURLs($textelement);
-			}
-			if ($serial) {
-				$text = serialize($text);
-			}
-		} else {
-			$text = str_replace(WEBPATH, '{*WEBPATH*}', str_replace(FULLWEBPATH, '{*FULLWEBPATH*}', $text));
-		}
-		return $text;
-	}
-
-	/**
-	 * reverses tagURLs()
-	 * @param string $text
-	 * @return string
-	 */
-	static function unTagURLs($text) {
-		if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
-			$text = getSerializedArray($text);
-			$serial = true;
-		} else {
-			$serial = false;
-		}
-		if (is_array($text)) {
-			foreach ($text as $key => $textelement) {
-				$text[$key] = self::unTagURLs($textelement);
-			}
-			if ($serial) {
-				$text = serialize($text);
-			}
-		} else {
-			$text = str_replace('{*WEBPATH*}', WEBPATH, str_replace('{*FULLWEBPATH*}', FULLWEBPATH, $text));
-		}
-		return $text;
-	}
-
-	/**
-	 * Searches out i.php image links and replaces them with cache links if image is cached
-	 * @param string $text
-	 * @return string
-	 */
-	static function updateImageProcessorLink($text) {
-		if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
-			$text = getSerializedArray($text);
-			$serial = true;
-		} else {
-			$serial = false;
-		}
-		if (is_array($text)) {
-			foreach ($text as $key => $textelement) {
-				$text[$key] = self::updateImageProcessorLink($textelement);
-			}
-			if ($serial) {
-				$text = serialize($text);
-			}
-		} else {
-			preg_match_all('|<\s*img.*?\ssrc\s*=\s*"([^"]*)?|', $text, $matches);
-			foreach ($matches[1] as $key => $match) {
-				preg_match('|.*i\.php\?(.*)|', $match, $imgproc);
-				if ($imgproc) {
-					$match = preg_split('~\&[amp;]*~', $imgproc[1]);
-					$set = array();
-					foreach ($match as $v) {
-						$s = explode('=', $v);
-						$set[$s[0]] = $s[1];
-					}
-					$args = getImageArgs($set);
-					$imageuri = getImageURI($args, urldecode($set['a']), urldecode($set['i']), NULL);
-					if (strpos($imageuri, 'i.php') === false) {
-						$text = str_replace($matches[1][$key], $imageuri, $text);
+				} else {
+					@chmod($path . $file, 0777);
+					if (!@unlink($path . '/' . $file)) {
+						return false;
 					}
 				}
 			}
 		}
-		return $text;
+		closedir($dir);
+		if (!$within) {
+			@chmod($path, 0777);
+			if (!@rmdir($path)) {
+				return false;
+			}
+		}
+		return true;
 	}
+	return false;
+}
 
-	static function pluginDebug($extension, $priority, $start) {
-		list($usec, $sec) = explode(" ", microtime());
-		$end = (float) $usec + (float) $sec;
-		$class = array();
-		if ($priority & CLASS_PLUGIN) {
-			$class[] = 'CLASS';
-		}
-		if ($priority & ADMIN_PLUGIN) {
-			$class[] = 'ADMIN';
-		}
-		if ($priority & FEATURE_PLUGIN) {
-			$class[] = 'FEATURE';
-		}
-		if ($priority & THEME_PLUGIN) {
-			$class[] = 'THEME';
-		}
-		if (empty($class))
-			$class[] = 'theme';
-		debugLog(sprintf('    ' . $extension . '(%s:%u)=>%.4fs', implode('|', $class), $priority & PLUGIN_PRIORITY, $end - $start));
+/**
+ * inserts location independent WEB path tags in place of site path tags
+ * @param string $text
+ */
+function tagURLs($text) {
+	if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+		$text = getSerializedArray($text);
+		$serial = true;
+	} else {
+		$serial = false;
 	}
-	
-	/**
-	 * Removes a trailing slash from a string if one exists, otherwise just returns the string
-	 * Used primarily within date and tag searches and news date archive results
-	 * 
-	 * @param string $string
-	 * @return string
-	 * @since 1.4.12
-	 */
-	static function removeTrailingSlash($string) {
-		if (substr($string, -1) == '/') {
-			$length = strlen($string) - 1;
-			return substr($string, 0, $length);
+	if (is_array($text)) {
+		foreach ($text as $key => $textelement) {
+			$text[$key] = tagURLs($textelement);
 		}
-		return $string;
-	}
-	
-	/**
-	 * Wrapper for the native PHP tidy() to balance out invalid html if existing on the server
-	 * Covers newer HTML5 elements
-	 * 
-	 * @param string $html The html to tidy, typical from a description or content field of items
-	 * @param string $shortenindicator If you are using this on truncated text
-	 * @return string
-	 * @since 1.4.12
-	 */
-	static function tidyHTML($html) {
-		if (class_exists('tidy')) {
-			$options = array(
-					'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header main nav section source summary template track video',
-					'new-empty-tags' => 'command embed keygen source track wbr',
-					'new-inline-tags' => 'audio command datalist embed keygen mark menuitem meter output progress source time video wbr',
-					'show-body-only' => true
-			);
-			$tidy = new tidy();
-			$tidy->parseString($html, $options, 'utf8');
-			$tidy->cleanRepair();
-			return trim($tidy);
+		if ($serial) {
+			$text = serialize($text);
 		}
-		return $html;
+	} else {
+		$text = str_replace(WEBPATH, '{*WEBPATH*}', str_replace(FULLWEBPATH, '{*FULLWEBPATH*}', $text));
 	}
+	return $text;
+}
 
+/**
+ * reverses tagURLs()
+ * @param string $text
+ * @return string
+ */
+function unTagURLs($text) {
+	if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+		$text = getSerializedArray($text);
+		$serial = true;
+	} else {
+		$serial = false;
+	}
+	if (is_array($text)) {
+		foreach ($text as $key => $textelement) {
+			$text[$key] = unTagURLs($textelement);
+		}
+		if ($serial) {
+			$text = serialize($text);
+		}
+	} else {
+		$text = str_replace('{*WEBPATH*}', WEBPATH, str_replace('{*FULLWEBPATH*}', FULLWEBPATH, $text));
+	}
+	return $text;
+}
+
+/**
+ * Searches out i.php image links and replaces them with cache links if image is cached
+ * @param string $text
+ * @return string
+ */
+function updateImageProcessorLink($text) {
+	if (is_string($text) && preg_match('/^a:[0-9]+:{/', $text)) { //	serialized array
+		$text = getSerializedArray($text);
+		$serial = true;
+	} else {
+		$serial = false;
+	}
+	if (is_array($text)) {
+		foreach ($text as $key => $textelement) {
+			$text[$key] = updateImageProcessorLink($textelement);
+		}
+		if ($serial) {
+			$text = serialize($text);
+		}
+	} else {
+		preg_match_all('|<\s*img.*?\ssrc\s*=\s*"([^"]*)?|', $text, $matches);
+		foreach ($matches[1] as $key => $match) {
+			preg_match('|.*i\.php\?(.*)|', $match, $imgproc);
+			if ($imgproc) {
+				$match = preg_split('~\&[amp;]*~', $imgproc[1]);
+				$set = array();
+				foreach ($match as $v) {
+					$s = explode('=', $v);
+					$set[$s[0]] = $s[1];
+				}
+				$args = getImageArgs($set);
+				$imageuri = getImageURI($args, urldecode($set['a']), urldecode($set['i']), NULL);
+				if (strpos($imageuri, 'i.php') === false) {
+					$text = str_replace($matches[1][$key], $imageuri, $text);
+				}
+			}
+		}
+	}
+	return $text;
+}
+
+function pluginDebug($extension, $priority, $start) {
+	list($usec, $sec) = explode(" ", microtime());
+	$end = (float) $usec + (float) $sec;
+	$class = array();
+	if ($priority & CLASS_PLUGIN) {
+		$class[] = 'CLASS';
+	}
+	if ($priority & ADMIN_PLUGIN) {
+		$class[] = 'ADMIN';
+	}
+	if ($priority & FEATURE_PLUGIN) {
+		$class[] = 'FEATURE';
+	}
+	if ($priority & THEME_PLUGIN) {
+		$class[] = 'THEME';
+	}
+	if (empty($class))
+		$class[] = 'theme';
+	debugLog(sprintf('    ' . $extension . '(%s:%u)=>%.4fs', implode('|', $class), $priority & PLUGIN_PRIORITY, $end - $start));
+}
+
+/**
+ * Removes a trailing slash from a string if one exists, otherwise just returns the string
+ * Used primarily within date and tag searches and news date archive results
+ * 
+ * @param string $string
+ * @return string
+ * @since 1.4.12
+ */
+function removeTrailingSlash($string) {
+	if (substr($string, -1) == '/') {
+		$length = strlen($string) - 1;
+		return substr($string, 0, $length);
+	}
+	return $string;
+}
+
+/**
+ * Returns an array the data privacy policy page and the data usage confirmation text as defined on Options > Security
+ * array(
+ *	'notice' => '<The defined text>',
+ *	'url' => '<url to the define page either custom page url or Zenpage page>',
+ *	'linktext' => '<The defined text>'
+ * )
+ * 
+ * @since Zenphoto 1.5
+ * 
+ * @return array
+ */
+function getDataUsageNotice() {
+	$array = array('notice' => '', 'url' => '', 'linktext' => '');
+	$array['linktext'] = get_language_string(getOption('dataprivacy_policy_customlinktext'));
+	$array['notice'] = get_language_string(getOption('dataprivacy_policy_notice'));
+	$custompage = trim(getOption('dataprivacy_policy_custompage'));
+	$zenpage_page =  '';
+	if(empty($array['notice'])) {
+		$array['notice'] = gettext('By using this form you agree with the storage and handling of your data by this website.');
+	} 
+	if (extensionEnabled('zenpage') && ZP_PAGES_ENABLED) {
+		$zenpage_page = getOption('dataprivacy_policy_zenpage');
+		if($zenpage_page == 'none') {
+			$zenpage_page = '';
+		}
+	}
+	if(!empty($custompage)) {
+		$array['url'] = $custompage;
+	} else if(!empty($zenpage_page)) {
+		$obj = new ZenpagePage($zenpage_page);
+		$array['url'] = $obj->getLink();
+	}
+	if(empty($array['linktext'])) {
+		$array['linktext'] = gettext('More info on our data privacy policy.');
+	} 
+	return $array;
+}
+
+/**
+ * Prints the data privacy policy page and the data usage confirmation text as defined on Options > Security
+ * If there is no page defined it only prints the default text.
+ * 
+ * @since Zenphoto 1.5
+ */
+function printDataUsageNotice() {
+	$data = getDataUsageNotice();
+	echo $data['notice'];
+	if(!empty($data['url'])) {
+		printLinkHTML($data['url'], ' ' . $data['linktext'], $data['linktext'], null, null);
+	}
 }
 
 /**
@@ -2984,7 +3030,4 @@ class _zp_HTML_cache {
 	}
 
 }
-
-zpFunctions::setexifvars();
-$_locale_Subdomains = zpFunctions::LanguageSubdomains();
-?>
+setexifvars();

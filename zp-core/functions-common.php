@@ -4,6 +4,7 @@
  * functions common to both the Zenphoto core and setup's basic environment
  *
  * @package core
+ * @subpackage functions\functions-common
  */
 
 /**
@@ -220,7 +221,12 @@ function sanitize_string($input, $sanitize_level) {
  * @since 0.6
  */
 function prefix($tablename = NULL) {
-	return '`' . DATABASE_PREFIX . $tablename . '`';
+	if(defined('DATABASE_PREFIX')) {
+		$prefix = DATABASE_PREFIX;
+	} else{
+		$prefix = 'zp_'; // use default in case this constant is not set in setup primitive environments
+	}
+	return '`' . $prefix . $tablename . '`';
 }
 
 /**
@@ -349,9 +355,7 @@ function html_encodeTagged($original, $allowScript = true) {
 	foreach (array_reverse($tags, true) as $taglist) {
 		$str = strtr($str, $taglist);
 	}
-	if ($str != $original) {
-		$str = zpFunctions::tidyHTML($str);
-	}
+	$str = tidyHTML($str);
 	return $str;
 }
 
@@ -486,7 +490,7 @@ function zp_setCookie($name, $value, $time = NULL, $path = NULL, $secure = false
     $cookiev = zp_cookieEncode(sanitize($value));
   }
   if (is_null($time)) {
-    $time = COOKIE_PESISTENCE;
+    $time = COOKIE_PERSISTENCE;
   }
   if (is_null($path)) {
     $path = WEBPATH;

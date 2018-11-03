@@ -6,10 +6,12 @@
  *
  * @author Malte Müller (acrylian)
  * @package plugins
+ * @subpackage paged-thumbs-nav
  */
 $plugin_description = gettext("Prints a paged thumbs navigation on image.php, independent of the album.php’s thumbs.");
 $plugin_author = "Malte Müller (acrylian)";
 $option_interface = 'pagedthumbsOptions';
+$plugin_category = gettext('Media');
 
 /**
  * Plugin option handling class
@@ -33,8 +35,8 @@ class pagedthumbsOptions {
 			setOptionDefault('pagedthumbs_pagelistprevnext', '');
 			setOptionDefault('pagedthumbs_pagelistlength', '6');
 			if (class_exists('cacheManager')) {
-				cacheManager::deleteThemeCacheSizes('paged_thumbs_nav');
-				cacheManager::addThemeCacheSize('paged_thumbs_nav', NULL, getOption('pagedthumbs_width'), getOption('pagedthumbs_height'), NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
+				cacheManager::deleteCacheSizes('paged_thumbs_nav');
+				cacheManager::addCacheSize('paged_thumbs_nav', NULL, getOption('pagedthumbs_width'), getOption('pagedthumbs_height'), NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
 			}
 		}
 	}
@@ -172,7 +174,7 @@ class pagedThumbsNav {
 			$this->searchimages = false;
 		}
 
-		if (in_context(ZP_SEARCH_LINKED) && $this->searchimages) {
+		if (in_context(ZP_SEARCH_LINKED) && !in_context(ZP_ALBUM_LINKED) && $this->searchimages) {
 			$this->images = $_zp_current_search->getImages();
 		} else {
 			$this->images = $_zp_current_album->getImages();

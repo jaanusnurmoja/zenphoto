@@ -2,7 +2,8 @@
 
 /**
  * root object class
- * @package classes
+ * @package core
+ * @subpackage classes\objects
  */
 // force UTF-8 Ø
 // classes.php
@@ -52,10 +53,10 @@ class PersistentObject {
 
 	/**
 	 *
-	 * @deprecated
+	 * @deprecated 2.0
+	 * @since 1.4.6
 	 */
 	function __construct($tablename, $unique_set, $cache_by = NULL, $use_cache = true, $is_transient = false, $allowCreate = true) {
-		deprecated_functions::PersistentObject();
 		return instantiate($tablename, $unique_set, $cache_by, $use_cache, $is_transient, $allowCreate);
 	}
 
@@ -442,7 +443,7 @@ class ThemeObject extends PersistentObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -452,7 +453,7 @@ class ThemeObject extends PersistentObject {
 	 * @param string $title the title
 	 */
 	function setTitle($title) {
-		$this->set('title', zpFunctions::tagURLs($title));
+		$this->set('title', tagURLs($title));
 	}
 
 	/**
@@ -576,7 +577,7 @@ class ThemeObject extends PersistentObject {
 	 * @return array
 	 */
 	function getCodeblock() {
-		return zpFunctions::unTagURLs($this->get("codeblock"));
+		return unTagURLs($this->get("codeblock"));
 	}
 
 	/**
@@ -584,7 +585,7 @@ class ThemeObject extends PersistentObject {
 	 *
 	 */
 	function setCodeblock($cb) {
-		$this->set('codeblock', zpFunctions::tagURLs($cb));
+		$this->set('codeblock', tagURLs($cb));
 	}
 
 	/**
@@ -597,7 +598,7 @@ class ThemeObject extends PersistentObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -607,7 +608,7 @@ class ThemeObject extends PersistentObject {
 	 * @param string $val the value to be put in custom_data
 	 */
 	function setCustomData($val) {
-		$this->set('custom_data', zpFunctions::tagURLs($val));
+		$this->set('custom_data', tagURLs($val));
 	}
 
 	/**
@@ -670,10 +671,11 @@ class ThemeObject extends PersistentObject {
 	 * @param bool $private set to true if the comment is for the admin only
 	 * @param bool $anon set to true if the poster wishes to remain anonymous
 	 * @param string $customdata
+	 * @param bool $dataconfirmation true or false if data privacy confirmation was required
 	 * @return object
 	 */
-	function addComment($name, $email, $website, $comment, $code, $code_ok, $ip, $private, $anon, $customdata) {
-		$goodMessage = zp_apply_filter('object_addComment', $name, $email, $website, $comment, $code, $code_ok, $this, $ip, $private, $anon, $customdata);
+	function addComment($name, $email, $website, $comment, $code, $code_ok, $ip, $private, $anon, $customdata, $dataconfirmation) {
+		$goodMessage = zp_apply_filter('object_addComment', $name, $email, $website, $comment, $code, $code_ok, $this, $ip, $private, $anon, $customdata, false, $dataconfirmation);
 		return $goodMessage;
 	}
 
@@ -788,9 +790,9 @@ class MediaObject extends ThemeObject {
 	function getDesc($locale = NULL) {
 		$text = $this->get('desc');
 		if ($locale == 'all') {
-			return zpFunctions::unTagURLs($text);
+			return unTagURLs($text);
 		} else {
-			return applyMacros(zpFunctions::unTagURLs(get_language_string($text, $locale)));
+			return applyMacros(unTagURLs(get_language_string($text, $locale)));
 		}
 	}
 
@@ -800,7 +802,7 @@ class MediaObject extends ThemeObject {
 	 * @param string $desc description text
 	 */
 	function setDesc($desc) {
-		$desc = zpFunctions::tagURLs($desc);
+		$desc = tagURLs($desc);
 		$this->set('desc', $desc);
 	}
 
@@ -872,7 +874,7 @@ class MediaObject extends ThemeObject {
 		if ($locale !== 'all') {
 			$text = get_language_string($text, $locale);
 		}
-		$text = zpFunctions::unTagURLs($text);
+		$text = unTagURLs($text);
 		return $text;
 	}
 
@@ -882,7 +884,7 @@ class MediaObject extends ThemeObject {
 	 * @param string $hint the hint text
 	 */
 	function setPasswordHint($hint) {
-		$this->set('password_hint', zpFunctions::tagURLs($hint));
+		$this->set('password_hint', tagURLs($hint));
 	}
 
 	/**

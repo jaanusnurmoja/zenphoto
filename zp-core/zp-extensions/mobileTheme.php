@@ -71,12 +71,15 @@
  * </li>
  * </ul>
  *
+ * @author Stephen Billard (sbillard)
  * @package plugins
+ * @subpackage mobiletheme
  */
 
 $plugin_is_filter = 5|CLASS_PLUGIN;
 $plugin_description = gettext('Select your theme based on the device connecting to your site');
 $plugin_author = "Stephen Billard (sbillard)";
+$plugin_category = gettext('Misc');
 
 $option_interface = 'mobileTheme';
 
@@ -165,8 +168,8 @@ class mobileTheme {
 					case 'index.php':
 						$link = 'index.php?mobileTheme=' . $enable;
 						break;
-					case 'gallery.php':
-						$link = 'index.php?p=gallery&amp;mobileTheme=' . $enable;
+					case getCustomGalleryIndexPage():
+						$link = 'index.php?p=' . stripSuffix(getCustomGalleryIndexPage()) . '&amp;mobileTheme=' . $enable;
 						break;
 					case 'album.php':
 						$link = $_zp_current_album->getLink(null) . '&amp;mobileTheme=' . $enable;
