@@ -4,7 +4,7 @@ if (!defined('WEBPATH'))
 $map = function_exists('printGoogleMap');
 ?>
 <!DOCTYPE html>
-<html>
+<html<?php printLangAttribute(); ?>>
 	<head>
 		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<?php
@@ -51,12 +51,12 @@ $map = function_exists('printGoogleMap');
 										while (next_album()) {
 											?>
 											<div class="album">
-												<a class="albumthumb" href="<?php echo getAlbumURL(); ?>" title="<?php printf(gettext('View album:  %s'), getBareAlbumTitle()); ?>">
-													<?php printCustomAlbumThumbImage(getAlbumTitle(), 85, NULL, NULL, 85, 85); ?>
+												<a class="albumthumb" href="<?php echo getAlbumURL(); ?>" title="<?php printf(gettext('View album: %s'), getBareAlbumTitle()); ?>">
+													<?php printCustomAlbumThumbImage(getAlbumTitle(), null, 85, 85, 85, 85); ?>
 												</a>
 												<div class="albumdesc">
 													<h3>
-														<a href="<?php echo getAlbumURL(); ?>" title="<?php printf(gettext('View album:  %s'), getBareAlbumTitle()); ?>">
+														<a href="<?php echo getAlbumURL(); ?>" title="<?php printf(gettext('View album: %s'), getBareAlbumTitle()); ?>">
 															<?php printAlbumTitle(); ?>
 														</a>
 													</h3>

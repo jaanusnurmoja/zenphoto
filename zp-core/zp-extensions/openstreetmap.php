@@ -26,19 +26,18 @@ zp_register_filter('theme_head', 'openStreetMap::scripts');
 class openStreetMapOptions {
 
 	function __construct() {
+		replaceOption('osmap_controlpos', 'osmap_zoomcontrolpos');
+		replaceOption('osmap_maptiles', 'osmap_defaultlayer');
+		
 		setOptionDefault('osmap_width', '100%'); //responsive by default!
 		setOptionDefault('osmap_height', '300px');
 		setOptionDefault('osmap_zoom', 4);
 		setOptionDefault('osmap_minzoom', 2);
 		setOptionDefault('osmap_maxzoom', 18);
-		if (getOption('osmap_controlpos')) {
-			setOption('osmap_zoomcontrolpos', getOption('osmap_controlpos'));
-			purgeOption('osmap_controlpos');
-		}
-		if (getOption('osmap_maptiles')) {
-			setOption('osmap_defaultlayer', getOption('osmap_maptiles'));
-			purgeOption('osmap_maptiles');
-		}
+		
+		setOptionDefault('osmap_zoomcontrolpos', 'topleft');
+		setOptionDefault('osmap_defaultlayer', 'OpenStreetMap.Mapnik');
+		
 		setOptionDefault('osmap_clusterradius', 40);
 		setOptionDefault('osmap_markerpopup', 1);
 		setOptionDefault('osmap_markerpopup_title', 1);
@@ -481,10 +480,13 @@ class openStreetMap {
 		$this->markerpopup_thumb = getOption('osmap_markerpopup_thumb');
 		$this->showlayerscontrol = getOption('osmap_showlayerscontrol');
 		// generate an array of selected layers
+		$selectedlayerslist = array();
 		$layerslist = self::getLayersList();
-		foreach ($layerslist as $layer => $layer_dbname) {
-			if (getOption($layer_dbname)) {
-				$selectedlayerslist[$layer] = $layer;
+		if ($layerslist) {
+			foreach ($layerslist as $layer => $layer_dbname) {
+				if (getOption($layer_dbname)) {
+					$selectedlayerslist[$layer] = $layer;
+				}
 			}
 		}
 		// deduplicate default Layer from layers list
@@ -550,12 +552,12 @@ class openStreetMap {
 			if ((!empty($exif['EXIFGPSLatitude'])) && (!empty($exif['EXIFGPSLongitude']))) {
 				$lat_c = explode('.', str_replace(',', '.', $exif['EXIFGPSLatitude']) . '.0');
 				$lat_f = round((float) abs($lat_c[0]) + ($lat_c[1] / pow(10, strlen($lat_c[1]))), 12);
-				if (strtoupper(@$exif['EXIFGPSLatitudeRef']{0}) == 'S') {
+				if (strtoupper(@$exif['EXIFGPSLatitudeRef'][0]) == 'S') {
 					$lat_f = -$lat_f;
 				}
 				$long_c = explode('.', str_replace(',', '.', $exif['EXIFGPSLongitude']) . '.0');
 				$long_f = round((float) abs($long_c[0]) + ($long_c[1] / pow(10, strlen($long_c[1]))), 12);
-				if (strtoupper(@$exif['EXIFGPSLongitudeRef']{0}) == 'W') {
+				if (strtoupper(@$exif['EXIFGPSLongitudeRef'][0]) == 'W') {
 					$long_f = -$long_f;
 				}
 				$thumb = "<a href='" . $image->getLink() . "'><img src='" . $image->getCustomImage(150, NULL, NULL, NULL, NULL, NULL, NULL, true) . "' alt='' /></a>";
@@ -916,7 +918,6 @@ class openStreetMap {
 	static function getTileProviders() {
 		return array(
 				'OpenStreetMap.Mapnik',
-				'OpenStreetMap.BlackAndWhite',
 				'OpenStreetMap.DE',
 				'OpenStreetMap.France',
 				'OpenStreetMap.HOT',

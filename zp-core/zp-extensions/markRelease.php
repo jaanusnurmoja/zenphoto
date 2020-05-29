@@ -38,9 +38,7 @@ if (isset($_REQUEST['markRelease'])) {
 	}
 	$v = preg_replace("~define\('ZENPHOTO_VERSION.*\n~", $version . "\n", $v);
 	file_put_contents(SERVERPATH . '/' . ZENFOLDER . '/version.php', $v);
-	header('location:' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
-
-	exitZP();
+	redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
 }
 
 function markRelease_button($buttons) {
@@ -58,8 +56,8 @@ function markRelease_button($buttons) {
 					'enable'			 => true,
 					'button_text'	 => gettext('Mark release'),
 					'formname'		 => 'markRelease_button',
-					'action'			 => '?markRelease=' . $action,
-					'icon'				 => $mark ? 'images/comments-on.png' : 'images/comments-off.png',
+					'action'			 => FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?markRelease=' . $action,
+					'icon'				 => $mark ? FULLWEBPATH . '/' . ZENFOLDER . '/images/comments-on.png' : FULLWEBPATH . '/' . ZENFOLDER . '/images/comments-off.png',
 					'title'				 => sprintf(gettext('Edits the version.php file making a “%s” install.'), $text[$action]),
 					'alt'					 => '',
 					'hidden'			 => '<input type="hidden" name="markRelease" value="' . $action . '" />',

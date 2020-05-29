@@ -4,7 +4,6 @@
  * 
  * - Facebook
  * - Twitter
- * - Google+
  * - Pinterest 
  * - Linkedin
  * - Xing
@@ -23,11 +22,11 @@
  * 
  * Note: Since no scripts are involved no share counts!
  * 
- * To have it work correctly you should to enable the html_meta_tags plugin 
- * and the Open Graph (og:) meta data elements.
+ * To have it work correctly you should also enable the html_meta_tags plugin 
+ * and check the Open Graph (og:) meta data elements in the plugin's options.
  *
- * The plugin loads an default CSS styling using an icon font optionally. If you wish to use theme based custom icons 
- * and css to avoid extra loading you can disable it.
+ * The plugin loads default CSS styling using an icon font. If you wish to use theme based custom icons 
+ * and CSS to avoid extra loading you can disable it.
  *
  * Icon font created using the icomoon app: http://icomoon.io/#icons-icomoon
  * Fonts used:
@@ -36,7 +35,7 @@
  * - fontawesome (all other icons) http://fontawesome.io – SIL OFL 1.1 
  *
  * Usage:
- * Place `<?php ScriptlessSocialSharing::printButtons(); ?>` on your theme files where you wish the buttons to appear.
+ * Place <code><?php ScriptlessSocialSharing::printButtons(); ?></code> on your theme files where you wish the buttons to appear.
  *
  * @author Malte Müller (acrylian)
  * @copyright 2018 Malte Müller
@@ -56,7 +55,7 @@ if (getOption('scriptless_socialsharing_iconfont')) {
 class scriptlessSocialsharingOptions {
 
 	function __construct() {
-		
+		purgeOption('scriptless_socialsharing_gplus');
 	}
 
 	function getOptionsSupported() {
@@ -68,7 +67,6 @@ class scriptlessSocialsharingOptions {
 						'checkboxes' => array(
 								'Facebook' => 'scriptless_socialsharing_facebook',
 								'Twitter' => 'scriptless_socialsharing_twitter',
-								'Google+' => 'scriptless_socialsharing_gplus',
 								'Pinterest' => 'scriptless_socialsharing_pinterest',
 								'Linkedin' => 'scriptless_socialsharing_linkedin',
 								'Xing' => 'scriptless_socialsharing_xing',
@@ -201,7 +199,7 @@ class scriptlessSocialsharing {
 		}
 		//$text = getContentShorten($title, 100, ' (…)', false);
 		$title = urlencode($title);
-		$url = urlencode(FULLWEBPATH . html_encode($url));
+		$url = urlencode(SERVER_HTTP_HOST . html_encode($url));
 		if ($beforetext) {
 			echo $beforetext;
 		}
@@ -221,13 +219,6 @@ class scriptlessSocialsharing {
 					'class' => 'sharingicon-twitter',
 					'title' => 'Twitter',
 					'url' => 'https://twitter.com/intent/tweet?text=' . $title . $via . '&amp;url=' . $url
-			);
-		}
-		if (getOption('scriptless_socialsharing_gplus')) {
-			$buttons[] = array(
-					'class' => 'sharingicon-google-plus',
-					'title' => 'Google+',
-					'url' => 'https://plus.google.com/share?url=' . $url
 			);
 		}
 		if (getOption('scriptless_socialsharing_pinterest')) {

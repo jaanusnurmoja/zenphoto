@@ -38,7 +38,7 @@ function rewriteHandler() {
 	//process the rules
 	foreach ($rules as $rule) {
 		if ($rule = trim($rule)) {
-			if ($rule{0} != '#') {
+			if ($rule[0] != '#') {
 				if (preg_match('~^rewriterule~i', $rule)) {
 					// it is a rewrite rule, see if it is applicable
 					$rule = strtr($rule, $definitions);
@@ -85,8 +85,7 @@ function rewriteHandler() {
 								if (array_key_exists('R', $flags)) {
 									header('Status: ' . $flags['R']);
 								}
-								header('Location: ' . WEBPATH . '/' . $action[1] . $qs);
-								exit();
+								redirectURL(FULLWEBPATH . '/' . $action[1] . $qs);
 							}
 							$_zp_rewritten = true;
 							break;

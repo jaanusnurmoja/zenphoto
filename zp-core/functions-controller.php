@@ -106,10 +106,7 @@ function fix_path_redirect() {
 			parse_str($parts['query'], $query);
 			$redirectURL = zpRewriteURL($query);
 			if ($redirectURL) {
-				header("HTTP/1.0 301 Moved Permanently");
-				header("Status: 301 Moved Permanently");
-				header('Location: ' . FULLWEBPATH . '/' . $redirectURL);
-				exitZP();
+				redirectURL($redirectURL, '301');
 			}
 		}
 	}
@@ -395,6 +392,22 @@ function prepareCustomPage() {
 		$_zp_script = THEMEFOLDER . "/$theme/$page.php";
 	}
 	return $theme;
+}
+
+/**
+ * Handles redirections via filter hook "redirection_handler".
+ * It is meant to perform redirections of pages that have been removed or renamed.
+ * 
+ * @since ZenphotoCMS 1.5.2
+ */
+function redirectionHandler() {
+	if (zp_has_filter('redirection_handler')) {
+		$url = SERVER_HTTP_HOST . getRequestURI();
+		$redirect_url = zp_apply_filter('redirection_handler', $url);
+		if ($redirect_url != $url) {
+			redirectURL($redirect_url, '301');
+		}
+	}
 }
 
 //force license page if not acknowledged

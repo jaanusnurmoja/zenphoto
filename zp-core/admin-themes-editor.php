@@ -12,11 +12,15 @@ require_once(dirname(__FILE__) . '/admin-globals.php');
 admin_securityChecks(THEMES_RIGHTS, currentRelativeURL());
 
 if (!isset($_GET['theme'])) {
-	header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-themes.php");
-	exitZP();
+	redirectURL(FULLWEBPATH . "/" . ZENFOLDER . "/admin-themes.php");
 }
 
-function isTextFile($file, $ok_extensions = array('css', 'php', 'js', 'txt', 'inc')) {
+$ok_extensions = array('css', 'txt');
+if (zp_loggedin(ADMIN_RIGHTS)) {
+	$ok_extensions = array('css', 'php', 'js', 'txt');
+}
+
+function isTextFile($file, $ok_extensions) {
 	$path_info = pathinfo($file);
 	$ext = (isset($path_info['extension']) ? strtolower($path_info['extension']) : '');
 	return (!empty($ok_extensions) && (in_array($ext, $ok_extensions) ) );

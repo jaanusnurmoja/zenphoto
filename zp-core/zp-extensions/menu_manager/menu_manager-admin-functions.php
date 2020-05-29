@@ -36,6 +36,7 @@ function updateItemsSortorder() {
  */
 function printItemsListTable($item, $flag) {
 	global $_zp_gallery;
+	$menuset = checkChosenMenuset('');
 	$link = '';
 	$array = getItemTitleAndURL($item);
 	if ($array['valid']) {
@@ -106,13 +107,13 @@ function printItemsListTable($item, $flag) {
 				<?php
 				if ($item['show'] === '1') {
 					?>
-					<a href="menu_tab.php?publish&amp;id=<?php echo $item['id'] . "&amp;show=0"; ?>&amp;add&amp;XSRFToken=<?php echo getXSRFToken('update_menu') ?>" title="<?php echo gettext('hide'); ?>" >
+					<a href="menu_tab.php?publish&amp;id=<?php echo $item['id'] . "&amp;show=0"; ?>&amp;add&amp;XSRFToken=<?php echo getXSRFToken('update_menu') ?>&amp;menuset=<?php echo sanitize($menuset); ?>" title="<?php echo gettext('hide'); ?>" >
 						<img src="../../images/pass.png"	alt="<?php echo gettext('hide'); ?>" style="border: 0px;" />
 					</a>
 					<?php
 				} else {
 					?>
-					<a href="menu_tab.php?publish&amp;id=<?php echo $item['id'] . "&amp;show=1"; ?>&amp;add&amp;XSRFToken=<?php echo getXSRFToken('update_menu') ?>"  title="<?php echo gettext('show'); ?>">
+					<a href="menu_tab.php?publish&amp;id=<?php echo $item['id'] . "&amp;show=1"; ?>&amp;add&amp;XSRFToken=<?php echo getXSRFToken('update_menu') ?>&amp;menuset=<?php echo sanitize($menuset); ?>"  title="<?php echo gettext('show'); ?>">
 						<img src="../../images/action.png"	alt="<?php echo gettext('show'); ?>" style="border: 0px;" />
 					</a>
 					<?php
@@ -379,7 +380,11 @@ function addPagesToDatabase($menuset, $base = NULL) {
 	$parents = array('NULL');
 	$result = query_full_array("SELECT * FROM " . prefix('pages') . " ORDER BY sort_order");
 	foreach ($result as $key => $item) {
-		$sorts = explode('-', $item['sort_order']);
+		if(empty($item['sort_order'])) {
+			$sorts = array($key);
+		} else {
+			$sorts = explode('-', $item['sort_order']);
+		}
 		$level = count($sorts);
 		$sorts[0] = sprintf('%03u', $result = $sorts[0] + $pagebase);
 		$order = $sortbase . implode('-', $sorts);
@@ -416,11 +421,16 @@ function addCategoriesToDatabase($menuset, $base = NULL) {
 	}
 	$result = $categorybase;
 	$parents = array('NULL');
-	$result = query_full_array("SELECT * FROM " . prefix('news_categories') . " ORDER BY sort_order");
-	foreach ($result as $key => $item) {
-		$sorts = explode('-', $item['sort_order']);
+	$cats = query_full_array("SELECT * FROM " . prefix('news_categories') . " ORDER BY sort_order");
+	foreach ($cats as $key => $item) {
+		if(empty($item['sort_order'])) {
+			$sorts = array($key);
+		} else {
+			$sorts = explode('-', $item['sort_order']);
+		}
 		$level = count($sorts);
-		$sorts[0] = sprintf('%03u', $result = $sorts[0] + $categorybase);
+		$result = $sorts[0] + $categorybase;
+		$sorts[0] = sprintf('%03u', $result);
 		$order = $sortbase . implode('-', $sorts);
 		$link = $item['titlelink'];
 		$parent = $parents[$level - 1];
@@ -491,6 +501,15 @@ function addItem(&$reports) {
 				return $result;
 			}
 			$successmsg = sprintf(gettext("Album menu item <em>%s</em> added"), $result['link']);
+			break;
+		case 'homepage':
+			$result['title'] = process_language_string_save("title", 2);
+			$result['link'] = NULL;
+			if (empty($result['title'])) {
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
+				return $result;
+			}
+			$successmsg = sprintf(gettext("Home page menu item <em>%s</em> added"), $result['link']);
 			break;
 		case 'galleryindex':
 			$result['title'] = process_language_string_save("title", 2);
@@ -616,9 +635,7 @@ function addItem(&$reports) {
  * Updates a menu item (custom link, custom page only) set via POST
  *
  */
-function updateMenuItem(&
-
-$reports) {
+function updateMenuItem(&$reports) {
 	$menuset = checkChosenMenuset();
 	$result = array();
 	$result['id'] = sanitize($_POST['id']);
@@ -638,6 +655,14 @@ $reports) {
 			$result['title'] = $result['link'] = sanitize($_POST['albumselect']);
 			if (empty($result['link'])) {
 				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to select an album.") . " </p>";
+				return $result;
+			}
+			break;
+		case 'homepage':
+			$result['title'] = process_language_string_save("title", 2);
+			$result['link'] = NULL;
+			if (empty($result['title'])) {
+				$reports[] = "<p class = 'errorbox fade-message'>" . gettext("You forgot to give your menu item a <strong>title</strong>!") . " </p>";
 				return $result;
 			}
 			break;
@@ -752,9 +777,7 @@ $reports) {
  * Deletes a menu item set via GET
  *
  */
-function deleteItem(&
-
-$reports) {
+function deleteItem(&$reports) {
 	if (isset($_GET['delete'])) {
 		$delete = sanitize_numeric($_GET['delete'], 3);
 		query("DELETE FROM " . prefix('menu') . " WHERE `id` = $delete");
@@ -888,9 +911,31 @@ function printCustomPageSelector($current) {
 		chdir($root);
 		$filelist = safe_glob('*.php');
 		$list = array();
+		$exclude = array(
+				'404.php',
+				'index.php',
+				'main.php',
+				'gallery.php',
+				'album.php',
+				'image.php',
+				'pages.php',
+				'news.php',
+				'functions.php',
+				'inc-footer.php',
+				'footer.php',
+				'inc-header.php',
+				'header.php',
+				'inc-sidebar.php',
+				'sidebar.php',
+				'slideshow.php',
+				'theme_description.php',
+				'themeoptions.php'
+		);
 		foreach ($filelist as $file) {
-			$file = filesystemToInternal($file);
-			$list[$file] = str_replace('.php', '', $file);
+			if(!in_array($file, $exclude)) {
+				$file = filesystemToInternal($file);
+				$list[$file] = str_replace('.php', '', $file);
+			}
 		}
 		generateListFromArray(array($current), $list, false, true);
 		chdir($curdir);
@@ -919,10 +964,8 @@ function unpublishedZenphotoItemCheck($obj, $dropdown = true) {
  */
 function processMenuBulkActions() {
 	$report = NULL;
-	if (isset($_POST[
-									'ids'])) {
-		$action = sanitize(
-						$_POST['checkallaction']);
+	if (isset($_POST['ids'])) {
+		$action = sanitize($_POST['checkallaction']);
 		$ids = $_POST['ids'];
 		$total = count($ids);
 		$message = NULL;

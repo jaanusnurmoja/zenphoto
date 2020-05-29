@@ -22,8 +22,7 @@ $handlers = array_keys($uploadHandlers = zp_apply_filter('upload_handlers', arra
 if (!zp_loggedin(UPLOAD_RIGHTS) || empty($handlers)) {
 	//	redirect to the files page if present
 	if (isset($zenphoto_tabs['upload']['subtabs'][0])) {
-		header('location: ' . $zenphoto_tabs['upload']['subtabs'][0]);
-		exitZP();
+		redirectURL($zenphoto_tabs['upload']['subtabs'][0]);
 	}
 	$handlers = array();
 }
@@ -152,14 +151,6 @@ foreach ($albumlist as $key => $value) {
 				<div class="messagebox fade-message">
 					<h2><?php echo gettext("Upload complete"); ?></h2>
 					<?php echo gettext('Your files have been uploaded.'); ?>
-				</div>
-				<?php
-			}
-			if (SAFE_MODE) {
-				?>
-				<div class="warningbox fade-message">
-					<h2><?php echo gettext("PHP Safe Mode Restrictions in effect!"); ?></h2>
-					<p><?php echo gettext("Zenphoto may be unable to perform uploads when PHP Safe Mode restrictions are in effect"); ?></p>
 				</div>
 				<?php
 			}

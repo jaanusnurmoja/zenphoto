@@ -24,6 +24,8 @@ $_zp_conf_vars['special_pages']['contact'] = array('define' => '_CONTACT_', 'rew
 $_zp_conf_vars['special_pages'][] = array('definition' => '%CONTACT%', 'rewrite' => '_CONTACT_');
 $_zp_conf_vars['special_pages'][] = array('define' => false, 'rewrite' => '%CONTACT%', 'rule' => '^%REWRITE%/*$		index.php?p=contact [L,QSA]');
 
+zp_register_filter('content_macro', 'getContactFormMacros');
+
 /**
  * Plugin option handling class
  *
@@ -310,15 +312,19 @@ function printContactForm($subject_override = '') {
 		}
 		// CAPTCHA end
 		if (getOption('contactform_dataconfirmation') && empty($mailcontent['dataconfirmation'])) {
-			$error_dataconfirmation = gettext('Please agree to storage and handling of your data by this website.');
+			$error_dataconfirmation = $error[13] = gettext('Please agree to storage and handling of your data by this website.');
 		}
 		// If required fields are empty or not valide print note
-		if (count($error) != 0 || !is_null($error_dataconfirmation)) {
+		if (count($error) != 0) {
 			?>
 			<div class="errorbox">
 				<?php
-				if (count($error) != 0) {
 					$err = $error;
+					if($error_dataconfirmation) { 
+						echo '<p>' . $error_dataconfirmation . '</p>';
+						// remove data confirmation error so we re-print it with the wrong generic text below
+						unset($err[13]);
+					}
 					switch (count($err)) {
 						case 1:
 							printf(gettext('Please enter %s. Thanks.'), array_shift($err));
@@ -327,18 +333,16 @@ function printContactForm($subject_override = '') {
 							printf(gettext('Please enter %1$s and %2$s. Thanks.'), array_shift($err), array_shift($err));
 							break;
 						default:
-							$list = '<ul class="errorlist">';
-							foreach ($err as $item) {
-								$list .= '<li>' . $item . '</li>';
+							if(!empty($err)) { // no data confirmation may result in this although there is one error
+								$list = '<ul class="errorlist">';
+								foreach ($err as $item) {
+									$list .= '<li>' . $item . '</li>';
+								}
+								$list .= '</ul>';
+								printf(gettext('Please enter: %sThanks.'), $list);
 							}
-							$list .= '</ul>';
-							printf(gettext('Please enter: %sThanks.'), $list);
 							break;
 					}
-				}
-				if (!is_null($error_dataconfirmation)) {
-					echo '<p>' . $error_dataconfirmation . '</p>';
-				}
 				?>
 			</div>
 			<?php
@@ -396,6 +400,7 @@ function printContactForm($subject_override = '') {
 					<?PHP
 					$_processing_post = true;
 					include(getPlugin('contact_form/form.php', true));
+					$message = str_replace("\n", '<br>', $message);
 					?>
 					<form id="confirm" action="<?php echo html_encode(getRequestURI()); ?>" method="post" accept-charset="UTF-8" style="float: left">
 						<input type="hidden" id="confirm" name="confirm" value="confirm" />
@@ -425,7 +430,7 @@ function printContactForm($subject_override = '') {
 	}
 	if (isset($_POST['confirm'])) {
 		$subject = sanitize($_POST['subject']);
-		$message = sanitize($_POST['message'], 1);
+		$message = str_replace('<br>', "\n", sanitize($_POST['message'], 1));
 		$mailaddress = sanitize($_POST['mailaddress']);
 		$honeypot = sanitize($_POST['username']);
 		$name = sanitize($_POST['name']);
@@ -534,4 +539,34 @@ function checkRequiredField($option) {
 	} else {
 		return "";
 	}
+}
+
+/**
+ * Buffers the contact form print out so it can be passed to its content macro
+ * @param type $subject_override
+ * @return type
+ */
+function printContactFormMacro($subject_override = '') {
+	ob_start();
+	printContactForm($subject_override);
+	$content = ob_get_contents();
+	ob_end_clean();
+	return $content;
+}
+
+/**
+ * Registers the content macro(s)
+ * 
+ * @param array $macros Passes through the array of already registered 
+ * @return array
+ */
+function getContactFormMacros($macros) {
+	$macros['CONTACTFORM'] = array(
+			'class' => 'function',
+			'params' => array('string*'),
+			'value' => 'printContactFormMacro',
+			'owner' => 'contact_form',
+			'desc' => gettext('Set %1 to optionally override the subject.')
+	);
+	return $macros;
 }

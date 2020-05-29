@@ -67,19 +67,26 @@ class user_expiry {
 	 * @return array
 	 */
 	function getOptionsSupported() {
-		return
-						array(gettext('Days until expiration') => array('key'		 => 'user_expiry_interval', 'type'	 => OPTION_TYPE_CLEARTEXT,
-														'order'	 => 1,
-														'desc'	 => gettext('The number of days until a user is flagged as expired. Set to zero for no expiry.')),
-										gettext('Warning interval')			 => array('key'		 => 'user_expiry_warn_interval', 'type'	 => OPTION_TYPE_CLEARTEXT,
-														'order'	 => 2,
-														'desc'	 => gettext('The period in days before the expiry during which a warning message will be sent to the user. (If set to zero, no warning occurs.)')),
-										gettext('Auto renew')						 => array('key'		 => 'user_expiry_auto_renew', 'type'	 => OPTION_TYPE_CHECKBOX,
-														'order'	 => 3,
-														'desc'	 => gettext('Automatically renew the subscription if the user visits during the warning period.')),
-										gettext('Password cycle')				 => array('key'		 => 'user_expiry_password_cycle', 'type'	 => OPTION_TYPE_CLEARTEXT,
-														'order'	 => 4,
-														'desc'	 => gettext('Number of days between required password changes. Set to zero for no required changes.'))
+		return array(gettext('Days until expiration') => array(
+						'key' => 'user_expiry_interval',
+						'type' => OPTION_TYPE_CLEARTEXT,
+						'order' => 1,
+						'desc' => gettext('The number of days until a user is flagged as expired. Set to zero for no expiry.')),
+				gettext('Warning interval') => array(
+						'key' => 'user_expiry_warn_interval',
+						'type' => OPTION_TYPE_CLEARTEXT,
+						'order' => 2,
+						'desc' => gettext('The period in days before the expiry during which a warning message will be sent to the user. (If set to zero, no warning occurs.)')),
+				gettext('Auto renew') => array(
+						'key' => 'user_expiry_auto_renew',
+						'type' => OPTION_TYPE_CHECKBOX,
+						'order' => 3,
+						'desc' => gettext('Automatically renew the subscription if the user visits during the warning period.')),
+				gettext('Password cycle') => array(
+						'key' => 'user_expiry_password_cycle',
+						'type' => OPTION_TYPE_CLEARTEXT,
+						'order' => 4,
+						'desc' => gettext('Number of days between required password changes. Set to zero for no required changes.'))
 		);
 	}
 
@@ -91,9 +98,10 @@ class user_expiry {
 		global $_zp_current_admin_obj, $_zp_loggedin;
 		if (user_expiry::checkPasswordRenew()) {
 			$_zp_current_admin_obj->setRights($_zp_loggedin = USER_RIGHTS | NO_RIGHTS);
-			$tabs = array('users' => array('text'		 => gettext("users"),
-											'link'		 => WEBPATH . "/" . ZENFOLDER . '/admin-users.php?page=users',
-											'subtabs'	 => NULL));
+			$tabs = array('users' => array(
+							'text' => gettext("users"),
+							'link' => FULLWEBPATH . '/' . ZENFOLDER . '/admin-users.php?page=users',
+							'subtabs' => NULL));
 		}
 		if (zp_loggedin(ADMIN_RIGHTS) && $_zp_current_admin_obj->getID()) {
 			if (isset($tabs['users']['subtabs'])) {
@@ -101,18 +109,19 @@ class user_expiry {
 			} else {
 				$subtabs = array();
 			}
-			$subtabs[gettext('users')] = 'admin-users.php?page=users&tab=users';
-			$subtabs[gettext('expiry')] = PLUGIN_FOLDER . '/user-expiry/user-expiry-tab.php?page=users&tab=expiry';
-			$tabs['users'] = array('text'		 => gettext("admin"),
-							'link'		 => WEBPATH . "/" . ZENFOLDER . '/admin-users.php?page=users&tab=users',
-							'subtabs'	 => $subtabs,
-							'default'	 => 'users');
+			$subtabs[gettext('users')] = FULLWEBPATH . '/' . ZENFOLDER . '/' . 'admin-users.php?page=users&tab=users';
+			$subtabs[gettext('expiry')] = FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/user-expiry/user-expiry-tab.php?page=users&tab=expiry';
+			$tabs['users'] = array(
+					'text' => gettext("admin"),
+					'link' => FULLWEBPATH . '/' . ZENFOLDER . '/admin-users.php?page=users&tab=users',
+					'subtabs' => $subtabs,
+					'default' => 'users');
 		}
 		return $tabs;
 	}
 
 	private static function checkexpires($loggedin, $userobj) {
-		global $_zp_gallery;
+		global $_zp_gallery, $_zp_current_admin_obj;
 
 		if ($userobj->logout_link !== true) {
 			return $loggedin;
@@ -124,6 +133,7 @@ class user_expiry {
 		$expires = strtotime($userobj->getDateTime()) + $subscription;
 		if ($expires < time()) {
 			$userobj->setValid(2);
+			$userobj->setLastChangeUser($_zp_current_admin_obj->getUser());
 			$userobj->save();
 			$loggedin = false;
 		} else {
@@ -141,6 +151,7 @@ class user_expiry {
 						unset($credentials[$key]);
 						$userobj->setCredentials($credentials);
 					}
+					$userobj->setLastChangeUser($_zp_current_admin_obj->getUser());
 					$userobj->save();
 				} else {
 					if ($mail = $userobj->getEmail()) {
@@ -148,6 +159,7 @@ class user_expiry {
 						if (!in_array('exiry_notice', $credentials)) {
 							$credentials[] = 'exiry_notice';
 							$userobj->setCredentials($credentials);
+							$userobj->setLastChangeUser($_zp_current_admin_obj->getUser());
 							$userobj->save();
 							$message = sprintf(gettext('Your user id for the Zenphoto site %s will expire on %s.'), $_zp_gallery->getTitle(), date('Y-m-d', $expires));
 							$notify = zp_mail(get_language_string(gettext('User id expiration')), $message, array($userobj->getName() => $mail));
@@ -160,6 +172,7 @@ class user_expiry {
 				if ($key !== false) {
 					unset($credentials[$key]);
 					$userobj->setCredentials($credentials);
+					$userobj->setLastChangeUser($_zp_current_admin_obj->getUser());
 					$userobj->save();
 				}
 			}
@@ -249,16 +262,15 @@ class user_expiry {
 				$userobj->setCredentials($credentials);
 				$userobj->setValid(1);
 				$userobj->set('loggedin', date('Y-m-d H:i:s'));
+				$userobj->setLastChangeUser($_zp_current_admin_obj->getUser());
 				$userobj->save();
 
 				Zenphoto_Authority::logUser($userobj);
-				header("Location: " . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
-				exitZP();
+				redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
 			}
 		}
 		if (user_expiry::checkPasswordRenew()) {
-			header("Location: " . FULLWEBPATH . '/' . ZENFOLDER . '/admin-users.php?page=users&tab=users');
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-users.php?page=users&tab=users');
 		}
 		return $path;
 	}

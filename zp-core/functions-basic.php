@@ -120,7 +120,12 @@ if (!defined('SERVERPATH')) {
 unset($const_serverpath);
 
 // Including the config file more than once is OK, and avoids $conf missing.
-eval('?>' . file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE));
+if (OFFSET_PATH != 2 && !file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
+	require_once(dirname(__FILE__) . '/reconfigure.php');
+	reconfigureAction(1);
+} else {
+	eval('?>' . file_get_contents(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE));
+}
 
 // If the server protocol is not set, set it to the default.
 if (!isset($_zp_conf_vars['server_protocol'])) {
@@ -128,7 +133,11 @@ if (!isset($_zp_conf_vars['server_protocol'])) {
 }
 
 //NOTE: SERVER_PROTOCOL is the option, PROTOCOL is what should be used in links
-define('SERVER_PROTOCOL', $_zp_conf_vars['server_protocol']);
+if (isset($_zp_conf_vars['server_protocol'])) {
+	define('SERVER_PROTOCOL', $_zp_conf_vars['server_protocol']);
+} else {
+	define('SERVER_PROTOCOL', 'http');
+}
 switch (SERVER_PROTOCOL) {
 	case 'https':
 		define('PROTOCOL', 'https');
@@ -141,11 +150,6 @@ switch (SERVER_PROTOCOL) {
 		}
 		break;
 }
-if (OFFSET_PATH != 2 && !file_exists(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE)) {
-	require_once(dirname(__FILE__) . '/reconfigure.php');
-	reconfigureAction(1);
-}
-
 
 // Silently setup default rewrite tokens if missing completely or partly from current config file
 if (!isset($_zp_conf_vars['special_pages'])) {
@@ -178,7 +182,16 @@ if(file_exists(SERVERPATH . '/' . DATA_FOLDER . '/setup.log')) {
 }
 if (!defined('DATABASE_SOFTWARE') && extension_loaded(strtolower(@$_zp_conf_vars['db_software']))) {
 	require_once(dirname(__FILE__) . '/functions-db-' . $_zp_conf_vars['db_software'] . '.php');
-	$data = db_connect(array_intersect_key($_zp_conf_vars, array('db_software' => '', 'mysql_user' => '', 'mysql_pass' => '', 'mysql_host' => '', 'mysql_database' => '', 'mysql_prefix' => '', 'UTF-8' => '')), false);
+	$dbarray = array(
+			'db_software' => '',
+			'mysql_user' => '',
+			'mysql_pass' => '',
+			'mysql_host' => '',
+			'mysql_database' => '',
+			'mysql_port' => '',
+			'mysql_prefix' => '',
+			'UTF-8' => '');
+	$data = db_connect(array_intersect_key($_zp_conf_vars, $dbarray), false);
 } else {
 	$data = false;
 }
@@ -275,9 +288,9 @@ if ($c = getOption('zenphoto_cookie_path')) {
 }
 
 define('SERVER_HTTP_HOST', PROTOCOL . "://" . $_SERVER['HTTP_HOST']);
-define('SAFE_MODE', preg_match('#(1|ON)#i', ini_get('safe_mode')));
+define('SAFE_MODE', false);
 define('FULLWEBPATH', SERVER_HTTP_HOST . WEBPATH);
-define('SAFE_MODE_ALBUM_SEP', '__');
+define('SAFE_MODE_ALBUM_SEP', '');
 define('SERVERCACHE', SERVERPATH . '/' . CACHEFOLDER);
 define('MOD_REWRITE', getOption('mod_rewrite'));
 
@@ -463,6 +476,29 @@ function loadLocalOptions($albumid, $theme) {
 	}
 }
 
+/**
+ * Replaces/renames an option. If the old option exits, it creates the new option with the old option's value as the default 
+ * unless the new option has already been set otherwise. Independently it always deletes the old option.
+ * 
+ * @param string $oldkey Old option name
+ * @param string $newkey New option name
+ * 
+ * @since Zenphoto 1.5.1
+ */
+function replaceOption($oldkey, $newkey) {
+	$oldoption = getOption($oldkey);
+	if ($oldoption) {
+		setOptionDefault($newkey, $oldoption);
+		purgeOption($oldkey);
+	}
+}
+
+/**
+ * Deletes an option from the database 
+ * 
+ * @global array $_zp_options
+ * @param string $key
+ */
 function purgeOption($key) {
 	global $_zp_options;
 	unset($_zp_options[strtolower($key)]);
@@ -598,12 +634,7 @@ function getImageCacheFilename($album8, $image8, $args) {
 	if (empty($album)) {
 		$albumsep = '';
 	} else {
-		if (SAFE_MODE) {
-			$albumsep = SAFE_MODE_ALBUM_SEP;
-			$album = str_replace(array('/', "\\"), $albumsep, $album);
-		} else {
-			$albumsep = '/';
-		}
+		$albumsep = '/';
 	}
 	if (getOption('obfuscate_cache')) {
 		$result = '/' . $album . $albumsep . sha1($image . HASH_SEED . $postfix) . '.' . $image . $postfix . '.' . $suffix;
@@ -734,7 +765,7 @@ function getImageParameters($args, $album = NULL) {
 			}
 			break;
 	}
-
+	
 	// Round each numeric variable, or set it to false if not a number.
 	list($width, $height, $cw, $ch, $quality) = array_map('sanitize_numeric', array($width, $height, $cw, $ch, $quality));
 	if (!is_null($cx)) {
@@ -1092,7 +1123,7 @@ function rewrite_path($rewrite, $plain, $webpath = NULL) {
 	} else {
 		$path = $plain;
 	}
-	if ($path{0} == "/") {
+	if ($path[0] == "/") {
 		$path = substr($path, 1);
 	}
 	return $webpath . "/" . $path;
@@ -1505,6 +1536,10 @@ function secureServer() {
 		}
 	} elseif (isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] )) {
 		return true;
+	} elseif (isset($_SERVER['HTTP_FORWARDED']) && preg_match("/^(.+[,;])?\s*proto=https\s*([,;].*)$/", strtolower($_SERVER['HTTP_FORWARDED']))) {
+		return true;
+	} elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && ('https' == strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']))) {
+		return true;
 	}
 	return false;
 }
@@ -1553,7 +1588,7 @@ function safe_glob($pattern, $flags = 0) {
 	if (($dir = opendir($path)) !== false) {
 		$glob = array();
 		while (($file = readdir($dir)) !== false) {
-			if (@preg_match($match, $file) && $file{0} != '.') {
+			if (@preg_match($match, $file) && $file[0] != '.') {
 				if (is_dir("$path/$file")) {
 					if ($flags & GLOB_MARK)
 						$file.='/';
@@ -1706,6 +1741,50 @@ function addMissingDefaultRewriteTokens() {
 }
 
 /**
+ * Sends a simple cURL request to the $uri specified.
+ * 
+ * @param string $uri The uri to send the request to. Sets `curl_setopt($ch, CURLOPT_URL, $uri);`
+ * @param array $options An array of cURL options to set (uri is set via the separate parameter)
+ * Default is if nothing is set:
+ *	array(
+ *		CURLOPT_RETURNTRANSFER => true,
+ *		CURLOPT_TIMEOUT => 2000
+ * )
+ * See http://php.net/manual/en/function.curl-setopt.php for more info
+ * @return boolean
+ */
+function curlRequest($uri, $options = array()) {
+	if (function_exists('curl_init')) {
+		$defaultoptions = array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_TIMEOUT => 2000,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_MAXREDIRS => 3
+		);
+		if (empty($options) || !is_array($options)) {
+			$options = $defaultoptions;
+		}
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $uri);
+		curl_setopt_array($ch, $options);
+		$curl_exec = curl_exec($ch);
+		if ($curl_exec === false) {
+			debugLog(gettext('ERROR: cURL request failed: ') . curl_error($ch));
+			$result = false;
+		} else if (trim($curl_exec) == false) {
+			debugLogVar(gettext('NOTICE: cURL request not successful.'), curl_getinfo($ch));
+			$result = false;
+		} else {
+			$result = $curl_exec;
+		}
+		curl_close($ch);
+		return $result;
+	}
+	debugLog(gettext('ERROR: Your server does not support cURL.'));
+	return false;
+}
+
+/**
  * Sends a cURL request to i.php to generate the image requested without printing it.
  * Returns the uri to the cache version of the image on success or false. 
  * It also returns false if cURL is not available.
@@ -1718,26 +1797,111 @@ function generateImageCacheFile($imageuri) {
 	if (strpos($imageuri, SERVER_HTTP_HOST) === false) {
 		$uri = SERVER_HTTP_HOST . pathurlencode($uri) . '&returnmode';
 	}
-	if (function_exists('curl_init')) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $uri);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 2000);
-		$curl_exec = curl_exec($ch);
-		if ($curl_exec === false) {
-			debuglog(gettext('ERROR: Image generation via cURL failed: ') . curl_error($ch));
-			return false;
-		} else if (empty(trim($curl_exec))) {
-			debuglog(gettext('ERROR: Image generation returned no image url.'));
-			return false;
-		} else {
-			// this should be the cache image uri if all worked out…
-			return $curl_exec;
-		}
-		curl_close($ch);
+	return curlRequest($uri);
+}
+
+/**
+ * Checks if protocol not https and redirects if https required
+ * @param string $type Tpye to redirect "backend" (default) or "frontend"
+ */
+function httpsRedirect($type = 'backend') {
+	$redirect_url = SERVER_HTTP_HOST . getRequestURI();
+	switch ($type) {
+		case 'backend':
+			if (SERVER_PROTOCOL == 'https_admin' || SERVER_PROTOCOL == 'https') {
+				// force https login
+				if (!secureServer()) {
+					redirectURL($redirect_url);
+				}
+			}
+			break;
+		case 'frontend':
+			if ((PROTOCOL == 'https' && !secureServer()) || (PROTOCOL == 'http' && secureServer())) {
+				redirectURL($redirect_url, '301');
+			}
+			break;
 	}
-	debuglog(gettext('ERROR: generateImage() does not work because the PHP extension cURL is not available.'));
-	return false;
+}
+
+/**
+ * General url redirection handler using header()
+ * 
+ * @since ZenphotoCMS 1.5.2
+ * 
+ * @param string $url A full qualified url
+ * @param string $statuscode Default null (no status header). Enter the status header code to send. Currently supported: 
+ *			200, 301, 302, 401, 403, 404 (more may be added if needed later on)
+ *			If you need custom headers not supported just set to null and add them separately before calling this function.
+ * @param bool $allowexternal True to allow redirections outside of the current domain (does not cover subdomains!). Default false.
+ */
+function redirectURL($url, $statuscode = null, $allowexternal = false) {
+	$redirect_url = sanitize($url);
+	if (!$allowexternal) {
+		sanitizeRedirect($redirect_url);
+	}
+	switch ($statuscode) {
+		case '200':
+			header("HTTP/1.0 200 OK");
+			header("Status: 200 OK");
+			break;
+		case '301':
+			header("HTTP/1.1 301 Moved Permanently");
+			header("Status: 301 Moved Permanently");
+			break;
+		case '302':
+			header("HTTP/1.1 302 Found");
+			header("Status: 302 Found");
+			break;
+		case '401':
+			header("HTTP/1.1 401 Unauthorized");
+			header("Status: 401 Unauthorized");
+			break;
+		case '403':
+			header("HTTP/1.1 403 Forbidden");
+			header("Status: 403 Forbidden");
+			break;
+		case '404':
+			header("HTTP/1.1 404 Not found");
+			header("Status: 404 Not found");
+			break;
+	}
+	header('Location: ' . $redirect_url);
+	exitZP();
+}
+
+/**
+ * Sanitizes a "redirect" post to always be within the site
+ * @param string $redirectTo
+ * @return string
+ */
+function sanitizeRedirect($redirectTo) {
+	$redirect = NULL;
+	if ($redirectTo && $redir = parse_url($redirectTo)) {
+		if (isset($redir['scheme']) && isset($redir['host'])) {
+			$redirect = $redir['scheme'] . '://' . sanitize($redir['host']);
+		}
+		if (defined('SERVER_HTTP_HOST') && $redirect != SERVER_HTTP_HOST) {
+			$redirect = SERVER_HTTP_HOST;
+		}
+		if (defined('WEBPATH') && !empty(WEBPATH) && strpos($redirectTo, WEBPATH) === false) {
+			$redirect .= WEBPATH;
+		} 
+		if (isset($redir['path'])) {
+			$path = urldecode(sanitize($redir['path']));
+			//Prevent double slashes or missing slash with WEBPATH on subfolder installs
+			if(substr($path , 0, 1) != '/') {
+				$path = '/' . $path;
+			} 
+			$redirect .= $path;
+		}
+		if (isset($redir['query'])) {
+			$redirect .= '?' . sanitize($redir['query']);
+		}
+		if (isset($redir['fragment'])) {
+			$redirect .= '#' . sanitize($redir['fragment']);
+		}
+	}
+	return $redirect;
 }
 
 /**

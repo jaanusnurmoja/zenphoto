@@ -5,7 +5,7 @@
  * stores all the default values for options
  * @package setup
  */
-setupLog(gettext('Set Zenphoto default options'), true);
+setup::Log(gettext('Set Zenphoto default options'), true);
 
 require(SERVERPATH . '/' . DATA_FOLDER . '/' . CONFIGFILE);
 require_once(dirname(dirname(__FILE__)) . '/' . PLUGIN_FOLDER . '/security-logger.php');
@@ -26,9 +26,8 @@ $salt = 'abcdefghijklmnopqursuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~!@#$%^&*
 $list = range(0, strlen($salt) - 1);
 shuffle($list);
 for ($i = 0; $i < 30; $i++) {
-	$lib_auth_extratext = $lib_auth_extratext . $salt{$list[$i]};
+	$lib_auth_extratext = $lib_auth_extratext . $salt[$list[$i]];
 }
-
 
 purgeOption('zenphoto_release');
 purgeOption('zenphoto_version');
@@ -48,7 +47,7 @@ if (Zenphoto_Authority::$preferred_version > ($oldv = getOption('libauth_version
 		$msg .= ': ' . gettext('failed');
 	}
 	echo $msg;
-	setupLog($msg, true);
+	setup::Log($msg, true);
 }
 $admins = $_zp_authority->getAdministrators('all');
 
@@ -76,24 +75,21 @@ $conf = $_zp_conf_vars;
 setOptionDefault('time_offset', 0);
 setOption('mod_rewrite_detected', 0);
 if (isset($_GET['mod_rewrite'])) {
-	?>
-	<script type="text/javascript">
-		$(function() {
-			$('img').error(function() {
-				var link = $(this).attr('src');
-				var title = $(this).attr('title');
-				$(this).parent().html('<a href="' + link + '"><img src="../images/fail.png" title="' + title + '"></a>');
-				imageErr = true;
+	if (!function_exists('curl_init')) {
+		?>
+		<script type="text/javascript">
+			$(function() {
+				$('img').error(function() {
+					var link = $(this).attr('src');
+					var title = $(this).attr('title');
+					$(this).parent().html('<a href="' + link + '"><img src="../images/fail.png" title="' + title + '"></a>');
+					imageErr = true;
+				});
 			});
-		});
-	</script>
-	<p>
-		<?php echo gettext('Mod_Rewrite check:'); ?>
-		<br />
-		<span>
-			<img src="<?php echo FULLWEBPATH . '/' . $_zp_conf_vars['special_pages']['page']['rewrite']; ?>/setup_set-mod_rewrite?z=setup" title="<?php echo gettext('Mod_rewrite'); ?>" alt="<?php echo gettext('Mod_rewrite'); ?>" height="16px" width="16px" />
-		</span>
-	</p>
+		</script>
+	<?php } ?>
+	<p><?php echo gettext('Mod_Rewrite check:'); ?></p>
+	<?php setup::defaultOptionsRequest(gettext('Mod_rewrite'), 'modrewrite'); ?>
 	<?php
 }
 
@@ -117,7 +113,7 @@ if (getOption('perform_watermark')) {
 setOptionDefault('watermark_h_offset', 90);
 setOptionDefault('watermark_w_offset', 90);
 setOptionDefault('watermark_scale', 5);
-setOptionDefault('watermark_allow_upscale', 1);
+purgeOption('watermark_allow_upscale');
 setOptionDefault('perform_video_watermark', 0);
 
 if (getOption('perform_video_watermark')) {
@@ -131,8 +127,7 @@ setOptionDefault('hotlink_protection', '1');
 
 setOptionDefault('search_fields', 'title,desc,tags,file,location,city,state,country,content,author');
 
-$a = "a => (href =>() title =>() target=>() class=>() id=>() rel=>())\n" .
-				"abbr =>(class=>() id=>() title =>())\n" .
+$style_tags = "abbr =>(class=>() id=>() title =>())\n" .
 				"acronym =>(class=>() id=>() title =>())\n" .
 				"b => (class=>() id=>() )\n" .
 				"blockquote =>(class=>() id=>() cite =>())\n" .
@@ -142,6 +137,11 @@ $a = "a => (href =>() title =>() target=>() class=>() id=>() rel=>())\n" .
 				"i => (class=>() id=>()) \n" .
 				"strike => (class=>() id=>())\n" .
 				"strong => (class=>() id=>())\n" .
+				"sup => (class=>() id=>())\n" .
+				"sub => (class=>() id=>())\n"
+;
+
+$general_tags = "a => (href =>() title =>() target=>() class=>() id=>() rel=>())\n" .
 				"ul => (class=>() id=>())\n" .
 				"ol => (class=>() id=>())\n" .
 				"li => (class=>() id=>())\n" .
@@ -156,20 +156,32 @@ $a = "a => (href =>() title =>() target=>() class=>() id=>() rel=>())\n" .
 				"address=>(class=>() id=>() style=>())\n" .
 				"span=>(class=>() id=>() style=>())\n" .
 				"div=>(class=>() id=>() style=>())\n" .
-				"img=>(class=>() id=>() style=>() src=>() title=>() alt=>() width=>() height=>())\n" .
-				"iframe=>(class=>() id=>() style=>() src=>() title=>() width=>() height=>())\n"
+				"img=>(class=>() id=>() style=>() src=>() title=>() alt=>() width=>() height=>() size=>() srcset=>())\n" .
+				"iframe=>(class=>() id=>() style=>() src=>() title=>() width=>() height=>())\n" .
+				"figure=>(class=>() id=>() style=>())\n" .
+				"figcaption=>(class=>() id=>() style=>())\n" .
+				"article=>(class=>() id=>() style=>())\n" .
+				"section => (class=>() id=>() style=>())\n" .
+				"nav => (class=>() id=>() style=>())\n" .
+				"video => (class=>() id=>() style=>() src=>() controls=>() autoplay=>() buffered=>() height=>() width=>() loop=>() muted=>() preload=>() poster=>())\n" .
+				"audio => (class=>() id=>() style=>() src=>() controls=>() autoplay=>() buffered=>() height=>() width=>() loop=>() muted=>() preload=>() volume=>())\n" .
+				"picture=>(class=>() id=>())\n" .
+				"source=>(src=>() scrset=>() size=>() type=>() media=>())\n" .
+				"track=>(src=>() kind=>() scrlang=>() label=>() default=>())\n" .
+				"table => (class=>() id=>())\n" .
+				"caption => (class=>() id=>())\n" .
+				"th => (class=>() id=>())\n" .
+				"tr => (class=>() id=>())\n" .
+				"td => (class=>() id=>() colspan=>())\n" .
+				"thead => (class=>() id=>())\n" .
+				"tbody => (class=>() id=>())\n" .
+				"tfoot => (class=>() id=>())\n" .
+				"colgroup => (class=>() id=>())\n" .
+				"col => (class=>() id=>())\n"
 ;
-setOption('allowed_tags_default', $a);
-setOptionDefault('allowed_tags', $a);
-setOptionDefault('style_tags', "abbr => (title => ())\n" .
-				"acronym => (title => ())\n" .
-				"b => ()\n" .
-				"em => ()\n" .
-				"i => () \n" .
-				"strike => ()\n" .
-				"strong => ()\n");
-//	insure tags are in lower case!
-setOption('allowed_tags', strtolower(getOption('allowed_tags')));
+setOption('allowed_tags_default', $style_tags . $general_tags);
+setOptionDefault('allowed_tags', $style_tags . $general_tags);
+setOptionDefault('style_tags', strtolower($style_tags));
 
 setOptionDefault('full_image_quality', 75);
 
@@ -199,6 +211,7 @@ setOptionDefault('multi_lingual', 0);
 setOptionDefault('tagsort', 0);
 setOptionDefault('albumimagesort', 'ID');
 setOptionDefault('albumimagedirection', 'DESC');
+setOptionDefault('albumimagesort_status', 'all');
 setOptionDefault('cache_full_image', 0);
 setOptionDefault('custom_index_page', '');
 setOptionDefault('picture_of_the_day', serialize(array('day' => NULL, 'folder' => NULL, 'filename' => NULL)));
@@ -299,18 +312,9 @@ if (!in_array('newuser', $groupsdefined)) {
 }
 setOption('defined_groups', serialize($groupsdefined)); // record that these have been set once (and never again)
 
-setOptionDefault('RSS_album_image', 1);
-setOptionDefault('RSS_comments', 1);
-setOptionDefault('RSS_articles', 1);
-setOptionDefault('RSS_pages', 1);
-setOptionDefault('RSS_article_comments', 1);
-
 setOptionDefault('AlbumThumbSelect', 1);
 purgeOption('AlbumThumbSelectField');
 purgeOption('AlbumThumbSelectDirection');
-
-setOptionDefault('menu_truncate_string', 0);
-setOptionDefault('menu_truncate_indicator', '');
 
 setOptionDefault('site_email', "zenphoto@" . $_SERVER['SERVER_NAME']);
 setOptionDefault('site_email_name', 'Zenphoto');
@@ -327,13 +331,9 @@ if (file_exists(SERVERPATH . '/' . ZENFOLDER . '/Zenphoto.package')) {
 <p>
 	<?php
 	natcasesort($themes);
-	echo gettext('Theme setup:') . '<br />';
+	echo '<p>' . gettext('Setting theme default options') . '</p>';
 	foreach (array_keys($_zp_gallery->getThemes()) as $theme) {
-		?>
-		<span>
-			<img src="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/setup/setup_themeOptions.php?theme=' . $theme; ?>" title="<?php echo $theme; ?>" alt="<?php echo $theme; ?>" height="16px" width="16px" />
-		</span>
-		<?php
+		setup::defaultOptionsRequest($theme, 'theme');
 	}
 	?>
 </p>
@@ -350,19 +350,7 @@ if (!file_exists(SERVERPATH . '/favicon.ico')) {
 }
 
 setOptionDefault('default_copyright', sprintf(gettext('Copyright %1$u: %2$s'), date('Y'), $_SERVER["HTTP_HOST"]));
-
-if (getOption('comment_name_required') == 1) {
-	setOption('comment_name_required', 'required');
-}
-if (getOption('comment_email_required') == 1) {
-	setOption('comment_email_required', 'required');
-}
-if (getOption('comment_web_required') == 1) {
-	setOption('comment_web_required', 'required');
-}
-
 setOptionDefault('fullsizeimage_watermark', getOption('fullimage_watermark'));
-
 
 $data = getOption('gallery_data');
 if ($data) {
@@ -413,7 +401,7 @@ if (!isset($data['hitcounter']))
 if (!isset($data['current_theme'])) {
 	$data['current_theme'] = getOption('current_theme');
 	if (is_null($data['current_theme'])) {
-		$data['current_theme'] = 'default';
+		$data['current_theme'] = 'basic';
 	}
 }
 if (!isset($data['website_title']))
@@ -465,32 +453,36 @@ setOption('gallery_data', serialize($data));
 
 $_zp_gallery = new Gallery(); // insure we have the proper options instantiated
 
-/* TODO:enable on the 1.4.7 release
+/*
  *
-  The following options have been relocated to methods of the gallery object. They will be purged form installations
-  on the Zenphoto 1.5 release.
-
-  gallery_page_unprotected_xxx
-  gallery_sortdirection
-  gallery_sorttype
-  gallery_title
-  Gallery_description
-  gallery_password
-  gallery_user
-  gallery_hint
-  current_theme
-  website_title
-  website_url
-  gallery_security
-  login_user_field
-  album_use_new_image_date
-  thumb_select_images
-  album_default
-  image_default
-
- * these may have been used in third party themes. Themes should cease using these options and instead use the
-  appropriate gallery methods.
+ * The following options have been relocated in 1.4.7 to methods of the gallery object. They will be purged form installations
+ * on the Zenphoto 1.5 release.
+ * 
+ * these may have been used in third party themes. Themes should cease using these options and instead use the appropriate gallery methods.
  */
+$unprotectedpages = query_full_array("SELECT name FROM " . prefix('options') . " WHERE name LIKE 'gallery_page_unprotected_%' ");
+if ($unprotectedpages) {
+	foreach ($unprotectedpages as $unprotectedpage) {
+		purgeOption($unprotectedpage['name']);
+	}
+}
+purgeOption('gallery_sortdirection');
+purgeOption('gallery_sorttype');
+purgeOption('gallery_title');
+purgeOption('Gallery_description');
+purgeOption('gallery_password');
+purgeOption('gallery_user');
+purgeOption('gallery_hint');
+purgeOption('current_theme');
+purgeOption('website_title');
+purgeOption('website_url');
+purgeOption('gallery_security');
+purgeOption('login_user_field');
+purgeOption('album_use_new_image_date');
+purgeOption('thumb_select_images');
+purgeOption('album_default');
+purgeOption('image_default');
+
 if (TEST_RELEASE) {
 	foreach ($data as $key => $option) {
 		purgeOption($key);
@@ -606,7 +598,7 @@ foreach ($_languages as $language => $dirname) {
 		if (is_null(getOption('disallow_' . $dirname)) && $version < $zpversion) {
 			setOptionDefault('disallow_' . $dirname, 1);
 		}
-		if (setupLocale($dirname)) {
+		if (setup::Locale($dirname)) {
 			purgeOption('unsupported_' . $dirname);
 		} else {
 			setOption('unsupported_' . $dirname, 1);
@@ -622,13 +614,9 @@ $plugins = getPluginFiles('*.php');
 	<?php
 	$plugins = array_keys($plugins);
 	natcasesort($plugins);
-	echo gettext('Plugin setup:') . '<br />';
+	echo '<p>' . gettext('Plugin setup:') . '</p>';
 	foreach ($plugins as $extension) {
-		?>
-		<span>
-			<img src="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/setup/setup_pluginOptions.php?plugin=' . $extension; ?>" title="<?php echo $extension; ?>" alt="<?php echo $extension; ?>" height="16px" width="16px" />
-		</span>
-		<?php
+		setup::defaultOptionsRequest($extension, 'plugin');
 	}
 	?>
 </p>

@@ -51,7 +51,7 @@ class comment_form {
 		setOptionDefault('email_new_comments', 1);
 		setOptionDefault('comment_name_required', 'required');
 		setOptionDefault('comment_email_required', 'required');
-		setOptionDefault('comment_web_required', 'show');
+		setOptionDefault('comment_web_required', 1);
 		setOptionDefault('Use_Captcha', false);
 		setOptionDefault('comment_form_addresses', 0);
 		setOptionDefault('comment_form_require_addresses', 0);
@@ -214,7 +214,7 @@ class comment_form {
 				if ($add && !in_array($key, array('overview', 'edit', 'upload', 'pages', 'news', 'tags', 'menu'))) {
 					$newtabs['comments'] = array(
 							'text' => gettext("comments"),
-							'link' => WEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&tab=' . gettext('comments'),
+							'link' => FULLWEBPATH . "/" . ZENFOLDER . '/' . PLUGIN_FOLDER . '/' . 'comment_form/admin-comments.php?page=comments&tab=' . gettext('comments'),
 							'subtabs' => NULL);
 					$add = false;
 				}

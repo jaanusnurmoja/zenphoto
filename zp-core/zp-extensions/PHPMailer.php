@@ -88,6 +88,7 @@ class zp_PHPMailer {
 //Import the PHPMailer class into the global namespace
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\POP3;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 function zenphoto_PHPMailer($msg, $email_list, $subject, $message, $from_mail, $from_name, $cc_addresses, $replyTo) {
@@ -119,6 +120,7 @@ function zenphoto_PHPMailer($msg, $email_list, $subject, $message, $from_mail, $
 			break;
 	}
 	$mail->SMTPSecure = getOption('PHPMailer_secure');
+	$mail->SMTPAutoTLS = (bool) $mail->SMTPSecure;
 	$mail->CharSet = 'UTF-8';
 	$mail->From = $from_mail;
 	$mail->FromName = $from_name;

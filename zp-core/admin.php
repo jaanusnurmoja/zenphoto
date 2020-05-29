@@ -39,8 +39,7 @@ if (zp_loggedin() && !empty($zenphoto_tabs)) {
 		// admin access without overview rights, redirect to first tab
 		$tab = array_shift($zenphoto_tabs);
 		$link = $tab['link'];
-		header('location:' . $link);
-		exitZP();
+		redirectURL($link);
 	}
 } else {
 	if (isset($_GET['from'])) {
@@ -247,8 +246,8 @@ if (!zp_loggedin()) {
 							'enable' => true,
 							'button_text' => gettext('Setup » restore scripts'),
 							'formname' => 'restore_setup.php',
-							'action' => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=restore_setup',
-							'icon' => 'images/lock_open.png',
+							'action' => FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?action=restore_setup',
+							'icon' => FULLWEBPATH . '/' . ZENFOLDER . '/images/lock_open.png',
 							'alt' => '',
 							'title' => gettext('Restores setup files so setup can be run.'),
 							'hidden' => '<input type="hidden" name="action" value="restore_setup" />',
@@ -262,8 +261,8 @@ if (!zp_loggedin()) {
 							'enable' => true,
 							'button_text' => gettext('Setup » protect scripts'),
 							'formname' => 'restore_setup.php',
-							'action' => WEBPATH . '/' . ZENFOLDER . '/admin.php?action=protect_setup',
-							'icon' => 'images/lock_2.png',
+							'action' => FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?action=protect_setup',
+							'icon' => FULLWEBPATH . '/' . ZENFOLDER . '/images/lock_2.png',
 							'alt' => '',
 							'title' => gettext('Protects setup files so setup cannot be run.'),
 							'hidden' => '<input type="hidden" name="action" value="protect_setup" />',
@@ -278,8 +277,8 @@ if (!zp_loggedin()) {
 						'enable' => true,
 						'button_text' => gettext('Run setup'),
 						'formname' => 'run_setup.php',
-						'action' => WEBPATH . '/' . ZENFOLDER . '/setup.php',
-						'icon' => 'images/Zp.png',
+						'action' => FULLWEBPATH . '/' . ZENFOLDER . '/setup.php',
+						'icon' => FULLWEBPATH . '/' . ZENFOLDER . '/images/Zp.png',
 						'alt' => '',
 						'title' => gettext('Run the setup script.'),
 						'hidden' => '',
@@ -295,7 +294,7 @@ if (!zp_loggedin()) {
 					?>
 					<div class="warningbox">
 							<h2><?php echo gettext('Your Setup scripts are not protected.'); ?></h2>
-							<?php echo gettext('The Setup environment is not totally secure, you should protect the scripts to thwart hackers. Use the <strong>Setup » protect scripts</strong> button in the <em>Admin</em> section of the <em>Utility functions</em>. '); ?>
+							<?php echo gettext('The Setup environment is not totally secure, you should protect the scripts to thwart hackers. Use the <strong>Setup » protect scripts</strong> button in the <em>Admin</em> section of the <em>Utility functions</em>.'); ?>
 						</div>
 					<?php 
 				} ?>
@@ -387,6 +386,7 @@ if (!zp_loggedin()) {
 									printf(gettext('Current gallery theme: <strong>%1$s</strong>'), $currenttheme);
 									?>
 								</li>
+								<li><?php printf(gettext('Server software: <strong>%1$s</strong>'), html_encode($_SERVER['SERVER_SOFTWARE'])); ?></li>
 								<li><?php printf(gettext('PHP version: <strong>%1$s</strong>'), phpversion()); ?></li>
 								<?php
 								if (TEST_RELEASE) {

@@ -62,7 +62,7 @@ class rewriteTokens {
 				//Things have changed, need to reset to defaults;
 				setOption('rewriteTokens_restore', 1);
 				$this->handleOptionSave(NULL, NULL);
-				setupLog(gettext('rewriteTokens restored to default'), true);
+				setup::Log(gettext('rewriteTokens restored to default'), true);
 			}
 		} else {
 			enableExtension('rewriteTokens', 97 | ADMIN_PLUGIN); //	plugin must be enabled for saving options
@@ -207,7 +207,7 @@ class rewriteTokens {
 						'text' => gettext("development"),
 						'subtabs' => NULL);
 			}
-			$tabs['development']['subtabs'][gettext("tokens")] = PLUGIN_FOLDER . '/rewriteTokens/admin_tab.php?page=tokens&tab=' . gettext('tokens');
+			$tabs['development']['subtabs'][gettext("tokens")] = FULLWEBPATH . '/'. ZENFOLDER . '/'. PLUGIN_FOLDER . '/rewriteTokens/admin_tab.php?page=tokens&tab=' . gettext('tokens');
 			$named = array_flip($tabs['development']['subtabs']);
 			natcasesort($named);
 			$tabs['development']['subtabs'] = $named = array_flip($named);

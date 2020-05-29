@@ -148,7 +148,7 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 			var today = new Date();
 			var pub = $('#date').datepicker('getDate');
 			if (pub.getTime() > today.getTime()) {
-				$(".scheduledpublishing").html('<?php echo addslashes(gettext('Future publishing date:')); ?>');
+				$(".scheduledpublishing").html('<?php echo addslashes(gettext('Future publishing date')); ?>');
 			} else {
 				$(".scheduledpublishing").html('');
 			}
@@ -263,12 +263,7 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 							?>
 							<h1><?php echo gettext('Edit Article:'); ?> <em><?php checkForEmptyTitle($result->getTitle(), 'news', false); ?></em></h1>
 							<?php
-							if ($result->getDatetime() >= date('Y-m-d H:i:s')) {
-								echo '<small><strong id="scheduldedpublishing">' . gettext('(Article scheduled for publishing)') . '</strong></small>';
-								if ($result->getShow() != 1) {
-									echo '<p class="scheduledate"><small>' . gettext('<strong>Note:</strong> Scheduled publishing is not active unless the article is also set to <em>published</em>') . '</small></p>';
-								}
-							}
+							printScheduledPublishingNotes($result);
 							if ($result->inProtectedCategory()) {
 								echo '<p class="notebox">' . gettext('<strong>Note:</strong> This article belongs to a password protected category.') . '</p>';
 							}
@@ -282,12 +277,7 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 							?>
 							<h1><?php echo gettext('Edit Page:'); ?> <em><?php checkForEmptyTitle($result->getTitle(), 'page', false); ?></em></h1>
 							<?php
-							if ($result->getDatetime() >= date('Y-m-d H:i:s')) {
-								echo ' <small><strong id="scheduldedpublishing">' . gettext('(Page scheduled for publishing)') . '</strong></small>';
-								if ($result->getShow() != 1) {
-									echo '<p class="scheduledate"><small>' . gettext('Note: Scheduled publishing is not active unless the page is also set to <em>published</em>') . '</small></p>';
-								}
-							}
+							printScheduledPublishingNotes($result);
 							if ($result->getPassword()) {
 								echo '<p class="notebox">' . gettext('<strong>Note:</strong> This page is password protected.') . '</p>';
 							}
@@ -308,10 +298,7 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 								?>
 								<input type="hidden" name="id" value="<?php echo $result->getID(); ?>" />
 								<input type="hidden" name="titlelink-old" id="titlelink-old" value="<?php echo html_encode($result->getTitlelink()); ?>" />
-								<input type="hidden" name="lastchange" id="lastchange" value="<?php echo date('Y-m-d H:i:s'); ?>" />
-								<input type="hidden" name="lastchangeauthor" id="lastchangeauthor" value="<?php echo $_zp_current_admin_obj->getUser(); ?>" />
 								<input type="hidden" name="hitcounter" id="hitcounter" value="<?php echo $result->getHitcounter(); ?>" />
-
 								<?php
 								if (is_AdminEditPage("newsarticle")) {
 									$backurl = 'admin-news-articles.php?' . $page;
@@ -546,6 +533,9 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 															<?php
 														}
 													}
+													if (is_AdminEditPage("newscategory")) {
+														printLastChangeInfo($result);
+													}
 													if (!$result->transient && !is_AdminEditPage('newscategory')) {
 														?>
 														<label class="checkboxlabel">
@@ -607,8 +597,8 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 															<br />
 															<strong class='scheduledpublishing'>
 																<?php
-																if ($date > date('Y-m-d H:i:s')) {
-																	echo addslashes(gettext('Future publishing date:'));
+																if ($result->hasPublishSchedule()) {
+																	echo addslashes(gettext('Future publishing date'));
 																}
 																?>
 															</strong>
@@ -636,22 +626,17 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 															<br />
 															<input name="expiredate" type="text" id="expiredate" value="<?php echo $date; ?>" onchange="checkFutureExpiry();" />
 															<br />
-															<strong class='expire'>
+															<strong>
 																<?php
-																if (!empty($date) && ($date <= date('Y-m-d H:i:s'))) {
-																	echo '<br />' . gettext('This is not a future date!');
-																}
+																	if($result->hasExpired()) {
+																		echo '<span class="expired">' . gettext('Expired!') . '</span>';
+																	} else if($result->hasExpiration() || $result->hasInactiveExpiration()) {
+																		echo '<span class="expiredate">' . gettext('Expiration date set!') . '</span>';
+																	} 
 																?>
 															</strong>
 														</p>
-														<?php
-														if ($result->getLastchangeAuthor() != "") {
-															?>
-															<hr /><p><?php printf(gettext('Last change:<br />%1$s<br />by %2$s'), $result->getLastchange(), $result->getLastchangeauthor()); ?>
-															</p>
-															<?php
-														}
-														?>
+														<?php printLastChangeInfo($result);	?>
 													</div>
 
 													<h2 class="h2_bordered_edit"><?php echo gettext("General"); ?></h2>

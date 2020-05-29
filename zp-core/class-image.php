@@ -97,25 +97,26 @@ function isImageClass($image = NULL) {
  */
 class Image extends MediaObject {
 
-	var $filename; // true filename of the image.
-	var $exists = true; // Does the image exist?
-	var $webpath; // The full URL path to the original image.
-	var $localpath; // Latin1 full SERVER path to the original image.
-	var $displayname; // $filename with the extension stripped off.
-	var $album; // An album object for the album containing this image.
-	var $albumname; // The name of the album for which this image was instantiated. (MAY NOT be $this->album->name!!!!).
-	var $albumnamealbum; //	An album object representing the above;
-	var $albumlink; // "rewrite" verwion of the album name, eg. may not have the .alb
-	var $imagefolder; // The album folder containing the image (May be different from the albumname!!!!)
+	public $filename; // true filename of the image.
+	public $exists = true; // Does the image exist?
+	public $webpath; // The full URL path to the original image.
+	public $localpath; // Latin1 full SERVER path to the original image.
+	public $displayname; // $filename with the extension stripped off.
+	public $album; // An album object for the album containing this image.
+	public $albumname; // The name of the album for which this image was instantiated. (MAY NOT be $this->album->name!!!!).
+	public $albumnamealbum; //	An album object representing the above;
+	public $albumlink; // "rewrite" verwion of the album name, eg. may not have the .alb
+	public $imagefolder; // The album folder containing the image (May be different from the albumname!!!!)
 	protected $index; // The index of the current image in the album array.
 	protected $sortorder; // The position that this image should be shown in the album
-	var $filemtime; // Last modified time of this image
-	var $sidecars = array(); // keeps the list of suffixes associated with this image
-	var $manage_rights = MANAGE_ALL_ALBUM_RIGHTS;
-	var $manage_some_rights = ALBUM_RIGHTS;
-	var $view_rights = ALL_ALBUMS_RIGHTS;
+	public $filemtime; // Last modified time of this image
+	public $sidecars = array(); // keeps the list of suffixes associated with this image
+	public $manage_rights = MANAGE_ALL_ALBUM_RIGHTS;
+	public $manage_some_rights = ALBUM_RIGHTS;
+	public $view_rights = ALL_ALBUMS_RIGHTS;
 	// Plugin handler support
-	var $objectsThumb = NULL; // Thumbnail image for the object
+	public $objectsThumb = NULL; // Thumbnail image for the object
+	protected $is_public = null;
 
 	/**
 	 * Constructor for class-image
@@ -152,8 +153,9 @@ class Image extends MediaObject {
 		$album_name = $album->name;
 		$new = $this->instantiate('images', array('filename' => $filename, 'albumid' => $this->album->getID()), 'filename', false, empty($album_name));
 		if ($new || $this->filemtime != $this->get('mtime')) {
-			if ($new)
+			if ($new) {
 				$this->setTitle($this->displayname);
+			}
 			$this->updateMetaData(); // extract info from image
 			$this->updateDimensions(); // deal with rotation issues
 			$this->set('mtime', $this->filemtime);
@@ -171,6 +173,7 @@ class Image extends MediaObject {
 		global $_zp_gallery;
 		$this->setShow($_zp_gallery->getImagePublish());
 		$this->set('mtime', $this->filemtime);
+		$this->setLastChange();
 		$this->updateDimensions(); // deal with rotation issues
 	}
 
@@ -489,8 +492,9 @@ class Image extends MediaObject {
 				$this->setOwner($alb->getOwner());
 			}
 			$save = false;
-			if (strtotime($alb->getUpdatedDate()) < strtotime($this->getDateTime())) {
-				$alb->setUpdatedDate($this->getDateTime());
+			if (strtotime($alb->getUpdatedDate()) < strtotime(date('Y-m-d H:i:s'))) {
+				$alb->setUpdatedDate();
+				$alb->setUpdatedDateParents();
 				$save = true;
 			}
 			if (is_null($albdate = $alb->getDateTime()) || ($_zp_gallery->getAlbumUseImagedate() && strtotime($albdate) < strtotime($this->getDateTime()))) {
@@ -788,6 +792,7 @@ class Image extends MediaObject {
         $result = $result && @unlink($file);
       }
       if ($result) {
+				$this->setUpdatedDateAlbum();
         query("DELETE FROM " . prefix('obj_to_tag') . "WHERE `type`='images' AND `objectid`=" . $this->id);
         query("DELETE FROM " . prefix('comments') . "WHERE `type` ='images' AND `ownerid`=" . $this->id);
         $cachepath = SERVERCACHE . '/' . pathurlencode($this->album->name) . '/' . $this->filename;
@@ -796,6 +801,7 @@ class Image extends MediaObject {
           @chmod($file, 0777);
           @unlink($file);
         }
+				
       }
     }
     clearstatcache();
@@ -846,6 +852,10 @@ class Image extends MediaObject {
 		}
 		if ($result) {
 			if (parent::move(array('filename' => $newfilename, 'albumid' => $newalbum->getID()))) {
+				$this->setUpdatedDateAlbum();
+				$newalbum->setUpdatedDate();
+				$newalbum->save();
+				$newalbum->setUpdatedDateParents(); 
 				$this->set('mtime', filemtime($newpath));
 				$this->save();
 				return 0;
@@ -896,6 +906,9 @@ class Image extends MediaObject {
 			if ($newID = parent::copy(array('filename' => $filename, 'albumid' => $newalbum->getID()))) {
 				storeTags(readTags($this->getID(), 'images'), $newID, 'images');
 				query('UPDATE ' . prefix('images') . ' SET `mtime`=' . filemtime($newpath) . ' WHERE `filename`="' . $filename . '" AND `albumid`=' . $newalbum->getID());
+				$newalbum->setUpdatedDate(); 
+				$newalbum->save();
+				$newalbum->setUpdatedDateParents();
 				return 0;
 			}
 		}
@@ -1024,11 +1037,11 @@ class Image extends MediaObject {
 		}
 
 		if (($size && ($side == 'longest' && $h > $w) || ($side == 'height') || ($side == 'shortest' && $h < $w))) {
-// Scale the height
+			// Scale the height
 			$newh = $dim;
 			$neww = $wprop;
 		} else {
-// Scale the width
+			// Scale the width
 			$neww = $dim;
 			$newh = $hprop;
 		}
@@ -1267,13 +1280,61 @@ class Image extends MediaObject {
 		$album = $this->getAlbum();
 		return $album->checkforGuest($hint, $show);
 	}
-
+	
 	/**
 	 *
 	 * returns true if there is any protection on the image
 	 */
 	function isProtected() {
 		return $this->checkforGuest() != 'zp_public_access';
+	}
+	
+	/**
+	 * Returns true if this image is published and also its album and all of its parents.
+	 * 
+	 * @since Zenphoto 1.5.5
+	 * 
+	 * @return bool
+	 */
+	function isPublic() {
+		if (is_null($this->is_public)) {
+			if (!$this->getShow()) {
+				return $this->is_public = false;
+			}
+			$album = $this->getAlbum();
+			if(!$album->isPublic()) {
+				return $this->is_public = false;
+			}
+			return $this->is_public = true;
+		} else {
+			return $this->is_public;
+		}
+	}
+	
+	/**
+	 * Returns the filesize in bytes of the full image
+	 * 
+	 * @since ZenphotoCMS 1.5.2
+	 * 
+	 * @return int|false
+	 */
+	function getFilesize() {
+		$album = $this->getAlbum();
+		$filesize = filesize($this->getFullImage(SERVERPATH));
+		return $filesize;
+	}
+	
+	/**
+	 * Sets the current date to the images'album and all of its parent albums recursively
+	 * @since Zenphoto 1.5.5
+	 */
+	function setUpdatedDateAlbum() {
+		$album = $this->album;
+		if($album) {
+			$album->setUpdatedDate();
+			$album->save();
+			$album->setUpdatedDateParents();
+		}
 	}
 
 }

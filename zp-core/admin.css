@@ -80,6 +80,30 @@ em {
 	border-bottom: 1px solid #FF8A00;
 }
 
+.scrollup {
+	position:fixed;
+	bottom:45px;
+	right:5px;
+	display:block;
+	background: #191818;
+	color:#fff;
+	outline: none !important;
+	z-index:1000;
+	border-radius:45px;
+	padding: 0.3em 0.8em 0.3em 0.8em;
+	border: 0;
+	font-size: 1.4em;
+}
+
+.scrollup:hover,
+.scrollup:active,
+.scrollup:focus {
+	border: 0;
+	color: black;
+	text-decoration:none;
+	background: lightgray;
+}
+
 #links {
 	float: right;
 	font-size: 100%;
@@ -117,7 +141,7 @@ h1 {
 h2 {
 	font-size: 100%;
 	font-weight: bold;
-	margin: 0px 0px 5px 0px;
+	margin: 15px 0px 5px 0px;
 }
 
 h2.h2_bordered {
@@ -1359,7 +1383,7 @@ button.positive,.buttons a.positive {
 .resizeable_tagchecklist {
 	border: 1px solid #ccc;
 	list-style: none;
-	height: 120px;
+	height: 24em;
 	overflow: auto;
 	background-color: white;
 }
@@ -1446,6 +1470,7 @@ button.positive,.buttons a.positive {
 	height: 1%;
 }
 
+
 /* CSS for tag new lists
 -----------------------------*/
 .tagnewlist {
@@ -1480,7 +1505,7 @@ button.positive,.buttons a.positive {
 .searchchecklist {
 	border: 1px solid #ccc;
 	list-style: none;
-	height: 120px;
+	height: 18em;
 	width: 350px;
 	overflow: auto;
 	background-color: white;
@@ -1640,7 +1665,8 @@ button.positive,.buttons a.positive {
 .languagelist {
 	border: 1px solid #ccc;
 	list-style: none;
-	height: 8em;
+	height: 16em;
+	resize: vertical;
 	overflow: auto;
 	width: 350px;
 	background-color: white;
@@ -2002,6 +2028,7 @@ fieldset,
 .shortchecklist {
 	border: 1px solid #ccc;
 	list-style: none;
+	resize: vertical;
 	height: 10em;
 	width: 19.5em;
 	overflow: auto;
@@ -2317,13 +2344,17 @@ div.tabs>div h2 {
 	top: 8px;
 }
 
+.flags {
+	padding: 0;
+}
+
 .flags img {
 	border: none;
 	vertical-align: -15%;
 }
 
 .flags li {
-	display: inline;
+	display: inline-block;
 	padding: 5px;
 }
 
@@ -2650,11 +2681,21 @@ Tooltip styling
 	list-style-type: none;
 	float: left;
 	margin: 0 8px 8px 0;
+	position: relative;
 }
 
 #images li p {
 	margin: -5px 0 0 0 !important;
 	padding: 0;
+}
+
+#images .images_publishstatus {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	background: rgba(0,0,0,0.5);
+	padding: 0 1px 0 1px;
+	line-height: 1em;
 }
 
 /* definition lists */
@@ -2723,4 +2764,38 @@ form.dirty input[type=submit]:active{
 
 .clearfix:after {
   clear: both !important; 
+}
+
+.language_string_listbox,
+.zenpage_language_string_listbox {
+	resize: vertical !important;
+	overflow: scroll;
+}
+
+/* scheduled publishing
+--------------------------*/
+.scheduledpublishing {
+	color: orange !important;
+	font-weight: normal;
+}
+
+.scheduledate {
+	color: orange !important;
+	font-weight: normal;
+}
+
+.inactivescheduledate {
+	color: lightsalmon !important;
+	font-weight: normal;
+}
+
+.expiredate {
+	color: blue !important;
+	font-weight: normal;
+}
+
+.expire,
+.expired {
+	color: red !important;
+	font-weight: normal;
 }

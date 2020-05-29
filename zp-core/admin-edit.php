@@ -35,8 +35,7 @@ if (isset($_GET['album'])) {
 		$allow = $album->isMyItem(ALBUM_RIGHTS);
 		if (!$allow) {
 			if (isset($_GET['uploaded'])) { // it was an upload to an album which we cannot edit->return to sender
-				header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?uploaded=1');
-				exitZP();
+				redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?uploaded=1');
 			}
 		}
 	} else {
@@ -45,8 +44,7 @@ if (isset($_GET['album'])) {
 	}
 }
 if (!zp_apply_filter('admin_managed_albums_access', $allow, $return)) {
-	header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?from=' . $return);
-	exitZP();
+	redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?from=' . $return);
 }
 
 $tagsort = getTagOrder();
@@ -86,8 +84,7 @@ if (isset($_GET['action'])) {
 					$notify = '&bulkmessage=' . $notify;
 				}
 			}
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $notify);
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $notify);
 			break;
 		case 'savesubalbumorder':
 			XSRFdefender('savealbumorder');
@@ -102,6 +99,7 @@ if (isset($_GET['action'])) {
 					$album = newAlbum($folder);
 					$album->setSortType('manual', 'album');
 					$album->setSortDirection(false, 'album');
+					$album->setLastchangeUser($_zp_current_admin_obj->getUser());
 					$album->save();
 				} else {
 					$notify = '&noaction';
@@ -114,8 +112,7 @@ if (isset($_GET['action'])) {
 					$notify = '&bulkmessage=' . $notify;
 				}
 			}
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . $folder . '&tab=subalbuminfo' . $notify);
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . $folder . '&tab=subalbuminfo' . $notify);
 			break;
 		case 'sorttags':
 			if (isset($_GET['subpage'])) {
@@ -125,8 +122,7 @@ if (isset($_GET['action'])) {
 				$pg = '';
 				$tab = '';
 			}
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . $folder . $pg . '&tagsort=' . html_encode($tagsort) . $tab);
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . $folder . $pg . '&tagsort=' . html_encode($tagsort) . $tab);
 			break;
 
 		/** clear the cache ********************************************************** */
@@ -139,13 +135,13 @@ if (isset($_GET['action'])) {
 				$album = sanitize_path($_POST['album']);
 			}
 			Gallery::clearCache(SERVERCACHE . '/' . $album);
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&cleared&album=' . $album);
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&cleared&album=' . $album);
 			break;
 		case 'comments':
 			XSRFdefender('albumedit');
 			$album = newAlbum($folder);
 			$album->setCommentsAllowed(sanitize_numeric($_GET['commentson']));
+			$album->setLastchangeUser($_zp_current_admin_obj->getUser());
 			$album->save();
 			$return = sanitize_path($r = $_GET['return']);
 			if (!empty($return)) {
@@ -154,8 +150,7 @@ if (isset($_GET['action'])) {
 					$return .= '&tab=subalbuminfo';
 				}
 			}
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return);
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return);
 			break;
 
 		/** Publish album  *********************************************************** */
@@ -163,7 +158,13 @@ if (isset($_GET['action'])) {
     case "publish":
       XSRFdefender('albumedit');
       $album = newAlbum($folder);
-      $album->setShow($_GET['value']);
+      $album->setShow(sanitize_numeric($_GET['value']));
+			if($album->hasPublishSchedule()) {
+				$album->setPublishdate(date('Y-m-d H:i:s'));
+			} else if($album->hasExpiration() || $album->hasExpired()) {
+				$album->setExpiredate(null);
+			}
+			$album->setLastchangeUser($_zp_current_admin_obj->getUser());
       $album->save();
       $return = sanitize_path($r = $_GET['return']);
       if (!empty($return)) {
@@ -172,8 +173,7 @@ if (isset($_GET['action'])) {
           $return .= '&tab=subalbuminfo';
         }
       }
-      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return);
-      exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return);
       break;
 
     /** Reset hitcounters ********************************************************** */
@@ -192,8 +192,7 @@ if (isset($_GET['action'])) {
       }
       query("UPDATE " . prefix('albums') . " SET `hitcounter`= 0" . $where);
       query("UPDATE " . prefix('images') . " SET `hitcounter`= 0" . $imgwhere);
-      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return . '&counters_reset');
-      exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $return . '&counters_reset');
       break;
 
 //** DELETEIMAGE **************************************************************/
@@ -210,8 +209,7 @@ if (isset($_GET['action'])) {
       } else {
         $nd = 2;
       }
-      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . pathurlencode($albumname) . '&ndeleted=' . $nd);
-      exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . pathurlencode($albumname) . '&ndeleted=' . $nd);
       break;
 
     /** REFRESH IMAGE METADATA */
@@ -221,6 +219,7 @@ if (isset($_GET['action'])) {
       $imagename = sanitize_path($_REQUEST['image']);
       $image = newImage(NULL, array('folder' => $albumname, 'filename' => $imagename));
       $image->updateMetaData();
+			$image->setLastchangeUser($_zp_current_admin_obj->getUser());
       $image->save();
       if (isset($_GET['album'])) {
         $return = pathurlencode(sanitize_path($_GET['album']));
@@ -229,8 +228,7 @@ if (isset($_GET['action'])) {
       }
 
       $return = '?page=edit&tab=imageinfo&album=' . $return . '&metadata_refresh';
-      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php' . $return);
-      exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php' . $return);
       break;
 
     /** SAVE ********************************************************************* */
@@ -266,10 +264,12 @@ if (isset($_GET['action'])) {
             if (isset($_POST['checkForPostTruncation'])) {
 							$returntab = '&tagsort=' . $tagsort . '&tab=imageinfo';
 							$oldsort = checkAlbumimagesort(sanitize($_POST['oldalbumimagesort'], 3));
+							$oldsort_status = checkAlbumimagesort(sanitize($_POST['oldalbumimagesort_status'], 3), 'albumimagesort_status');
 							if (getOption('albumimagedirection'))
 								$oldsort = $oldsort . '_desc';
 							$newsort = checkAlbumimagesort(sanitize($_POST['albumimagesort'], 3));
-							if ($oldsort == $newsort) {
+							$newsort_status = checkAlbumimagesort(sanitize($_POST['albumimagesort_status'], 3), 'albumimagesort_status');
+							if ($oldsort == $newsort && $oldsort_status == $newsort_status) {
 								for ($i = 0; $i < $_POST['totalimages']; $i++) {
 									$filename = sanitize($_POST["$i-filename"]);
 									// The file might no longer exist
@@ -286,6 +286,7 @@ if (isset($_GET['action'])) {
 									setOption('albumimagesort', $newsort);
 									setOption('albumimagedirection', '');
 								}
+								setOption('albumimagesort_status', $newsort_status);
 								$notify = '&';
 							}
 							if (isset($_POST['ids'])) { //	process bulk actions, not individual image actions.
@@ -343,8 +344,7 @@ if (isset($_GET['action'])) {
         if (empty($notify))
           $notify = '&saved';
       }
-      header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $qs_albumsuffix . $notify . $pg . $returntab);
-      exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit' . $qs_albumsuffix . $notify . $pg . $returntab);
       break;
 
     /** DELETION ***************************************************************** */
@@ -372,8 +372,7 @@ if (isset($_GET['action'])) {
 			} else {
 				$albumdir = '';
 			}
-			header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-edit.php?page=edit" . $albumdir . "&ndeleted=" . $nd);
-			exitZP();
+			redirectURL(FULLWEBPATH . "/" . ZENFOLDER . "/admin-edit.php?page=edit" . $albumdir . "&ndeleted=" . $nd);
 			break;
 		case 'newalbum':
 			XSRFdefender('newalbum');
@@ -400,8 +399,7 @@ if (isset($_GET['action'])) {
 				} else {
 					$tab = '&tab=albuminfo';
 				}
-				header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-edit.php?page=edit$albumdir&exists=" . urlencode($name) . $tab);
-				exitZP();
+				redirectURL(FULLWEBPATH . "/" . ZENFOLDER . "/admin-edit.php?page=edit$albumdir&exists=" . urlencode($name) . $tab);
 			} else {
 				mkdir_recursive($uploaddir, FOLDER_MOD);
 			}
@@ -411,8 +409,7 @@ if (isset($_GET['action'])) {
 			if ($album->exists) {
 				$album->setTitle($name);
 				$album->save();
-				header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-edit.php?page=edit" . "&album=" . pathurlencode($folder));
-				exitZP();
+				redirectURL(FULLWEBPATH . "/" . ZENFOLDER . "/admin-edit.php?page=edit" . "&album=" . pathurlencode($folder));
 			} else {
 				$AlbumDirName = str_replace(SERVERPATH, '', $_zp_gallery->albumdir);
 				zp_error(gettext("The album couldn’t be created in the “albums” folder. This is usually a permissions problem. Try setting the permissions on the albums and cache folders to be world-writable using a shell:") . " <code>chmod 777 " . $AlbumDirName . '/' . CACHEFOLDER . '/' . "</code>, "
@@ -423,12 +420,19 @@ if (isset($_GET['action'])) {
 } else {
 	if (isset($_GET['albumimagesort'])) {
 		$newsort = checkAlbumimagesort(sanitize($_GET['albumimagesort'],3));
+		$newsort_status = '';
+		if(isset($_GET['albumimagesort_status'])) {
+			$newsort_status = checkAlbumimagesort(sanitize($_GET['albumimagesort_status'],3),'albumimagesort_status');
+		}
 		if (strpos($newsort, '_desc')) {
 			setOption('albumimagesort', substr($newsort, 0, -5), false);
 			setOption('albumimagedirection', 'DESC', false);
 		} else {
 			setOption('albumimagesort', $newsort, false);
 			setOption('albumimagedirection', '', false);
+		}
+		if(!empty($newsort_status)) {
+			setOption('albumimagesort_status',$newsort_status, false);
 		}
 	}
 }
@@ -597,6 +601,7 @@ echo "\n</head>";
 				genAlbumList($mcr_albumlist);
 
 				$oldalbumimagesort = getOption('albumimagesort');
+				$oldalbumimagesort_status = getOption('albumimagesort_status');
 				$direction = getOption('albumimagedirection');
 				if ($album->isDynamic()) {
 					$subalbums = array();
@@ -604,6 +609,21 @@ echo "\n</head>";
 				} else {
 					$subalbums = getNestedAlbumList($album, $subalbum_nesting);
 					$allimages = $album->getImages(0, 0, $oldalbumimagesort, $direction);
+					if($oldalbumimagesort_status !== 'all') {
+						$allimages_edit = array();
+						foreach($allimages as $filename) {
+							$imgobj = newImage($album, $filename);
+							if($oldalbumimagesort_status == 'published' && $imgobj->getShow()) {
+								$allimages_edit[] = $filename;
+							} 
+							if($oldalbumimagesort_status == 'unpublished' && !$imgobj->getShow()) {
+								$allimages_edit[] = $filename;
+							}
+						}
+						if(!empty($allimages_edit)) {
+							$allimages = $allimages_edit;
+						}
+					} 
 					if (!($album->albumSubRights() & MANAGED_OBJECT_RIGHTS_EDIT)) {
 						$allimages = array();
 						$requestor = $_zp_current_admin_obj->getUser();
@@ -613,7 +633,14 @@ echo "\n</head>";
 						} else {
 							$retunNull = '';
 						}
-						$sql = 'SELECT * FROM ' . prefix('images') . ' WHERE (`albumid`=' . $album->getID() . ') AND (' . $retunNull . ' `owner`="' . $requestor . '") ORDER BY `' . $oldalbumimagesort . '` ' . $direction;
+						$status = '';
+						if($oldalbumimagesort_status == 'published') {
+							$status = ' (`show` = 1)';
+						}
+						if($oldalbumimagesort_status == 'unpublished') {
+							$status = ' (`show` = 0)';
+						}
+						$sql = 'SELECT * FROM ' . prefix('images') . ' WHERE (`albumid`=' . $album->getID() . ') AND (' . $retunNull . ' `owner`="' . $requestor . '")' . $status . ' ORDER BY `' . $oldalbumimagesort . '` ' . $direction;
 						$result = query($sql);
 						if ($result) {
 							while ($row = db_fetch_assoc($result)) {
@@ -684,7 +711,10 @@ echo "\n</head>";
 					?>
 					<!-- Album info box -->
 					<div id="tab_albuminfo" class="tabbox">
-						<?php consolidatedEditMessages('albuminfo'); ?>
+						<?php 
+						consolidatedEditMessages('albuminfo');
+						printScheduledPublishingNotes($album);
+						?>
 						<form class="dirty-check" name="albumedit1" id="form_albumedit" autocomplete="off" action="?page=edit&amp;action=save<?php echo "&amp;album=" . pathurlencode($album->name); ?>" method="post">
 							<?php XSRFToken('albumedit'); ?>
 							<input type="hidden" name="album"	value="<?php echo $album->name; ?>" />
@@ -717,8 +747,11 @@ echo "\n</head>";
 										} else {
 											$dir = '';
 										}
-										$sortNames = array_flip($_zp_sortby);
-										$sorttype = $sortNames[$sorttype];
+										$sortNames = getSortByOptions('albums');
+										$sortNames = array_flip($sortNames);
+										if(array_key_exists($sorttype, $sortNames)) {
+											$sorttype = $sortNames[$sorttype];
+										} 
 									} else {
 										$dir = '';
 									}
@@ -878,7 +911,7 @@ echo "\n</head>";
 							}
 						}
 						if ($allimagecount) {
-					        if ($singleimage) { ?>
+					     if ($singleimage) { ?>
 								<form class="dirty-check" name="albumedit2"	id="form_imageedit" action="?page=edit&amp;action=save<?php echo "&amp;album=" . html_encode(pathurlencode($album->name)); ?>&amp;singleimage=<?php html_encode($singleimage); ?>&amp;nopagination" method="post" autocomplete="off">
 					        <?php } else {  ?>
 					          	<form class="dirty-check" name="albumedit2"	id="form_imageedit" action="?page=edit&amp;action=save<?php echo "&amp;album=" . html_encode(pathurlencode($album->name)); ?>" method="post" autocomplete="off">
@@ -889,7 +922,8 @@ echo "\n</head>";
 								<input type="hidden" name="totalimages" value="<?php echo $totalimages; ?>" />
 								<input type="hidden" name="tagsort" value="<?php echo html_encode($tagsort); ?>" />
 								<input type="hidden" name="oldalbumimagesort" value="<?php echo html_encode($oldalbumimagesort); ?>" />
-        						<input type="hidden" name="albumimagesort" value="" />
+								<input type="hidden" name="oldalbumimagesort_status" value="<?php echo html_encode($oldalbumimagesort_status); ?>" />
+        				<!-- <input type="hidden" name="albumimagesort" value="" /> -->
 
 								<?php $totalpages = ceil(($allimagecount / $imagesTab_imageCount)); ?>
 								<table class="bordered">
@@ -901,19 +935,19 @@ echo "\n</head>";
 
 											<td align="right">
 												<?php
-												$sort = $_zp_sortby;
-												foreach ($sort as $key => $value) {
-													$sort[sprintf(gettext('%s (descending)'), $key)] = $value . '_desc';
-												}
-												$sort[gettext('Manual')] = 'manual';
+												$sort = getSortByOptions('images-edit');
 												ksort($sort, SORT_LOCALE_STRING);
 												if ($direction)
 													$oldalbumimagesort = $oldalbumimagesort . '_desc';
-												echo gettext("Display images by:");
 												echo '<select id="albumimagesort" name="albumimagesort" onchange="this.form.submit()">';
 												generateListFromArray(array($oldalbumimagesort), $sort, false, true);
 												echo '</select>';
+												$sort_status = getSortByStatusOptions();
+												echo '<select id="albumimagesort_status" name="albumimagesort_status" onchange="this.form.submit()">';
+												generateListFromArray(array($oldalbumimagesort_status), $sort_status, false, true);
+												echo '</select>';
 												?>
+				
 											</td>
 										</tr>
 										<?php
@@ -976,6 +1010,11 @@ echo "\n</head>";
 											<td colspan="4">
 												<input type="hidden" name="<?php echo $currentimage; ?>-filename"	value="<?php echo $image->filename; ?>" />
 												<table style="border:none" class="formlayout" id="image-<?php echo $currentimage; ?>">
+													<?php if(checkSchedulePublishingNotes($image)) { ?>
+														<tr>
+															<td colspan="5"><?php printScheduledPublishingNotes($image); ?></td>
+														</tr>
+													<?php } ?>
 													<tr>
 														<td valign="top" rowspan="17" style="border-bottom:none;">
 															<div style="width: 135px;">
@@ -1030,9 +1069,16 @@ echo "\n</head>";
 														<td style="padding-left: 1em; text-align: left; border-bottom:none;" rowspan="14" valign="top">
 															<h2 class="h2_bordered_edit"><?php echo gettext("General"); ?></h2>
 															<div class="box-edit">
+																<?php 
+																	if($image->hasPublishSchedule()) {
+																		$publishlabel = '<span class="scheduledate">' . gettext('Publishing scheduled') . '</span>';
+																	} else {
+																		$publishlabel = gettext("Published");
+																	}
+																?>
 																<label class="checkboxlabel">
-																	<input type="checkbox" id="Visible-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-Visible" value="1" <?php if ($image->getShow()) echo ' checked="checked"'; ?> />
-																	<?php echo gettext("Published"); ?>
+																	<input type="checkbox" id="Visible-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-Visible" value="1" <?php if ($image->get('show', false)) echo ' checked="checked"'; ?> />
+																	<?php echo $publishlabel; ?>
 																</label>
 																<label class="checkboxlabel">
 																	<input type="checkbox" id="allowcomments-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-allowcomments" value="1" <?php
@@ -1115,24 +1161,28 @@ echo "\n</head>";
 																<p>
 																	<label for="publishdate-<?php echo $currentimage; ?>"><?php echo gettext('Publish date'); ?> <small>(YYYY-MM-DD)</small></label>
 																	<br /><input value="<?php echo $publishdate; ?>" type="text" size="20" maxlength="30" name="publishdate-<?php echo $currentimage; ?>" id="publishdate-<?php echo $currentimage; ?>" />
-																	<strong class="scheduledpublishing-<?php echo $currentimage; ?>" style="color:red">
+																	<strong class="scheduledpublishing-<?php echo $currentimage; ?>">
 																		<?php
-																		if (!empty($publishdate) && ($publishdate > date('Y-m-d H:i:s'))) {
-																			echo '<br />' . gettext('Future publishing date.');
+																		if ($image->hasPublishSchedule()) {
+																			echo '<br><span class="scheduledate">' . gettext('Future publishing date.') . '</span>';
 																		}
 																		?>
 																	</strong>
 																	<br /><br />
 																	<label for="expirationdate-<?php echo $currentimage; ?>"><?php echo gettext('Expiration date'); ?> <small>(YYYY-MM-DD)</small></label>
 																	<br /><input value="<?php echo $expirationdate; ?>" type="text" size="20" maxlength="30" name="expirationdate-<?php echo $currentimage; ?>" id="expirationdate-<?php echo $currentimage; ?>" />
-																	<strong class="expire-<?php echo $currentimage; ?>" style="color:red">
+																	<strong class="expired expire-<?php echo $currentimage; ?>">
 																		<?php
-																		if (!empty($expirationdate) && ($expirationdate <= date('Y-m-d H:i:s'))) {
-																			echo '<br />' . gettext('Expired!');
+																		if ($image->hasExpiration()) {
+																			echo '<br><span class="expiredate">' . gettext('Expiration set') . '</span>';
+																		}
+																		if ($image->hasExpired()) {
+																			echo '<br><span class="expired">' . gettext('Expired!') . '</span>';
 																		}
 																		?>
 																	</strong>
 																</p>
+																<?php	printLastChangeInfo($image); ?>
 															</div>
 
 															<h2 class="h2_bordered_edit"><?php echo gettext("Utilities"); ?></h2>
@@ -1655,14 +1705,16 @@ echo "\n</head>";
 							} else {
 								$dir = '';
 							}
-							$sortNames = array_flip($_zp_sortby);
-							$sorttype = $sortNames[$sorttype];
+							$sortNames = getSortByOptions('albums');
+							if(array_key_exists($sorttype, $sortNames)) {
+								$sorttype = $sortNames[$sorttype];
+							} 
 						} else {
 							$dir = '';
 						}
 						?>
 						<p>
-							<?php printf(gettext('Current sort: <em>%1$s%2$s</em>.'), $sorttype, $dir); ?>
+							<?php printf(gettext('Current sort: <em>%1s%2$s</em>.'), $sorttype, $dir); ?>
 						</p>
 						<p>
 							<?php echo gettext('Drag the albums into the order you wish them displayed.'); ?>

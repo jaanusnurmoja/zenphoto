@@ -25,7 +25,7 @@
  *
  *
  * The plugin works best if <var>mod_rewrite</var> is active and the <var>.htaccess</var> file exists. If this is not the case
- * the plugin will still work in most cases. However if you the release you are upgrading to has significant changes involving
+ * the plugin will still work in most cases. However if the release you are upgrading to has significant changes involving
  * plugin loading of the front-end site there may be PHP failures due if the site is accessed while the files
  * being uploaded are in a mixed release state.
  *
@@ -48,8 +48,7 @@ switch (OFFSET_PATH) {
 				$page = 'page';
 			}
 			if (!preg_match('~' . preg_quote($page) . '/setup_set-mod_rewrite\?z=setup$~', $_SERVER['REQUEST_URI'])) {
-				header('location: ' . WEBPATH . '/' . USER_PLUGIN_FOLDER . '/site_upgrade/closed.php');
-				exit();
+				redirectURL(WEBPATH . '/' . USER_PLUGIN_FOLDER . '/site_upgrade/closed.php', '302');
 			}
 		}
 		break;
@@ -99,8 +98,8 @@ switch (OFFSET_PATH) {
 							'enable'			 => true,
 							'button_text'	 => gettext('Restore site_upgrade files'),
 							'formname'		 => 'refreshHTML',
-							'action'			 => WEBPATH . '/' . ZENFOLDER . '/admin.php',
-							'icon'				 => 'images/refresh.png',
+							'action'			 => FULLWEBPATH . '/' . ZENFOLDER . '/admin.php',
+							'icon'				 => FULLWEBPATH . '/' . ZENFOLDER . '/images/refresh.png',
 							'title'				 => gettext('Restores the files in the "plugins/site_upgrade" folder to their default state. Note: this will overwrite any custom edits you may have made.'),
 							'alt'					 => '',
 							'hidden'			 => '<input type="hidden" name="refreshHTML" value="1" />',
@@ -114,8 +113,8 @@ switch (OFFSET_PATH) {
 									'enable'			 => true,
 									'button_text'	 => gettext('Site » test mode'),
 									'formname'		 => 'site_upgrade.php',
-									'action'			 => WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/site_upgrade/site_upgrade.php',
-									'icon'				 => 'images/lock_open.png',
+									'action'			 => FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/site_upgrade/site_upgrade.php',
+									'icon'				 => FULLWEBPATH . '/' . ZENFOLDER . '/images/lock_open.png',
 									'title'				 => gettext('Make the site available for viewing administrators only.'),
 									'alt'					 => '',
 									'hidden'			 => '<input type="hidden" name="siteState" value="closed_for_test" />',
@@ -129,8 +128,8 @@ switch (OFFSET_PATH) {
 									'enable'			 => true,
 									'button_text'	 => gettext('Site » open'),
 									'formname'		 => 'site_upgrade.php',
-									'action'			 => WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/site_upgrade/site_upgrade.php',
-									'icon'				 => 'images/lock.png',
+									'action'			 => FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/site_upgrade/site_upgrade.php',
+									'icon'				 => FULLWEBPATH . '/' . ZENFOLDER . '/images/lock.png',
 									'title'				 => gettext('Make site available for viewing.'),
 									'alt'					 => '',
 									'hidden'			 => '<input type="hidden" name="siteState" value="open" />',
@@ -144,8 +143,8 @@ switch (OFFSET_PATH) {
 									'enable'			 => true,
 									'button_text'	 => gettext('Site » close'),
 									'formname'		 => 'site_upgrade.php',
-									'action'			 => WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/site_upgrade/site_upgrade.php',
-									'icon'				 => 'images/lock.png',
+									'action'			 => FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/site_upgrade/site_upgrade.php',
+									'icon'				 => FULLWEBPATH . '/' . ZENFOLDER . '/images/lock.png',
 									'title'				 => gettext('Make site unavailable for viewing by redirecting to the "closed.html" page.'),
 									'alt'					 => '',
 									'hidden'			 => '<input type="hidden" name="siteState" value="closed" />',

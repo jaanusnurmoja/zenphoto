@@ -76,8 +76,7 @@ if ($forbidden = getOption('image_processor_flooding_protection') && (!isset($_G
 if (!isset($_GET['s']) && !isset($_GET['w']) && !isset($_GET['h'])) {
 	// No image parameters specified
 	if (getOption('album_folder_class') !== 'external') {
-		header("Location: " . getAlbumFolder(FULLWEBPATH) . pathurlencode(filesystemToInternal($album)) . "/" . rawurlencode(filesystemToInternal($image)));
-		return;
+		redirectURL(getAlbumFolder(FULLWEBPATH) . pathurlencode(filesystemToInternal($album)) . "/" . rawurlencode(filesystemToInternal($image)));
 	}
 }
 
@@ -132,20 +131,6 @@ if (!file_exists($imgfile)) {
 }
 
 // Make the directories for the albums in the cache, recursively.
-// Skip this for safe_mode, where we can't write to directories we create!
-if (!SAFE_MODE) {
-	$albumdirs = getAlbumArray($album, true);
-	foreach ($albumdirs as $dir) {
-		$dir = internalToFilesystem($dir);
-		$dir = SERVERCACHE . '/' . $dir;
-		if (!is_dir($dir)) {
-			@mkdir($dir, FOLDER_MOD);
-			@chmod($dir, FOLDER_MOD);
-		} else if (!is_writable($dir)) {
-			@chmod($dir, FOLDER_MOD);
-		}
-	}
-}
 $process = true;
 // If the file exists, check its modification time and update as needed.
 $fmt = filemtime($imgfile);

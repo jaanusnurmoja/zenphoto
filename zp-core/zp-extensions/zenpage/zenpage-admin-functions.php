@@ -9,6 +9,7 @@
 global $_zp_zenpage, $_zp_current_zenpage_news, $_zp_current_zenpage_page, $_zp_current_category;
 Zenpage::expiry();
 
+
 /**
  * Retrieves posted expiry date and checks it against the current date/time
  * Returns the posted date if it is in the future
@@ -57,6 +58,7 @@ function processTags($object) {
  * @return object
  */
 function updatePage(&$reports, $newpage = false) {
+	global $_zp_current_admin_obj;
 	$title = process_language_string_save("title", 2);
 	$author = sanitize($_POST['author']);
 	$content = updateImageProcessorLink(process_language_string_save("content", EDITOR_SANITIZE_LEVEL));
@@ -64,8 +66,6 @@ function updatePage(&$reports, $newpage = false) {
 	$custom = process_language_string_save("custom_data", 1);
 	$show = getcheckboxState('show');
 	$date = sanitize($_POST['date']);
-	$lastchange = sanitize($_POST['lastchange']);
-	$lastchangeauthor = sanitize($_POST['lastchangeauthor']);
 	$expiredate = getExpiryDatePost();
 	$commentson = getcheckboxState('commentson');
 	$permalink = getcheckboxState('permalink');
@@ -73,18 +73,15 @@ function updatePage(&$reports, $newpage = false) {
 		$codeblock = processCodeblockSave(0);
 	}
 	$locked = getcheckboxState('locked');
-	$date = sanitize($_POST['date']);
 	if ($newpage) {
-		$titlelink = seoFriendly(get_language_string($title));
-		if (empty($titlelink)) {
-			$titlelink = seoFriendly($date);
+		$titlelink = createTitlelink($title, $date);
+		if(getOption('zenpage_titlelinkdate_pages')) {
+			$titlelink = addDateToTitlelink($titlelink);
 		}
-		$sql = 'SELECT `id` FROM ' . prefix('pages') . ' WHERE `titlelink`=' . db_quote($titlelink);
-		$rslt = query_single_row($sql, false);
-		if ($rslt) {
+		$duplicate = checkTitlelinkDuplicate($titlelink, 'page');
+		if ($duplicate) {
 			//already exists
-			$time = explode(' ', microtime());
-			$titlelink = $titlelink . '_' . ($time[1] + $time[0]);
+			$titlelink = addDateToTitlelink($titlelink);
 			$reports[] = "<p class='warningbox fade-message'>" . gettext('Duplicate page title') . '</p>';
 		}
 		$oldtitlelink = $titlelink;
@@ -94,10 +91,7 @@ function updatePage(&$reports, $newpage = false) {
 	if (getcheckboxState('edittitlelink')) {
 		$titlelink = sanitize($_POST['titlelink'], 3);
 		if (empty($titlelink)) {
-			$titlelink = seoFriendly(get_language_string($title));
-			if (empty($titlelink)) {
-				$titlelink = seoFriendly($date);
-			}
+			$titlelink = createTitlelink($title, $date);
 		}
 	} else {
 		if (!$permalink) { //	allow the link to change
@@ -127,13 +121,12 @@ function updatePage(&$reports, $newpage = false) {
 	$page->setCustomData(zp_apply_filter('save_page_custom_data', $custom, $page));
 	$page->setShow($show);
 	$page->setDateTime($date);
+	$page->setLastChange($date);
 	$page->setCommentsAllowed($commentson);
 	if (zp_loggedin(CODEBLOCK_RIGHTS)) {
 		$page->setCodeblock($codeblock);
 	}
 	$page->setAuthor($author);
-	$page->setLastchange($lastchange);
-	$page->setLastchangeauthor($lastchangeauthor);
 	$page->setPermalink($permalink);
 	$page->setLocked($locked);
 	$page->setExpiredate($expiredate);
@@ -144,6 +137,9 @@ function updatePage(&$reports, $newpage = false) {
 		$page->set('total_value', 0);
 		$page->set('total_votes', 0);
 		$page->set('used_ips', 0);
+	}
+	if(!$newpage) {
+		$page->setLastchangeUser($_zp_current_admin_obj->getUser());
 	}
 	processTags($page);
 	if ($newpage) {
@@ -171,7 +167,11 @@ function updatePage(&$reports, $newpage = false) {
 			$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Page <em>%s</em> updated"), $titlelink) . '</p>';
 		}
 	}
-	$page->save();
+	$checkupdates = true;
+	if ($newpage) { 
+		$checkupdates = false;
+	}
+	$page->save($checkupdates);
 	if ($msg) {
 		$reports[] = $msg;
 	}
@@ -191,8 +191,7 @@ function deletePage($titlelink) {
 	$result = $obj->remove();
 	if ($result) {
 		if (is_object($titlelink)) {
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/admin-pages.php?deleted');
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/admin-pages.php?deleted');
 		}
 		SearchEngine::clearSearchCache();
 		return "<p class='messagebox fade-message'>" . gettext("Page successfully deleted!") . "</p>";
@@ -329,6 +328,7 @@ function printPagesListTable($page, $flag) {
  * @return object
  */
 function updateArticle(&$reports, $newarticle = false) {
+	global $_zp_current_admin_obj;
 	$date = date('Y-m-d_H-i-s');
 	$title = process_language_string_save("title", 2);
 	$author = sanitize($_POST['author']);
@@ -339,24 +339,20 @@ function updateArticle(&$reports, $newarticle = false) {
 	$date = sanitize($_POST['date']);
 	$expiredate = getExpiryDatePost();
 	$permalink = getcheckboxState('permalink');
-	$lastchange = sanitize($_POST['lastchange']);
-	$lastchangeauthor = sanitize($_POST['lastchangeauthor']);
 	$commentson = getcheckboxState('commentson');
 	if (zp_loggedin(CODEBLOCK_RIGHTS)) {
 		$codeblock = processCodeblockSave(0);
 	}
 	$locked = getcheckboxState('locked');
 	if ($newarticle) {
-		$titlelink = seoFriendly(get_language_string($title));
-		if (empty($titlelink)) {
-			$titlelink = seoFriendly($date);
+		$titlelink = createTitlelink($title, $date);
+		if(getOption('zenpage_titlelinkdate_articles')) {
+			$titlelink = addDateToTitlelink($titlelink);
 		}
-		$sql = 'SELECT `id` FROM ' . prefix('news') . ' WHERE `titlelink`=' . db_quote($titlelink);
-		$rslt = query_single_row($sql, false);
-		if ($rslt) {
+		$duplicate = checkTitlelinkDuplicate($titlelink, 'article');
+		if ($duplicate) {
 			//already exists
-			$time = explode(' ', microtime());
-			$titlelink = $titlelink . '_' . ($time[1] + $time[0]);
+			$titlelink = addDateToTitlelink($titlelink);
 			$reports[] = "<p class='warningbox fade-message'>" . gettext('Duplicate article title') . '</p>';
 		}
 		$oldtitlelink = $titlelink;
@@ -369,10 +365,7 @@ function updateArticle(&$reports, $newarticle = false) {
 	if (getcheckboxState('edittitlelink')) {
 		$titlelink = sanitize($_POST['titlelink'], 3);
 		if (empty($titlelink)) {
-			$titlelink = seoFriendly(get_language_string($title));
-			if (empty($titlelink)) {
-				$titlelink = seoFriendly($date);
-			}
+			$titlelink = createTitlelink($title, $date);
 		}
 	} else {
 		if (!$permalink) { //	allow the title link to change.
@@ -400,13 +393,12 @@ function updateArticle(&$reports, $newarticle = false) {
 	$article->setCustomData(zp_apply_filter('save_article_custom_data', $custom, $article));
 	$article->setShow($show);
 	$article->setDateTime($date);
+	$article->setLastChange($date);
 	$article->setCommentsAllowed($commentson);
 	if (zp_loggedin(CODEBLOCK_RIGHTS)) {
 		$article->setCodeblock($codeblock);
 	}
 	$article->setAuthor($author);
-	$article->setLastchange($lastchange);
-	$article->setLastchangeauthor($lastchangeauthor);
 	$article->setPermalink($permalink);
 	$article->setLocked($locked);
 	$article->setExpiredate($expiredate);
@@ -429,6 +421,9 @@ function updateArticle(&$reports, $newarticle = false) {
 		}
 	}
 	$article->setCategories($categories);
+	if (!$newarticle) {
+		$article->setLastchangeUser($_zp_current_admin_obj->getUser());
+	}
 	if ($newarticle) {
 		$msg = zp_apply_filter('new_article', '', $article);
 		if (empty($title)) {
@@ -446,8 +441,11 @@ function updateArticle(&$reports, $newarticle = false) {
 			$reports[] = "<p class='messagebox fade-message'>" . sprintf(gettext("Article <em>%s</em> updated"), $titlelink) . '</p>';
 		}
 	}
-	$article->save();
-
+	$checkupdates = true;
+	if($newarticle) {
+		$checkupdates = false;
+	}
+	$article->save($checkupdates);
 	if ($msg) {
 		$reports[] = $msg;
 	}
@@ -467,8 +465,7 @@ function deleteArticle($titlelink) {
 	$result = $obj->remove();
 	if ($result) {
 		if (is_object($titlelink)) {
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/admin-news-articles.php?deleted');
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/admin-news-articles.php?deleted');
 		}
 		SearchEngine::clearSearchCache();
 		return "<p class='messagebox fade-message'>" . gettext("Article successfully deleted!") . "</p>";
@@ -526,7 +523,7 @@ function printCategorySelection($id = '', $option = '') {
 		$catobj = new ZenpageCategory($cats['titlelink']);
 		if ($option != "all") {
 			$cat2news = query_single_row("SELECT cat_id FROM " . prefix('news2cat') . " WHERE news_id = " . $id . " AND cat_id = " . $catobj->getID());
-			if ($cat2news['cat_id'] != "") {
+			if (isset($cat2news['cat_id']) && !empty($cat2news['cat_id'])) {
 				$selected = "checked ='checked'";
 			}
 		}
@@ -686,6 +683,8 @@ function printSortOrderDropdown() {
 			$orderdate_asc = '';
 			$ordertitle_desc = '';
 			$ordertitle_asc = '';
+			$orderlastchange_desc = '';
+			$orderlastchange_asc = '';
 			if (isset($_GET['sortorder'])) {
 				switch ($_GET['sortorder']) {
 					case "date-desc":
@@ -700,6 +699,12 @@ function printSortOrderDropdown() {
 					case "title-asc":
 						$ordertitle_asc = "selected='selected'";
 						break;
+					case "lastchange-desc":
+						$orderlastchange_desc = "selected='selected'";
+						break;
+					case "lastchange-asc":
+						$orderlastchange_asc = "selected='selected'";
+						break;
 				}
 			} else {
 				$orderdate_desc = "selected='selected'";
@@ -709,6 +714,8 @@ function printSortOrderDropdown() {
 			echo "<option $orderdate_asc value='admin-news-articles.php" . getNewsAdminOptionPath(array_merge(array('sortorder' => 'date-asc'), $option)) . "'>" . gettext("Order by date ascending") . "</option>\n";
 			echo "<option $ordertitle_desc value='admin-news-articles.php" . getNewsAdminOptionPath(array_merge(array('sortorder' => 'title-desc'), $option)) . "'>" . gettext("Order by title descending") . "</option>\n";
 			echo "<option $ordertitle_asc value='admin-news-articles.php" . getNewsAdminOptionPath(array_merge(array('sortorder' => 'title-asc'), $option)) . "'>" . gettext("Order by title ascending") . "</option>\n";
+			echo "<option $orderlastchange_desc value='admin-news-articles.php" . getNewsAdminOptionPath(array_merge(array('sortorder' => 'lastchange-desc'), $option)) . "'>" . gettext("Order by last change date descending") . "</option>\n";
+			echo "<option $orderlastchange_asc value='admin-news-articles.php" . getNewsAdminOptionPath(array_merge(array('sortorder' => 'lastchange-asc'), $option)) . "'>" . gettext("Order by last change date ascending") . "</option>\n";
 			?>
 		</select>
 	</form>
@@ -842,23 +849,22 @@ function printAuthorDropdown() {
  *
  */
 function updateCategory(&$reports, $newcategory = false) {
+	global $_zp_current_admin_obj;
 	$date = date('Y-m-d_H-i-s');
 	$id = sanitize_numeric($_POST['id']);
 	$permalink = getcheckboxState('permalink');
 	$title = process_language_string_save("title", 2);
 	$desc = process_language_string_save("desc", EDITOR_SANITIZE_LEVEL);
 	$custom = process_language_string_save("custom_data", 1);
-
 	if ($newcategory) {
-		$titlelink = seoFriendly(get_language_string($title));
-		if (empty($titlelink))
-			$titlelink = seoFriendly($date);
-		$sql = 'SELECT `id` FROM ' . prefix('news_categories') . ' WHERE `titlelink`=' . db_quote($titlelink);
-		$rslt = query_single_row($sql, false);
-		if ($rslt) {
+		$titlelink = createTitlelink($title, $date);
+		if(getOption('zenpage_titlelinkdate_categories')) {
+			$titlelink = addDateToTitlelink($titlelink);
+		}
+		$duplicate = checkTitlelinkDuplicate($titlelink, 'category');
+		if ($duplicate) {
 			//already exists
-			$time = explode(' ', microtime());
-			$titlelink = $titlelink . '_' . ($time[1] + $time[0]);
+			$titlelink = addDateToTitlelink($titlelink);
 			$reports[] = "<p class='warningbox fade-message'>" . gettext('Duplicate category title') . '</p>';
 		}
 		$oldtitlelink = $titlelink;
@@ -867,10 +873,7 @@ function updateCategory(&$reports, $newcategory = false) {
 		if (getcheckboxState('edittitlelink')) {
 			$titlelink = sanitize($_POST['titlelink'], 3);
 			if (empty($titlelink)) {
-				$titlelink = seoFriendly(get_language_string($title));
-				if (empty($titlelink)) {
-					$titlelink = seoFriendly($date);
-				}
+				$titlelink = createTitlelink($title, $date);
 			}
 		} else {
 			if (!$permalink) { //	allow the link to change
@@ -897,6 +900,7 @@ function updateCategory(&$reports, $newcategory = false) {
 	$cat->setPermalink(getcheckboxState('permalink'));
 	$cat->set('title', $title);
 	$cat->setDesc($desc);
+	$cat->setLastChange();
 	$cat->setCustomData(zp_apply_filter('save_category_custom_data', $custom, $cat));
 	$cat->setShow($show);
 	if (getcheckboxState('resethitcounter')) {
@@ -907,7 +911,9 @@ function updateCategory(&$reports, $newcategory = false) {
 		$cat->set('total_votes', 0);
 		$cat->set('used_ips', 0);
 	}
-
+	if (!$newcategory) {
+		$cat->setLastchangeUser($_zp_current_admin_obj->getUser());
+	}
 	if ($newcategory) {
 		$msg = zp_apply_filter('new_category', '', $cat);
 		if (empty($title)) {
@@ -935,7 +941,11 @@ function updateCategory(&$reports, $newcategory = false) {
 			$reports[] = "<p class='errorbox fade-message'>" . sprintf(gettext("A category with the title/titlelink <em>%s</em> already exists!"), html_encode($cat->getTitle())) . "</p>";
 		}
 	}
-	$cat->save();
+	$checkupdates = true;
+	if ($newcategory) { 
+		$checkupdates = false;
+	}
+	$cat->save($checkupdates);
 	if ($msg) {
 		$reports[] = $msg;
 	}
@@ -1058,10 +1068,9 @@ function printCategoryCheckboxListEntry($cat, $articleid, $option, $class = '') 
 	$selected = '';
 	if (($option != "all") && !$cat->transient && !empty($articleid)) {
 		$cat2news = query_single_row("SELECT cat_id FROM " . prefix('news2cat') . " WHERE news_id = " . $articleid . " AND cat_id = " . $cat->getID());
-		if ($cat2news['cat_id'] != "") {
+		$selected = "";
+		if (isset($cat2news['cat_id']) && !empty($cat2news['cat_id'])) {
 			$selected = "checked ='checked'";
-		} else {
-			$selected = "";
 		}
 	}
 	$catname = $cat->getTitle();
@@ -1259,22 +1268,34 @@ function checkForEmptyTitle($titlefield, $type, $truncate = true) {
  * @return string
  */
 function zenpagePublish($obj, $show) {
-	if ($show > 1) {
-		$obj->setExpireDate(NULL);
-	}
+	global $_zp_current_admin_obj;
 	$obj->setShow((int) ($show && 1));
+	$obj->setLastchangeUser($_zp_current_admin_obj->getUser());
 	$obj->save();
 }
 
 /**
- * Skips the scheduled publishing by setting the date of a page or article to the current date to publish it immediately
+ * Skips the scheduled future publishing by setting the date of a page or article to the current date to publish it immediately
+ * or the expiration handling by setting the expiredate to null.
  *
+ * @since ZenphotoCMS 1.5.7
  * @param object $obj
+ * @param string $type "futuredate" or "expiredate"
  * @return string
  */
-function skipScheduledPublishing($obj) {
-	$obj->setDateTime(date('Y-m-d H:i:s'));
-	$obj->setShow(1);
+function skipScheduledPublishing($obj, $type = 'futuredate') {
+	global $_zp_current_admin_obj;
+	switch ($type) {
+		case 'futuredate':
+			$obj->setDateTime(date('Y-m-d H:i:s'));
+			$obj->setShow(1);
+			break;
+		case 'expiredate':
+			$obj->setExpiredate(null);
+			$obj->setShow(1);
+			break;
+	}
+	$obj->setLastchangeUser($_zp_current_admin_obj->getUser());
 	$obj->save();
 }
 
@@ -1396,7 +1417,9 @@ function printZenpageIconLegend() {
 		<?php
 		if (GALLERY_SECURITY == 'public') {
 			?>
-			<li><img src="../../images/lock.png" alt="" /><?php echo gettext("Has Password"); ?></li>	<li><img src="../../images/pass.png" alt="" /><img	src="../../images/action.png" alt="" /><img src="images/clock.png" alt="" /><?php echo gettext("Published/Not published/Scheduled for publishing"); ?></li>
+			<li><img src="../../images/lock.png" alt="" /><?php echo gettext("Has Password"); ?></li>	
+			<li><img src="../../images/pass.png" alt="" /><img	src="../../images/action.png" alt="" /><?php echo gettext("Published/Not published"); ?></li>
+			<li><img src="../../images/clock_futuredate.png" alt="" /><img src="../../images/clock_expiredate.png" alt="" /><img src="../../images/clock_expired.png" alt="" /><?php echo gettext("Scheduled publishing/Scheduled expiration/Expired"); ?></li>
 			<?php
 		}
 		?>
@@ -1442,42 +1465,7 @@ function authorSelector($author = NULL) {
 	<?php
 }
 
-/**
- * Prints data info for objects
- *
- * @param string $object Object of the page or news article to check
- * @return string
- */
-function printPublished($object) {
-	$dt = $object->getDateTime();
-	if ($dt > date('Y-m-d H:i:s')) {
-		if ($object->getShow() != 1) {
-			echo '<span class="inactivescheduledate">' . $dt . '</strong>';
-		} else {
-			echo '<span class="scheduledate">' . $dt . '</strong>';
-		}
-	} else {
-		echo '<span>' . $dt . '</span>';
-	}
-}
 
-/**
- * Prints data info for objects
- *
- * @param string $object Object of the page or news article to check
- * @return string
- */
-function printExpired($object) {
-	$dt = $object->getExpireDate();
-	if (!empty($dt)) {
-		$expired = $dt < date('Y-m-d H:i:s');
-		if ($expired) {
-			echo ' <span class="expired">' . $dt . "</span>";
-		} else {
-			echo ' <span class="expiredate">' . $dt . "</span>";
-		}
-	}
-}
 
 /**
  * Prints the publish/un-published/scheduled publishing icon with a link for the pages and news articles list.
@@ -1504,46 +1492,41 @@ function printPublishIconLink($object, $type, $linkback = '') {
 			$urladd .= "&amp;articles_page=" . sanitize_numeric($_GET['articles_page']);
 		}
 	}
-	if ($object->getDateTime() > date('Y-m-d H:i:s')) {
-		if ($object->getShow()) {
-			$title = gettext("Publish immediately (skip scheduling)");
-			?>
-			<a href="?skipscheduling=1&amp;titlelink=<?php echo html_encode($object->getTitlelink()) . $urladd; ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo $title; ?>">
-				<img src="images/clock.png" alt="<?php gettext("Scheduled for published"); ?>" title="<?php echo $title; ?>" /></a>
-			<?php
+	if ($object->hasPublishSchedule()) {
+		$title = gettext("Publish immediately (skip scheduling)");
+		$alt = gettext("Scheduled for published");
+		$action = '?skipscheduling=1';
+		$icon = '../../images/clock_futuredate.png';
+	} else if ($object->hasExpiration()) {
+		$title = gettext("Skip scheduled expiration");
+		$alt = gettext("Scheduled for expiration");
+		$action = '?skipexpiration=1';
+		$icon = '../../images/clock_expiredate.png';
+	} else if ($object->getShow()) {
+		$title = gettext("Un-publish");
+		$alt = gettext("Published");
+		$action = '?publish=0';
+		$icon = '../../images/pass.png';
+	} else if (!$object->getShow()) {
+		if ($object->hasExpired()) {
+			$title = gettext("Publish immediately (skip expiration)");
+			$alt = gettext("Un-published because expired");
+			$action = '?skipexpiration=1';
+			$icon = '../../images/clock_expired.png';
 		} else {
-			$title = gettext("Enable scheduled publishing");
-			?>
-			<a href="?publish=1&amp;titlelink=<?php echo html_encode($object->getTitlelink()) . $urladd; ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo $title; ?>">
-				<img src="../../images/action.png" alt="<?php echo gettext("Un-published"); ?>" title="<?php echo $title; ?>" /></a>
-			<?php
-		}
-	} else {
-		if ($object->getShow()) {
-			$title = gettext("Un-publish");
-			?>
-			<a href="?publish=0&amp;titlelink=<?php echo html_encode($object->getTitlelink()) . $urladd; ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo $title; ?>">
-				<img src="../../images/pass.png" alt="<?php echo gettext("Published"); ?>" title="<?php echo $title; ?>" /></a>
-			<?php
-		} else {
-			$dt = $object->getExpireDate();
-			if (empty($dt)) {
-				$title = gettext("Publish");
-				?>
-				<a href="?publish=1&amp;titlelink=<?php echo html_encode($object->getTitlelink()) . $urladd; ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>">
-					<?php
-				} else {
-					$title = gettext("Publish (override expiration)");
-					?>
-					<a href="?publish=2&amp;titlelink=<?php echo html_encode($object->getTitlelink()) . $urladd; ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>">
-						<?php
-					}
-					?>
-					<img src="../../images/action.png" alt="<?php echo gettext("Un-published"); ?>" title= "<?php echo $title; ?>" /></a>
-				<?php
-			}
+			$title = gettext("Publish");
+			$alt = gettext("Un-published");
+			$action = '?publish=1';
+			$icon = '../../images/action.png';
 		}
 	}
+	?>
+	<a href="<?php echo $action; ?>&amp;titlelink=<?php echo html_encode($object->getTitlelink()) . $urladd; ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>">
+		<img src="<?php echo $icon; ?>" alt="<?php echo $alt; ?>" title= "<?php echo $title; ?>" />
+	</a>
+	<?php
+}
+
 
 	/**
 	 * Checks if a checkbox is selected and checks it if.
@@ -1608,7 +1591,7 @@ function printPublishIconLink($object, $type, $linkback = '') {
 	 *
 	 */
 	function processZenpageBulkActions($type) {
-		global $_zp_zenpage;
+		global $_zp_zenpage, $_zp_current_admin_obj;
 		$action = false;
 		if (isset($_POST['ids'])) {
 			//echo "action for checked items:". $_POST['checkallaction'];
@@ -1656,7 +1639,8 @@ function printPublishIconLink($object, $type, $linkback = '') {
 									$newsobj = new ZenpageNews($article['titlelink']);
 									$mytags = array_unique(array_merge($tags, $newsobj->getTags()));
 									$newsobj->setTags($mytags);
-									$newsobj->save();
+									$newsobj->setLastchangeUser($_zp_current_admin_obj->getUser());
+									$newsobj->save(true);
 								}
 								break;
 							case 'clearalltags':
@@ -1664,7 +1648,8 @@ function printPublishIconLink($object, $type, $linkback = '') {
 								foreach ($allarticles as $article) {
 									$newsobj = new ZenpageNews($article['titlelink']);
 									$newsobj->setTags(array());
-									$newsobj->save();
+									$newsobj->setLastchangeUser($_zp_current_admin_obj->getUser());
+									$newsobj->save(true);
 								}
 								break;
 							case 'addcats':
@@ -1700,7 +1685,8 @@ function printPublishIconLink($object, $type, $linkback = '') {
 								$obj->set('hitcounter', 0);
 								break;
 						}
-						$obj->save();
+						$obj->setLastchangeUser($_zp_current_admin_obj->getUser());
+						$obj->save(true);
 					}
 				}
 			}
@@ -1754,4 +1740,83 @@ function printPublishIconLink($object, $type, $linkback = '') {
 		}
 		return false;
 	}
-	?>
+	
+	/**
+	 * Creates the titlelink from the title passed.
+	 * 
+	 * @since ZenphotoCMS 1.5.2
+	 * 
+	 * @param string|array $title The title respectively language array of titles
+	 * @param string $date The date the article is saved
+	 * @return type
+	 */
+	function createTitlelink($title, $date) {
+		$titlelink = seoFriendly(get_language_string($title));
+		if (empty($titlelink)) {
+			$titlelink = seoFriendly($date);
+		}
+		return $titlelink;
+	}
+
+	/**
+	 * Checks if a title link of this itemtype already exists
+	 * 
+	 * @since ZenphotoCMS 1.5.2
+	 * 
+	 * @param string $titlelink The titlelink to check
+	 * @param string $itemtype
+	 * @return bool
+	 */
+	function checkTitlelinkDuplicate($titlelink, $itemtype) {
+		switch ($itemtype) {
+			case 'article':
+				$table = prefix('news');
+				break;
+			case 'category':
+				$table = prefix('news_categories');
+				break;
+			case 'page':
+				$table = prefix('pages');
+				break;
+		}
+		$sql = 'SELECT `id` FROM ' . $table . ' WHERE `titlelink`=' . db_quote($titlelink);
+		$rslt = query_single_row($sql, false);
+		return $rslt;
+	}
+
+	/**
+	 * Append or prepends a date string to a titlelink as defined.
+	 * Note: This does not check the item type option and will add to any string passed!
+	 * 
+	 * @since ZenphotoCMS 1.5.2
+	 * 
+	 * @param string $titlelink The titleink (e.g. as created by createTitleink())
+	 * @return string
+	 */
+	function addDateToTitlelink($titlelink) {
+		$addwhere = getOption('zenpage_titlelinkdate_location');
+		$dateformat = getOption('zenpage_titlelinkdate_dateformat');
+		switch($dateformat) {
+			case 'Y-m-d':
+			case 'Ymd':
+			case 'Y-m-d_H-i-s':
+			case 'YmdHis':
+				$date = date($dateformat);
+				break;
+			default:
+			case 'timestamp':
+				$date = time();
+				break;
+		}
+		switch ($addwhere) {
+			case 'before':
+				$titlelink = $date . '-' . $titlelink;
+				break;
+			default:
+			case 'after':
+				$titlelink = $titlelink . '-' . $date;
+				break;
+		}
+		return $titlelink;
+	}
+	

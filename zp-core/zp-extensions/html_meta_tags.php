@@ -35,21 +35,16 @@ if (in_context(ZP_INDEX)) {
 class htmlmetatags {
 
 	function __construct() {
+		replaceOption('google-site-verification','htmlmeta_google-site-verification');
+		purgeOption('htmlmeta_pragma');
 		setOptionDefault('htmlmeta_cache_control', 'no-cache');
-		setOptionDefault('htmlmeta_pragma', 'no-cache');
 		setOptionDefault('htmlmeta_robots', 'index');
 		setOptionDefault('htmlmeta_revisit_after', '10 Days');
 		setOptionDefault('htmlmeta_expires', '43200');
 		setOptionDefault('htmlmeta_tags', '');
 
-		if(getOption('google-site-verification')) { // import existing old option
-			$verify = getOption('google-site-verification');
-			setOptionDefault('htmlmeta_google-site-verification', $verify);
-			purgeOption('google-site-verification'); // remove obsolete option
-		} else {
-			setOptionDefault('htmlmeta_google-site-verification', '');
-		}
-
+		setOptionDefault('htmlmeta_google-site-verification', '');
+	
 		if(getOption('htmlmeta_og-title')) { // assume this will be set
 			setOptionDefault('htmlmeta_opengraph', 1);
 		}
@@ -106,13 +101,6 @@ class htmlmetatags {
 								'private' => "private",
 								'no-store' => "no-store"),
 						'desc' => gettext("If the browser cache should be used.")),
-				gettext('Pragma') => array(
-						'key' => 'htmlmeta_pragma',
-						'type' => OPTION_TYPE_SELECTOR,
-						'selections' => array(
-								'no-cache' => "no-cache",
-								'cache' => "cache"),
-						'desc' => gettext("If the pages should be allowed to be cached on proxy servers.")),
 				gettext('Robots') => array(
 						'key' => 'htmlmeta_robots',
 						'type' => OPTION_TYPE_SELECTOR,
@@ -351,7 +339,7 @@ class htmlmetatags {
 			$meta .= '<meta http-equiv="Cache-control" content="' . getOption("htmlmeta_cache_control") . '">' . "\n";
 		}
 		if (getOption('htmlmeta_http-equiv-pragma')) {
-			$meta .= '<meta http-equiv="pragma" content="' . getOption("htmlmeta_pragma") . '">' . "\n";
+			$meta .= '<meta http-equiv="pragma" content="no-cache">' . "\n";
 		}
 		if (getOption('htmlmeta_name-keywords')) {
 			$meta .= '<meta name="keywords" content="' . htmlmetatags::getMetaKeywords() . '">' . "\n";
@@ -409,7 +397,7 @@ class htmlmetatags {
 
 		// Facebook app id
 		if (getOption('htmlmeta_fb-app_id')) {
-			$meta .= '<meta property="fb:app_id"  content="' . sanitize_numeric(getOption('htmlmeta_fb-app_id')) . '" />' . "\n";
+			$meta .= '<meta property="fb:app_id"  content="' . getOption('htmlmeta_fb-app_id') . '" />' . "\n";
 		}
 
 		// dissalow users to pin images on Pinterest

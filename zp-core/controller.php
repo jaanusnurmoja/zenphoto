@@ -6,6 +6,7 @@
  */
 
 // force UTF-8 Ø
+redirectionHandler();
 
 /*** Request Handler **********************
  ******************************************/
@@ -30,5 +31,4 @@ $_zp_comment_error = zp_apply_filter('handle_comment', false);
 // This is mostly helpful for SEO, but also for users. Consistent URLs are a Good Thing.
 
 fix_path_redirect();
-
-?>
+httpsRedirect('frontend');

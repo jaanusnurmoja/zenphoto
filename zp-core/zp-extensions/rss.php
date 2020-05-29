@@ -38,7 +38,6 @@ class rss_options {
 			setOptionDefault('RSS_truncate_length', getOption('zenpage_rss_length'));
 			setOptionDefault('RSS_zenpage_items', getOption('zenpage_rss_items'));
 
-
 			purgeOption('feed_items');
 			purgeOption('feed_imagesize');
 			purgeOption('feed_sortorder');
@@ -53,7 +52,12 @@ class rss_options {
 			purgeOption('feed_title');
 			purgeOption('zenpage_rss_length');
 			purgeOption('zenpage_rss_items');
-
+			
+			setOptionDefault('RSS_album_image', 1);
+			setOptionDefault('RSS_comments', 1);
+			setOptionDefault('RSS_articles', 1);
+			setOptionDefault('RSS_pages', 1);
+			setOptionDefault('RSS_article_comments', 1);
 			setOptionDefault('RSS_truncate_length', '100');
 			setOptionDefault('RSS_zenpage_items', '10');
 			setOptionDefault('RSS_items', 10); // options for standard images rss
@@ -450,7 +454,6 @@ class RSS extends feed {
 
 // individual feedtype setup
 		switch ($this->feedtype) {
-
 			case 'gallery':
 				if (!getOption('RSS_album_image')) {
 					self::feed404();
@@ -460,17 +463,13 @@ class RSS extends feed {
 					$alb = newAlbum($this->albumfolder, true, true);
 					if ($alb->exists) {
 						$albumtitle = $alb->getTitle();
-						if ($this->mode == 'albums' || $this->collection) {
-							$albumname = ' - ' . html_encode($albumtitle) . $this->getChannelTitleExtra();
-						}
+						$albumname = ' - ' . html_encode($albumtitle) . $this->getChannelTitleExtra();
 					} else {
 						self::feed404();
 					}
 				} else {
 					$albumtitle = '';
 				}
-				$albumname = $this->getChannelTitleExtra();
-
 				$this->channel_title = html_encode($this->channel_title . ' ' . getBare($albumname));
 				require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/image_album_statistics.php');
 				break;
@@ -748,8 +747,9 @@ class RSS extends feed {
 				<lastBuildDate><?php echo date("r", time()); ?></lastBuildDate>
 				<docs>http://blogs.law.harvard.edu/tech/rss</docs>
 				<generator>Zenphoto RSS Generator</generator>
+				
 				<?php
-				if (is_array($feeditems)) {
+				if (is_array($feeditems) && !empty($feeditems)) {
 					foreach ($feeditems as $feeditem) {
 						switch ($this->feedtype) {
 							case 'gallery':
@@ -794,6 +794,12 @@ class RSS extends feed {
 						</item>
 						<?php
 					} // foreach
+				} else {
+					?>
+					<item>
+						<title><![CDATA[<?php echo gettext('No items available.'); ?>]]></title>
+					</item>
+					<?php
 				}
 				?>
 			</channel>

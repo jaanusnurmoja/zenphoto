@@ -38,8 +38,7 @@ if (getOption('hotlink_protection') && isset($_SERVER['HTTP_REFERER'])) {
 	};
 	if (preg_replace('/^www./', '', strtolower($_SERVER['SERVER_NAME'])) != $checkstring) { 
 		/* It seems they are directly requesting the full image. */
-		header('Location: ' . FULLWEBPATH . '/index.php?album=' . $album8 . '&image=' . $image8);
-		exitZP();
+		redirectURL(FULLWEBPATH . '/index.php?album=' . $album8 . '&image=' . $image8);
 	}
 }
 
@@ -178,11 +177,11 @@ if (!($process || $force_cache)) { // no processing needed
 	if (getOption('album_folder_class') != 'external' && $disposal != 'Download') { // local album system, return the image directly
 		header('Content-Type: image/' . $suffix);
 		if (UTF8_IMAGE_URI) {
-			header("Location: " . getAlbumFolder(FULLWEBPATH) . pathurlencode($album8) . "/" . rawurlencode($image8));
+			$utf9_image_uri = getAlbumFolder(FULLWEBPATH) . pathurlencode($album8) . "/" . rawurlencode($image8);
 		} else {
-			header("Location: " . getAlbumFolder(FULLWEBPATH) . pathurlencode($album) . "/" . rawurlencode($image));
+			$utf9_image_uri = getAlbumFolder(FULLWEBPATH) . pathurlencode($album) . "/" . rawurlencode($image);
 		}
-		exitZP();
+		redirectURL($utf9_image_uri);
 	} else { // the web server does not have access to the image, have to supply it
 		$fp = fopen($image_path, 'rb');
 		// send the right headers
@@ -230,35 +229,15 @@ if (is_null($cache_path) || !file_exists($cache_path)) { //process the image
 		}
 		if ($watermark_use_image) {
 			$watermark_image = getWatermarkPath($watermark_use_image);
-			if (!file_exists($watermark_image))
+			if (!file_exists($watermark_image)) {
 				$watermark_image = SERVERPATH . '/' . ZENFOLDER . '/images/imageDefault.png';
-			$offset_h = getOption('watermark_h_offset') / 100;
-			$offset_w = getOption('watermark_w_offset') / 100;
-			$watermark = zp_imageGet($watermark_image);
-			$watermark_width = zp_imageWidth($watermark);
-			$watermark_height = zp_imageHeight($watermark);
-			$imw = zp_imageWidth($newim);
-			$imh = zp_imageHeight($newim);
-			$percent = getOption('watermark_scale') / 100;
-			$r = sqrt(($imw * $imh * $percent) / ($watermark_width * $watermark_height));
-			if (!getOption('watermark_allow_upscale')) {
-				$r = min(1, $r);
 			}
-			$nw = round($watermark_width * $r);
-			$nh = round($watermark_height * $r);
-			if (($nw != $watermark_width) || ($nh != $watermark_height)) {
-				$watermark = zp_imageResizeAlpha($watermark, $nw, $nh);
-			}
-			// Position Overlay in Bottom Right
-			$dest_x = max(0, floor(($imw - $nw) * $offset_w));
-			$dest_y = max(0, floor(($imh - $nh) * $offset_h));
-			zp_copyCanvas($newim, $watermark, $dest_x, $dest_y, 0, 0, $nw, $nh);
-			zp_imageKill($watermark);
-		}
+			$newim = addWatermark($newim, $watermark_image, $image_path);
+		} 
 		$iMutex->unlock();
 		if (!zp_imageOutput($newim, $suffix, $cache_path, $quality) && DEBUG_IMAGE) {
 			debugLog('full-image failed to create:' . $image);
-		}
+		} 
 	}
 }
 

@@ -41,18 +41,25 @@ if (isset($_GET['publish'])) {
 if (isset($_GET['skipscheduling'])) {
 	XSRFdefender('update');
 	$obj = new ZenpageNews(sanitize($_GET['titlelink']));
-	skipScheduledPublishing($obj);
+	skipScheduledPublishing($obj, 'futuredate');
+}
+if (isset($_GET['skipexpiration'])) {
+	XSRFdefender('update');
+	$obj = new ZenpageNews(sanitize($_GET['titlelink']));
+	skipScheduledPublishing($obj, 'expiredate');
 }
 if (isset($_GET['commentson'])) {
 	XSRFdefender('update');
 	$obj = new ZenpageNews(sanitize($_GET['titlelink']));
 	$obj->setCommentsAllowed(sanitize_numeric($_GET['commentson']));
+	$obj->setLastchangeUser($_zp_current_admin_obj->getUser());
 	$obj->save();
 }
 if (isset($_GET['hitcounter'])) {
 	XSRFdefender('hitcounter');
 	$obj = new ZenpageNews(sanitize($_GET['titlelink']));
 	$obj->set('hitcounter', 0);
+	$obj->setLastchangeUser($_zp_current_admin_obj->getUser());
 	$obj->save();
 	$reports[] = '<p class="messagebox fade-message">' . gettext("Hitcounter reset") . '</p>';
 }
@@ -182,7 +189,7 @@ datepickerJS();
 						$offset = Zenpage::getOffset($articles_page);
 						$list = array();
 						foreach ($result as $article) {
-							$list[] = $article[$sortorder];
+							$list[] = $article;
 						}
 						if ($sortorder == 'date') {
 							$rangeset = getPageSelector($list, $articles_page, 'dateDiff');

@@ -40,9 +40,9 @@ function getLanguageArray() {
 					'bn_BD'	 => gettext('Bengali'),
 					'bg_BG'	 => gettext('Bulgarian'),
 					'ca_ES'	 => gettext('Catalan'),
-					'zh_CN'	 => gettext('Chinese (People’s Republic of China)'),
-					'zh_HK'	 => gettext('Chinese (Hong Kong)'),
-					'zh_TW'	 => gettext('Chinese (Taiwan)'),
+					'zh_Hans_CN'	 => gettext('Chinese (People’s Republic of China)'),
+					'zh_Hans_HK'	 => gettext('Chinese (Hong Kong)'),
+					'zh_Hant_TW'	 => gettext('Chinese (Taiwan)'),
 					'hr_HR'	 => gettext('Croatian'),
 					'cs_CZ'	 => gettext('Czech'),
 					'km_KH'	 => gettext('Cambodian'),
@@ -354,6 +354,22 @@ function setupCurrentLocale($override = NULL) {
 }
 
 /**
+ * Converts underscore locales like "en_US" to valid IANA/BCP 47 hyphen locales like "en-US"
+ * Needed for example in JS or HTML "lang" attributes.
+ * 
+ * @since ZenphotoCMS 1.5.7
+ * 
+ * @param string $locale a locale like "en_US", if empty the current locale is used
+ * @return string
+ */
+function getLangAttributeLocale($locale = NULL) {
+	if(empty($locale)) {
+		$locale = getUserLocale();
+	}
+	return str_replace('_', '-', $locale);
+}
+
+/**
  * This function will parse a given HTTP Accepted language instruction
  * (or retrieve it from $_SERVER if not provided) and will return a sorted
  * array. For example, it will parse fr;en-us;q=0.8
@@ -542,10 +558,10 @@ function getTimezones() {
 		foreach ($timezones as $key => $zones) {
 			foreach ($zones as $id => $zone) {
 				/**
-				 * Only get timezones explicitely not part of "Others".
+				 * Only get timezones explicitely not part of "Others" except UTC
 				 * @see http://www.php.net/manual/en/timezones.others.php
 				 */
-				if (preg_match('/^(Africa|America|Antarctica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)\//', $zone['timezone_id'])) {
+				if ($zone['timezone_id'] == 'UTC' || preg_match('/^(Africa|America|Antarctica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)\//', $zone['timezone_id'])) {
 					$cities[] = $zone['timezone_id'];
 				}
 			}
@@ -669,6 +685,54 @@ if (function_exists('date_default_timezone_set')) { // insure a correct time zon
 		error_reporting($err);
 	}
 	unset($tz);
+}
+
+/**
+ * Gets all locales suppported on the current server as a multidimensional array
+ * 
+ * @param bool $plainarray Default false for a multidimensial array grouped by locale base. Set to true to generate a single dimensional array with all locales. 
+ * 
+ * @author Stephen Billard (sbillard), Malte Müller (acrylian) - adapted from the old former unsupported tool `list_locales.php`
+ * @since ZenphotoCMS 1.5.2
+ * @return array
+ */
+function getSystemLocales($plainarray = false) {
+	if (class_exists('ResourceBundle')) {
+		$locales = ResourceBundle::getLocales('');
+		$array = array();
+		if ($plainarray) {
+			return $locales;
+		} else {
+			foreach ($locales as $locale) {
+				$expl = explode('_', $locale);
+				$array[$expl[0]][] = $locale;				
+			}
+			return $array;
+		}
+	}
+	return false;
+}
+
+/**
+ * Returns the real language name to the locale passed.
+ * 
+ * If available it will use the native PHP Locale class. It returns the name in the language/locale currently set.
+ * Otherwise the far more limited internal Zenphoto catalogue stored in getLanguageArray() will be used.
+ * 
+ * @since ZenphotoCMS 1.5.2
+ * 
+ * @param string $locale A vaild locale.
+ * @return string
+ */
+function getLanguageDisplayName($locale) {
+	if (class_exists('Locale')) {
+		return Locale::getDisplayName($locale);
+	} else {
+		$languages = getLanguageArray();
+		if (array_key_exists($locale, $languages)) {
+			return $languages[$locale];
+		}
+	}
 }
 
 $_locale_Subdomains = getLanguageSubdomains();

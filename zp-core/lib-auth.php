@@ -683,8 +683,7 @@ class Zenphoto_Authority {
 						$info = $user->getChallengePhraseInfo();
 						if ($post_pass && $info['response'] == $post_pass) {
 							$ref = self::getResetTicket($post_user, $user->getPass());
-							header('location:' . WEBPATH . '/' . ZENFOLDER . '/admin-users.php?ticket=' . $ref . '&user=' . $post_user);
-							exitZP();
+							redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-users.php?ticket=' . $ref . '&user=' . $post_user);
 						}
 					}
 					if ( !empty($info['challenge']) && !empty($_POST['pass'])) { $_zp_login_error = gettext('Sorry, that is not the answer.'); }
@@ -795,6 +794,7 @@ class Zenphoto_Authority {
 		$_zp_loggedin = false;
 		$_zp_pre_authorization = array();
 		zp_session_destroy();
+		header('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
 		return zp_apply_filter('zp_logout', NULL, $_zp_current_admin_obj);
 	}
 
@@ -1308,16 +1308,19 @@ class Zenphoto_Authority {
 
 	/**
 	 * Checks if the email address being set is already used by another user
+	 * Returns true if it is, false if not
 	 *
 	 * @param string $email_to_check email address to check
 	 * @param type $current_user user id of the user trying to set this email address
 	 * @return boolean
 	 */
 	function checkUniqueMailaddress($email_to_check, $current_user) {
-		$all_users = $this->getAdministrators('users');
-		foreach ($all_users as $user) {
-			if ($user['user'] != $current_user && $user['email'] == $email_to_check) {
-				return true;
+		if (!empty($email_to_check) && isValidEmail($email_to_check)) {
+			$all_users = $this->getAdministrators('users');
+			foreach ($all_users as $user) {
+				if ($user['user'] != $current_user && !empty($user['email']) && $user['email'] == $email_to_check) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -1607,8 +1610,10 @@ class Zenphoto_Administrator extends PersistentObject {
 
 	/**
 	 * Uptates the database with all changes
+	 * 
+	 * @param bool $checkupdates Default false. If true the internal $updates property is checked for actual changes so unnecessary saving is skipped. Applies to already existing objects only.
 	 */
-	function save() {
+	function save($checkupdates = false) {
 		global $_zp_gallery;
 		if (DEBUG_LOGIN) {
 			debugLogVar("Zenphoto_Administrator->save()", $this);
@@ -1617,7 +1622,7 @@ class Zenphoto_Administrator extends PersistentObject {
 		if (is_null($this->get('date'))) {
 			$this->set('date', date('Y-m-d H:i:s'));
 		}
-		parent::save();
+		parent::save($checkupdates);
 		$id = $this->getID();
 		if (is_array($objects)) {
 			$sql = "DELETE FROM " . prefix('admin_to_object') . ' WHERE `adminid`=' . $id;

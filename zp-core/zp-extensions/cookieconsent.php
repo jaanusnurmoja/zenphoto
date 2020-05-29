@@ -3,7 +3,7 @@
  * A plugin to add a cookie notify dialog to comply with the EU cookie law and Google's requirement for Google Ads and more
  * https://www.cookiechoices.org
  *
- * Adapted of https://cookieconsent.insites.com
+ * Adapted of https://cookieconsent.osano.com/
  *
  * @author Malte Müller (acrylian), Fred Sondaar (fretzl), Vincent Bourganel (vincent3569)
  * @license GPL v3 or later
@@ -11,12 +11,12 @@
  * @subpackage cookieconsent
  */
 $plugin_is_filter = 5 | THEME_PLUGIN;
-$plugin_description = gettext("A plugin to add a cookie notify dialog to comply with the EU cookie law and Google's request regarding usages of Google Adwords, Analytics and more");
+$plugin_description = gettext("A plugin to add a cookie notify dialog to comply with the EU cookie law and Google's request regarding usages of Google Adwords, Analytics and more. Based on <a href='https://cookieconsent.osano.com/'>https://cookieconsent.osano.com/</a>");
 $plugin_author = "Malte Müller (acrylian), Fred Sondaar (fretzl), Vincent Bourganel (vincent3569)";
 $option_interface = 'cookieConsent';
 $plugin_category = gettext('Misc');
 
-if (!isset($_COOKIE['cookieconsent_status'])) {
+if (!zp_loggedin() && !isset($_COOKIE['cookieconsent_status'])) {
 	zp_register_filter('theme_head', 'cookieConsent::getCSS');
 	zp_register_filter('theme_head', 'cookieConsent::getJS');
 }	
@@ -124,11 +124,17 @@ class cookieConsent {
 		if (getOption('zpcookieconsent_buttonagree')) {
 			$dismiss = get_language_string(getOption('zpcookieconsent_buttonagree'));
 		}
-		$learnmore = gettext('More info');
+		$dataprivacy_info = getDataUsageNotice();
 		if (getOption('zpcookieconsent_buttonlearnmore')) {
 			$learnmore = get_language_string(getOption('zpcookieconsent_buttonlearnmore'));
+		}  else {
+			$learnmore = $dataprivacy_info['linktext'];
 		}
-		$link = getOption('zpcookieconsent_buttonlearnmorelink');
+		if(getOption('zpcookieconsent_buttonlearnmorelink')) {
+			$link = getOption('zpcookieconsent_buttonlearnmorelink');
+		} else {
+			$link = $dataprivacy_info['url'];
+		}
 		$theme = 'block';
 		if (getOption('zpcookieconsent_theme')) {
 			$theme = getOption('zpcookieconsent_theme');

@@ -21,38 +21,60 @@ if (isset($_GET['album'])) {
 	$album = newAlbum($folder);
 	if (!$album->isMyItem(ALBUM_RIGHTS)) {
 		if (!zp_apply_filter('admin_managed_albums_access', false, $return)) {
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
 		}
 	}
 	if (isset($_GET['saved'])) {
 		XSRFdefender('save_sort');
 		if (isset($_POST['ids'])) { //	process bulk actions, not individual image actions.
 			$action = processImageBulkActions($album);
-			if (!empty($action))
+			if (!empty($action)) {
 				$_GET['bulkmessage'] = $action;
-		} else {
-			parse_str($_POST['sortableList'], $inputArray);
-			if (isset($inputArray['id'])) {
-				$orderArray = $inputArray['id'];
-				if (!empty($orderArray)) {
-					foreach ($orderArray as $key => $id) {
-						$sql = 'UPDATE ' . prefix('images') . ' SET `sort_order`=' . db_quote(sprintf('%03u', $key)) . ' WHERE `id`=' . sanitize_numeric($id);
-						query($sql);
-					}
-					$album->setSortType("manual");
-					$album->setSortDirection(false, 'image');
-					$album->save();
-					$_GET['saved'] = 1;
-				}
 			}
+		} else {
+			$orderArray = explode('&', str_replace('id[]=', '', $_POST['sortableList']));
+			if (is_array($orderArray) && !empty($orderArray)) {
+				foreach ($orderArray as $key => $id) {
+					$sql = 'UPDATE ' . prefix('images') . ' SET `sort_order`=' . db_quote(sprintf('%03u', $key)) . ' WHERE `id`=' . sanitize_numeric($id);
+					query($sql);
+				}
+				$album->setSortType("manual");
+				$album->setSortDirection(false, 'image');
+				$album->setLastChangeUser($_zp_current_admin_obj->getUser());
+				$album->save();
+				$_GET['saved'] = 1;
+			}
+		}
+		if(!isset($_POST['checkForPostTruncation'])) {
+			$_GET['post_error'] = 1;
+		}
+	} 
+	if (isset($_GET['action']) && isset($_GET['image'])) {
+		$action = sanitize($_GET['action']);
+		$filename = sanitize($_GET['image']);
+		switch ($action) {
+			case 'publish': // yeah, only one but we might extend here
+				XSRFdefender('imageedit');
+				$album = newAlbum($folder);
+				$image = newImage($album, $filename);
+				$image->setShow(sanitize_numeric($_GET['value']));
+				if ($image->hasPublishSchedule()) {
+					$image->setPublishdate(date('Y-m-d H:i:s'));
+				} else if ($image->hasExpiration() || $image->hasExpired()) {
+					$image->setExpiredate(null);
+				}
+				$image->setLastchangeUser($_zp_current_admin_obj->getUser());
+				$image->save(); 
+				break;
 		}
 	}
 }
 
+
 // Print the admin header
 setAlbumSubtabs($album);
 printAdminHeader('edit', 'sort');
+
 ?>
 <script type="text/javascript">
 	//<!-- <![CDATA[
@@ -122,59 +144,13 @@ echo "\n</head>";
 					<?php
 					if (isset($_GET['saved'])) {
 						if (sanitize_numeric($_GET['saved'])) {
-							?>
-							<div class="messagebox fade-message">
-								<h2><?php echo gettext("Image order saved"); ?></h2>
-							</div>
-							<?php
+							consolidatedEditMessages($subtab);
 						} else {
 							if (isset($_GET['bulkmessage'])) {
-								$action = sanitize($_GET['bulkmessage']);
-								switch ($action) {
-									case 'deleteall':
-										$messagebox = gettext('Selected items deleted');
-										break;
-									case 'showall':
-										$messagebox = gettext('Selected items published');
-										break;
-									case 'hideall':
-										$messagebox = gettext('Selected items unpublished');
-										break;
-									case 'commentson':
-										$messagebox = gettext('Comments enabled for selected items');
-										break;
-									case 'commentsoff':
-										$messagebox = gettext('Comments disabled for selected items');
-										break;
-									case 'resethitcounter':
-										$messagebox = gettext('Hitcounter for selected items');
-										break;
-									case 'addtags':
-										$messagebox = gettext('Tags added for selected items');
-										break;
-									case 'cleartags':
-										$messagebox = gettext('Tags cleared for selected items');
-										break;
-									case 'alltags':
-										$messagebox = gettext('Tags added for images of selected items');
-										break;
-									case 'clearalltags':
-										$messagebox = gettext('Tags cleared for images of selected items');
-										break;
-									default:
-										$messagebox = $action;
-										break;
-								}
-							} else {
-								$messagebox = gettext("Nothing changed");
-							}
-							?>
-							<div class="messagebox fade-message">
-								<h2><?php echo $messagebox; ?></h2>
-							</div>
-							<?php
+								consolidatedEditMessages($subtab);
+							} 
 						}
-					}
+					} 
 					?>
 					<form class="dirty-check" action="?page=edit&amp;album=<?php echo $album->getFileName(); ?>&amp;saved&amp;tab=sort" method="post" name="sortableListForm" id="sortableListForm" autocomplete="off">
 						<?php XSRFToken('save_sort'); ?>
@@ -215,7 +191,7 @@ echo "\n</head>";
 											 title="<?php echo html_encode($image->getTitle()) . ' (' . html_encode($image->getFileName()) . ')'; ?>"
 											 width="80" height="80"  />
 									<p>
-										<input type="checkbox" name="ids[]" value="<?php echo $image->filename; ?>">
+										<?php printPublishIconLinkGallery($image, true) ?>
 										<a href="<?php echo WEBPATH . "/" . ZENFOLDER; ?>/admin-edit.php?page=edit&amp;album=<?php echo pathurlencode($album->name); ?>&amp;image=<?php echo urlencode($image->filename); ?>&amp;tab=imageinfo#IT" title="<?php echo gettext('edit'); ?>"><img src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/pencil.png" alt=""></a>
 										<?php
 										if (isImagePhoto($image)) {
@@ -224,6 +200,7 @@ echo "\n</head>";
 											<?php
 										}
 										?>
+										<input type="checkbox" name="ids[]" value="<?php echo $image->filename; ?>">	
 									</p>
 									<?php
 								}
@@ -249,11 +226,12 @@ echo "\n</head>";
 								</a>
 							</p>
 						</div>
+						<input type="hidden" name="checkForPostTruncation" value="1" />
 					</form>
 					<br class="clearall" />
 
 				</div>
-
+<?php printAlbumLegend(); ?>
 			</div>
 
 		</div>

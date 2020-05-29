@@ -1,11 +1,15 @@
 <?php
 /**
+ * The version number within @deprecated indicates the version these will be removed completely
+ * 
  * @package plugins
  * @subpackage deprecated-functions
  */
 
 /**
  * Zenphoto general deprecated functions
+ * 
+ * 
  *
  * @package plugins
  * @subpackage deprecated-functions
@@ -38,7 +42,7 @@ class internal_deprecations {
 	 * @since 1.5
 	 */
 	static function hasPrimaryScripts() {
-		deprecated_functions::notify(gettext('Use removeTrailingSlash() instead'));
+		deprecated_functions::notify(gettext('Use hasPrimaryScripts() instead'));
 	}
 	/**
 	 * @deprecated 2.0 Use removeDir() instead
@@ -116,6 +120,30 @@ class internal_deprecations {
 function cleanHTML($html) {
 	deprecated_functions::notify(gettext("Use tidyHTML() instead"));
 	return tidyHTML($html);
+}
+
+/**
+ * Returns the count of all the images in the album and any subalbums
+ * @deprecated 2.0
+ * @since 1.5.2
+ * 
+ * @param object $album The album whose image count you want
+ * @return int
+ */
+function getTotalImagesIn($album) {
+	deprecated_functions::notify(gettext("Use AlbumBase class method getNumAllImages() instead"));
+	return $album->getNumAllImages();
+}
+
+/**
+ * checks if the item has expired
+ * @deprecated ZenphotoCMS 2.0 - Use themeObject::checkScheduledPublishing() instead
+ * @since 1.5.7
+ * @param array $row database row of the object
+ */
+function checkPublishDates($row) {
+	deprecated_functions::notify(gettext("Use themeObject::checkScheduledPublishing() instead"));
+	return themeObject::checkScheduledPublishing($row);
 }
 
 /**
@@ -233,5 +261,7 @@ class zpFunctions {
 		internal_deprecations::tidyHTML();
 		return tidyHTML($html);
 	}
+	
+	
 
 }

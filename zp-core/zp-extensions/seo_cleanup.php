@@ -26,8 +26,8 @@ if (defined('OFFSET_PATH')) {
 						'enable'			 => true,
 						'button_text'	 => gettext('SEO Cleaner'),
 						'formname'		 => 'seo_cleanup.php',
-						'action'			 => WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/seo_cleanup.php',
-						'icon'				 => 'images/redo.png',
+						'action'			 => FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/seo_cleanup.php',
+						'icon'				 => FULLWEBPATH . '/' . ZENFOLDER . '/images/redo.png',
 						'title'				 => gettext('Make file and folder names in the Gallery SEO friendly.'),
 						'alt'					 => '',
 						'hidden'			 => '',
@@ -65,7 +65,7 @@ if (defined('OFFSET_PATH')) {
 	}
 
 	function cleanAlbum($obj) {
-		global $albumcount;
+		global $albumcount, $_zp_current_admin_obj;
 		$subalbum = $obj->name;
 		$file = basename($subalbum);
 		$seoname = seoFriendly($file);
@@ -82,6 +82,7 @@ if (defined('OFFSET_PATH')) {
 				printf(gettext('<em>%1$s</em> rename to <em>%2$s</em> failed: %3$s'), $subalbum, $newname, $error);
 				echo "<br />\n";
 			} else {
+				$obj->setLastChangeUser($_zp_current_admin_obj->getUser());
 				$obj->save();
 				clearstatcache();
 				printf(gettext('<em>%1$s</em> renamed to <em>%2$s</em>'), $subalbum, $newname);
@@ -100,7 +101,7 @@ if (defined('OFFSET_PATH')) {
 	}
 
 	function checkFolder($album, $album_cleaned) {
-		global $count, $albumcount;
+		global $count, $albumcount, $_zp_current_admin_obj;
 		$subalbums = $album->getAlbums(0);
 		foreach ($subalbums as $subalbum) {
 			$obj = newAlbum($subalbum);
@@ -117,6 +118,7 @@ if (defined('OFFSET_PATH')) {
 					printf(gettext('<em>%1$s</em> rename to <em>%2$s</em> failed: %3$s'), $folder . $filename, $seoname, $error);
 					echo "<br />\n";
 				} else {
+					$image->setLastChangeUser($_zp_current_admin_obj->getUser());
 					$image->save();
 					clearstatcache();
 					echo '&nbsp;&nbsp;';
@@ -137,7 +139,7 @@ if (defined('OFFSET_PATH')) {
 
 	$_zp_gallery->garbageCollect();
 
-	$zenphoto_tabs['overview']['subtabs'] = array(gettext('SEO cleaner') => '');
+	$zenphoto_tabs['overview']['subtabs'] = array(gettext('SEO cleaner') => FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/seo_cleanup.php?XSRFToken=' . getXSRFToken('seo_cleanup'));
 	printAdminHeader('overview', 'SEO cleaner');
 
 	if (isset($_GET['todo'])) {
@@ -174,7 +176,7 @@ if (defined('OFFSET_PATH')) {
 							<p>
 								<?php
 								if ($albumcount) {
-									printf(ngettext('%d album cleaned.', '%d albums cleaned', $albumcount), $albumcount);
+									printf(ngettext('%d album cleaned.', '%d albums cleaned.', $albumcount), $albumcount);
 								} else {
 									echo gettext('No albums cleaned.');
 								}
@@ -183,7 +185,7 @@ if (defined('OFFSET_PATH')) {
 							<p>
 								<?php
 								if ($count) {
-									printf(ngettext('%d image cleaned.', '%d images cleaned', $count), $count);
+									printf(ngettext('%d image cleaned.', '%d images cleaned.', $count), $count);
 								} else {
 									echo gettext('No images cleaned.');
 								}

@@ -3,9 +3,9 @@
 	<p><?php echo gettext("Fill in the information below and <strong>setup</strong> will attempt to update your configuration file."); ?><br />
 	</p>
 	<form action="" method="post"><input type="hidden" name="db" value="yes" />
-		<input type="hidden" name="xsrfToken" value="<?php echo $xsrftoken?>" />
+		<input type="hidden" name="xsrfToken" value="<?php echo $_zp_setup_xsrftoken; ?>" />
 		<?php
-		if ($debug) {
+		if ($_zp_setup_debug) {
 			?>
 			<input type="hidden" name="debug" />
 			<?php
@@ -96,6 +96,10 @@
 			}
 			?>
 			<td><input type="text" size="40" name="db_prefix" value="<?php echo $path; ; ?>" /></td>
+		</tr>
+		<tr id="prefix" >
+			<td><?php echo gettext("Database server port"); ?></td>
+			<td><input type="text" size="40" name="db_port" id="db_port" value="<?php echo $_zp_conf_vars['mysql_port']?>" /></td>
 		</tr>
 		<tr>
 			<td></td>

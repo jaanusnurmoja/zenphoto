@@ -62,11 +62,20 @@ if (!function_exists('zp_graphicsLibInfo')) {
 		$_gd_freetype_fonts = array(0);
 
 		$imgtypes = imagetypes();
-		$_lib_GD_info['GIF'] = ($imgtypes & IMG_GIF) ? 'gif' : false;
-		$_lib_GD_info['JPG'] = ($imgtypes & IMG_JPG) ? 'jpg' : false;
-		$_lib_GD_info['JPEG'] = ($imgtypes & IMG_JPG) ? 'jpg' : false;
-		$_lib_GD_info['PNG'] = ($imgtypes & IMG_PNG) ? 'png' : false;
-		$_lib_GD_info['WBMP'] = ($imgtypes & IMG_WBMP) ? 'jpg' : false;
+		$gd_imgtypes['GIF'] = ($imgtypes & IMG_GIF) ? 'gif' : false;
+		$gd_imgtypes['JPG'] = ($imgtypes & IMG_JPG) ? 'jpg' : false;
+		$gd_imgtypes['JPEG'] = ($imgtypes & IMG_JPG) ? 'jpg' : false;
+		$gd_imgtypes['PNG'] = ($imgtypes & IMG_PNG) ? 'png' : false;
+		$gd_imgtypes['WBMP'] = ($imgtypes & IMG_WBMP) ? 'jpg' : false;
+		$gd_imgtypes['WEBP'] = ($imgtypes & IMG_WEBP) ? 'webp' : false;
+		
+		//Fix that unsupported types may be listed without suffix and then confuse e.g. the "cache as" option
+		foreach($gd_imgtypes as $key => $value) {
+			if($value) {
+				$_lib_GD_info[$key] = $value;
+			}
+		}
+		unset($gd_imgtypes);
 		unset($imgtypes);
 		unset($info);
 
@@ -92,6 +101,8 @@ if (!function_exists('zp_graphicsLibInfo')) {
 					return imagecreatefromjpeg($imgfile);
 				case 'gif':
 					return imagecreatefromgif($imgfile);
+				case 'webp':
+					return imagecreatefromwebp($imgfile);
 			}
 			return false;
 		}
@@ -120,6 +131,8 @@ if (!function_exists('zp_graphicsLibInfo')) {
 					return imagejpeg($im, $filename, $qual);
 				case 'gif':
 					return imagegif($im, $filename);
+				case 'webp':
+					return imagewebp($im, $filename, $qual);
 			}
 			return false;
 		}
@@ -129,10 +142,15 @@ if (!function_exists('zp_graphicsLibInfo')) {
 		 *
 		 * @param int $w the width of the image
 		 * @param int $h the height of the image
+		 * @param bool $truecolor True to create a true color image, false for usage with palette images like gifs
 		 * @return image
 		 */
-		function zp_createImage($w, $h) {
-			return imagecreatetruecolor($w, $h);
+		function zp_createImage($w, $h, $truecolor = true) {
+			if ($truecolor) {
+				return imagecreatetruecolor($w, $h);
+			} else {
+				return imagecreate($w, $h);
+			}
 		}
 
 		/**
@@ -293,34 +311,47 @@ if (!function_exists('zp_graphicsLibInfo')) {
 			}
 			return $img;
 		}
-
+		
 		/**
 		 * Resize a PNG file with transparency to given dimensions
 		 * and still retain the alpha channel information
-		 * Author:  Alex Le - http://www.alexle.net
-		 *
-		 *
+		 * 
+		 * Note: You have to apply zp_resampleImage() afterwards as the function does not handle this internally
+		 * 
 		 * @param image $src
 		 * @param int $w
 		 * @param int $h
 		 * @return image
 		 */
-		function zp_imageResizeAlpha(&$src, $w, $h) {
-			/* create a new image with the new width and height */
-			if ($temp = @imagecreatetruecolor($w, $h)) {
-
-				/* making the new image transparent */
-				$background = imagecolorallocate($temp, 0, 0, 0);
-				imagecolortransparent($temp, $background); // make the new temp image all transparent
-				imagealphablending($temp, false); // turn off the alpha blending to keep the alpha channel
-
-				/* Resize the PNG file */
-				/* use imagecopyresized to gain some performance but loose some quality */
-				imagecopyresampled($temp, $src, 0, 0, 0, 0, $w, $h, imagesx($src), imagesy($src));
-				/* use imagecopyresampled if you concern more about the quality */
-				//imagecopyresampled($temp, $src, 0, 0, 0, 0, $w, $h, imagesx($src), imagesy($src));
+		function zp_imageResizeAlpha($src, $w, $h) {
+			if ($src) {
+				imagealphablending($src, false);
+				imagesavealpha($src, true);
+				$transparentindex = imagecolorallocatealpha($src, 255, 255, 255, 127);
+				imagefill($src, 0, 0, $transparentindex);
 			}
-			return $temp;
+			return $src;
+		}
+
+		/**
+		 * Resize a GIF file with transparency to given dimensions
+		 * and still retain the transparency information
+		 * 
+		 * Note: You have to apply zp_resampleImage() afterwards as the function does not handle this internally
+		 * 
+		 * @since ZenphotoCMS 1.5.2
+		 * 
+		 * @param image $src
+		 * @param int $w
+		 * @param int $h
+		 * @return image
+		 */
+		function zp_imageResizeTransparent($src, $w, $h) {
+			if ($src) {
+				$transparent = zp_colorAllocate($src, 255, 255, 255);
+				zp_imageColorTransparent($src, $transparent);
+			}
+			return $src;
 		}
 
 		/**

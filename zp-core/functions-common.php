@@ -91,8 +91,6 @@ function internalToFilesystem($filename) {
  * @return string
  */
 function sanitize_path($filename) {
-	if (get_magic_quotes_gpc())
-		$filename = stripslashes(trim($filename));
 	$filename = strip_tags(str_replace('\\', '/', $filename));
 	$filename = preg_replace(array('/x00/', '/\/\/+/', '/\/\.\./', '/\/\./', '/:/', '/</', '/>/', '/\?/', '/\*/', '/\"/', '/\|/', '/\/+$/', '/^\/+/'), '', $filename);
 	return $filename;
@@ -123,7 +121,7 @@ function sanitize_script($text) {
 }
 
 /** Make strings generally clean.  Takes an input string and cleans out
- * null-bytes, slashes (if magic_quotes_gpc is on), and optionally use KSES
+ * null-bytes, and optionally use KSES
  * library to prevent XSS attacks and other malicious user input.
  * @param string $input_string is a string that needs cleaning.
  * @param string $sanitize_level is a number between 0 and 3 that describes the
@@ -181,11 +179,7 @@ function getBare($content) {
  * @return string the sanitized string.
  */
 function sanitize_string($input, $sanitize_level) {
-	// Strip slashes if get_magic_quotes_gpc is enabled.
 	if (is_string($input)) {
-		if (get_magic_quotes_gpc()) {
-			$input = stripslashes($input);
-		}
 		$input = str_replace(chr(0), " ", $input);
 		switch ($sanitize_level) {
 			case 0:
@@ -337,6 +331,7 @@ function html_encodeTagged($original, $allowScript = true) {
 		$str = preg_replace('|<(.*)onclick|ixs', '%$c', $str);
 		$tags[2]['%$c'] = '&lt;<strike>onclick</strike>';
 	}
+	$str = htmLawed($str);
 	//strip html comments
 	$str = preg_replace('~<!--.*?-->~is', '', $str);
 	// markup
@@ -355,7 +350,9 @@ function html_encodeTagged($original, $allowScript = true) {
 	foreach (array_reverse($tags, true) as $taglist) {
 		$str = strtr($str, $taglist);
 	}
-	$str = tidyHTML($str);
+	if ($str != $original) {
+		$str = tidyHTML($str);
+	}
 	return $str;
 }
 

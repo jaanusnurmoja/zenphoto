@@ -123,11 +123,20 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 	$_lib_Imagick_info['Library_desc'] = sprintf(gettext('PHP Imagick library <em>%s</em>') . '<br /><em>%s</em>', $_imagick_version, $_imagemagick_version['versionString']);
 
 	$_imagick_format_whitelist = array(
-					'BMP'		 => 'jpg', 'BMP2'	 => 'jpg', 'BMP3'	 => 'jpg',
-					'GIF'		 => 'gif', 'GIF87'	 => 'gif',
-					'JPG'		 => 'jpg', 'JPEG'	 => 'jpg',
-					'PNG'		 => 'png', 'PNG8'	 => 'png', 'PNG24'	 => 'png', 'PNG32'	 => 'png',
-					'TIFF'	 => 'jpg', 'TIFF64' => 'jpg'
+			'BMP' => 'jpg',
+			'BMP2' => 'jpg',
+			'BMP3' => 'jpg',
+			'GIF' => 'gif',
+			'GIF87' => 'gif',
+			'JPG' => 'jpg',
+			'JPEG' => 'jpg',
+			'PNG' => 'png',
+			'PNG8' => 'png',
+			'PNG24' => 'png',
+			'PNG32' => 'png',
+			'TIFF' => 'jpg',
+			'TIFF64' => 'jpg',
+			'WEBP' => 'webp'
 	);
 
 	$_imagick = new Imagick();
@@ -197,32 +206,25 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 			case 'gif':
 				$im->setImageCompression(Imagick::COMPRESSION_LZW);
 				$im->setImageCompressionQuality($qual);
-
 				if ($interlace) {
 					$im->setInterlaceScheme(Imagick::INTERLACE_GIF);
 				}
-
 				break;
-
 			case 'jpeg':
 			case 'jpg':
 				$im->setImageCompression(Imagick::COMPRESSION_JPEG);
 				$im->setImageCompressionQuality($qual);
-
 				if ($interlace) {
 					$im->setInterlaceScheme(Imagick::INTERLACE_JPEG);
 				}
-
 				break;
-
 			case 'png':
+			case 'webp': // apparently there are no interlace and compression constants for webp so we just use the png setting
 				$im->setImageCompression(Imagick::COMPRESSION_ZIP);
 				$im->setImageCompressionQuality($qual);
-
 				if ($interlace) {
 					$im->setInterlaceScheme(Imagick::INTERLACE_PNG);
 				}
-
 				break;
 		}
 
@@ -242,13 +244,18 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 	 *
 	 * @param int $w the width of the image
 	 * @param int $h the height of the image
+	 * @param bool $truecolor True to create a true color image, false for usage with palette images like gifs
 	 * @return Imagick
 	 */
-	function zp_createImage($w, $h) {
+	function zp_createImage($w, $h, $truecolor = true) {
 		$im = new Imagick();
 		$im->newImage($w, $h, 'none');
-		$im->setImageType(Imagick::IMGTYPE_TRUECOLORMATTE);
-
+		if($truecolor) {
+			$im->setImageType(Imagick::IMGTYPE_TRUECOLORMATTE);
+		} else {
+			$imagetype = $im->getImageType();
+			$im->setImageType($imagetype);
+		}
 		return $im;
 	}
 
@@ -364,8 +371,19 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 	 */
 	function zp_imageResizeAlpha($src, $w, $h) {
 		$src->scaleImage($w, $h);
-
 		return $src;
+	}
+	
+	/**
+	 * Uses zp_imageResizeAlpha() internally as Imagick does not make a difference
+	 * 
+	 * @param type $src
+	 * @param type $w
+	 * @param type $h
+	 * @return type
+	 */
+	function zp_imageResizeTransparent($src, $w, $h) {
+		return zp_imageResizeAlpha($src, $w, $h);
 	}
 
 	/**
@@ -397,13 +415,13 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 	 * @return array
 	 */
 	function zp_imageDims($filename) {
-		$ping = new Imagick();
-
-		if ($ping->pingImage(filesystemToInternal($filename))) {
-			return array('width' => $ping->getImageWidth(), 'height' => $ping->getImageHeight());
+		$imageinfo = NULL;
+		$rslt = getimagesize($filename, $imageinfo);
+		if (is_array($rslt)) {
+			return array('width' => $rslt[0], 'height' => $rslt[1]);
+		} else {
+			return false;
 		}
-
-		return false;
 	}
 
 	/**
@@ -413,17 +431,13 @@ if ($_zp_imagick_present && (getOption('use_imagick') || !extension_loaded('gd')
 	 * @return string
 	 */
 	function zp_imageIPTC($filename) {
-		$ping = new Imagick();
-
-		if ($ping->pingImage(filesystemToInternal($filename))) {
-			try {
-				return $ping->getImageProfile('iptc');
-			} catch (ImagickException $e) {
-				// IPTC profile does not exist
-			}
+		$imageinfo = NULL;
+		$rslt = getimagesize($filename, $imageinfo);
+		if (is_array($rslt) && isset($imageinfo['APP13'])) {
+			return $imageinfo['APP13'];
+		} else {
+			return false;
 		}
-
-		return false;
 	}
 
 	/**

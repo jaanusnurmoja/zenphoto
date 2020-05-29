@@ -18,9 +18,7 @@ if (!function_exists("json_encode")) {
 require_once(dirname(__FILE__) . '/functions-basic.php');
 require_once(dirname(__FILE__) . '/functions-filter.php');
 require_once(SERVERPATH . '/' . ZENFOLDER . '/lib-kses.php');
-if (!class_exists('tidy')) {
-	require_once dirname(__FILE__) . '/lib-htmLawed.php';
-}
+require_once dirname(__FILE__) . '/lib-htmLawed.php';
 
 $_zp_captcha = new _zp_captcha(); // this will be overridden by the plugin if enabled.
 $_zp_HTML_cache = new _zp_HTML_cache(); // this will be overridden by the plugin if enabled.
@@ -215,8 +213,8 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 		$short = truncate_string($articlecontent, $shorten, '');
 		if ($short != $articlecontent || $forceindicator) { //	we actually did remove some stuff
 			// drop open tag strings
-			$open = mb_strrpos($short, '</');
-			if ($open) {
+			$open = mb_strrpos($short, '<');
+			if ($open > mb_strrpos($short, '>')) {
 				$short = mb_substr($short, 0, $open);
 			}
 			$short = tidyHTML($short . $shortenindicator);
@@ -707,6 +705,17 @@ function enableExtension($extension, $priority, $persistent = true) {
 }
 
 /**
+ * Disables an extension
+ * @param string $extension
+ * @param bool $persistent
+ * 
+ * @since ZenphotoCMS 1.5.2
+ */
+function disableExtension($extension, $persistent = true) {
+	setOption('zp_plugin_' . $extension, 0, $persistent);
+}
+
+/**
  * Gets an array of comments for the current admin
  *
  * @param int $number how many comments desired
@@ -952,7 +961,7 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 			$_zp_loggedin = $save_logon;
 			foreach ($search_album_list as $searchalbum) {
 				if (strpos($albumname, $searchalbum) !== false) {
-					if($searchparent == 'searchresults_album' && $_zp_last_album == $albumname) {
+					if($searchparent == 'searchresults_album') {
 						$context = $context | ZP_SEARCH_LINKED | ZP_ALBUM_LINKED;
 					} else {
 						$context = $context | ZP_SEARCH_LINKED | ZP_IMAGE_LINKED;
@@ -994,31 +1003,10 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 		} else { // not an object in the current search path
 			$_zp_current_search = null;
 			rem_context(ZP_SEARCH);
-			if (!isset($_REQUEST['preserve_serch_params'])) {
+			if (!isset($_REQUEST['preserve_search_params'])) {
 				zp_clearCookie("zenphoto_search_params");
 			}
 		}
-	}
-}
-
-/**
- *
- * checks if the item has expired
- * @param array $row database row of the object
- */
-function checkPublishDates($row) {
-	if (@$row['show']) {
-		if (isset($row['expiredate']) && $row['expiredate'] && $row['expiredate'] != '0000-00-00 00:00:00') {
-			if ($row['expiredate'] <= date('Y-m-d H:i:s')) {
-				return 1;
-			}
-		}
-		if (isset($row['publishdate']) && $row['publishdate'] && $row['publishdate'] != '0000-00-00 00:00:00') {
-			if ($row['publishdate'] >= date('Y-m-d H:i:s')) {
-				return 2;
-			}
-		}
-		return null;
 	}
 }
 
@@ -1069,7 +1057,7 @@ function setupTheme($album = NULL) {
 		header('Content-Type: text/html; charset=' . LOCAL_CHARSET);
 		?>
 		<!DOCTYPE html>
-		<html xmlns="http://www.w3.org/1999/xhtml">
+		<html>
 			<head>
 			</head>
 			<body>
@@ -1565,10 +1553,10 @@ function getNotViewableImages() {
   $hidealbums = getNotViewableAlbums();
   $where = '';
   if (!is_null($hidealbums)) {
-    $where = implode(',', $hidealbums);
+		$where = ' OR `albumid` in (' . implode(',', $hidealbums) . ')';
   }
   if (is_null($_zp_not_viewable_image_list)) {
-    $sql = 'SELECT DISTINCT `id` FROM ' . prefix('images') . ' WHERE `show` = 0 OR `albumid` in (' . $where . ')';
+    $sql = 'SELECT DISTINCT `id` FROM ' . prefix('images') . ' WHERE `show` = 0' . $where;
     $result = query($sql);
     if ($result) {
       $_zp_not_viewable_image_list = array();
@@ -1599,6 +1587,22 @@ function isValidURL($url) {
  */
 function safe_fnmatch($pattern, $string) {
 	return @preg_match('/^' . strtr(addcslashes($pattern, '\\.+^$(){}=!<>|'), array('*' => '.*', '?' => '.?')) . '$/i', $string);
+}
+
+/**
+ * Returns true if the mail address passed is valid. 
+ * It uses PHP's internal `filter_var` functions to validate the syntax but not the existence.
+ * 
+ * @since ZenphotoCMS 1.5.2
+ * 
+ * @param string $email An email address
+ * @return boolean
+ */
+function isValidEmail($email) {
+	if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -1762,36 +1766,6 @@ function restore_context() {
 }
 
 /**
- * Sanitizes a "redirect" post to always be within the site
- * @param string $redirectTo
- * @return string
- */
-function sanitizeRedirect($redirectTo) {
-	$redirect = NULL;
-	if ($redirectTo && $redir = parse_url($redirectTo)) {
-		if (isset($redir['scheme']) && isset($redir['host'])) {
-			$redirect = $redir['scheme'] . '://' . sanitize($redir['host']);
-		}
-		if ($redirect != SERVER_HTTP_HOST) {
-			$redirect = SERVER_HTTP_HOST;
-		}
-		if (WEBPATH && strpos($redirectTo, WEBPATH) === false) {
-			$redirect .= WEBPATH . '/';
-		}
-		if (isset($redir['path'])) {
-			$redirect .= urldecode(sanitize($redir['path']));
-		}
-		if (isset($redir['query'])) {
-			$redirect .= '?' . sanitize($redir['query']);
-		}
-		if (isset($redir['fragment'])) {
-			$redirect .= '#' . sanitize($redir['fragment']);
-		}
-	}
-	return $redirect;
-}
-
-/**
  * checks password posting
  *
  * @param string $authType override of athorization type
@@ -1937,8 +1911,7 @@ function zp_handle_password_single($authType = NULL, $check_auth = NULL, $check_
 			if (isset($_POST['redirect'])) {
 				$redirect_to = sanitizeRedirect($_POST['redirect']);
 				if (!empty($redirect_to)) {
-					header("Location: " . $redirect_to);
-					exitZP();
+					redirectURL($redirect_to);
 				}
 			}
 		} else {
@@ -1995,6 +1968,9 @@ function setThemeOption($key, $value, $album, $theme, $default = false) {
 		$id = $album->getID();
 		$theme = $album->getAlbumTheme();
 	}
+	if (empty($theme)) {
+		$theme = $_zp_gallery->getCurrentTheme();
+	}
 	$creator = THEMEFOLDER . '/' . $theme;
 
 	$sql = 'INSERT INTO ' . prefix('options') . ' (`name`,`ownerid`,`theme`,`creator`,`value`) VALUES (' . db_quote($key) . ',0,' . db_quote($theme) . ',' . db_quote($creator) . ',';
@@ -2014,6 +1990,49 @@ function setThemeOption($key, $value, $album, $theme, $default = false) {
 }
 
 /**
+ * Replaces/renames an option. If the old option exits, it creates the new option with the old option's value as the default 
+ * unless the new option has already been set otherwise. Independently it always deletes the old option.
+ * 
+ * @param string $oldkey Old option name
+ * @param string $newkey New option name
+ * 
+ * @since Zenphoto 1.5.1
+ */
+function replaceThemeOption($oldkey, $newkey) {
+	$oldoption = getThemeOption($oldkey);
+	if ($oldoption) {
+		setThemeOptionDefault($newkey, $oldoption);
+		purgeThemeOption($oldkey);
+	}
+}
+
+/**
+ * Deletes an option from the database 
+ * 
+ * @global array $_zp_options
+ * @param string $key
+ * 
+ * @since Zenphoto 1.5.1
+ */
+function purgeThemeOption($key, $album = NULL, $theme = NULL) {
+	global $_set_theme_album, $_zp_gallery;
+	if (is_null($album)) {
+		$album = $_set_theme_album;
+	}
+	if (is_null($album)) {
+		$id = 0;
+	} else {
+		$id = $album->getID();
+		$theme = $album->getAlbumTheme();
+	}
+	if (empty($theme)) {
+		$theme = $_zp_gallery->getCurrentTheme();
+	}
+	$sql = 'DELETE FROM ' . prefix('options') . ' WHERE `name`=' . db_quote($key) . ' AND `ownerid`=' . $id . ' AND `theme`=' . db_quote($theme);
+	query($sql, false);
+}
+
+/**
  * Used to set default values for theme specific options
  *
  * @param string $key
@@ -2025,6 +2044,8 @@ function setThemeOptionDefault($key, $value) {
 	$theme = basename(dirname($b['file']));
 	setThemeOption($key, $value, NULL, $theme, true);
 }
+
+
 
 /**
  * Returns the value of a theme option
@@ -2261,10 +2282,7 @@ function XSRFdefender($action) {
 	$token = getXSRFToken($action);
 	if (!isset($_REQUEST['XSRFToken']) || $_REQUEST['XSRFToken'] != $token) {
 		zp_apply_filter('admin_XSRF_access', false, $action);
-		header("HTTP/1.0 302 Found");
-		header("Status: 302 Found");
-		header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?action=external&error&msg=' . sprintf(gettext('“%s” Cross Site Request Forgery blocked.'), $action));
-		exitZP();
+		redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin.php?action=external&error&msg=' . sprintf(gettext('“%s” Cross Site Request Forgery blocked.'), $action), '302');
 	}
 	unset($_REQUEST['XSRFToken']);
 	unset($_POST['XSRFToken']);
@@ -2663,7 +2681,7 @@ function setexifvars() {
 	 * is displayed
 	 */
 	$_zp_exifvars = array(
-			// Database Field       		 => array('source', 'Metadata Key', 'ZP Display Text', Display?	size,	enabled, type)
+			// Database Field       		 => array('source', 'Metadata Key', 'ZP Display Text', Display?,	size (ignored!), enabled, type)
 			'EXIFMake' => array('IFD0', 'Make', gettext('Camera Maker'), true, 52, true, 'string'),
 			'EXIFModel' => array('IFD0', 'Model', gettext('Camera Model'), true, 52, true, 'string'),
 			'EXIFDescription' => array('IFD0', 'ImageDescription', gettext('Image Title'), false, 52, true, 'string'),
@@ -2719,7 +2737,7 @@ function setexifvars() {
 			'EXIFGPSLongitudeRef' => array('GPS', 'Longitude Reference', gettext('Longitude Reference'), false, 52, true, 'string'),
 			'EXIFGPSAltitude' => array('GPS', 'Altitude', gettext('Altitude'), false, 52, true, 'number'),
 			'EXIFGPSAltitudeRef' => array('GPS', 'Altitude Reference', gettext('Altitude Reference'), false, 52, true, 'string'),
-			'IPTCOriginatingProgram' => array('IPTC', 'OriginatingProgram', gettext('Originating Program '), false, 32, true, 'string'),
+			'IPTCOriginatingProgram' => array('IPTC', 'OriginatingProgram', gettext('Originating Program'), false, 32, true, 'string'),
 			'IPTCProgramVersion' => array('IPTC', 'ProgramVersion', gettext('Program Version'), false, 10, true, 'string'),
 			'VideoFormat' => array('VIDEO', 'fileformat', gettext('Video File Format'), false, 32, true, 'string'),
 			'VideoSize' => array('VIDEO', 'filesize', gettext('Video File Size'), false, 32, true, 'number'),
@@ -3031,3 +3049,14 @@ class _zp_HTML_cache {
 
 }
 setexifvars();
+
+/**
+ * Prints the lang="" attribute for the main <html> element.
+ * 
+ * @since ZenphotoCMS 1.5.7
+ * 
+ * @param string $locale Default null so the current locale is used. Or a locale like "en_US" which will get the underscores replaced by hyphens to be valid
+ */
+function printLangAttribute($locale = null) {
+	echo ' lang="' .  getLangAttributeLocale($locale) .'"';
+}

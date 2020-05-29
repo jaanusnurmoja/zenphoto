@@ -76,16 +76,14 @@ if (isset($_GET['action'])) {
 			} else {
 				$notify = '&migration_error';
 			}
-			header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-users.php?page=users&subpage=" . $subpage . $notify);
-			exitZP();
+			redirectURL(FULLWEBPATH . "/" . ZENFOLDER . "/admin-users.php?page=users&subpage=" . $subpage . $notify);
 			break;
 		case 'deleteadmin':
 			XSRFdefender('deleteadmin');
 			$adminobj = Zenphoto_Authority::newAdministrator(sanitize($_GET['adminuser']), 1);
 			zp_apply_filter('save_user', '', $adminobj, 'delete');
 			$adminobj->remove();
-			header("Location: " . FULLWEBPATH . "/" . ZENFOLDER . "/admin-users.php?page=users&deleted&subpage=" . $subpage);
-			exitZP();
+			redirectURL(FULLWEBPATH . "/" . ZENFOLDER . "/admin-users.php?page=users&deleted&subpage=" . $subpage);
 			break;
 		case 'saveoptions':
 			XSRFdefender('saveadmin');
@@ -124,6 +122,7 @@ if (isset($_GET['action'])) {
 									$what = 'new';
 									$userobj = Zenphoto_Authority::newAdministrator('');
 									$userobj->setUser($user);
+									$userobj->setLastChange();
 									markUpdated();
 								}
 							} else {
@@ -141,15 +140,17 @@ if (isset($_GET['action'])) {
 							}
 							if (isset($_POST[$i . '-admin_email'])) {
 								$admin_e = trim(sanitize($_POST[$i . '-admin_email']));
-								$mail_duplicate = $_zp_authority->checkUniqueMailaddress($admin_e, $user);
-								if($mail_duplicate) {
-									$msg = sprintf(gettext('%s email is already used by another user!'), $admin_n);
-								} else {
-									if ($admin_e != $userobj->getEmail()) {
-										markUpdated();
-										$userobj->setEmail($admin_e);
+								if(!empty($admin_e) && isValidEmail($admin_e)) {				
+									$mail_duplicate = $_zp_authority->checkUniqueMailaddress($admin_e, $user);
+									if($mail_duplicate) {
+										$msg = sprintf(gettext('%s email is already used by another user!'), $admin_n);
+									} else {
+										if ($admin_e != $userobj->getEmail()) {
+											markUpdated();
+											$userobj->setEmail($admin_e);
+										}
 									}
-								}
+								} 
 							}
 							if (empty($pass)) {
 								if ($newuser || @$_POST['passrequired' . $i]) {
@@ -227,7 +228,8 @@ if (isset($_GET['action'])) {
 								if (empty($msg)) {
 									if (!$notify)
 										$userobj->transient = false;
-									$userobj->save();
+									$userobj->setLastChangeUser($_zp_current_admin_obj->getUser());
+									$userobj->save(true);
 								} else {
 									$notify = '?mismatch=format&error=' . urlencode($msg);
 									$error = true;
@@ -251,8 +253,7 @@ if (isset($_GET['action'])) {
 	if (empty($notify)) {
 		$notify = '?saved';
 	}
-	header("Location: " . $notify . $returntab . $ticket);
-	exitZP();
+	redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-users.php' . $notify . $returntab . $ticket);
 }
 $refresh = false;
 
@@ -263,10 +264,7 @@ if ($_zp_current_admin_obj->reset) {
 }
 
 if (!$_zp_current_admin_obj && $_zp_current_admin_obj->getID()) {
-	header("HTTP/1.0 302 Found");
-	header("Status: 302 Found");
-	header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin.php');
-	exitZP();
+	redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin.php','302');
 }
 
 printAdminHeader($_current_tab);
@@ -778,7 +776,10 @@ echo $refresh;
 														}
 														?>
 													</ul>
-													<?php	userDataExport::printUserAccountExportLinks($userobj); ?>
+													<?php	
+														printLastChangeInfo($userobj);
+														userDataExport::printUserAccountExportLinks($userobj); 
+													?>
 												</td>
 
 												<td <?php if (!empty($background)) echo " style=\"$background\""; ?>>

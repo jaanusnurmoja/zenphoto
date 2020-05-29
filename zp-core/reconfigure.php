@@ -33,9 +33,15 @@ function reconfigureAction($mandatory) {
 			}
 			$dir = rtrim($dir, '/');
 			unprotectSetupFiles();
+			if (!defined('PROTOCOL')) {
+				if (secureServer()) {
+					define('PROTOCOL', 'https');
+				} else {
+					define('PROTOCOL', 'http');
+				}
+			}
 			$location = PROTOCOL . '://' . $_SERVER['HTTP_HOST'] . $dir . "/" . ZENFOLDER . "/setup/index.php?autorun=$where";
-			header("Location: $location");
-			exitZP();
+			redirectURL($location);
 		} else {
 			reconfigurePage($diff, $needs, $mandatory);
 		}
@@ -79,7 +85,7 @@ function checkSignature($auto) {
 	$_configMutex->lock();
 	if (file_exists(SERVERPATH . '/' .ZENFOLDER . '/setup/')) {
 		$found = isSetupProtected();
-		if(!empty($found) && $auto && zp_loggedin(ADMIN_RIGHTS)) {
+		if(!empty($found) && $auto && (defined('ADMIN_RIGHTS') && zp_loggedin(ADMIN_RIGHTS))) {
 			unprotectSetupFiles();
 		}
 		$found = safe_glob('*.*');
@@ -230,6 +236,9 @@ function unprotectSetupFiles() {
 	$found = isSetupProtected();
 	if ($found) {
 		foreach ($found as $script) {
+			if(!defined('FILE_MOD')) {
+				define('FILE_MOD', 0666);
+			}
 			chmod($script, 0777);
 			if (@rename($script, stripSuffix($script))) {
 				chmod(stripSuffix($script), FILE_MOD);

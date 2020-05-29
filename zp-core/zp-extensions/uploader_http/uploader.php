@@ -69,6 +69,7 @@ if (isset($_POST['processed'])) {
 					$album->setShow((int) !empty($_POST['publishalbum']));
 					$album->setOwner($_zp_current_admin_obj->getUser());
 				}
+				$album->setLastChangeUser($_zp_current_admin_obj->getUser());
 				$album->save();
 			} else {
 				$AlbumDirName = str_replace(SERVERPATH, '', $_zp_gallery->albumdir);
@@ -101,6 +102,7 @@ if (isset($_POST['processed'])) {
 								if ($name != $soename) {
 									$image->setTitle(stripSuffix($name));
 								}
+								$image->setLastChangeUser($_zp_current_admin_obj->getUser());
 								$image->save();
 							}
 						} else if (is_zip($name)) {
@@ -117,11 +119,11 @@ if (isset($_POST['processed'])) {
 			if ($error == UPLOAD_ERR_OK && ($filecount || isset($_POST['newalbum']))) {
 				if ($album->albumSubRights() & MANAGED_OBJECT_RIGHTS_EDIT) {
 //	he has edit rights, allow new album creation
-					header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . pathurlencode($folder) . '&uploaded&subpage=1&tab=imageinfo&albumimagesort=id_desc');
+					$redirecturl = FULLWEBPATH . '/' . ZENFOLDER . '/admin-edit.php?page=edit&album=' . pathurlencode($folder) . '&uploaded&subpage=1&tab=imageinfo&albumimagesort=id_desc';
 				} else {
-					header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?uploaded=1');
+					$redirecturl = FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?uploaded=1';
 				}
-				exitZP();
+				redirectURL($redirecturl);
 			}
 		}
 	}
@@ -156,6 +158,4 @@ if (!isset($_POST['processed'])) {
 			break;
 	}
 }
-header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?error=' . $errormsg);
-exitZP();
-?>
+redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-upload.php?error=' . $errormsg);

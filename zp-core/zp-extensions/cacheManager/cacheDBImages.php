@@ -15,8 +15,8 @@ admin_securityChecks(NULL, $return = currentRelativeURL());
 XSRFdefender('cacheDBImages');
 
 $zenphoto_tabs['overview']['subtabs'] = array(
-		gettext('Cache images') => PLUGIN_FOLDER . '/cacheManager/cacheImages.php?page=overview&tab=images',
-		gettext('Cache stored images') => PLUGIN_FOLDER . '/cacheManager/cacheDBImages.php?page=overview&tab=DB&XSRFToken=' . getXSRFToken('cacheDBImages')
+		gettext('Cache images') => FULLWEBPATH .'/'. ZENFOLDER .'/' . PLUGIN_FOLDER . '/cacheManager/cacheImages.php?page=overview&tab=images',
+		gettext('Cache stored images') => FULLWEBPATH .'/'. ZENFOLDER . '/' . PLUGIN_FOLDER . '/cacheManager/cacheDBImages.php?page=overview&tab=DB&XSRFToken=' . getXSRFToken('cacheDBImages')
 );
 printAdminHeader('overview', 'DB'); ?>
 </head>
@@ -62,7 +62,7 @@ printAdminHeader('overview', 'DB'); ?>
 	?>
 	<form name="size_selections" action="?select" method="post">
 		<?php
-		$_zp_cachemanager_missingimages = NULL;
+		cacheManager::$missingimages = NULL;
 		$refresh = $imageprocessor_total = $imageprocessor_item = $found_total = $found_item = $fixed_item = $fixed_total = 0;
 		XSRFToken('cacheDBImages');
 		$watermarks = getWatermarks();
@@ -101,7 +101,7 @@ printAdminHeader('overview', 'DB'); ?>
 										$sql = 'UPDATE ' . prefix($table) . ' SET `' . $field . '`=' . db_quote($text) . ' WHERE `id`=' . $row['id'];
 										$success = query($sql);
 										if($success) { 
-											echo '<li><strong>'. $title . '</strong> – <em>' . $field . '</em>: ' . sprintf(ngettext('%u image processor reference updated', '%u image processor references updated.', $imageprocessor_item), $imageprocessor_item) . '</li>';
+											echo '<li><strong>'. $title . '</strong> – <em>' . $field . '</em>: ' . sprintf(ngettext('%u image processor reference updated.', '%u image processor references updated.', $imageprocessor_item), $imageprocessor_item) . '</li>';
 										}
 									} 
 								}
@@ -128,7 +128,6 @@ printAdminHeader('overview', 'DB'); ?>
 								$image_cleared = getImageProcessorURIFromCacheName($match, $watermarks);
 								list($image, $args) = getImageProcessorURIFromCacheName($match, $watermarks);
 								if (!file_exists(getAlbumFolder() . $image)) {
-									printf(gettext('%s is missing'), getAlbumFolder() . $image);
 									cacheManager::recordMissing($table, $row, $image);
 								} else {
 									$uri = getImageURI($args, dirname($image), basename($image), NULL);
@@ -172,7 +171,7 @@ printAdminHeader('overview', 'DB'); ?>
 		?>
 		<h2><?php echo gettext('Statistics'); ?></h2>
 		<?php
-		if (!empty($_zp_cachemanager_missingimages)) {
+		if (!empty(cacheManager::$missingimages)) {
 			?>
 			<div class="errorbox">
 				<p>
@@ -182,7 +181,7 @@ printAdminHeader('overview', 'DB'); ?>
 				</p>
 				<ol>
 				<?php
-				foreach ($_zp_cachemanager_missingimages as $missing) {
+				foreach (cacheManager::$missingimages as $missing) {
 					?><li>
 						<?php echo $missing; ?>
 					</li><?php

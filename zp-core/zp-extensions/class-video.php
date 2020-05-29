@@ -21,6 +21,7 @@ $plugin_category = gettext('Media');
 
 Gallery::addImageHandler('mp4', 'Video');
 Gallery::addImageHandler('m4v', 'Video');
+Gallery::addImageHandler('m4a', 'Video');
 Gallery::addImageHandler('mp3', 'Video');
 
 $option_interface = 'VideoObject_Options';
@@ -146,18 +147,6 @@ class Video extends Image {
 					break;
 				case "m4a": // specific suffix for mp4/AAC audio
 					$img = '/m4aDefault.png';
-					break;
-				case "flv": // suffix for flash video container
-					$img = '/flvDefault.png';
-					break;
-				case "fla": // suffix for flash audio container
-					$img = '/flaDefault.png';
-					break;
-				case "mov":
-					$img = '/movDefault.png';
-					break;
-				case "3gp":
-					$img = '/3gpDefault.png';
 					break;
 				default: // just in case we extend and are lazy...
 					$img = '/multimediaDefault.png';
@@ -319,7 +308,7 @@ class Video extends Image {
 	 */
 	private function getMetaDataID3() {
 		$suffix = getSuffix($this->localpath);
-		if (in_array($suffix, array('m4a', 'm4v', 'mp3', 'mp4', 'flv', 'fla', 'mov', '3gp'))) {
+		if (in_array($suffix, array('m4a', 'm4v', 'mp3', 'mp4'))) {
 			$getID3 = new getID3;
 			@set_time_limit(30);
 			$ThisFileInfo = $getID3->analyze($this->localpath);
@@ -340,58 +329,56 @@ class Video extends Image {
 	function updateMetaData() {
 		global $_zp_exifvars;
 		parent::updateMetaData();
-		if (!SAFE_MODE) {
-			//see if there are any "enabled" VIDEO fields
-			$process = array();
-			foreach ($_zp_exifvars as $field => $exifvar) {
-				if ($exifvar[5] && $exifvar[0] == 'VIDEO') {
-					$process[$field] = $exifvar;
-				}
+		//see if there are any "enabled" VIDEO fields
+		$process = array();
+		foreach ($_zp_exifvars as $field => $exifvar) {
+			if ($exifvar[5] && $exifvar[0] == 'VIDEO') {
+				$process[$field] = $exifvar;
 			}
-			if (!empty($process)) {
-				$ThisFileInfo = $this->getMetaDataID3();
-				if (is_array($ThisFileInfo)) {
-					foreach ($ThisFileInfo as $key => $info) {
-						if (is_array($info)) {
-							switch ($key) {
-								case 'comments':
-									foreach ($info as $key1 => $data) {
-										$ThisFileInfo[$key1] = array_shift($data);
-									}
-									break;
-								case 'audio':
-								case 'video':
-									foreach ($info as $key1 => $data) {
-										$ThisFileInfo[$key1] = $data;
-									}
-									break;
-								case 'error':
-									$msg = sprintf(gettext('getid3 exceptions for %1$s::%2$s'), $this->album->name, $this->filename);
-									foreach ($info as $data) {
-										$msg .= "\n" . $data;
-									}
-									debugLog($msg);
-									break;
-								default:
-									//discard, not used
-									break;
-							}
-							unset($ThisFileInfo[$key]);
+		}
+		if (!empty($process)) {
+			$ThisFileInfo = $this->getMetaDataID3();
+			if (is_array($ThisFileInfo)) {
+				foreach ($ThisFileInfo as $key => $info) {
+					if (is_array($info)) {
+						switch ($key) {
+							case 'comments':
+								foreach ($info as $key1 => $data) {
+									$ThisFileInfo[$key1] = array_shift($data);
+								}
+								break;
+							case 'audio':
+							case 'video':
+								foreach ($info as $key1 => $data) {
+									$ThisFileInfo[$key1] = $data;
+								}
+								break;
+							case 'error':
+								$msg = sprintf(gettext('getid3 exceptions for %1$s::%2$s'), $this->album->name, $this->filename);
+								foreach ($info as $data) {
+									$msg .= "\n" . $data;
+								}
+								debugLog($msg);
+								break;
+							default:
+								//discard, not used
+								break;
+						}
+						unset($ThisFileInfo[$key]);
+					}
+				}
+				foreach ($process as $field => $exifvar) {
+					if (isset($ThisFileInfo[$exifvar[1]])) {
+						$data = $ThisFileInfo[$exifvar[1]];
+						if (!empty($data)) {
+							$this->set($field, $data);
+							$this->set('hasMetadata', 1);
 						}
 					}
-					foreach ($process as $field => $exifvar) {
-						if (isset($ThisFileInfo[$exifvar[1]])) {
-							$data = $ThisFileInfo[$exifvar[1]];
-							if (!empty($data)) {
-								$this->set($field, $data);
-								$this->set('hasMetadata', 1);
-							}
-						}
-					}
-					$title = $this->get('VideoTitle');
-					if (!empty($title)) {
-						$this->setTitle($title);
-					}
+				}
+				$title = $this->get('VideoTitle');
+				if (!empty($title)) {
+					$this->setTitle($title);
 				}
 			}
 		}
@@ -416,7 +403,7 @@ class pseudoPlayer {
 	function getPlayerConfig($obj, $movietitle = NULL, $count = NULL) {
 		$movie = $obj->getFullImage(FULLWEBPATH);
 		$suffix = getSuffix($movie);
-		$poster =  $obj->getCustomImage(null, $obj->width, $obj->height, $obj->width, $obj->height, null, null, true);
+		$poster =  $obj->getCustomImage(null, $obj->getWidth(), $obj->getHeight(), $obj->getWidth(), $obj->getHeight(), null, null, true);
 		$content = '';
 		switch ($suffix) {
 			case 'mp4':
@@ -425,6 +412,7 @@ class pseudoPlayer {
 				$content .= '<p>' . gettext('Your browser sadly does not support this video format.') . '</p>';
 				$content .= '</video>';
 				break;
+			case 'm4a':
 			case 'mp3':
 				$content = '<audio src="' . html_encode($movie) . '" controls>';
 				$content .= '<p>' . gettext('Your browser sadly does not support this audio format.') . '</p>';

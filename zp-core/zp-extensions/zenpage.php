@@ -135,10 +135,12 @@ zp_register_filter('themeSwitcher_Controllink', 'zenpagecms::switcher_controllin
 zp_register_filter('load_theme_script', 'zenpagecms::switcher_setup', 99);
 zp_register_filter('load_theme_script', 'zenpagecms::disableZenpageItems', 0);
 
-require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/zenpage-class.php');
-require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/zenpage-class-news.php');
-require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/zenpage-class-page.php');
-require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/zenpage-class-category.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/class-zenpage.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/class-zenpageroot.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/class-zenpageitems.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/class-zenpagenews.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/class-zenpagepage.php');
+require_once(SERVERPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/zenpage/class-zenpagecategory.php');
 
 $_zp_zenpage = new Zenpage();
 
@@ -154,12 +156,17 @@ class zenpagecms {
 			setOptionDefault('zenpage_read_more', getAllTranslations($str));
 			setOptionDefault('zenpage_indexhitcounter', false);
 			setOptionDefault('enabled-zenpage-items', 'news-and-pages');
+			
+			setOptionDefault('zenpage_titlelinkdate_articles', 0);
+			setOptionDefault('zenpage_titlelinkdate_categories', 0);
+			setOptionDefault('zenpage_titlelinkdate_pages', 0);
+			setOptionDefault('zenpage_titlelinkdate_location', 'after');
+			setOptionDefault('zenpage_titlelinkdate_dateformat', 'timestamp');
 		}
 	}
 
 	function getOptionsSupported() {
 		global $_common_truncate_handler;
-
 		$options = array(
 				gettext('Enabled Zenpage items') => array(
 						'key' => 'enabled-zenpage-items',
@@ -194,6 +201,37 @@ class zenpagecms {
 						'multilingual' => 1,
 						'order' => 3,
 						'desc' => gettext("The text for the link to the full article.")),
+				gettext('New titlelink with date: Item types') => array(
+						'key' => 'zenpage_titlelinkdate_items',
+						'type' => OPTION_TYPE_CHECKBOX_ARRAY,
+						'checkboxes' => array(
+								gettext('Articles') => 'zenpage_titlelinkdate_articles',
+								gettext('Categories') => 'zenpage_titlelinkdate_categories',
+								gettext('Pages') => 'zenpage_titlelinkdate_pages'
+						),
+						'order' => 4,
+						'desc' => gettext('Select the item type where the date always should be appended or prepended to the titlelink of newly created items.') . '<p class="notebox">' . gettext('A date will automatically be added if you are creating an item with an already used titlelink.') . '</p>'),
+				gettext('New titlelink with date: Date location') => array(
+						'key' => 'zenpage_titlelinkdate_location',
+						'type' => OPTION_TYPE_RADIO,
+						'buttons' => array(
+								gettext('Before') => 'before',
+								gettext('After') => 'after'
+						),
+						'order' => 5,
+						'desc' => gettext('Choose where to add the date to the titlelink of newly created items.')),
+				gettext('New titlelink with date: Date format') => array(
+						'key' => 'zenpage_titlelinkdate_dateformat',
+						'type' => OPTION_TYPE_SELECTOR,
+						'selections' => array(
+								gettext('Y-m-d') => 'Y-m-d',
+								gettext('Ymd') => 'Ymd',
+								gettext('Y-m-d_H-i-s') => 'Y-m-d_H-i-s',
+								gettext('YmdHis') => 'YmdHis',
+								gettext('Unix timestamp') => 'timestamp'
+						),
+						'order' => 6,
+						'desc' => gettext('Choose which date format to append or prepend to the titlelink of newly created items.')),
 				gettext('Truncate titles*') => array(
 						'key' => 'menu_truncate_string',
 						'type' => OPTION_TYPE_TEXTBOX,
@@ -205,7 +243,8 @@ class zenpagecms {
 						'type' => OPTION_TYPE_TEXTBOX,
 						'disabled' => $_common_truncate_handler,
 						'order' => 24,
-						'desc' => gettext('Append this string to truncated titles.'))
+						'desc' => gettext('Append this string to truncated titles.')),
+				
 		);
 		if ($_common_truncate_handler) {
 			$options['note'] = array(

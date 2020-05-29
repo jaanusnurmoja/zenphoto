@@ -34,40 +34,38 @@ if (isset($_GET['action'])) {
 			$comment = new Comment(sanitize_numeric($_GET['id']));
 			$comment->setInModeration(1);
 			zp_apply_filter('comment_disapprove', $comment);
+			$comment->setLastchangeUser($_zp_current_admin_obj->getUser());
 			$comment->save();
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php');
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php');
 
 		case "notspam":
 			XSRFdefender('comment_update');
 			$comment = new Comment(sanitize_numeric($_GET['id']));
 			$comment->setInModeration(0);
 			zp_apply_filter('comment_approve', $comment);
+			$comment->setLastchangeUser($_zp_current_admin_obj->getUser());
 			$comment->save();
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php');
-			exitZP();
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php');
 
 		case 'applycomments':
 			XSRFdefender('applycomments');
 			if (isset($_POST['ids'])) {
 				$action = processCommentBulkActions();
-				header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?bulk=' . $action);
+				$redirecturl =  FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?bulk=' . $action;
 			} else {
-				header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?saved');
+				$redirecturl =  FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?saved';
 			}
-			exitZP();
+			redirectURL($redirecturl);
 		case 'deletecomment':
 			XSRFdefender('deletecomment');
 			$id = sanitize_numeric($_GET['id']);
 			$comment = new Comment($id);
 			$comment->remove();
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?ndeleted=1');
-			exitZP();
+		  redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?ndeleted=1');
 
 		case 'savecomment':
 			if (!isset($_POST['id'])) {
-				header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php');
-				exitZP();
+				redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php');
 			}
 			XSRFdefender('savecomment');
 			$id = sanitize_numeric($_POST['id']);
@@ -81,9 +79,9 @@ if (isset($_GET['action'])) {
 			$comment->setDateTime(sanitize($_POST['date'], 3));
 			$comment->setComment(sanitize($_POST['comment'], 1));
 			$comment->setCustomData($_comment_form_save_post = serialize(getCommentAddress(0)));
-			$comment->save();
-			header('Location: ' . FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?saved&page=editcomment&id=' . $comment->getID());
-			exitZP();
+			$comment->setLastchangeUser($_zp_current_admin_obj->getUser());
+			$comment->save(true);
+			redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/comment_form/admin-comments.php?saved&page=editcomment&id=' . $comment->getID());
 	}
 }
 
@@ -227,6 +225,10 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 						<hr />
 						<p><?php echo $status_private; ?></p>
 						<p><?php echo $status_anon; ?></p>
+						<?php 
+							$commentobj = new Comment($id);
+							printLastChangeInfo($commentobj);
+						?>
 					</div><!-- div box-edit-unpadded end -->
 				</div>
 			</form>
@@ -370,7 +372,7 @@ if ($page == "editcomment" && isset($_GET['id'])) {
 				$id = $comment['id'];
 				$author = $comment['name'];
 				$email = $comment['email'];
-				$link = '<a title="' . gettext('The item upon which this comment was posted no longer exists.') . '">' . gettext('<strong>Missing Object</strong> ') . '</a>'; // in case of such
+				$link = '<a title="' . gettext('The item upon which this comment was posted no longer exists.') . '">' . gettext('<strong>Missing Object</strong>') . '</a>'; // in case of such
 				$image = '';
 				$albumtitle = '';
 

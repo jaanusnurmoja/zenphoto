@@ -280,7 +280,6 @@ if (isset($_GET['action'])) {
 			}
 
 			setOption('watermark_scale', sanitize($_POST['watermark_scale'], 3));
-			setOption('watermark_allow_upscale', (int) isset($_POST['watermark_allow_upscale']));
 			setOption('watermark_h_offset', sanitize($_POST['watermark_h_offset'], 3));
 			setOption('watermark_w_offset', sanitize($_POST['watermark_w_offset'], 3));
 			setOption('image_cache_suffix', sanitize($_POST['image_cache_suffix']));
@@ -485,8 +484,7 @@ if (isset($_GET['action'])) {
 
 		if (empty($notify))
 			$notify = '?saved';
-		header("Location: " . $notify . $returntab);
-		exitZP();
+		redirectURL(FULLWEBPATH . '/' . ZENFOLDER . '/admin-options.php' . $notify . $returntab);
 	}
 }
 printAdminHeader($_current_tab);
@@ -706,6 +704,7 @@ Zenphoto_Authority::printPasswordFormJS();
 										<br />
 										<ul class="languagelist">
 											<?php
+											$systemlocales = getSystemLocales(true);
 											$locales = generateLanguageList('all');
 											$locales[gettext("HTTP_Accept_Language")] = '';
 											ksort($locales, SORT_LOCALE_STRING);
@@ -719,6 +718,9 @@ Zenphoto_Authority::printPasswordFormJS();
 											foreach ($locales as $language => $dirname) {
 												$languageAlt = $language;
 												$class = '';
+												if(!empty($systemlocales) && !in_array($dirname, $systemlocales) && $language != 'HTTP_Accept_Language') {
+													$language = '<img src="'. WEBPATH . '/'. ZENFOLDER .'/images/action.png" alt="'. gettext('Locale not installed'). '"> ' . $language;
+												}
 												if (!empty($dirname) && $dirname != 'en_US') {
 													$version = '';
 													$po = file_get_contents(SERVERPATH . "/" . ZENFOLDER . "/locale/" . $dirname . '/LC_MESSAGES/zenphoto.po');
@@ -765,9 +767,6 @@ Zenphoto_Authority::printPasswordFormJS();
 												if ($dirname == $currentValue) {
 													$r_attrs = ' checked="checked"';
 													$c_attrs = ' checked="checked" disabled="disabled"';
-													?>
-													<input type="hidden" name="language_allow_<?php echo $dirname; ?>" value="1" />
-													<?php
 													$ci = $c;
 												}
 												$c++;
@@ -810,6 +809,10 @@ Zenphoto_Authority::printPasswordFormJS();
 															});</script>
 										<br class="clearall" />
 										<p class="notebox"><?php printf(gettext('Highlighted languages are not current with Zenphoto Version %1$s. (The version Zenphoto of the out-of-date language is shown in braces.) Please check the <a href="%2$s">translation repository</a> for new and updated language translations.'), $zpversion, 'https://github.com/zenphoto/zenphoto/tree/master/zp-core/locale'); ?></p>
+										<?php if(!empty($systemlocales)) { // if class ResourceBundle does not exist this has no meaning ?>
+											<p class="notebox"><?php printf(gettext('Languages marked with the %1$s icon have no matching locale installed on the server and therefore will not work. This is a technical requirement by native <a href="%2$s">PHP gettext</a>.'), '<img src="'. WEBPATH . '/'. ZENFOLDER .'/images/action.png" alt="'. gettext('Locale not installed'). '">', 'https://www.php.net/manual/en/book.gettext.php'); ?></p>
+										<?php } ?>
+										
 										<label class="checkboxlabel">
 											<input type="checkbox" name="multi_lingual" value="1"	<?php checked('1', getOption('multi_lingual')); ?> /><?php echo gettext('Multi-lingual'); ?>
 										</label>
@@ -996,7 +999,7 @@ Zenphoto_Authority::printPasswordFormJS();
 										if (!GALLERY_SESSION) {
 											echo gettext('Path');
 											?>
-											<input type="text" size="48" id="zenphoto_cookie_path" name="zenphoto_cookie_path"  value="<?php echo getOption('zenphoto_cookie_path'); ?>" />
+											<input type="text" size="48" id="zenphoto_cookie_path" name="zenphoto_cookie_path" value="<?php echo getOption('zenphoto_cookie_path'); ?>" />
 											<p>
 												<?php
 												echo gettext('Duration');
@@ -1033,7 +1036,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									</td>
 									<td width="350">
 										<p><?php print_language_string_list(getOption('site_email_name'), 'site_email_name'); ?></p>
-										<p><input type="text" size="48" id="site_email" name="site_email"  value="<?php echo getOption('site_email'); ?>" /></p>
+										<p><input type="text" size="48" id="site_email" name="site_email" value="<?php echo getOption('site_email'); ?>" /></p>
 									</td>
 									<td><?php echo gettext("This email name and address will be used as the <em>From</em> address for all mails sent by Zenphoto."); ?></td>
 								</tr>
@@ -1050,14 +1053,14 @@ Zenphoto_Authority::printPasswordFormJS();
 										?>
 									</td>
 									<td width="350">
-										<input type="text" size="5" id="users_per_page" name="users_per_page"  value="<?php echo getOption('users_per_page'); ?>" />
+										<input type="text" size="5" id="users_per_page" name="users_per_page" value="<?php echo getOption('users_per_page'); ?>" />
 										<br />
-										<input type="text" size="5" id="plugins_per_page" name="plugins_per_page"  value="<?php echo getOption('plugins_per_page'); ?>" />
+										<input type="text" size="5" id="plugins_per_page" name="plugins_per_page" value="<?php echo getOption('plugins_per_page'); ?>" />
 										<?php
 										if (extensionEnabled('zenpage')) {
 											?>
 											<br />
-											<input type="text" size="5" id="articles_per_page" name="articles_per_page"  value="<?php echo getOption('articles_per_page'); ?>" />
+											<input type="text" size="5" id="articles_per_page" name="articles_per_page" value="<?php echo getOption('articles_per_page'); ?>" />
 											<?php
 										}
 										?>
@@ -1198,7 +1201,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<input type="text" size="<?php echo TEXT_INPUT_SIZE; ?>"
 														 class="dirtyignore" 
 														 onkeydown="passwordClear('');"
-														 id="user_name"  name="user"
+														 id="user_name" name="user"
 														 value="<?php echo html_encode($_zp_gallery->getUser()); ?>" />
 											</p>
 
@@ -1326,9 +1329,8 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td><?php echo gettext("Sort gallery by:"); ?></td>
 									<td>
 										<?php
-										$sort = $_zp_sortby;
-										$sort[gettext('Manual')] = 'manual';
-										$sort[gettext('Custom')] = 'custom';
+										$sort = getSortByOptions('albums');
+
 										/*
 										 * not recommended--screws with peoples minds during pagination!
 
@@ -1444,7 +1446,7 @@ Zenphoto_Authority::printPasswordFormJS();
 
 										<p><?php echo gettext("<a href=\"javascript:toggle('visualthumb');\" >Details</a> for <em>visual thumb selection</em>"); ?></p>
 										<div id="visualthumb" style="display: none">
-											<p><?php echo gettext("Setting this option places thumbnails in the album thumbnail selection list (the dropdown list on each album’s edit page). In Firefox the dropdown shows the thumbs, but in IE and Safari only the names are displayed (even if the thumbs are loaded!). In albums with many images loading these thumbs takes much time and is unnecessary when the browser will not display them. Uncheck this option and the images will not be loaded. "); ?></p>
+											<p><?php echo gettext("Setting this option places thumbnails in the album thumbnail selection list (the dropdown list on each album’s edit page). In Firefox the dropdown shows the thumbs, but in IE and Safari only the names are displayed (even if the thumbs are loaded!). In albums with many images loading these thumbs takes much time and is unnecessary when the browser will not display them. Uncheck this option and the images will not be loaded."); ?></p>
 										</div>
 
 										<p><?php echo gettext("<a href=\"javascript:toggle('multithumb');\" >Details</a> for <em>subalbum thumb selection</em>"); ?></p>
@@ -1535,7 +1537,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<input type="text" size="<?php echo TEXT_INPUT_SIZE; ?>"
 														 class="dirtyignore" 
 														 onkeydown="passwordClear('');"
-														 id="user_name"  name="user"
+														 id="user_name" name="user"
 														 value="<?php echo html_encode(getOption('search_user')); ?>" autocomplete="off" />
 											<br />
 
@@ -1712,17 +1714,15 @@ Zenphoto_Authority::printPasswordFormJS();
 										<?php echo gettext('Search will remember the results of particular searches so that it can quickly serve multiple pages, etc. Over time this remembered result can become obsolete, so it should be refreshed. This option lets you decide how long before a search will be considered obsolete and thus re-executed. Setting the option to <em>zero</em> disables caching of searches.'); ?>
 									</td>
 								</tr>
-								<?php 
-									$sort = $_zp_sortby;
-									$sort[gettext('Custom')] = 'custom'; 
-									$sort[gettext('Manual')] = 'sort_order'; 
-								?>
+				
 								<tr>
 									<td class="leftcolumn"><?php echo gettext("Sort albums by"); ?> </td>
 									<td colspan="2">
 										<span class="nowrap">
 											<select id="album_sort_select" name="search_album_sort_type" onchange="update_direction(this, 'album_direction_div', 'album_custom_div');">
 												<?php
+												$sort = getSortByOptions('albums'); 
+												$sort[gettext('Manual')] = 'sort_order'; 
 												$cvt = $type = strtolower(getOption('search_album_sort_type'));
 												if ($type && !in_array($type, $sort)) {
 													$cv = array('custom');
@@ -1774,6 +1774,8 @@ Zenphoto_Authority::printPasswordFormJS();
 										<span class="nowrap">
 											<select id="image_sort_select" name="search_image_sort_type" onchange="update_direction(this, 'image_direction_div', 'image_custom_div')">
 												<?php
+												$sort = getSortByOptions('images'); 
+												$sort[gettext('Manual')] = 'sort_order'; 
 												$cvt = $type = strtolower(getOption('search_image_sort_type'));
 												if ($type && !in_array($type, $sort)) {
 													$cv = array('custom');
@@ -1818,14 +1820,6 @@ Zenphoto_Authority::printPasswordFormJS();
 									</td>
 								</tr>
 								<?php
-								$zenpage_sort = array(
-										gettext('Title') => 'title',
-										gettext('TitleLink') => 'titlelink',
-										gettext('ID') => 'id',
-										gettext('Date') => 'date',
-										gettext('Published') => 'show',
-										gettext('Author') => 'author'
-								);
 								if (ZP_NEWS_ENABLED) {
 								?>
 									<tr>
@@ -1834,13 +1828,14 @@ Zenphoto_Authority::printPasswordFormJS();
 											<span class="nowrap">
 												<select id="newsarticle_sort_select" name="search_newsarticle_sort_type" onchange="update_direction(this, 'newsarticle_direction_div', 'newsarticle_custom_div')">
 													<?php
+													$zenpage_sort_news = getSortByOptions('news');
 													$cvt = $type = strtolower(getOption('search_newsarticle_sort_type'));
-													if ($type && !in_array($type, $zenpage_sort)) {
+													if ($type && !in_array($type, $zenpage_sort_news)) {
 														$cv = array('custom');
 													} else {
 														$cv = array($type);
 													}
-													generateListFromArray($cv, $zenpage_sort, false, true);
+													generateListFromArray($cv, $zenpage_sort_news, false, true);
 													?>
 												</select>
 												<?php
@@ -1861,7 +1856,7 @@ Zenphoto_Authority::printPasswordFormJS();
 												</label>
 											</span>
 											<?php
-											$flip = array_flip($zenpage_sort);
+											$flip = array_flip($zenpage_sort_news);
 											if (empty($type) || isset($flip[$type])) {
 												$dsp = 'none';
 											} else {
@@ -1880,7 +1875,8 @@ Zenphoto_Authority::printPasswordFormJS();
 								<?php 
 								} 
 								if (ZP_PAGES_ENABLED) {
-									$zenpage_sort[gettext('Manual')] = 'sort_order';
+									$zenpage_sort_pages = getSortByOptions('pages');
+									$zenpage_sort_pages[gettext('Manual')] = 'sort_order';
 								?>
 									<tr>
 										<td class="leftcolumn"><?php echo gettext("Sort pages by"); ?> </td>
@@ -1889,12 +1885,12 @@ Zenphoto_Authority::printPasswordFormJS();
 												<select id="page_sort_select" name="search_page_sort_type" onchange="update_direction(this, 'page_direction_div', 'page_custom_div')">
 													<?php
 													$cvt = $type = strtolower(getOption('search_page_sort_type'));
-													if ($type && !in_array($type, $zenpage_sort)) {
+													if ($type && !in_array($type, $zenpage_sort_pages)) {
 														$cv = array('custom');
 													} else {
 														$cv = array($type);
 													}
-													generateListFromArray($cv, $zenpage_sort, false, true);
+													generateListFromArray($cv, $zenpage_sort_pages, false, true);
 													?>
 												</select>
 												<?php
@@ -1915,7 +1911,7 @@ Zenphoto_Authority::printPasswordFormJS();
 												</label>
 											</span>
 											<?php
-											$flip = array_flip($zenpage_sort);
+											$flip = array_flip($zenpage_sort_pages);
 											if (empty($type) || isset($flip[$type])) {
 												$dsp = 'none';
 											} else {
@@ -1979,9 +1975,9 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td><?php echo gettext("Sort images by"); ?></td>
 									<td>
 										<?php
-										$sort = $_zp_sortby;
+										$sort = getSortByOptions('images');
 										$cvt = $cv = IMAGE_SORT_TYPE;
-										$sort[gettext('Custom')] = 'custom';
+										//$sort[gettext('Custom')] = 'custom';
 
 										/*
 										 * not recommended--screws with peoples minds during pagination!
@@ -2103,7 +2099,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									</td>
 									<td>
 										<p><?php echo gettext("Compression quality for images and thumbnails generated by Zenphoto."); ?></p>
-										<p><?php echo gettext("Quality ranges from 0 (worst quality, smallest file) to 100 (best quality, biggest file). "); ?></p>
+										<p><?php echo gettext("Quality ranges from 0 (worst quality, smallest file) to 100 (best quality, biggest file)."); ?></p>
 									</td>
 								</tr>
 								<tr>
@@ -2261,10 +2257,6 @@ Zenphoto_Authority::printPasswordFormJS();
 											<?php echo gettext('cover') . ' '; ?>
 											<input type="text" size="2" name="watermark_scale"
 														 value="<?php echo html_encode(getOption('watermark_scale')); ?>" /><?php /* xgettext:no-php-format */ echo gettext('% of image') ?>
-											<label>
-												<input type="checkbox" name="watermark_allow_upscale" value="1"	<?php checked('1', getOption('watermark_allow_upscale')); ?> />
-												<?php echo gettext("allow upscale"); ?>
-											</label>
 										</p>
 										<p class="nowrap">
 											<?php echo gettext("offset h"); ?>
@@ -2277,7 +2269,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td>
 										<p><?php echo gettext("The watermark image is scaled by to cover <em>cover percentage</em> of the image and placed relative to the upper left corner of the image."); ?></p>
 										<p><?php echo gettext("It is offset from there (moved toward the lower right corner) by the <em>offset</em> percentages of the height and width difference between the image and the watermark."); ?></p>
-										<p><?php echo gettext("If <em>allow upscale</em> is not checked the watermark will not be made larger than the original watermark image."); ?></p>
+										<p><?php echo gettext("The watermark will not be made larger than the original watermark image."); ?></p>
 										<p><?php printf(gettext('Custom watermarks should be placed in the <code>/%s/watermarks/</code> folder. The images must be in png-24 format.'), USER_PLUGIN_FOLDER); ?></p>
 										<?php
 										if (!empty($imageplugins)) {
@@ -2412,7 +2404,7 @@ Zenphoto_Authority::printPasswordFormJS();
 														<input type="text" size="30"
 																	 class="dirtyignore" 
 																	 onkeydown="passwordClear('');"
-																	 id="user_name"  name="user"
+																	 id="user_name" name="user"
 																	 value="<?php echo html_encode(getOption('protected_image_user')); ?>" autocomplete="off" />
 
 													</td>
@@ -2593,7 +2585,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									<td>
 										<?php echo $desc; ?>
 										<p class="notebox">
-											<?php echo gettext('<strong>NOTE:</strong> This option  applies only to JPEG format cached images.'); ?>
+											<?php echo gettext('<strong>NOTE:</strong> This option applies only to JPEG format cached images.'); ?>
 										</p>
 									</td>
 								</tr>
@@ -2769,7 +2761,7 @@ Zenphoto_Authority::printPasswordFormJS();
 												?>
 												<p class="notebox">
 													<?php
-													echo gettext('<strong>Note:</strong> If <em>thumbnails per row</em> is greater than 1, The actual number of thumbnails that are displayed on a page will be rounded up to  the next multiple of it.') . ' ';
+													echo gettext('<strong>Note:</strong> If <em>thumbnails per row</em> is greater than 1, The actual number of thumbnails that are displayed on a page will be rounded up to the next multiple of it.') . ' ';
 													printf(gettext('For album pages there will be %1$u rows of thumbnails.'), ceil(getThemeOption('albums_per_page', $album, $themename) / getThemeOption('albums_per_row', $album, $themename)));
 													?>
 												</p>
@@ -2806,7 +2798,7 @@ Zenphoto_Authority::printPasswordFormJS();
 												?>
 												<p class="notebox">
 													<?php
-													echo gettext('<strong>Note:</strong> If <em>thumbnails per row</em> is greater than 1, The actual number of thumbnails that are displayed on a page will be rounded up to  the next multiple of it.') . ' ';
+													echo gettext('<strong>Note:</strong> If <em>thumbnails per row</em> is greater than 1, The actual number of thumbnails that are displayed on a page will be rounded up to the next multiple of it.') . ' ';
 													printf(gettext('For pages containing images there will be %1$u rows of thumbnails.'), ceil(getThemeOption('images_per_page', $album, $themename) / getThemeOption('images_per_row', $album, $themename)));
 													?>
 												</p>
@@ -3231,7 +3223,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											?>
 										</p>
 										<p class="warningbox"><?php
-											echo gettext('<strong>Warning:</strong> If you select <em>https</em> or <em>secure admin</em> your server <strong>MUST</strong> support <em>https</em>.  ' .
+											echo gettext('<strong>Warning:</strong> If you select <em>https</em> or <em>secure admin</em> your server <strong>MUST</strong> support <em>https</em>. ' .
 															'If you set either of these on a server which does not support <em>https</em> you will not be able to access the <code>admin</code> pages to reset the option! ' .
 															'Your only possibility then is to set or add <code>$conf["server_protocol"] = "http";</code> to your <code>zenphoto.cfg.php</code> file .');
 											?>
@@ -3250,7 +3242,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											if (!getOption('IP_tied_cookies')) {
 												echo ' ' . gettext('<strong>Note</strong>: If your browser does not present a consistant IP address during a session you may not be able to log into your site when this option is enabled.') . ' ';
 											}
-											echo gettext(' You <strong>WILL</strong> have to login after changing this option.');
+											echo gettext('You <strong>WILL</strong> have to login after changing this option.');
 											if (!getOption('IP_tied_cookies')) {
 												echo ' ' . gettext('If you set the option and cannot login, you will have to restore your database to a point when the option was not set, so you might want to backup your database first.');
 											}
@@ -3403,7 +3395,7 @@ Zenphoto_Authority::printPasswordFormJS();
 													<br><?php echo gettext('Select a Zenpage page. * denotes unpublished page.'); ?>
 												</label>
 												<?php 
-											}  else {
+											} else {
 												echo '<p><em>' . gettext('No suitable Zenpage pages available') . '</em></p>';
 											}
 										} 
