@@ -27,16 +27,16 @@ function printAdminFooter($addl = '') {
 	<div id="footer">
 		<button type="button" class="scrollup hidden" title="<?php echo gettext('Scroll to top'); ?>"><?php echo gettext('Top'); ?></button>
 		<?php
-		printf(gettext('<a href="http://www.zenphoto.org" title="The simpler media website CMS">Zen<strong>photo</strong></a> version %1$s'), ZENPHOTO_VERSION);
+		printf(gettext('<a href="https://www.zenphoto.org" title="The simpler media website CMS">Zen<strong>photo</strong></a> version %1$s'), ZENPHOTO_VERSION);
 		if (!empty($addl)) {
 			echo ' | ' . $addl;
 		}
 		?>
 		| <a href="<?php echo FULLWEBPATH . '/' . ZENFOLDER . '/license.php' ?>" title="<?php echo gettext('Zenphoto licence'); ?>"><?php echo gettext('License'); ?></a>
-		| <a href="http://www.zenphoto.org/news/category/user-guide" title="<?php echo gettext('User guide'); ?>"><?php echo gettext('User guide'); ?></a>
-		| <a href="http://www.zenphoto.org/support/" title="<?php echo gettext('Forum'); ?>"><?php echo gettext('Forum'); ?></a>
+		| <a href="https://www.zenphoto.org/news/category/user-guide" title="<?php echo gettext('User guide'); ?>"><?php echo gettext('User guide'); ?></a>
+		| <a href="https://www.zenphoto.org/support/" title="<?php echo gettext('Forum'); ?>"><?php echo gettext('Forum'); ?></a>
 		| <a href="https://github.com/zenphoto/zenphoto/issues" title="<?php echo gettext('Bugtracker'); ?>"><?php echo gettext('Bugtracker'); ?></a>
-		| <a href="http://www.zenphoto.org/news/category/changelog" title="<?php echo gettext('View Change log'); ?>"><?php echo gettext('Change log'); ?></a>
+		| <a href="https://www.zenphoto.org/news/category/changelog" title="<?php echo gettext('View Change log'); ?>"><?php echo gettext('Change log'); ?></a>
 		| <?php printf(gettext('Server date: %s'), date('Y-m-d H:i:s')); ?>
 	</div>
 	<?php
@@ -1348,7 +1348,7 @@ function printAdminHeader($tab, $subtab = NULL) {
 									<p> <?php
 										// Autofill honeypot hack (hidden password input),
 										// needed to prevent "Are you sure?" from tiggering when autofill is enabled in browsers
-										// http://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
+										// https://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
 										?>
 										<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 										<input type="password" 
@@ -2930,7 +2930,7 @@ function printAdminHeader($tab, $subtab = NULL) {
 	 * Return an array of files from a directory and sub directories
 	 *
 	 * This is a non recursive function that digs through a directory. More info here:
-	 * @link http://planetozh.com/blog/2005/12/php-non-recursive-function-through-directories/
+	 * @link https://planetozh.com/blog/2005/12/php-non-recursive-function-through-directories/
 	 *
 	 * @param string $dir directory
 	 * @return array

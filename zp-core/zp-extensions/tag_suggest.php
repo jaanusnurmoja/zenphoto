@@ -1,6 +1,6 @@
 <?php
 /**
- * Provide JavaScript tag "suggestions" based on Remy Sharp's {@link http://remysharp.com/2007/12/28/jquery-tag-suggestion/ jQuery Tag Suggestion} plugin.
+ * Provide JavaScript tag "suggestions" based on Remy Sharp's {@link https://remysharp.com/2007/12/28/jquery-tag-suggestion/ jQuery Tag Suggestion} plugin.
  *
  * Activate the plugin and the feature is available on the theme's search field.
  *

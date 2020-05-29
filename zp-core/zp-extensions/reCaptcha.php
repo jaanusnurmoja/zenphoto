@@ -1,7 +1,7 @@
 <?php
 
 /**
- * reCaptcha v2 handler (http://www.google.com/recaptcha)
+ * reCaptcha v2 handler (https://www.google.com/recaptcha)
  * 
  * Adapted from the third paryt noCaptcha reCaptcha plugin by Ben Feather (Epsilon) 
  * https://github.com/Epsilon8425/Zenphoto-noCaptcha-reCaptcha
@@ -47,7 +47,7 @@ class reCaptcha extends _zp_captcha {
 						'key' => 'reCaptcha_public_key',
 						'type' => OPTION_TYPE_TEXTBOX,
 						'order' => 1,
-						'desc' => gettext('Enter your <em>reCaptcha v2</em> public key. You can obtain this key from the Google <a href="http://www.google.com/recaptcha">reCaptcha</a> site')),
+						'desc' => gettext('Enter your <em>reCaptcha v2</em> public key. You can obtain this key from the Google <a href="https://www.google.com/recaptcha">reCaptcha</a> site')),
 				gettext('Private key') => array(
 						'key' => 'reCaptcha_private_key',
 						'type' => OPTION_TYPE_TEXTBOX,

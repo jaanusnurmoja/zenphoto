@@ -2,7 +2,7 @@
 /**
  * Merges several RSS feeds into one stream.
  *
- * Based on David Stinemetze's {@link http://www.widgetsandburritos.com/technical/programming/merge-rss-feeds-php-cache/ MergedRSS Class}
+ * Based on David Stinemetze's {@link https://www.widgetsandburritos.com/technical/programming/merge-rss-feeds-php-cache/ MergedRSS Class}
  *
  * If you ever wanted to have a Zenphoto RSS that for example returns latest images for <i>album x</i>
  * but latest albums for <i>album y</i> this is the tool to use. Just enter the urls of the seperate feeds and it will return the combined feed.
@@ -64,7 +64,7 @@ class MergedRSSOptions {
         gettext('RSS feeds to merge') => array('key' => 'mergedrss_feeds', 'type' => OPTION_TYPE_TEXTAREA,
             'order' => 11,
             'multilingual' => false,
-            'desc' => gettext('Enter the full urls of the feeds to merge separated by semicolons (e.g. "http://www.domain1.com/rss; http://www.domain2.com/rss")')),
+            'desc' => gettext('Enter the full urls of the feeds to merge separated by semicolons (e.g. "https://www.domain1.com/rss; https://www.domain2.com/rss")')),
         gettext('Feed items:') => array('key' => 'mergedrss_items', 'type' => OPTION_TYPE_TEXTBOX,
             'order' => 2,
             'desc' => gettext("The number of new entries you want to appear in your site’s RSS feed")),
@@ -159,7 +159,7 @@ class MergedRSS {
     if (!$use_mergedrss_cache) {
       // set all the initial, necessary xml data
       $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-      $xml .= "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
+      $xml .= "<rss version=\"2.0\" xmlns:atom=\"https://www.w3.org/2005/Atom\">\n";
       $xml .= "<channel>\n";
       if (isset($this->myTitle)) {
         $xml .= "\t<title>" . $this->myTitle . "</title>\n";

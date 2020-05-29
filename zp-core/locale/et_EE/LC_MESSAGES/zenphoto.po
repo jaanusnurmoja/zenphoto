@@ -257,8 +257,8 @@ msgid "Sorry, no image matches found. Try refining your search."
 msgstr "Kahjuks ei leitud selliseid pilte. Soovi korral täpsustage otsingut."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/basic/theme_description.php:5
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> et <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> et <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/basic/theme_description.php:8
 msgid ""
@@ -772,8 +772,8 @@ msgid "News"
 msgstr "Uudised"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/effervescence_plus/theme_description.php:7
-msgid "<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> with modifications by Stephen Billard (sbillard)"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a>, redigeerinud <a href=\"http://stephen.sbillard.org/\">Stephen Billard (sbillard)</a>"
+msgid "<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> with modifications by Stephen Billard (sbillard)"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a>, redigeerinud <a href=\"https://stephen.sbillard.org/\">Stephen Billard (sbillard)</a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/effervescence_plus/theme_description.php:10
 msgid "Based on Effervescence 1.1 with multiple color schemes and personalities added."
@@ -1066,8 +1066,8 @@ msgid "Search category"
 msgstr "Otsi kategooriaid"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/garland/theme_description.php:10
-msgid "Modded Wordpress theme from, <a href=\"http://garlandtheme.blogspot.com/\">garland</a>"
-msgstr "Wordpressi kujunduse <a href=\"http://garlandtheme.blogspot.com/\">Garland</a> põhjal valminud teema"
+msgid "Modded Wordpress theme from, <a href=\"https://garlandtheme.blogspot.com/\">garland</a>"
+msgstr "Wordpressi kujunduse <a href=\"https://garlandtheme.blogspot.com/\">Garland</a> põhjal valminud teema"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/garland/themeoptions.php:75
 msgid "Set to enable search form."
@@ -1094,8 +1094,8 @@ msgid "Gallery archive"
 msgstr "Galerii arhiiv"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zenpage/footer.php:5
-msgid "Zenpage theme designed by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-msgstr "Teema autor: <a href=\"http://www.maltem.de\">Malte Müller</a>"
+msgid "Zenpage theme designed by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+msgstr "Teema autor: <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zenpage/gallery.php:71 C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zenpage/news.php:65
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zenpage/news.php:93
@@ -1266,8 +1266,8 @@ msgid "Malte Müller (acrylian)"
 msgstr "Malte Müller (acrylian)"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zpmobile/theme_description.php:10
-msgid "A theme primarily meant for mobile/smartphone browsing using <a href='http://jQuerymobile.com'>jQuerymobile framework</a>."
-msgstr "Kujundus on mõeldud eelkõige telefonis kuvamiseks,kasutades <a href='http://jQuerymobile.com'>jQuerymobile raamistikku</a>."
+msgid "A theme primarily meant for mobile/smartphone browsing using <a href='https://jQuerymobile.com'>jQuerymobile framework</a>."
+msgstr "Kujundus on mõeldud eelkõige telefonis kuvamiseks,kasutades <a href='https://jQuerymobile.com'>jQuerymobile raamistikku</a>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/themes/zpmobile/themeoptions.php:39
 msgid "Allow direct link from multimedia"
@@ -2044,8 +2044,8 @@ msgstr "Pole ühtki albumit, mida muuta"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-functions.php:28
 #, php-format
-msgid "<a href=\"http://www.zenphoto.org\" title=\"The simpler media website CMS\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-msgstr "<a href=\"http://www.zenphoto.org\" title=\"Lihtsaim pildi- ja multimeedia CMS\">Zen<strong>photo</strong></a> versio0n %1$s [%2$s]"
+msgid "<a href=\"https://www.zenphoto.org\" title=\"The simpler media website CMS\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgstr "<a href=\"https://www.zenphoto.org\" title=\"Lihtsaim pildi- ja multimeedia CMS\">Zen<strong>photo</strong></a> versio0n %1$s [%2$s]"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-functions.php:33
 msgid "Zenphoto licence"
@@ -3222,9 +3222,9 @@ msgstr "veebruar 25, 2008"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-options.php:847
 msgid ""
-"Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span class=\"nowrap\"><code>strftime()</"
+"Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span class=\"nowrap\"><code>strftime()</"
 "code></span></a> format string in the text box."
-msgstr "Valige loetelust kuupäevavorming või sea <code>oma vorming</code> kasutades <a href=\"http://fr.php.net/manual/fr/function.strftime.php\"><code>strftime()</code></a> vormingut."
+msgstr "Valige loetelust kuupäevavorming või sea <code>oma vorming</code> kasutades <a href=\"https://fr.php.net/manual/fr/function.strftime.php\"><code>strftime()</code></a> vormingut."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-options.php:850
 msgid "Charset:"
@@ -3292,8 +3292,8 @@ msgid "Set to the time in seconds that cookies should be kept by browsers."
 msgstr "Määra, mitu sekundit peavad veebilehitsejad küpsiseid elus hoidma. "
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-options.php:985
-msgid "If this option is selected Zenphoto will use <a href=\"http://www.w3schools.com/php/php_sessions.asp\">PHP sessions</a> instead of cookies to make visitor settings persistent."
-msgstr "Selle valiku korral kasutab Zenphoto küpsiste asemel <a href=\"http://www.w3schools.com/php/php_sessions.asp\">PHP sessioone</a>, et saidi külastaja valikud jääksid püsima."
+msgid "If this option is selected Zenphoto will use <a href=\"https://www.w3schools.com/php/php_sessions.asp\">PHP sessions</a> instead of cookies to make visitor settings persistent."
+msgstr "Selle valiku korral kasutab Zenphoto küpsiste asemel <a href=\"https://www.w3schools.com/php/php_sessions.asp\">PHP sessioone</a>, et saidi külastaja valikud jääksid püsima."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-options.php:986
 msgid ""
@@ -4751,8 +4751,8 @@ msgid "Themes allow you to visually change the entire look and feel of your gall
 msgstr "Kujundused võimaldavad muuta tundmatuseni nii galerii väljanägemist kui ka meeleolu. Vastavad failid paiknevad kaustas <code>/themes</code>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-themes.php:181
-msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/theme/\">zenphoto themes page</a>."
-msgstr "Võite alla laadida ka teisi kujundusi: <a href=\"http://www.zenphoto.org/zp/theme/\">Zenphoto kujunduste leht</a>."
+msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/theme/\">zenphoto themes page</a>."
+msgstr "Võite alla laadida ka teisi kujundusi: <a href=\"https://www.zenphoto.org/zp/theme/\">Zenphoto kujunduste leht</a>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/admin-themes.php:182
 msgid "Place the downloaded themes in the <code>/themes</code> folder and they will be available for your use."
@@ -7345,8 +7345,8 @@ msgstr "Pilti %s ei saa pöörata."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/functions-image.php:251
 #, php-format
-msgid "Unknown error processing %s! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-msgstr "%s töötlemisel tekkis tundmatu viga! Palun teavitage sellest Zenphoto arendajaid, kelle andmed leiate <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgid "Unknown error processing %s! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgstr "%s töötlemisel tekkis tundmatu viga! Palun teavitage sellest Zenphoto arendajaid, kelle andmed leiate <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/functions-image.php:363 C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/functions-image.php:388
 #, php-format
@@ -8874,10 +8874,10 @@ msgstr "PHP <code>Register Globals</code> de PHP [sees]"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:619
 msgid ""
-"PHP Register globals presents a security risk to any PHP application. See <a href=\"http://php.net/manual/en/security.globals.php\"><em>Using Register Globals</em></a>. Change your PHP."
+"PHP Register globals presents a security risk to any PHP application. See <a href=\"https://php.net/manual/en/security.globals.php\"><em>Using Register Globals</em></a>. Change your PHP."
 "ini settings to <code>register_globals = off</code>."
 msgstr ""
-"PHP direktiiv register_globals on suur turvarisk mistahes PHP veebirakendusele. Vaata <a href=\"http://php.net/manual/en/security.globals.php\"><em>Üldiste muutujate kasutamine</em></a>. "
+"PHP direktiiv register_globals on suur turvarisk mistahes PHP veebirakendusele. Vaata <a href=\"https://php.net/manual/en/security.globals.php\"><em>Üldiste muutujate kasutamine</em></a>. "
 "Muuda oma PHP.ini seadeid nii, et <code>register_globals = off</code>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:626
@@ -8919,10 +8919,10 @@ msgstr "PHP <code>magic_quotes_gpc</code> [sees]"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:654
 msgid ""
-"We strongly recommend disabling <code>magic_quotes_gpc</code>. For more information See <em><a href=\"http://www.zenphoto.org/news/installation-problems#about-magicquotes-and-why-they-"
+"We strongly recommend disabling <code>magic_quotes_gpc</code>. For more information See <em><a href=\"https://www.zenphoto.org/news/installation-problems#about-magicquotes-and-why-they-"
 "should-be-disabled\">What is magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto troubleshooting guide."
 msgstr ""
-"Soovitame tungivalt lülitada välja <code>magic_quotes_gpc</code>. Lisateabe saamiseks vaata <em><a href=\"http://www.zenphoto.org/news/installation-problems#about-magicquotes-and-why-they-"
+"Soovitame tungivalt lülitada välja <code>magic_quotes_gpc</code>. Lisateabe saamiseks vaata <em><a href=\"https://www.zenphoto.org/news/installation-problems#about-magicquotes-and-why-they-"
 "should-be-disabled\">Mis on magic_quotes_gpc ja miks see tuleks välja lülitada?</a></em> Zenphoto tõrkeotsingu juhises."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:660
@@ -9002,8 +9002,8 @@ msgid "Locale functionality is not implemented on your platform or the specified
 msgstr "Teie platvormil pole keelefunktsiooni või ei ole seda keelt paigaldatud. Tõlge ei pruugi töötada. "
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:688
-msgid "See the <a  href=\"http://www.zenphoto.org/news/problems-with-languages\">user guide</a> on zenphoto.org for details."
-msgstr "Vaata üksikasju <a  href=\"http://www.zenphoto.org/news/problems-with-languages\">juhises</a> saidil zenphoto.org ."
+msgid "See the <a  href=\"https://www.zenphoto.org/news/problems-with-languages\">user guide</a> on zenphoto.org for details."
+msgstr "Vaata üksikasju <a  href=\"https://www.zenphoto.org/news/problems-with-languages\">juhises</a> saidil zenphoto.org ."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:690
 msgid "mb_strings"
@@ -9548,10 +9548,10 @@ msgstr "Zenphoto core file permissions [not correct]"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:1396
 msgid ""
-"Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"http://www.zenphoto.org/news/permissions-"
+"Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"https://www.zenphoto.org/news/permissions-"
 "for-zenphoto-files-and-folders\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
 msgstr ""
-"Seadistus ei suutnud anda ühele või mitmele komponendile valitud õigusi. Pead seadma õigused käsitsi. Vaata <a href=\"http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-"
+"Seadistus ei suutnud anda ühele või mitmele komponendile valitud õigusi. Pead seadma õigused käsitsi. Vaata <a href=\"https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-"
 "folders\">tõrkeotsingu juhist</a> "
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:1399
@@ -9580,9 +9580,9 @@ msgstr "Server seems to be <em>nginx</em>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:1422
 msgid ""
-"If you wish to create cruft-free URLs, you will need to configuring <a href=\"http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL rewriting for NGINX servers</em></a>."
+"If you wish to create cruft-free URLs, you will need to configuring <a href=\"https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL rewriting for NGINX servers</em></a>."
 msgstr ""
-"TÕLKIMATA! If you wish to create cruft-free URLs, you will need to configuring <a href=\"http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL rewriting for NGINX servers</"
+"TÕLKIMATA! If you wish to create cruft-free URLs, you will need to configuring <a href=\"https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL rewriting for NGINX servers</"
 "em></a>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/index.php:1426
@@ -9910,9 +9910,9 @@ msgstr "<em>%1$s</em> folder%2$s [permissions failure]"
 #, php-format
 msgid ""
 "Setup could not change the file permissions from <em>%1$s</em> (<code>0%2$o</code>) to <em>%3$s</em> (<code>0%4$o</code>). You will have to set the permissions manually. See the <a href="
-"\"http://www.zenphoto.org/news/troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
+"\"https://www.zenphoto.org/news/troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
 msgstr ""
-"Seadistus ei suutnud faili õigusi <em>%1$s</em> (<code>0%2$o</code>) muuta õigusteks <em>%3$s</em> (<code>0%4$o</code>). Pead õigused käsitsi seadma. Vaata <a href=\"http://www.zenphoto."
+"Seadistus ei suutnud faili õigusi <em>%1$s</em> (<code>0%2$o</code>) muuta õigusteks <em>%3$s</em> (<code>0%4$o</code>). Pead õigused käsitsi seadma. Vaata <a href=\"https://www.zenphoto."
 "org/news/troubleshooting-zenphoto#29\">Tõrkeotsingu juhendit</a> "
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/setup-functions.php:269
@@ -9959,8 +9959,8 @@ msgid "%1$s (0%2$o)"
 msgstr "%1$s (0%2$o)"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/setup-functions.php:428
-msgid "See the <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
-msgstr "Vaata <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#24\">tõrkeotsingu juhist</a> saidil zenphoto.org "
+msgid "See the <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
+msgstr "Vaata <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#24\">tõrkeotsingu juhist</a> saidil zenphoto.org "
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/setup/setup-functions.php:478
 msgid "An attempt at cross site reference forgery has been blocked."
@@ -10344,8 +10344,8 @@ msgid "login"
 msgstr "Sisene"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/template-functions.php:4281
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
-msgstr "Galerii töötab sisuhaldussüsteemil <a href=\"http://www.zenphoto.org\" title=\"Lihtsaim fotoalbum\"><span id=\"zen-part\">Zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgstr "Galerii töötab sisuhaldussüsteemil <a href=\"https://www.zenphoto.org\" title=\"Lihtsaim fotoalbum\"><span id=\"zen-part\">Zen</span><span id=\"photo-part\">PHOTO</span></a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/template-functions.php:4445
 msgid "Zenphoto Error:</strong> the requested object was not found."
@@ -10972,8 +10972,8 @@ msgid "The GoogleMap plugin <em>map display</em> script has received a corrupt <
 msgstr "The GoogleMap plugin <em>map display</em> script has received a corrupt <em>Map</em> parameter.\tThis is most likely caused by URL character limitations from your browser."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/GoogleMap/Map.php:107
-msgid "For information on URL limits visit <a href=\"javascript:parent.window.location='http://www.boutell.com/newfaq/misc/urllength.html';\">What is the maximum length of a URL</a>."
-msgstr "For information on URL limits visit <a href=\"javascript:parent.window.location='http://www.boutell.com/newfaq/misc/urllength.html';\">What is the maximum length of a URL</a>."
+msgid "For information on URL limits visit <a href=\"javascript:parent.window.location='https://www.boutell.com/newfaq/misc/urllength.html';\">What is the maximum length of a URL</a>."
+msgstr "For information on URL limits visit <a href=\"javascript:parent.window.location='https://www.boutell.com/newfaq/misc/urllength.html';\">What is the maximum length of a URL</a>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/GoogleMap/Map.php:110
 msgid "You can try a different browser or contact the site manager for assistance."
@@ -11120,8 +11120,8 @@ msgid "Auto Backup last ran %s."
 msgstr "Automaatne varundamine töötas viimati %s."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/bxslider_thumb_nav.php:15
-msgid "Responsive jQuery bxSlider thumb nav plugin based on <a href='http://bxslider.com'>http://bxslider.com</a>"
-msgstr "TÕLKIMATA! Responsive jQuery bxSlider thumb nav plugin based on <a href='http://bxslider.com'>http://bxslider.com</a>"
+msgid "Responsive jQuery bxSlider thumb nav plugin based on <a href='https://bxslider.com'>https://bxslider.com</a>"
+msgstr "TÕLKIMATA! Responsive jQuery bxSlider thumb nav plugin based on <a href='https://bxslider.com'>https://bxslider.com</a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/bxslider_thumb_nav.php:17 C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/jcarousel_thumb_nav.php:14
 #, php-format
@@ -14355,10 +14355,10 @@ msgstr "No acknowledgement"
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/image_effects.php:108
 msgid ""
 "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href="
-"\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
+"\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
 msgstr ""
 "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href="
-"\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
+"\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/image_effects.php:113
 msgid "No effects"
@@ -14558,8 +14558,8 @@ msgid "<strong>IMPORTANT</strong>: Only one multimedia extension plugin can be e
 msgstr "<strong>IMPORTANT</strong>: Only one multimedia extension plugin can be enabled at the time and the class-video plugin must be enabled, too."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/jplayer.php:72
-msgid "Please see <a href='http://jplayer.org'>jplayer.org</a> for more info about the player and its license."
-msgstr "Please see <a href='http://jplayer.org'>jplayer.org</a> for more info about the player and its license."
+msgid "Please see <a href='https://jplayer.org'>jplayer.org</a> for more info about the player and its license."
+msgstr "Please see <a href='https://jplayer.org'>jplayer.org</a> for more info about the player and its license."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/jplayer.php:74
 msgid "This player does not support <em>External Albums</em>."
@@ -14741,8 +14741,8 @@ msgid "Update Required"
 msgstr "Uuendamine on vajalik"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/jplayer.php:497
-msgid "To play the media you will need to either update your browser to a recent version or update your <a href=\"http://get.adobe.com/flashplayer/\" target=\"_blank\">Flash plugin</a>."
-msgstr "To play the media you will need to either update your browser to a recent version or update your <a href=\"http://get.adobe.com/flashplayer/\" target=\"_blank\">Flash plugin</a>."
+msgid "To play the media you will need to either update your browser to a recent version or update your <a href=\"https://get.adobe.com/flashplayer/\" target=\"_blank\">Flash plugin</a>."
+msgstr "To play the media you will need to either update your browser to a recent version or update your <a href=\"https://get.adobe.com/flashplayer/\" target=\"_blank\">Flash plugin</a>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/legacySpam.php:15
 msgid "Use this plugin is to enable using older third party spam filters."
@@ -15317,8 +15317,8 @@ msgid "Custom link"
 msgstr "Kohandatud link"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:141
-msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. http://www.domain.com)."
-msgstr "Link väljapoole Zenphoto struktuuri. Soovitame kasutada täielikke URL -e (nt. http://www.domain.com)."
+msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. https://www.domain.com)."
+msgstr "Link väljapoole Zenphoto struktuuri. Soovitame kasutada täielikke URL -e (nt. https://www.domain.com)."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:148
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:260
@@ -15407,8 +15407,8 @@ msgid "RSS feeds to merge"
 msgstr "RSS vood sulandamiseks"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/mergedRSS.php:66
-msgid "Enter the full urls of the feeds to merge separated by semicolons (e.g. \"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
-msgstr "TÕLKIMATA! Enter the full urls of the feeds to merge separated by semicolons (e.g. \"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
+msgid "Enter the full urls of the feeds to merge separated by semicolons (e.g. \"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
+msgstr "TÕLKIMATA! Enter the full urls of the feeds to merge separated by semicolons (e.g. \"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/mergedRSS.php:67
 msgid "Feed items:"
@@ -16113,8 +16113,8 @@ msgid "Public key"
 msgstr "Avalik võti"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/reCaptcha.php:67
-msgid "Enter your <em>reCaptcha</em> public key. You can obtain this key from the Google <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site"
-msgstr "Hankige oma <em>reCaptcha</em> avalik võti. Võite selle saada Google lehelt <a href=\"http://www.google.com/recaptcha\">reCaptcha</a>"
+msgid "Enter your <em>reCaptcha</em> public key. You can obtain this key from the Google <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site"
+msgstr "Hankige oma <em>reCaptcha</em> avalik võti. Võite selle saada Google lehelt <a href=\"https://www.google.com/recaptcha\">reCaptcha</a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/reCaptcha.php:68
 msgid "Private key"
@@ -16948,8 +16948,8 @@ msgid "Patterns to die on"
 msgstr "Patterns to die on"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/simpleSpam.php:62
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
-msgstr "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgstr "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/simpleSpam.php:63
 msgid "Excessive URL count"
@@ -17223,8 +17223,8 @@ msgid "Google - URL to image license"
 msgstr "Google - URL to image license"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/sitemap-extended.php:165
-msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: http://mydomain.com/license.html"
-msgstr "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: http://mydomain.com/license.html"
+msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: https://mydomain.com/license.html"
+msgstr "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: https://mydomain.com/license.html"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/sitemap-extended.php:166
 msgid "Sitemap processing chunk"
@@ -18143,8 +18143,8 @@ msgid "This <code>tweet_news</code> app for this site needs a <em>consumer key</
 msgstr "This <code>tweet_news</code> app for this site needs a <em>consumer key</em>, a <em>consumer key secret</em>, an <em>access token</em>, and an <em>access token secret</em>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/tweet_news.php:75
-msgid "Get these from <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
-msgstr "Get these from <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
+msgid "Get these from <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
+msgstr "Get these from <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/tweet_news.php:76
 msgid "Secret"
@@ -19498,8 +19498,8 @@ msgstr "Järjestamisreeglid peavad selle asemel olema seatud meetoditega setSort
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:46
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:54
-msgid "CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a href=\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
-msgstr "TÕLKIMATA! CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a href=\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
+msgid "CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a href=\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
+msgstr "TÕLKIMATA! CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a href=\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:78
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:86
@@ -19682,8 +19682,8 @@ msgstr "use printRSSHeaderLink($option, $linktext, $lang, $categorylink)."
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:795
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:806
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:822
-msgid "CombiNews is deprecated. See the <a href=\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
-msgstr "CombiNews ei kasutata enam. Vaata <a href=\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
+msgid "CombiNews is deprecated. See the <a href=\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
+msgstr "CombiNews ei kasutata enam. Vaata <a href=\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:831
 #: C:\Users\hibou_000\Documents\GitHub\ZenPhoto/zp-core/zp-extensions/zenpage/deprecated-functions.php:841
@@ -20301,22 +20301,22 @@ msgstr "p"
 #~ msgstr "Rakenduse ID"
 
 #~ msgid ""
-#~ "Enter <em>YOUR</em> Application ID from facebook here. For more information please visit <a href=\"http://inthemdl.net/news/creating-your-facebook-app_id\">this page</a>.<br />\n"
+#~ "Enter <em>YOUR</em> Application ID from facebook here. For more information please visit <a href=\"https://inthemdl.net/news/creating-your-facebook-app_id\">this page</a>.<br />\n"
 #~ "\t\t\t\t\t\t\t\t  You should be entering numbers only in this field."
 #~ msgstr ""
-#~ "Sisesta <em>OMA</em> Facebooki rakenduse ID. Lisateavet saab <a href=\"http://inthemdl.net/news/creating-your-facebook-app_id\">siit</a>.<br />\n"
+#~ "Sisesta <em>OMA</em> Facebooki rakenduse ID. Lisateavet saab <a href=\"https://inthemdl.net/news/creating-your-facebook-app_id\">siit</a>.<br />\n"
 #~ "\t\t\t\t\t\t\t\t  Siia tuleb sisestada ainult numbrid."
 
 #~ msgid "Admin ID/User ID"
 #~ msgstr "Admini ID/Kasutaja ID"
 
 #~ msgid ""
-#~ "Enter <em>YOUR</em> User ID from facebook here. For more information please visit <a href=\"http://inthemdl.net/news/finding-your-facebook-userid\">this page</a>.<br />\n"
+#~ "Enter <em>YOUR</em> User ID from facebook here. For more information please visit <a href=\"https://inthemdl.net/news/finding-your-facebook-userid\">this page</a>.<br />\n"
 #~ "\t\t\t\t\t\t\t\t  Enter your Facebook User ID # or vanity name here.<br />\n"
 #~ "\t\t\t\t\t\t\t\t  <em><b>Please note:  If you do not add your admin ID, your page will not be parsed properly by Facebook and will likely result in errors for you.</b></em><br />\n"
 #~ "\t\t\t\t\t\t\t\t  For multiple admins, enter a comma separated list (can be #s or name); i.e.  '1273267113, micheall, myfacebooknamerocks'"
 #~ msgstr ""
-#~ "Sisesta siia <em>OMA</em> Facebooki kasutaja ID. Lisainfot saab <a href=\"http://inthemdl.net/news/finding-your-facebook-userid\">siit</a>.<br />\n"
+#~ "Sisesta siia <em>OMA</em> Facebooki kasutaja ID. Lisainfot saab <a href=\"https://inthemdl.net/news/finding-your-facebook-userid\">siit</a>.<br />\n"
 #~ "\t\t\t\t\t\t\t\t  Sisesta siia FB kasutaja ID # või aadressinimi.<br />\n"
 #~ "\t\t\t\t\t\t\t\t  <em><b>Tähelepanu! Kui admini ID-d mitte sisestada, siis ei käitle FB lehte korralikult ning võib tekkida vigu.</b></em><br />\n"
 #~ "\t\t\t\t\t\t\t\t  Mitme administraatori korral eralda nad komaga (võib kasutada nii numbreid kui ka nimesid, nt  '1273267113, micheall, myfacebooknamerocks')"
@@ -20334,8 +20334,8 @@ msgstr "p"
 #~ msgid "Site Root Install Location"
 #~ msgstr "Saidi juurkausta asukoht"
 
-#~ msgid "Enter the url (including http://) to the root fo your Zenphoto installation."
-#~ msgstr "Sisesta URL (sealhulgas http://) oma Zenphoto juurkausta."
+#~ msgid "Enter the url (including https://) to the root fo your Zenphoto installation."
+#~ msgstr "Sisesta URL (sealhulgas https://) oma Zenphoto juurkausta."
 
 #~ msgid "Adds Facebook 'Like Button' to your theme via template calls."
 #~ msgstr "Lisab sinu teemale Facebooki meeldimisnupu."
@@ -20400,8 +20400,8 @@ msgstr "p"
 #~ msgid "Twitter Feed"
 #~ msgstr "Twitteri voog"
 
-#~ msgid "Your twitter feed url: http://twitter.com/statuses/user_timeline/xxxxxxxx.rss"
-#~ msgstr "Twitteri sõnumivoo url: http://twitter.com/statuses/user_timeline/xxxxxxxx.rss"
+#~ msgid "Your twitter feed url: https://twitter.com/statuses/user_timeline/xxxxxxxx.rss"
+#~ msgstr "Twitteri sõnumivoo url: https://twitter.com/statuses/user_timeline/xxxxxxxx.rss"
 
 #~ msgid "Display Photo?"
 #~ msgstr "Näidata pilti?"
@@ -20412,8 +20412,8 @@ msgstr "p"
 #~ msgid "Image URL"
 #~ msgstr "Pildi URL"
 
-#~ msgid "Your image url: http://mysite.com/images/me.jpg - (JPG/PNG/GIF Only)"
-#~ msgstr "Sinu pildi url: http://mysite.com/images/me.jpg - (JPG/PNG/GIF Only)"
+#~ msgid "Your image url: https://mysite.com/images/me.jpg - (JPG/PNG/GIF Only)"
+#~ msgstr "Sinu pildi url: https://mysite.com/images/me.jpg - (JPG/PNG/GIF Only)"
 
 #~ msgid "Tweets Header"
 #~ msgstr "Säutsatuste päis"
@@ -20442,8 +20442,8 @@ msgstr "p"
 #~ msgid "General POP3: {hostname:110/pop3}INBOX<br>"
 #~ msgstr "General POP3: {hostname:110/pop3}INBOX<br>"
 
-#~ msgid "For more info please see:  http://php.net/manual/en/function.imap-open.php"
-#~ msgstr "Lisainfo:  http://php.net/manual/en/function.imap-open.php"
+#~ msgid "For more info please see:  https://php.net/manual/en/function.imap-open.php"
+#~ msgstr "Lisainfo:  https://php.net/manual/en/function.imap-open.php"
 
 #~ msgid "Mail User"
 #~ msgstr "E-posti kasutaja"
@@ -20641,21 +20641,21 @@ msgstr "p"
 #~ msgstr "sek."
 
 #~ msgid ""
-#~ "We strongly recommend disabling <code>magic_quotes_gpc</code>. For more information See <em><a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#what-is-magic_quotes_gpc-and-"
+#~ "We strongly recommend disabling <code>magic_quotes_gpc</code>. For more information See <em><a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#what-is-magic_quotes_gpc-and-"
 #~ "why-should-it-be-disabled-\">What is magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto troubleshooting guide."
 #~ msgstr ""
-#~ "Soovitame tungivalt <code>magic_quotes_gpc</code> välja lülitada. Täpsem info: <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#what-is-magic_quotes_gpc-and-why-should-"
+#~ "Soovitame tungivalt <code>magic_quotes_gpc</code> välja lülitada. Täpsem info: <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#what-is-magic_quotes_gpc-and-why-should-"
 #~ "it-be-disabled-\" title=\"What is magic_quotes_gpc and why should it be disabled?\"><em>Mis asi on magic_quotes_gpc j amiks ta peab olema välja lülitatud</em></a> Zenphoto "
 #~ "tõrkeotsingust."
 
-#~ msgid "See the <a  href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
-#~ msgstr "Vaata üksikasju <a  href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#24\">tõrkeotsingu juhendist</a> zenphoto.org lehel."
+#~ msgid "See the <a  href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
+#~ msgstr "Vaata üksikasju <a  href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#24\">tõrkeotsingu juhendist</a> zenphoto.org lehel."
 
 #~ msgid ""
-#~ "Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"http://www.zenphoto.org/news/"
+#~ "Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"https://www.zenphoto.org/news/"
 #~ "troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
 #~ msgstr ""
-#~ "Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"http://www.zenphoto.org/news/"
+#~ "Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"https://www.zenphoto.org/news/"
 #~ "troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
 
 #~ msgid "Database admin user"
@@ -20753,8 +20753,8 @@ msgstr "p"
 #~ msgid "This option requires the <em>menu_manager</em> plugin to be enabled and the <em>Gallery index page link</em> to be set to \"gallery\"."
 #~ msgstr "See valik töötab juhul, kui <em>menu_manager</em> on sisse lülitatud ja lingiks <em>galerii avalehele</em> on seatud \"galerii\"."
 
-#~ msgid "For the best viewing experience <a href=\"http://%s\"> Get Adobe Flash.</a>"
-#~ msgstr "Paigalda <a href=\"http://%s\">Adobe Flash</a>, siis on sul parem galeriid vaadata."
+#~ msgid "For the best viewing experience <a href=\"https://%s\"> Get Adobe Flash.</a>"
+#~ msgstr "Paigalda <a href=\"https://%s\">Adobe Flash</a>, siis on sul parem galeriid vaadata."
 
 #~ msgid "View Gallery Without Flash"
 #~ msgstr "Külasta galeriid ilma Flashita"
@@ -20963,8 +20963,8 @@ msgstr "p"
 #~ msgid "Contact form"
 #~ msgstr "Kontaktivorm"
 
-#~ msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
-#~ msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Galerii mallid</a>Stopdesign'ilt"
+#~ msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+#~ msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Galerii mallid</a>Stopdesign'ilt"
 
 #~ msgid "All galleries"
 #~ msgstr "Kõik galeriid"
@@ -20994,8 +20994,8 @@ msgstr "p"
 #~ msgid "Full Size"
 #~ msgstr "Täissuurus"
 
-#~ msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-#~ msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Mallid Stopdesing'ilt</a>."
+#~ msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+#~ msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Mallid Stopdesing'ilt</a>."
 
 #~ msgid "Recently Updated Galleries"
 #~ msgstr "Hiljuti uuendatud galeriid"
@@ -21031,16 +21031,16 @@ msgstr "p"
 #~ msgstr "Mini slaidi valija"
 
 #~ msgid "Select what you want for the six special slides."
-#~ msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+#~ msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
 
 #~ msgid "Ported to Zenphoto by Mark Galeassi and Stephen Billard"
 #~ msgstr "Zenphoto jaoks kohandanud Mark Galeassi ja Stephen Billard"
 
 #~ msgid ""
-#~ "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/"
+#~ "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/"
 #~ "by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
 #~ msgstr ""
-#~ "Teema, mis tugineb <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman'i</a> disainile. Teema on kaetud litsentsiga <a href=\"http://creativecommons.org/licenses/by-nc-"
+#~ "Teema, mis tugineb <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman'i</a> disainile. Teema on kaetud litsentsiga <a href=\"https://creativecommons.org/licenses/by-nc-"
 #~ "sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>."
 
 #~ msgid "%sName:"
@@ -21094,13 +21094,13 @@ msgstr "p"
 #~ msgid "No unpublished pages available"
 #~ msgstr "No unpublished pages available"
 
-#~ msgid "Zenpage-default theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-#~ msgstr "Zenpage-default teema. Autor: <a href=\"http://www.maltem.de\">Malte Müller</a>"
+#~ msgid "Zenpage-default theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+#~ msgstr "Zenpage-default teema. Autor: <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> <span id=\"IE-clear-part"
-#~ "\">with</span> <a href=\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
-#~ msgstr "Galerii on loodud <a href=\"http://www.zenphoto.org\" title=\"Lihtsaim fotoalbum\"><span id=\"zen-part\">Zen</span><span id=\"photo-part\">PHOTO</span></a> abil."
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> <span id=\"IE-clear-part"
+#~ "\">with</span> <a href=\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
+#~ msgstr "Galerii on loodud <a href=\"https://www.zenphoto.org\" title=\"Lihtsaim fotoalbum\"><span id=\"zen-part\">Zen</span><span id=\"photo-part\">PHOTO</span></a> abil."
 
 #~ msgid "&laquo; prev thumbs"
 #~ msgstr "&laquo; vignettes précédentes"
@@ -21205,8 +21205,8 @@ msgstr "p"
 #~ msgid "show fewer fields"
 #~ msgstr "näita vähem välju"
 
-#~ msgid "<a href=\"http://www.zenphoto.org\" title=\"A simpler web album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-#~ msgstr "<a href=\"http://www.zenphoto.org\" title=\"Lihtsaim pildi- ja multimeedia CMS\">Zen<strong>photo</strong></a> versio0n %1$s [%2$s]"
+#~ msgid "<a href=\"https://www.zenphoto.org\" title=\"A simpler web album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+#~ msgstr "<a href=\"https://www.zenphoto.org\" title=\"Lihtsaim pildi- ja multimeedia CMS\">Zen<strong>photo</strong></a> versio0n %1$s [%2$s]"
 
 #~ msgid "tag set!"
 #~ msgstr "silt lisatud!"
@@ -21468,8 +21468,8 @@ msgstr "p"
 #~ msgid "Add all the tags entered above."
 #~ msgstr "Lisa kõik sildid."
 
-#~ msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
-#~ msgstr "Võite alla laadida ka teisi kujundusi: <a href=\"http://www.zenphoto.org/zp/theme/\">Zenphoto kujunduste leht</a>."
+#~ msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+#~ msgstr "Võite alla laadida ka teisi kujundusi: <a href=\"https://www.zenphoto.org/zp/theme/\">Zenphoto kujunduste leht</a>."
 
 #~ msgid "Set %s as your theme"
 #~ msgstr "Vali kujundus %s"
@@ -21543,8 +21543,8 @@ msgstr "p"
 #~ msgid "Image not rotatable."
 #~ msgstr "Pilti ei saa pöörata."
 
-#~ msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-#~ msgstr "Tundmatu viga! Palun teavitage sellest Zenphoto arendajaid, kelle andmed leiate <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+#~ msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+#~ msgstr "Tundmatu viga! Palun teavitage sellest Zenphoto arendajaid, kelle andmed leiate <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 
 #~ msgid "Watermark not renderable."
 #~ msgstr "Vesimärki ei saa töödelda."
@@ -21706,8 +21706,8 @@ msgstr "p"
 #~ msgid "You are running the latest zenphoto version."
 #~ msgstr "Kasutad zenphoto viimast versiooni."
 
-#~ msgid "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-#~ msgstr "Ei saa ühendust saidiga <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+#~ msgid "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+#~ msgstr "Ei saa ühendust saidiga <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #~ msgid "zenphoto version %s is available."
 #~ msgstr "zenphoto versioon %s on saadaval."
@@ -21885,8 +21885,8 @@ msgstr "p"
 #~ "L’ancienne extension flowplayer3_playlist est maintenant incorporée. Vous pouvez l’utiliser pour afficher l’ensemble d’un album multimédia comme une liste de lecture, ou encore sous "
 #~ "forme de lecteurs individuels avec Flowplayer 3."
 
-#~ msgid "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
-#~ msgstr "Veuillez consulter<a href='http://flowplayer.org'>flowplayer.org</a> pour plus d’informations sur le lecteur et sa licence."
+#~ msgid "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
+#~ msgstr "Veuillez consulter<a href='https://flowplayer.org'>flowplayer.org</a> pour plus d’informations sur le lecteur et sa licence."
 
 #~ msgid "Flash players do not support <em>External Albums</em>."
 #~ msgstr "Les lecteurs flash ne gèrent pas les <em>Albums externes</em>."
@@ -22191,8 +22191,8 @@ msgstr "p"
 #~ "TÕLKIMATA! Select the skin (theme) to use. <br />NOTE: Since the skin is pure HTML/CSS only there may be display issues with certain themes that require manual adjustments. Place "
 #~ "custom skin within the root plugins folder. See plugin documentation for more info."
 
-#~ msgid "Enter the full urls of the feeds to merge separated by semicolons(e.g. \"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
-#~ msgstr "Saisissez l’URL complète des flux à fusionner, séparés par des points-virgules (ex.: « http://www.domaine1.com/rss; http://www.domaine2.com/rss »)"
+#~ msgid "Enter the full urls of the feeds to merge separated by semicolons(e.g. \"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
+#~ msgstr "Saisissez l’URL complète des flux à fusionner, séparés par des points-virgules (ex.: « https://www.domaine1.com/rss; https://www.domaine2.com/rss »)"
 
 #~ msgid "Prints a paged thumbs navigation on image.php, independent of the album.php's thumbs."
 #~ msgstr "Prépare un bloc de vignettes de navigation dans le fichier image.php, indépendamment des vignettes du fichier album.php."
@@ -23460,8 +23460,8 @@ msgstr "p"
 #~ msgid "<strong>Error parsing <em>plugin_URL</em> string!</strong>."
 #~ msgstr "<strong>Erreur lors de l’analyse de la chaîne <em>plugin_URL</em> !</strong>."
 
-#~ msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
-#~ msgstr "une adaption de <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/'>jQuery Tag Suggestion</a> de Remy Sharp"
+#~ msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+#~ msgstr "une adaption de <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/'>jQuery Tag Suggestion</a> de Remy Sharp"
 
 #~ msgid "Generates Troubleshooting news articles."
 #~ msgstr "Génère les articles de dépannage."

@@ -37,7 +37,7 @@ if ($_zp_script && file_exists($_zp_script)) {
 } else {
 	?>
 	<!DOCTYPE html>
-	<html xmlns="http://www.w3.org/1999/xhtml">
+	<html xmlns="https://www.w3.org/1999/xhtml">
 		<head>
 		</head>
 		<body>

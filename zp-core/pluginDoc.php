@@ -116,7 +116,7 @@ if (!defined('OFFSET_PATH')) {
 			$translatetext = '';
 		} else {
 			$translatetext = '<br />' .
-							'<a href="http://www.google.com/translate_c?langpair=en|' . strtolower(substr($real_locale, 0, 2)) . '&u=' . FULLWEBPATH . '/' . ZENFOLDER . '/pluginDoc.php?extension=' . $extension . '"' .
+							'<a href="https://www.google.com/translate_c?langpair=en|' . strtolower(substr($real_locale, 0, 2)) . '&u=' . FULLWEBPATH . '/' . ZENFOLDER . '/pluginDoc.php?extension=' . $extension . '"' .
 							'title="' . gettext('This document is generated from the plugin comment block and other items that are in English and outside of the Zenphoto translation system. This link will send the URL to the Google translation WEB to present the page in your language.') . '">' .
 							gettext('Translate this page.') .
 							'</a>';
@@ -127,7 +127,7 @@ if (!defined('OFFSET_PATH')) {
 			}
 		} else {
 			//removed for now as doc generators don't group by package/subpackge anymore
-			//$plugin_URL = 'http://docs.zenphoto.org/package-plugins.' . $sublink . '.html';
+			//$plugin_URL = 'https://docs.zenphoto.org/package-plugins.' . $sublink . '.html';
 			//$doclink = sprintf(gettext('See also the Zenphoto online documentation: <a href="%1$s">%2$s</a>'), $plugin_URL, $extension);
 			$doclink = '<p>' . gettext('Also review the in-file documentation of the plugin file(s) itself for more detailed function usage.') . '</p>';
 		}

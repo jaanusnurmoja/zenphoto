@@ -816,9 +816,9 @@ msgstr "Zenphoto'nun son sürümünü kullanıyorsunuz."
 
 #: zenphoto/zp-core/admin.php:94
 msgid ""
-"Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+"Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 msgstr ""
-"<a href=\"http://www.zenphoto.org\">zenphoto.org</a> adresine bağlanılamadı."
+"<a href=\"https://www.zenphoto.org\">zenphoto.org</a> adresine bağlanılamadı."
 
 #: zenphoto/zp-core/admin.php:96
 #, php-format
@@ -1407,11 +1407,11 @@ msgstr "Görüntülemek istediğiniz sayfa şifre korumalı."
 
 #: zenphoto/zp-core/template-functions.php:4553
 msgid ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo "
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo "
 "album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</"
 "span></a>"
 msgstr ""
-"Altyapı: <a href=\"http://www.zenphoto.org\" title=\"Daha kolay bir resim "
+"Altyapı: <a href=\"https://www.zenphoto.org\" title=\"Daha kolay bir resim "
 "albümü\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</"
 "span></a>"
 
@@ -2175,10 +2175,10 @@ msgstr "Resim bulunamadı veya kaynaktan okunamadı."
 
 #: zenphoto/zp-core/functions-image.php:193
 msgid ""
-"Unknown error! Please report to the developers at <a href=\"http://www."
+"Unknown error! Please report to the developers at <a href=\"https://www."
 "zenphoto.org/\">www.zenphoto.org</a>"
 msgstr ""
-"Bilinmeyen hata! Lütfen <a href=\"http://www.zenphoto.org\">zenphoto.org</"
+"Bilinmeyen hata! Lütfen <a href=\"https://www.zenphoto.org\">zenphoto.org</"
 "a>'daki geliştiricilere bu durumu bildirin."
 
 #: zenphoto/zp-core/admin-tags.php:103
@@ -3113,7 +3113,7 @@ msgstr "HTTP Accept Dili"
 msgid ""
 "Highlighted languages are not current with Zenphoto Version %s. (The version "
 "Zenphoto of the out-of-date language is shown in braces.) Please check the "
-"<a href=\"http://www.zenphoto.org/trac/report/9?sort=summary\">translation "
+"<a href=\"https://www.zenphoto.org/trac/report/9?sort=summary\">translation "
 "tickets</a> for new and updated language translations."
 msgstr ""
 
@@ -3318,12 +3318,12 @@ msgstr "Şubat 25, 2008"
 #: zenphoto/zp-core/admin-options.php:780
 msgid ""
 "Format for dates. Select from the list or set to <code>custom</code> and "
-"provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php"
+"provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php"
 "\"><span class=\"nowrap\"><code>strftime()</code></span></a> format string "
 "in the text box."
 msgstr ""
 "Tarih için biçimlendirme. Listeden bir öğe seçin veya \"ayarla\" seçeneğini "
-"kullanın ve <code>özel</code> bir <a href=\"http://us2.php.net/manual/en/"
+"kullanın ve <code>özel</code> bir <a href=\"https://us2.php.net/manual/en/"
 "function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</"
 "code></span></a> çıktısı ayarlayın."
 
@@ -5507,10 +5507,10 @@ msgstr ""
 #: zenphoto/zp-core/admin-themes.php:176
 #, fuzzy
 msgid ""
-"You can download more themes from the <a href=\"http://www.zenphoto.org/zp/"
+"You can download more themes from the <a href=\"https://www.zenphoto.org/zp/"
 "theme/\">zenphoto themes page</a>."
 msgstr ""
-"Daha fazla temayı <a href=\"http://www.zenphoto.org/zp/theme/\">Zenphoto "
+"Daha fazla temayı <a href=\"https://www.zenphoto.org/zp/theme/\">Zenphoto "
 "tema dizininden</a> indirebilirsiniz."
 
 #: zenphoto/zp-core/admin-themes.php:177
@@ -5895,10 +5895,10 @@ msgstr "Albümü oluştur"
 #: zenphoto/zp-core/admin-functions.php:26
 #, php-format
 msgid ""
-"<a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album"
+"<a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album"
 "\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
 msgstr ""
-"<a href=\"http://www.zenphoto.org\" title=\"Basit bir online albüm yazılımı"
+"<a href=\"https://www.zenphoto.org\" title=\"Basit bir online albüm yazılımı"
 "\">zen<strong>photo</strong></a> sürüm %1$s [%2$s]"
 
 #: zenphoto/zp-core/admin-functions.php:31
@@ -8657,10 +8657,10 @@ msgstr ""
 #: zenphoto/zp-core/zp-extensions/tag_suggest.php:11
 #, fuzzy
 msgid ""
-"an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-"
+"an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-"
 "tag-suggestion/ '>jQuery Tag Suggestion</a>"
 msgstr ""
-"eine Adaption von Remy Sharps <a href='http://remysharp.com/2007/12/28/"
+"eine Adaption von Remy Sharps <a href='https://remysharp.com/2007/12/28/"
 "jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
 
 #: zenphoto/zp-core/zp-extensions/quota_manager.php:27
@@ -10144,7 +10144,7 @@ msgstr ""
 
 #: zenphoto/zp-core/zp-extensions/flowplayer3.php:13
 msgid ""
-"Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info "
+"Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info "
 "about the player and its license."
 msgstr ""
 
@@ -10909,7 +10909,7 @@ msgstr ""
 msgid ""
 "Loads Colorbox JS and CSS scripts for selected theme page scripts. Note that "
 "this plugin does not attach Colorbox to any element. You need to do this on "
-"your theme yourself. Visit the <a href='http://colorpowered.com/"
+"your theme yourself. Visit the <a href='https://colorpowered.com/"
 "colorbox/'>Colorbox website</a> about that."
 msgstr ""
 
@@ -11157,7 +11157,7 @@ msgstr "Teşekkür \\thetheorem."
 msgid ""
 "<strong>Note:</strong> Although this plugin supports <em>Effenberger "
 "effects</em>, due to licensing considerations no <em>Effenberger effects</"
-"em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/\">CVI "
+"em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/\">CVI "
 "Astonishing Image Effects</a> by Christian Effenberger to select and "
 "download effects."
 msgstr ""
@@ -11451,7 +11451,7 @@ msgstr "Google - Resim lisansı için URL"
 #: zenphoto/zp-core/zp-extensions/sitemap-extended.php:153
 msgid ""
 "Optional. Used only if the Google extension is checked. Must be an absolute "
-"URL address of the form: http://mydomain.com/license.html"
+"URL address of the form: https://mydomain.com/license.html"
 msgstr ""
 
 #: zenphoto/zp-core/zp-extensions/sitemap-extended.php:194
@@ -12942,10 +12942,10 @@ msgstr "Verdächtige Muster"
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:41
 #, fuzzy
 msgid ""
-"SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression"
+"SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression"
 "\">regular expressions</a> (separate with spaces)"
 msgstr ""
-"SPAM-Blacklist <a href=\"http://de.wikipedia.widearea.org/wiki/Regul"
+"SPAM-Blacklist <a href=\"https://de.wikipedia.widearea.org/wiki/Regul"
 "%E4rer_Ausdruck\">Regulärer Ausdruck</a> (mit Leerzeichen trennen)"
 
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:42
@@ -13179,7 +13179,7 @@ msgstr "Özel link"
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:140
 msgid ""
 "Creates a link outside the Zenphoto structure. Use of a full URL is "
-"recommended (e.g. http://www.domain.com)."
+"recommended (e.g. https://www.domain.com)."
 msgstr ""
 
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:147
@@ -15075,11 +15075,11 @@ msgstr "15"
 
 #: zenphoto/themes/default/theme_description.php:4
 msgid ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
-"<a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
+"<a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 msgstr ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> ve <a "
-"href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> ve <a "
+"href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: zenphoto/themes/default/theme_description.php:7
 msgid ""
@@ -15197,14 +15197,14 @@ msgstr ""
 
 #: zenphoto/themes/stopdesign/theme_description.php:10
 msgid ""
-"A theme based on the design from <a href=\"http://stopdesign.com/templates/"
+"A theme based on the design from <a href=\"https://stopdesign.com/templates/"
 "photos/\">Douglas Bowman</a>. This theme is licensed under the <a href="
-"\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
+"\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
 "Attribution-NonCommercial-ShareAlike 2.5</a> License."
 msgstr ""
-"<a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>'ın "
+"<a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>'ın "
 "yapmış olduğu dizayn üzerine geliştirilmiş bir tema. Bu tema <a href="
-"\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
+"\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
 "Attribution-NonCommercial-ShareAlike 2.5</a> lisansıyla korunmaktadır."
 
 #: zenphoto/themes/stopdesign/comment.php:8
@@ -15252,10 +15252,10 @@ msgstr "Ana İndeks"
 
 #: zenphoto/themes/stopdesign/image.php:164
 msgid ""
-"<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from "
+"<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from "
 "Stopdesign."
 msgstr ""
-"<a href=\"http://stopdesign.com/templates/photos/\">Resim şablonları</a> "
+"<a href=\"https://stopdesign.com/templates/photos/\">Resim şablonları</a> "
 "için Stopdesign."
 
 #: zenphoto/themes/stopdesign/register.php:12
@@ -15267,10 +15267,10 @@ msgstr "Arşiv"
 #: zenphoto/themes/stopdesign/register.php:42
 #: zenphoto/themes/stopdesign/gallery.php:120
 msgid ""
-"<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from "
+"<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from "
 "Stopdesign"
 msgstr ""
-"<a href=\"http://stopdesign.com/templates/photos/\">Fotoğraf Temaları</a> "
+"<a href=\"https://stopdesign.com/templates/photos/\">Fotoğraf Temaları</a> "
 "için Stopdesign"
 
 #: zenphoto/themes/stopdesign/gallery.php:32
@@ -15505,11 +15505,11 @@ msgstr "Galeri sayfalarında kırpılacak resimlerin yüksekliği"
 #: zenphoto/themes/effervescence_plus/theme_description.php:7
 #, fuzzy
 msgid ""
-"<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with "
-"modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
+"<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with "
+"modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
 msgstr ""
-"<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> ve <a href="
-"\"http://stephen.sbillard.org/\">Stephen Billard</a>'ın katkılarıyla"
+"<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> ve <a href="
+"\"https://stephen.sbillard.org/\">Stephen Billard</a>'ın katkılarıyla"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:10
 #, fuzzy
@@ -15772,10 +15772,10 @@ msgstr ""
 #: zenphoto/themes/effervescence_plus/album.php:357
 #, fuzzy
 msgid ""
-"For the best viewing experience <a href=\"http://www.macromedia.com/go/"
+"For the best viewing experience <a href=\"https://www.macromedia.com/go/"
 "getflashplayer/\">Get Adobe Flash.</a>"
 msgstr ""
-"En iyi görünüm tecrübesi için <a href=\"http://www.macromedia.com/go/"
+"En iyi görünüm tecrübesi için <a href=\"https://www.macromedia.com/go/"
 "getflashplayer/\">Adobe Flash'ı</a> edinin."
 
 #: zenphoto/themes/effervescence_plus/album.php:366
@@ -16024,8 +16024,8 @@ msgstr "Tema sayfası"
 
 #: zenphoto/themes/zenpage/footer.php:5
 #, fuzzy
-msgid "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-msgstr "Zenpage teması: <a href=\"http://www.maltem.de\">Malte Müller</a>"
+msgid "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+msgstr "Zenpage teması: <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: zenphoto/themes/zenpage/themeoptions.php:44
 #, fuzzy

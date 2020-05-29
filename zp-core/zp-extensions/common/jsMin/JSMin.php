@@ -43,11 +43,11 @@
  * @package JSMin
  * @author Ryan Grove <ryan@wonko.com> (PHP port)
  * @author Steve Clay <steve@mrclay.org> (modifications + cleanup)
- * @author Andrea Giammarchi <http://www.3site.eu> (spaceBeforeRegExp)
+ * @author Andrea Giammarchi <https://www.3site.eu> (spaceBeforeRegExp)
  * @copyright 2002 Douglas Crockford <douglas@crockford.com> (jsmin.c)
  * @copyright 2008 Ryan Grove <ryan@wonko.com> (PHP port)
- * @license http://opensource.org/licenses/mit-license.php MIT License
- * @link http://code.google.com/p/jsmin-php/
+ * @license https://opensource.org/licenses/mit-license.php MIT License
+ * @link https://code.google.com/p/jsmin-php/
  */
 
 class JSMin {

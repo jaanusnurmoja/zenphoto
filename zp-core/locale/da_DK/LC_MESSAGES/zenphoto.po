@@ -224,11 +224,11 @@ msgstr ""
 
 #: themes/basic/theme_description.php:5
 msgid ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a "
-"href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a "
+"href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 msgstr ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> og <a "
-"href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> og <a "
+"href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: themes/basic/theme_description.php:8
 msgid ""
@@ -557,10 +557,10 @@ msgstr "Sider"
 
 #: themes/garland/theme_description.php:10
 msgid ""
-"Modded Wordpress theme from, <a href=\"http://garlandtheme.blogspot.com/"
+"Modded Wordpress theme from, <a href=\"https://garlandtheme.blogspot.com/"
 "\">garland</a>"
 msgstr ""
-"Modded Wordpress tema fra, <a href=\"http://garlandtheme.blogspot.com/"
+"Modded Wordpress tema fra, <a href=\"https://garlandtheme.blogspot.com/"
 "\">garland</a>"
 
 #: themes/garland/themeoptions.php:47 themes/zenpage/themeoptions.php:50
@@ -736,9 +736,9 @@ msgstr "GalleriArkiv"
 
 #: themes/zenpage/footer.php:5
 msgid ""
-"Zenpage theme designed by <a href=\"http://www.maltem.de\">Malte Müller</a>"
+"Zenpage theme designed by <a href=\"https://www.maltem.de\">Malte Müller</a>"
 msgstr ""
-"Zenpage tema designet af <a href=\"http://www.maltem.de\">Malte Müller</a>"
+"Zenpage tema designet af <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: themes/zenpage/gallery.php:70 themes/zenpage/news.php:57
 #: themes/zenpage/news.php:85
@@ -981,11 +981,11 @@ msgstr "Malte Müller (acrylian)"
 
 #: themes/zpmobile/theme_description.php:10
 msgid ""
-"A theme primarily meant for mobile/smartphone browsing using <a href='http://"
+"A theme primarily meant for mobile/smartphone browsing using <a href='https://"
 "jQuerymobile.com'>jQuerymobile framework</a>."
 msgstr ""
 "Et tema der primært er for mobil/smartphone browsing idet det bruger  <a "
-"href=‘http://jQuerymobile.com’>jQuerymobile framework</a>."
+"href=‘https://jQuerymobile.com’>jQuerymobile framework</a>."
 
 #: themes/zpmobile/themeoptions.php:41
 msgid "Allow direct link from multimedia"
@@ -1845,10 +1845,10 @@ msgstr "Top"
 #: zp-core/admin-functions.php:30
 #, php-format
 msgid ""
-"<a href=\"http://www.zenphoto.org\" title=\"The simpler media website CMS"
+"<a href=\"https://www.zenphoto.org\" title=\"The simpler media website CMS"
 "\">Zen<strong>photo</strong></a> version %1$s"
 msgstr ""
-"<a href=\"http://www.zenphoto.org\" title=\"Det enklere media website CMS"
+"<a href=\"https://www.zenphoto.org\" title=\"Det enklere media website CMS"
 "\">Zen<strong>photo</strong></a> version %1$s"
 
 #: zp-core/admin-functions.php:35
@@ -3254,12 +3254,12 @@ msgstr "Februar 25, 2008"
 #: zp-core/admin-options.php:890
 msgid ""
 "Format for dates. Select from the list or set to <code>custom</code> and "
-"provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span "
+"provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span "
 "class=\"nowrap\"><code>strftime()</code></span></a> format string in the text "
 "box."
 msgstr ""
 "Datoformater. Vælg fra listen eller sæt til <code>brugerdefineret</code> og lav "
-"en <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span class="
+"en <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span class="
 "\"nowrap\"><code>strftime()</code></span></a> formatstreng i tekstboksen."
 
 #: zp-core/admin-options.php:893
@@ -3354,11 +3354,11 @@ msgstr "Indstil til den tid i sekunder, at cookies skal bevares af browsere."
 
 #: zp-core/admin-options.php:1028
 msgid ""
-"If this option is selected Zenphoto will use <a href=\"http://www.w3schools.com/"
+"If this option is selected Zenphoto will use <a href=\"https://www.w3schools.com/"
 "php/php_sessions.asp\">PHP sessions</a> instead of cookies to make visitor "
 "settings persistent."
 msgstr ""
-"Hvis dette er valgt vil Zenphoto bruge <a href=\"http://www.w3schools.com/php/"
+"Hvis dette er valgt vil Zenphoto bruge <a href=\"https://www.w3schools.com/php/"
 "php_sessions.asp\"> PHP sessioner </a> i stedet for cookies for at bevare den "
 "besøgendes indstillinger."
 
@@ -5336,10 +5336,10 @@ msgstr ""
 
 #: zp-core/admin-themes.php:179
 msgid ""
-"You can download more themes from the <a href=\"http://www.zenphoto.org/theme/"
+"You can download more themes from the <a href=\"https://www.zenphoto.org/theme/"
 "\">zenphoto themes page</a>."
 msgstr ""
-"Du kan downloade flere temaer fra <a href=\"http://www.zenphoto.org/theme/"
+"Du kan downloade flere temaer fra <a href=\"https://www.zenphoto.org/theme/"
 "\">zenphotos tema side</a>."
 
 #: zp-core/admin-themes.php:180
@@ -8098,10 +8098,10 @@ msgstr "Billede %s kan ikke roteres."
 #, php-format
 msgid ""
 "Unknown error processing %s! Please report to the developers at <a href="
-"\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+"\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 msgstr ""
 "Ukendt fejl under behandling af %s! Rapporter venligst til udviklerne på <a "
-"href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+"href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 
 #: zp-core/functions-image.php:400 zp-core/functions-image.php:439
 #, php-format
@@ -9612,13 +9612,13 @@ msgstr "<em>%1$s</em> mappe%2$s [tilladelser fejl]"
 msgid ""
 "Setup could not change the file permissions from <em>%1$s</em> (<code>0%2$o</"
 "code>) to <em>%3$s</em> (<code>0%4$o</code>). You will have to set the "
-"permissions manually. See the <a href=\"http://www.zenphoto.org/news/"
+"permissions manually. See the <a href=\"https://www.zenphoto.org/news/"
 "troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto "
 "permissions requirements."
 msgstr ""
 "Setup kunne ikke ændre filrettighederne fra <em>%1$s</em> (<code>0%2$o</code>) "
 "til <em>%3$s</em> (<code>0%4$o</code>). Du bliver nødt til at sætte "
-"rettighedene manuelt. Se <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"rettighedene manuelt. Se <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#29\">Troubleshooting guide</a> for detaljer om Zenphotos krav til "
 "rettigheder."
 
@@ -9680,10 +9680,10 @@ msgstr "%1$s (0%2$o)"
 
 #: zp-core/setup/class-setup.php:467
 msgid ""
-"See the <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"See the <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
 msgstr ""
-"Se <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"Se <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#24\">troubleshooting guide</a> på zenphoto.org for detaljer."
 
 #: zp-core/setup/class-setup.php:521
@@ -9934,12 +9934,12 @@ msgstr "PHP <code>Register Globals</code> [er sat]"
 #: zp-core/setup/index.php:635
 msgid ""
 "PHP Register globals presents a security risk to any PHP application. See <a "
-"href=\"http://php.net/manual/en/security.globals.php\"><em>Using Register "
+"href=\"https://php.net/manual/en/security.globals.php\"><em>Using Register "
 "Globals</em></a>. Change your PHP.ini settings to <code>register_globals = off</"
 "code>."
 msgstr ""
 "PHP Register Globals repræsenterer en sikkerhedsrisiko for enhvert PHP program. "
-"Se <a href=\"http://php.net/manual/en/security.globals.php\"> <em> Brugen af "
+"Se <a href=\"https://php.net/manual/en/security.globals.php\"> <em> Brugen af "
 "Registrer Globals </em> </a>. Rediger dine php.ini indstillinger til "
 "<code>register_globals = Off</code>."
 
@@ -9989,13 +9989,13 @@ msgstr "PHP <code>magic_quotes_gpc</code> [er aktiveret]"
 #: zp-core/setup/index.php:670
 msgid ""
 "We strongly recommend disabling <code>magic_quotes_gpc</code>. For more "
-"information See <em><a href=\"http://www.zenphoto.org/news/installation-"
+"information See <em><a href=\"https://www.zenphoto.org/news/installation-"
 "problems#about-magicquotes-and-why-they-should-be-disabled\">What is "
 "magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto "
 "troubleshooting guide."
 msgstr ""
 "Vi anbefaler kraftigt at deaktivere <code>magic_quotes_gpc</code>. For mere "
-"information se <em><a href=\"http://www.zenphoto.org/news/installation-"
+"information se <em><a href=\"https://www.zenphoto.org/news/installation-"
 "problems#about-magicquotes-and-why-should-it-be-disabled-\">What is "
 "magic_quotes_gpc and why should it be disabled?</a></em> i Zenphoto "
 "fejlfindingsvejledning."
@@ -10118,10 +10118,10 @@ msgstr ""
 
 #: zp-core/setup/index.php:708
 msgid ""
-"See the <a  href=\"http://www.zenphoto.org/news/problems-with-languages\">user "
+"See the <a  href=\"https://www.zenphoto.org/news/problems-with-languages\">user "
 "guide</a> on zenphoto.org for details."
 msgstr ""
-"Se venligst <a  href=\"http://www.zenphoto.org/news/problems-with-languages"
+"Se venligst <a  href=\"https://www.zenphoto.org/news/problems-with-languages"
 "\">brugervejledningen</a> på zenphoto.org for detaljer."
 
 #: zp-core/setup/index.php:710
@@ -10759,13 +10759,13 @@ msgstr "Zenphoto kernefil rettigheder [ikke korrekte]"
 #: zp-core/setup/index.php:1426
 msgid ""
 "Setup could not set the one or more components to the selected permissions "
-"level. You will have to set the permissions manually. See the <a href=\"http://"
+"level. You will have to set the permissions manually. See the <a href=\"https://"
 "www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
 "\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
 msgstr ""
 "Setup kunne ikke sætte en eller flere komponenter til det valgte "
 "rettighedsniveau. Du bliver nødt til at indstille rettighederne manuelt. Se <a "
-"href=\"http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
+"href=\"https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
 "\">Troubleshooting guide</a> for detaljer vedrørende Zenphotos krav til "
 "rettigheder."
 
@@ -10807,11 +10807,11 @@ msgstr "Serveren synes at være <em>nginx</em>"
 #: zp-core/setup/index.php:1452
 msgid ""
 "If you wish to create cruft-free URLs, you will need to configuring <a href="
-"\"http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL rewriting "
+"\"https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL rewriting "
 "for NGINX servers</em></a>."
 msgstr ""
 "Hvis du ønsker at oprette søgevenlige webadresser, bliver du nødt til at "
-"konfigurere <a href=\"http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial"
+"konfigurere <a href=\"https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial"
 "\"><em> URL omskrivning for nginx servere </ em></a>."
 
 #: zp-core/setup/index.php:1456
@@ -11534,10 +11534,10 @@ msgstr "login"
 
 #: zp-core/template-functions.php:4447
 msgid ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"The simpler media "
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"The simpler media "
 "website CMS\">Zenphoto</a>"
 msgstr ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"Den enklere mediewebsite "
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"Den enklere mediewebsite "
 "CMS\"> Zenphoto </a>"
 
 #: zp-core/template-functions.php:4612
@@ -12419,11 +12419,11 @@ msgstr ""
 #: zp-core/zp-extensions/GoogleMap/Map.php:105
 msgid ""
 "For information on URL limits visit <a href=\"javascript:parent.window."
-"location='http://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
+"location='https://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
 "maximum length of a URL</a>."
 msgstr ""
 "For information om URL begrænsninger se <a href=\"javascript:parent.window."
-"location=‘http://www.boutell.com/newfaq/misc/urllength.html’;\">Hvad er maximum "
+"location=‘https://www.boutell.com/newfaq/misc/urllength.html’;\">Hvad er maximum "
 "længden af en URL</a>."
 
 #: zp-core/zp-extensions/GoogleMap/Map.php:108
@@ -12594,11 +12594,11 @@ msgstr "Auto backup kørte sidste %s."
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:15
 msgid ""
-"Responsive jQuery bxSlider thumb nav plugin based on <a href='http://bxslider."
-"com'>http://bxslider.com</a>"
+"Responsive jQuery bxSlider thumb nav plugin based on <a href='https://bxslider."
+"com'>https://bxslider.com</a>"
 msgstr ""
 "Responsive jQuery bxSlider miniature-navigeringsplugin baseret på <a "
-"href=‘http://bxslider.com’>http://bxslider.com</a>"
+"href=‘https://bxslider.com’>https://bxslider.com</a>"
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:17
 #, php-format
@@ -16173,10 +16173,10 @@ msgstr ""
 
 #: zp-core/zp-extensions/jplayer.php:72
 msgid ""
-"Please see <a href='http://jplayer.org'>jplayer.org</a> for more info about the "
+"Please see <a href='https://jplayer.org'>jplayer.org</a> for more info about the "
 "player and its license."
 msgstr ""
-"Se venligst <a href=‘http://jplayer.org’>jplayer.org</a> for mere information "
+"Se venligst <a href=‘https://jplayer.org’>jplayer.org</a> for mere information "
 "om jplayer og dens licens."
 
 #: zp-core/zp-extensions/jplayer.php:74
@@ -16387,11 +16387,11 @@ msgstr "Opdatering Krævet"
 #: zp-core/zp-extensions/jplayer.php:512
 msgid ""
 "To play the media you will need to either update your browser to a recent "
-"version or update your <a href=\"http://get.adobe.com/flashplayer/\" target="
+"version or update your <a href=\"https://get.adobe.com/flashplayer/\" target="
 "\"_blank\">Flash plugin</a>."
 msgstr ""
 "For at afspille mediet skal du enten opdatere din browser til en nyere version "
-"eller opdatere din <a href=\"http://get.adobe.com/flashplayer/\" target=\"_blank"
+"eller opdatere din <a href=\"https://get.adobe.com/flashplayer/\" target=\"_blank"
 "\">Flash plugin</a>.”"
 
 #: zp-core/zp-extensions/macroList.php:67
@@ -17175,10 +17175,10 @@ msgstr "Brugerdefineret link"
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:149
 msgid ""
 "Creates a link outside the Zenphoto structure. Use of a full URL is recommended "
-"(e.g. http://www.domain.com)."
+"(e.g. https://www.domain.com)."
 msgstr ""
 "Opretter et link til udenfor Zenpagestrukturen. Brug af fuld URL anbefales (fx. "
-"http://www.domain.com)."
+"https://www.domain.com)."
 
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:156
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:269
@@ -17269,10 +17269,10 @@ msgstr "RSS feeds der skal kombineres"
 #: zp-core/zp-extensions/mergedRSS.php:67
 msgid ""
 "Enter the full urls of the feeds to merge separated by semicolons (e.g. "
-"\"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
+"\"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
 msgstr ""
 "Angiv den fulde URL for de feeds den skal kombineres, adskildt af semikolon "
-"(fx.  \"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
+"(fx.  \"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
 
 #: zp-core/zp-extensions/mergedRSS.php:68
 msgid "Feed items:"
@@ -17857,12 +17857,12 @@ msgstr "Sæt standard for album udgivelse og billedsynlighed."
 #: zp-core/zp-extensions/publishContent/publishContent.php:226
 msgid ""
 "The number of un-published items does <strong>not</strong> include items that "
-"are un-published by <a href=\"http://www.zenphoto.org/news/an-overview-of-"
+"are un-published by <a href=\"https://www.zenphoto.org/news/an-overview-of-"
 "zenphoto-users#rules-of-protection-andvisibility-for-zenphoto-obj"
 "\">inheritance</a>."
 msgstr ""
 "Antallet af ikke-publicerede elementer inkluderer <strong>ikke</strong> "
-"elementer der er ikke-publicerede af <a href=\"http://www.zenphoto.org/news/an-"
+"elementer der er ikke-publicerede af <a href=\"https://www.zenphoto.org/news/an-"
 "overview-of-zenphoto-users#rules-of-protection-andvisibility-for-zenphoto-obj"
 "\">inheritance</a>."
 
@@ -18319,10 +18319,10 @@ msgstr "Offentlig nøgle"
 #: zp-core/zp-extensions/reCaptcha.php:50
 msgid ""
 "Enter your <em>reCaptcha v2</em> public key. You can obtain this key from the "
-"Google <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site"
+"Google <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site"
 msgstr ""
 "Indtast din <em>reCaptcha v2</em> offentlige nøgle. Du kan få denne nøgle fra "
-"Google <a href=\"http://www.google.com/recaptcha\"> reCaptcha </a> webstedet"
+"Google <a href=\"https://www.google.com/recaptcha\"> reCaptcha </a> webstedet"
 
 #: zp-core/zp-extensions/reCaptcha.php:51
 msgid "Private key"
@@ -19540,10 +19540,10 @@ msgstr "Mistænkelige mønstre"
 
 #: zp-core/zp-extensions/simpleSpam.php:62
 msgid ""
-"SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression"
+"SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression"
 "\">regular expressions</a> (separate with spaces)"
 msgstr ""
-"SPAM sortliste <a href=\"http://en.wikipedia.org/wiki/Regular_expression"
+"SPAM sortliste <a href=\"https://en.wikipedia.org/wiki/Regular_expression"
 "\">regulære udtryk</a> (adskilt med mellemrum)"
 
 #: zp-core/zp-extensions/simpleSpam.php:63
@@ -19878,10 +19878,10 @@ msgstr "Google - URl til billed licens."
 #: zp-core/zp-extensions/sitemap-extended.php:196
 msgid ""
 "Optional. Used only if the Google extension is checked. Must be an absolute URL "
-"address of the form: http://mydomain.com/license.html"
+"address of the form: https://mydomain.com/license.html"
 msgstr ""
 "Valgfrit. Bruges kun hvis Google udvidelser er markeret. Skal være en absolut "
-"URL-adresse af formen: http://mydomain.com/license.html"
+"URL-adresse af formen: https://mydomain.com/license.html"
 
 #: zp-core/zp-extensions/sitemap-extended.php:197
 msgid "Sitemap processing chunk"
@@ -22903,10 +22903,10 @@ msgstr ""
 #~ msgstr "Hovedindex"
 
 #~ msgid ""
-#~ "<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> with "
+#~ "<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> with "
 #~ "modifications by Stephen Billard (sbillard)"
 #~ msgstr ""
-#~ "<a href=\"http://angoulvant.net\">Stephane Angoulvant</a> med modifikationer "
+#~ "<a href=\"https://angoulvant.net\">Stephane Angoulvant</a> med modifikationer "
 #~ "af Stephen Billard (sbillard)"
 
 #~ msgid ""
@@ -22988,10 +22988,10 @@ msgstr ""
 #~ msgstr "Effervescence"
 
 #~ msgid ""
-#~ "<a href=\"http://www.zenphoto.org\" title=\"The simpler media website CMS"
+#~ "<a href=\"https://www.zenphoto.org\" title=\"The simpler media website CMS"
 #~ "\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
 #~ msgstr ""
-#~ "<a href=\"http://www.zenphoto.org\" title=\"Det enklere media hjemmeside  CMS"
+#~ "<a href=\"https://www.zenphoto.org\" title=\"Det enklere media hjemmeside  CMS"
 #~ "\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
 
 #~ msgid "demo"
@@ -23083,10 +23083,10 @@ msgstr ""
 #~ msgstr "Er du sikker på at du vil slette billedet? DETTE KAN IKKE FORTRYDES!"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album"
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 #~ msgstr ""
-#~ "Kører på <a href=\"http://www.zenphoto.org\" title=\"Et enklere webalbum"
+#~ "Kører på <a href=\"https://www.zenphoto.org\" title=\"Et enklere webalbum"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 
 #~ msgid "Use the getContent() method."
@@ -23594,13 +23594,13 @@ msgstr ""
 #~ msgid ""
 #~ "<strong>Note:</strong> Although this plugin supports <em>Effenberger "
 #~ "effects</em>, due to licensing considerations no <em>Effenberger effects</"
-#~ "em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/\">CVI "
+#~ "em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/\">CVI "
 #~ "Astonishing Image Effects</a> by Christian Effenberger to select and "
 #~ "download effects."
 #~ msgstr ""
 #~ "<strong>Bemærk:</strong> Selvom denne plugin understøtter <em>Effenberger "
 #~ "effekter</em>, er derpå grund af licensspørgsmål ikke inkluderet nogle "
-#~ "effekter. Se <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image "
+#~ "effekter. Se <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image "
 #~ "Effects</a> af Christian Effenberger for at vælge og downloade effekter."
 
 #~ msgid "No effects"
@@ -23781,10 +23781,10 @@ msgstr ""
 
 #~ msgid ""
 #~ "Enter your <em>reCaptcha</em> public key. You can obtain this key from the "
-#~ "Google <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site"
+#~ "Google <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site"
 #~ msgstr ""
 #~ "Indtast din <em>reCaptcha</em> offentlige nøgle. Du kan få denne nøgle fra "
-#~ "Googles <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site."
+#~ "Googles <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site."
 
 #~ msgid "Enter your <em>reCaptcha</em> private key."
 #~ msgstr "Indsæt din <em>reCaptcha</em> private nøgle."
@@ -23957,9 +23957,9 @@ msgstr ""
 #~ "og <em>access token secret</em>."
 
 #~ msgid ""
-#~ "Get these from <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
+#~ "Get these from <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
 #~ msgstr ""
-#~ "Hent disse fra <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
+#~ "Hent disse fra <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
 
 #~ msgid "Secret"
 #~ msgstr "Hemmelighed"
@@ -24350,10 +24350,10 @@ msgstr ""
 
 #~ msgid ""
 #~ "CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a href="
-#~ "\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release "
+#~ "\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release "
 #~ "notes</a>."
 #~ msgstr ""
-#~ "CombiNews er forældet. Se  <a href=\"http://www.zenphoto.org/news/"
+#~ "CombiNews er forældet. Se  <a href=\"https://www.zenphoto.org/news/"
 #~ "zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 
 #~ msgid "Use the getLink method instead"
@@ -24533,10 +24533,10 @@ msgstr ""
 #~ msgstr "brug printRSSHeaderLink($option, $linktext, $lang, $categorylink)."
 
 #~ msgid ""
-#~ "CombiNews is deprecated. See the <a href=\"http://www.zenphoto.org/news/"
+#~ "CombiNews is deprecated. See the <a href=\"https://www.zenphoto.org/news/"
 #~ "zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 #~ msgstr ""
-#~ "CombiNews er forældet. Se  <a href=\"http://www.zenphoto.org/news/"
+#~ "CombiNews er forældet. Se  <a href=\"https://www.zenphoto.org/news/"
 #~ "zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 
 #~ msgid "Create an object and use the object getLink"
@@ -24949,10 +24949,10 @@ msgstr ""
 #~ msgstr "Fotos"
 
 #~ msgid ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from "
 #~ "Stopdesign."
 #~ msgstr ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Foto Skabeloner</a> fra "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Foto Skabeloner</a> fra "
 #~ "Stopdesign."
 
 #~ msgid "%1$u album,&nbsp;%2$u images"
@@ -24968,14 +24968,14 @@ msgstr ""
 #~ msgstr "Omarbejdet for Zenphoto af Mark Galeassi and Stephen Billard"
 
 #~ msgid ""
-#~ "A theme based on the design from <a href=\"http://stopdesign.com/templates/"
+#~ "A theme based on the design from <a href=\"https://stopdesign.com/templates/"
 #~ "photos/\">Douglas Bowman</a>. This theme is licensed under the <a href="
-#~ "\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
+#~ "\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
 #~ "Attribution-NonCommercial-ShareAlike 2.5</a> License."
 #~ msgstr ""
-#~ "Et tema baseret på et design fra <a href=\"http://stopdesign.com/templates/"
+#~ "Et tema baseret på et design fra <a href=\"https://stopdesign.com/templates/"
 #~ "photos/\">Douglas Bowman</a>. Dette tema er licenseret under <a href="
-#~ "\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
+#~ "\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons "
 #~ "Attribution-NonCommercial-ShareAlike 2.5</a> Licens."
 
 #~ msgid ""
@@ -25001,10 +25001,10 @@ msgstr ""
 #~ msgstr "Vælg hvad du ønsker for seks særlige dias."
 
 #~ msgid ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from "
 #~ "Stopdesign"
 #~ msgstr ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Foto Skabeloner</a> fra "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Foto Skabeloner</a> fra "
 #~ "Stopdesign"
 
 #~ msgid "All galleries"
@@ -25673,9 +25673,9 @@ msgstr ""
 #~ msgstr "Billedgalleri"
 
 #~ msgid ""
-#~ "For the best viewing experience <a href=\"http://%s\"> Get Adobe Flash.</a>"
+#~ "For the best viewing experience <a href=\"https://%s\"> Get Adobe Flash.</a>"
 #~ msgstr ""
-#~ "For den bedste oplevelse <a href=\"http://%s\"> Installer Adobe Flash.</a>"
+#~ "For den bedste oplevelse <a href=\"https://%s\"> Installer Adobe Flash.</a>"
 
 #~ msgid "View Gallery Without Flash"
 #~ msgstr "Se Galleri uden Flash"
@@ -25965,10 +25965,10 @@ msgstr ""
 #~ "spilleliste eller som separate spillere på én side med Flowplayer 3."
 
 #~ msgid ""
-#~ "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info "
+#~ "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info "
 #~ "about the player and its license."
 #~ msgstr ""
-#~ "Se venligst <a href='http://flowplayer.org'>flowplayer.org</a> for mere info "
+#~ "Se venligst <a href='https://flowplayer.org'>flowplayer.org</a> for mere info "
 #~ "om playeren og dens licens."
 
 #~ msgid "Flash players do not support <em>External Albums</em>."

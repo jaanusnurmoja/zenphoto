@@ -1,6 +1,6 @@
 <?php
 /**
- * A Zenphoto plugin for showing OpenStreetMap maps using LeafletJS (http://leafletjs.com) for images or images from * 
+ * A Zenphoto plugin for showing OpenStreetMap maps using LeafletJS (https://leafletjs.com) for images or images from * 
  * albums with embeded geodata or maps with custom geodata.
  * 
  * Also includes 

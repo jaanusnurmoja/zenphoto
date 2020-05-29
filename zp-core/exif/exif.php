@@ -5,7 +5,7 @@
  * 
  * Originally created by:
  * Copyright © 2005 Jake Olefsky
- * http:// www.offsky.com/software/exif/index.php
+ * https:// www.offsky.com/software/exif/index.php
  * jake@olefsky.com
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of
@@ -14,7 +14,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. http:// www.gnu.org/copyleft/gpl.html
+ * See the GNU General Public License for more details. https:// www.gnu.org/copyleft/gpl.html
  * 
  * SUMMARY:
  * This script will correctly parse all of the EXIF data included in images taken
@@ -127,7 +127,7 @@
  * 
  * 1.6    March 25th, 2007 [Zenphoto]
  * 
- * - Adopted into the Zenphoto gallery project, at http://www.zenphoto.org
+ * - Adopted into the Zenphoto gallery project, at https://www.zenphoto.org
  * - Fixed a bug where strings had trailing null bytes.
  * - Formatted selected strings better.
  * - Added calculation of 35mm-equivalent focal length when possible.
@@ -852,13 +852,13 @@ function read_entry(&$result, $in, $seek, $intel, $ifd_name, $globalOffset) {
  * 
  * Usefull resources
  * 
- * - http:// www.ba.wakwak.com/~tsuruzoh/Computer/Digicams/exif-e.html
- * - http:// www.w3.org/Graphics/JPEG/jfif.txt
- * - http:// exif.org/
- * - http:// www.ozhiker.com/electronics/pjmt/library/list_contents.php4
- * - http:// www.ozhiker.com/electronics/pjmt/jpeg_info/makernotes.html
- * - http:// pel.sourceforge.net/
- * - http:// us2.php.net/manual/en/function.exif-read-data.php
+ * - https:// www.ba.wakwak.com/~tsuruzoh/Computer/Digicams/exif-e.html
+ * - https:// www.w3.org/Graphics/JPEG/jfif.txt
+ * - https:// exif.org/
+ * - https:// www.ozhiker.com/electronics/pjmt/library/list_contents.php4
+ * - https:// www.ozhiker.com/electronics/pjmt/jpeg_info/makernotes.html
+ * - https:// pel.sourceforge.net/
+ * - https:// us2.php.net/manual/en/function.exif-read-data.php
  * 
  * @param string $path
  * @param int $verbose

@@ -28,11 +28,11 @@
  * The plugin loads default CSS styling using an icon font. If you wish to use theme based custom icons 
  * and CSS to avoid extra loading you can disable it.
  *
- * Icon font created using the icomoon app: http://icomoon.io/#icons-icomoon
+ * Icon font created using the icomoon app: https://icomoon.io/#icons-icomoon
  * Fonts used:
- * - Brankic 1979 (buffer/stack icon) http://brankic1979.com/icons/ (free for personal and commercial use)
- * - Entypo+ (evernote icon) http://www.entypo.com – CC BY-SA 4.0
- * - fontawesome (all other icons) http://fontawesome.io – SIL OFL 1.1 
+ * - Brankic 1979 (buffer/stack icon) https://brankic1979.com/icons/ (free for personal and commercial use)
+ * - Entypo+ (evernote icon) https://www.entypo.com – CC BY-SA 4.0
+ * - fontawesome (all other icons) https://fontawesome.io – SIL OFL 1.1 
  *
  * Usage:
  * Place <code><?php ScriptlessSocialSharing::printButtons(); ?></code> on your theme files where you wish the buttons to appear.
@@ -275,7 +275,7 @@ class scriptlessSocialsharing {
 			$buttons[] = array(
 					'class' => 'sharingicon-digg',
 					'title' => 'Digg',
-					'url' => 'http://digg.com/submit?url=' . $url . '&amp;title=' . $title
+					'url' => 'https://digg.com/submit?url=' . $url . '&amp;title=' . $title
 			);
 		}
 		if (getOption('scriptless_socialsharing_livejournal')) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * An adaption of the jQuery Cycle2 script: http://jquery.malsup.com/cycle2/
+ * An adaption of the jQuery Cycle2 script: https://jquery.malsup.com/cycle2/
  *
  * Shows slideshows of images of an album. Slideshows are responsive by default but beware of theme css.
  *
@@ -688,7 +688,7 @@ if (extensionEnabled('slideshow2')) {
 	}
 
 	/**
-	 * Prints the slideshow using the {@link http://http://www.malsup.com/jquery/cycle2/  jQuery plugin Cycle2 }
+	 * Prints the slideshow using the {@link https://https://www.malsup.com/jquery/cycle2/  jQuery plugin Cycle2 }
 	 *
 	 * Two ways to use:
 	 * a) Use on your theme's slideshow.php page and called via printSlideShowLink():

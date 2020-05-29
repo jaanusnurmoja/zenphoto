@@ -38,7 +38,7 @@ if (!defined('WEBPATH'))
 	<body>
 		<?php zp_apply_filter('theme_body_open'); ?>
 		<div id="main">
-<img id="logo" src="http://www.nurmoja.net.ee/nurmoja_net_ee.png" style="float:left; margin-right:20px;"/>
+<img id="logo" src="https://www.nurmoja.net.ee/nurmoja_net_ee.png" style="float:left; margin-right:20px;"/>
 			<div id="gallerytitle">
 				<div class="imgnav">
 					<?php
@@ -122,7 +122,7 @@ if (!defined('WEBPATH'))
 		</div>
 		<div id="credit">
 			<?php if (!zp_loggedin()) { ?>
-			<a href="zp-core/zp-extensions/federated_logon/OpenID_logon.php?redirect=/index.php&user=openid.ee"><img src="http://www.nurmoja.net.ee/id-kaart.png" alt="ID-KAART"></a><br />
+			<a href="zp-core/zp-extensions/federated_logon/OpenID_logon.php?redirect=/index.php&user=openid.ee"><img src="https://www.nurmoja.net.ee/id-kaart.png" alt="ID-KAART"></a><br />
 			<?php } ?>
 			<?php if (class_exists('RSS')) printRSSLink('Album', '', 'RSS', ' | '); ?>
 			<?php printCustomPageURL(gettext("Archive View"), "archive"); ?> |

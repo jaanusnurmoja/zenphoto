@@ -4,7 +4,7 @@
  *
  * The Admin <var>upload/files</var> tab and the <i>TinyMCE</i> file browser (if configured) use
  * a plugin to supply file handling and uploading.
- * This plugin supplies file handling using <i>elFinder</i> by {@link http://elfinder.org/ Studio-42 }.
+ * This plugin supplies file handling using <i>elFinder</i> by {@link https://elfinder.org/ Studio-42 }.
  *
  * <hr>
  * <img src="%WEBPATH%/%ZENFOLDER%/%PLUGIN_FOLDER%/elFInder/elfinder-logo.png" />
@@ -14,7 +14,7 @@
  *
  * elFinder uses UNIX command line utils <var>zip</var>, <var>unzip</var>, <var>rar</var>, <var>unrar</var>, <var>tar</var>,
  * <var>gzip</var>, <var>bzip2</var>, and <var>7za</var> for archives support,
- * on windows you need to have full {@link http://www.cygwin.com/ cygwin} support in your webserver environment.
+ * on windows you need to have full {@link https://www.cygwin.com/ cygwin} support in your webserver environment.
  *
  *
  * @author Stephen Billard (sbillard)

@@ -392,12 +392,12 @@ msgid "Show fewer results"
 msgstr "Pokaż mniej wyników"
 
 #: /var/www/html/zenphoto-svn/themes/zenpage/footer.php:1
-msgid "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-msgstr "Motyw Zenpage autorstwa <a href=\"http://www.maltem.de\">Malte Müller</a>"
+msgid "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+msgstr "Motyw Zenpage autorstwa <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: /var/www/html/zenphoto-svn/themes/zenpage/footer.php:1
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
-msgstr "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgstr "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 
 #: /var/www/html/zenphoto-svn/themes/stopdesign/comment_form.php:11
 msgid "Add a comment"
@@ -509,8 +509,8 @@ msgstr "Rejestruj"
 
 #: /var/www/html/zenphoto-svn/themes/stopdesign/register.php:38
 #: /var/www/html/zenphoto-svn/themes/stopdesign/gallery.php:116
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> od Stopdesign"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> od Stopdesign"
 
 #: /var/www/html/zenphoto-svn/themes/stopdesign/index.php:28
 msgid "Recently Updated Galleries"
@@ -615,8 +615,8 @@ msgid "Comments"
 msgstr "Komentarze"
 
 #: /var/www/html/zenphoto-svn/themes/stopdesign/index.php:199
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> od Stopdesign."
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> od Stopdesign."
 
 #: /var/www/html/zenphoto-svn/themes/stopdesign/gallery.php:28
 msgid "All galleries"
@@ -762,8 +762,8 @@ msgid "Ported to Zenphoto by Mark Galeassi and Stephen Billard"
 msgstr "Przystosowany do Zenphoto przez Marka Galeassi i Stephana Billarda"
 
 #: /var/www/html/zenphoto-svn/themes/stopdesign/theme_description.php:7
-msgid "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
-msgstr "Motyw na podstawie designu <a href=\"http://stopdesign.com/templates/photos/\">Douglasa Bowmana</a>. Motyw dostępny na licencji <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>."
+msgid "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgstr "Motyw na podstawie designu <a href=\"https://stopdesign.com/templates/photos/\">Douglasa Bowmana</a>. Motyw dostępny na licencji <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>."
 
 #: /var/www/html/zenphoto-svn/themes/stopdesign/image.php:73
 #, php-format
@@ -953,8 +953,8 @@ msgid "Comments: %d"
 msgstr "Komentarze: %d"
 
 #: /var/www/html/zenphoto-svn/themes/effervescence_plus/theme_description.php:4
-msgid "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> zmodyfikowany przez <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
+msgid "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> zmodyfikowany przez <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
 
 #: /var/www/html/zenphoto-svn/themes/effervescence_plus/theme_description.php:7
 msgid "Based on Effervescence 1.1 with multiple personalities (slimbox, simpleviewer and smoothgallery) added. Select different color schemes and personalities from the Admin Options tab."
@@ -1103,8 +1103,8 @@ msgid "Google Map"
 msgstr "Google Map"
 
 #: /var/www/html/zenphoto-svn/themes/effervescence_plus/album.php:316
-msgid "For the best viewing experience <a href=\"http://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
-msgstr "<a href=\"http://www.adobe.com/go/getflashplayer\">Pobierz Adobe Flash</a>, aby uruchomić odtwarzacz."
+msgid "For the best viewing experience <a href=\"https://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
+msgstr "<a href=\"https://www.adobe.com/go/getflashplayer\">Pobierz Adobe Flash</a>, aby uruchomić odtwarzacz."
 
 #: /var/www/html/zenphoto-svn/themes/effervescence_plus/album.php:325
 msgid "View Gallery Without Flash"
@@ -1216,12 +1216,12 @@ msgid "Enable this if you want to show the login form in the sidebar if the user
 msgstr "Włącz tę opcję, jeśli używasz plug-inu user_logout i chcesz, żeby w pasku bocznym wyświetlany był formularz logowania."
 
 #: /var/www/html/zenphoto-svn/themes/my_theme/footer.php:1
-msgid "Zenpage-default theme by <a href=\"http://zenpage.maltem.de\">Malte Müller</a>"
-msgstr "Motyw Zenpage-default autorstwa <a href=\"http://zenpage.maltem.de\">Malte Müller</a>"
+msgid "Zenpage-default theme by <a href=\"https://zenpage.maltem.de\">Malte Müller</a>"
+msgstr "Motyw Zenpage-default autorstwa <a href=\"https://zenpage.maltem.de\">Malte Müller</a>"
 
 #: /var/www/html/zenphoto-svn/themes/my_theme/footer.php:1
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href=\"http://zenpage.maltem.de\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
-msgstr "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href=\"http://zenpage.maltem.de\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href=\"https://zenpage.maltem.de\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
+msgstr "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href=\"https://zenpage.maltem.de\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 
 #: /var/www/html/zenphoto-svn/themes/default/password.php:19
 #: /var/www/html/zenphoto-svn/themes/default/404.php:19
@@ -1235,8 +1235,8 @@ msgid "Sorry, no image matches found. Try refining your search."
 msgstr "Przepraszamy, żaden obraz nie pasuje. Spróbuj zmienić kryteria wyszukiwania."
 
 #: /var/www/html/zenphoto-svn/themes/default/theme_description.php:4
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> i <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> i <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: /var/www/html/zenphoto-svn/themes/default/theme_description.php:7
 msgid "The default theme in 4 distinct flavors. After choosing this theme you can pick the theme color by going to the Admin Options tab and changing the <em>Theme colors</em> option."
@@ -1414,8 +1414,8 @@ msgstr "Zarządca plików "
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-functions.php:27
 #, php-format
-msgid "<a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-msgstr "<a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> wersja %1$s [%2$s]"
+msgid "<a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgstr "<a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> wersja %1$s [%2$s]"
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-functions.php:32
 msgid "User guide"
@@ -3383,8 +3383,8 @@ msgid "Version %1$s or greater is required."
 msgstr "Wersja %1$s  lub nowsza jest wymagana."
 
 #: /var/www/html/zenphoto-svn/zp-core/_setup.php:592
-msgid "You should consider disabling <code>magic_quotes_gpc</code>. For more information <a href=\"http://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">click here</a>."
-msgstr "Rozważ wyłączenie <code>magic_quotes_gpc</code>. Po więcej informacji <a href=\"http://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">kliknij tutaj</a>."
+msgid "You should consider disabling <code>magic_quotes_gpc</code>. For more information <a href=\"https://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">click here</a>."
+msgstr "Rozważ wyłączenie <code>magic_quotes_gpc</code>. Po więcej informacji <a href=\"https://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">kliknij tutaj</a>."
 
 #: /var/www/html/zenphoto-svn/zp-core/_setup.php:599
 msgid "You need to install a graphics support library support in your PHP"
@@ -3657,8 +3657,8 @@ msgid "Image not found or is unreadable."
 msgstr "Nie znaleziono obrazu lub jest nieprawidłowy."
 
 #: /var/www/html/zenphoto-svn/zp-core/functions-image.php:192
-msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-msgstr "Nieznany błąd! Proszę poinformować deweloperów na <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgstr "Nieznany błąd! Proszę poinformować deweloperów na <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 
 #: /var/www/html/zenphoto-svn/zp-core/functions-controller.php:212
 msgid "Oops.. Cannot edit from this page"
@@ -4397,8 +4397,8 @@ msgid "Themes allow you to visually change the entire look and feel of your gall
 msgstr "Motywy pozwalają zmienić wygląd i zachowanie Twojej galerii. Pliki motywów zapisane są w folderze <code>/themes</code>."
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-themes.php:172
-msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
-msgstr "Możesz pobrać więcej motywów z <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto.org</a>."
+msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+msgstr "Możesz pobrać więcej motywów z <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto.org</a>."
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-themes.php:173
 msgid "Place the downloaded themes in the <code>/themes</code> folder and they will be available for your use."
@@ -5308,8 +5308,8 @@ msgid "You are running the latest zenphoto version."
 msgstr "Posiadasz najnowszą wersję zenphoto."
 
 #: /var/www/html/zenphoto-svn/zp-core/admin.php:95
-msgid "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-msgstr "Nie można się połączyć z <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+msgid "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+msgstr "Nie można się połączyć z <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: /var/www/html/zenphoto-svn/zp-core/admin.php:97
 #, php-format
@@ -5721,8 +5721,8 @@ msgid "Language:"
 msgstr "Język:"
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-options.php:567
-msgid "Please check the <a href=\"http://www.zenphoto.org/trac/report/9?asc=0&sort=version\">translation tickets</a> for new and updated language translations."
-msgstr "Nowe i zaktualizowane tłumaczenia znajdziesz na stronach <a href=\"http://www.zenphoto.org/trac/report/9?asc=0&sort=version\">biletów tłumaczeń</a>."
+msgid "Please check the <a href=\"https://www.zenphoto.org/trac/report/9?asc=0&sort=version\">translation tickets</a> for new and updated language translations."
+msgstr "Nowe i zaktualizowane tłumaczenia znajdziesz na stronach <a href=\"https://www.zenphoto.org/trac/report/9?asc=0&sort=version\">biletów tłumaczeń</a>."
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-options.php:569
 msgid "Multi-lingual"
@@ -5901,8 +5901,8 @@ msgid "February 25, 2008"
 msgstr "Luty 25, 2008"
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-options.php:639
-msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> format string in the text box."
-msgstr "Format dat. Wybierz z listy albo ustaw na <code>Własny</code> i wprowadź tekst formatujący <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> w polu tekstowym."
+msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> format string in the text box."
+msgstr "Format dat. Wybierz z listy albo ustaw na <code>Własny</code> i wprowadź tekst formatujący <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> w polu tekstowym."
 
 #: /var/www/html/zenphoto-svn/zp-core/admin-options.php:642
 msgid "Charset:"
@@ -9151,8 +9151,8 @@ msgid "Google Maps API key"
 msgstr "Klucz API Google Maps"
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/google_maps.php:67
-msgid "If you are going to be using Google Maps, <a href=\"http://www.google.com/apis/maps/signup.html\" target=\"_blank\">get an API key</a> and enter it here."
-msgstr "Jeśli zamierzasz używać Google Maps, <a href=\"http://www.google.com/apis/maps/signup.html\" target=\"_blank\">pobierz klucz do API</a> i wpisz go tutaj."
+msgid "If you are going to be using Google Maps, <a href=\"https://www.google.com/apis/maps/signup.html\" target=\"_blank\">get an API key</a> and enter it here."
+msgstr "Jeśli zamierzasz używać Google Maps, <a href=\"https://www.google.com/apis/maps/signup.html\" target=\"_blank\">pobierz klucz do API</a> i wpisz go tutaj."
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/google_maps.php:68
 msgid "All album points"
@@ -9463,8 +9463,8 @@ msgid "Enables jQuery tag suggestions on the search field. Just activate the plu
 msgstr "Włącza sugerowanie tagów w polach wyszukiwania przy pomocy jQuery. Po włączeniu plug-inu funkcja będzie od razu aktywna."
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/tag_suggest.php:11
-msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
-msgstr "zaadoptowano z <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a> Remy'ego Sharp'a"
+msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgstr "zaadoptowano z <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a> Remy'ego Sharp'a"
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/user_groups.php:8
 msgid "Provides rudimentary user groups."
@@ -10335,8 +10335,8 @@ msgid "<strong>IMPORTANT</strong>: Only one multimedia player plugin can be enab
 msgstr "<strong>WAŻNE:</strong> Tylko jeden odtwarzacz multimediów może być aktywny w danym momencie, ponadto włączony musi być też plugin class-video."
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/flowplayer3.php:13
-msgid "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
-msgstr "Odwiedź <a href='http://flowplayer.org'>flowplayer.org</a>, aby dowiedzieć się więcej o odtwarzaczu oraz jego licencji."
+msgid "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
+msgstr "Odwiedź <a href='https://flowplayer.org'>flowplayer.org</a>, aby dowiedzieć się więcej o odtwarzaczu oraz jego licencji."
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/flowplayer3.php:65
 msgid "Player width (ignored for <em>mp3</em> files.)"
@@ -11988,8 +11988,8 @@ msgid "Patterns to die on"
 msgstr "Wzorce, na których ma się opierać"
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/spamfilters/simple.php:41
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
-msgstr "Czarna lista <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">wyrażeń regularnych</a> (oddzielone spacjami)"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgstr "Czarna lista <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">wyrażeń regularnych</a> (oddzielone spacjami)"
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/spamfilters/simple.php:42
 msgid "Excessive URL count"
@@ -12611,8 +12611,8 @@ msgid "Script page"
 msgstr "Strona zewnętrzna"
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:140
-msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. http://www.domain.com)."
-msgstr "Tworzy link do strony znajdującej się poza strukturą Zenphoto. Zalecane jest podanie bezwzględnego adresu (np. http://www.inna_strona.pl)."
+msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. https://www.domain.com)."
+msgstr "Tworzy link do strony znajdującej się poza strukturą Zenphoto. Zalecane jest podanie bezwzględnego adresu (np. https://www.inna_strona.pl)."
 
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:147
 #: /var/www/html/zenphoto-svn/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:247
@@ -13529,13 +13529,13 @@ msgstr "Wyczyść pamięć RSS"
 #~ "Enable <strong>flowplayer 3</strong> to handle multimedia files. "
 #~ "IMPORTANT: Only one multimedia player plugin can be enabled at the time "
 #~ "and the class-video plugin must be enabled, too. <br /> Please see <a "
-#~ "href='http://flowplayer.org'>flowplayer.org</a> for more info about the "
+#~ "href='https://flowplayer.org'>flowplayer.org</a> for more info about the "
 #~ "player and its license."
 #~ msgstr ""
 #~ "Włącz <strong>flowplayer 3</strong> do obsługi plików multimedialnych. "
 #~ "WAŻNE: Tylko jeden odtwarzacz multimediów może być aktywny w danym "
 #~ "momencie, ponadto włączony musi być też plugin class-video.<br />Odwiedź "
-#~ "<a href='http://flowplayer.org'>flowplayer.org</a>, aby dowiedzieć się "
+#~ "<a href='https://flowplayer.org'>flowplayer.org</a>, aby dowiedzieć się "
 #~ "więcej o odtwarzaczu oraz jego licencji."
 
 #~ msgid ""
@@ -13568,11 +13568,11 @@ msgstr "Wyczyść pamięć RSS"
 #~ msgstr "Zarządzaj plikami"
 
 #~ msgid ""
-#~ "The tinyZenpage page on the Zenpage project site: <a href='http://zenpage."
+#~ "The tinyZenpage page on the Zenpage project site: <a href='https://zenpage."
 #~ "maltem.de/pages/tinyZenpage' title='Zenpage project site'>zenpage.maltem."
 #~ "de/pages/tinyZenpage</a>"
 #~ msgstr ""
-#~ "TinyZenpage na stronie projektu Zenpage:  <a href='http://zenpage.maltem."
+#~ "TinyZenpage na stronie projektu Zenpage:  <a href='https://zenpage.maltem."
 #~ "de/pages/tinyZenpage' title='Zenpage project site'>zenpage.maltem.de/"
 #~ "pages/tinyZenpage</a>"
 
@@ -13676,16 +13676,16 @@ msgstr "Wyczyść pamięć RSS"
 #~ "<em>zenphoto_sendmail</em> musi być włączony i poprawnie skonfigurowany."
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href="
-#~ "\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
+#~ "\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 #~ msgstr ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href="
-#~ "\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
+#~ "\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 
 #~ msgid "Get Adobe Flash."
@@ -13821,7 +13821,7 @@ msgstr "Wyczyść pamięć RSS"
 #~ "Attaches \"Effenberger effects\" to images and thumbnails. This plugin is "
 #~ "intended as an example for the use of the <em>image_html</em> filters."
 #~ "<br /><strong>Due to licensing considerations no effects are included "
-#~ "with this plugin.</strong> See <a href=\"http://www.netzgesta.de/cvi/"
+#~ "with this plugin.</strong> See <a href=\"https://www.netzgesta.de/cvi/"
 #~ "\">CVI Astonishing Image Effects</a> by Christian Effenberger to select "
 #~ "and download effects. Unzip the file you download and copy the "
 #~ "<code><em>effect</em></code>.js file to the <code>/%s/"
@@ -13832,7 +13832,7 @@ msgstr "Wyczyść pamięć RSS"
 #~ "Dodaje \"Efekty Effenbergera\" do obrazów i miniatur. Ten plugin ma jest "
 #~ "demonstracją użytku filtrów <em>image_html</em>.<br /><strong>Z uwagi na "
 #~ "licencje, żadne efekty nie są dołączone do pluginu.</strong> Zajrzyj na "
-#~ "stronę Christiana Effenbergera <a href=\"http://www.netzgesta.de/cvi/"
+#~ "stronę Christiana Effenbergera <a href=\"https://www.netzgesta.de/cvi/"
 #~ "\">CVI Astonishing Image Effects</a>, by wybrać i pobrać efekty. Rozpakuj "
 #~ "pobrane pliki i skopiuj plik <code><em>effect</em></code>.js do folderu "
 #~ "<code>/%s/effenberger_effects</code>.<br />Wszelkie testy były "
@@ -13850,14 +13850,14 @@ msgstr "Wyczyść pamięć RSS"
 
 #~ msgid ""
 #~ "Due to licensing considerations no effects are included with this plugin. "
-#~ "See <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image "
+#~ "See <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image "
 #~ "Effects</a> by Christian Effenberger to select and download effects. "
 #~ "Unzip the file you download and copy the <code><em>effect</em></code>.js "
 #~ "file to a folder named <code>effenberger_effects</code> in the global "
 #~ "plugins folder."
 #~ msgstr ""
 #~ "Due to licensing considerations no effects are included with this plugin. "
-#~ "See <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image "
+#~ "See <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image "
 #~ "Effects</a> by Christian Effenberger to select and download effects. "
 #~ "Unzip the file you download and copy the <code><em>effect</em></code>.js "
 #~ "file to a folder named <code>effenberger_effects</code> in the global "
@@ -13952,7 +13952,7 @@ msgstr "Wyczyść pamięć RSS"
 #~ "Enable <strong>FLV player 4.x</strong> to handle multimedia files. "
 #~ "<strong>No <em>FLVPlayer</em> player files are included with this plugin "
 #~ "due to licensing considerations.</strong> Please download these files "
-#~ "from the <a href=\"http://www.longtailvideo.com/players/jw-flv-player/"
+#~ "from the <a href=\"https://www.longtailvideo.com/players/jw-flv-player/"
 #~ "\">Longtail Video</a> site. Extract the files \"player*.swf\" and "
 #~ "\"swobjects.js\" into <code>/%s/flvplayer/</code>. <br />IMPORTANT: Only "
 #~ "one multimedia player plugin can be enabled at the time. The class-video "
@@ -13961,7 +13961,7 @@ msgstr "Wyczyść pamięć RSS"
 #~ "Włącz <strong>FLV player 4.x</strong> do obsługi multimediów.  "
 #~ "<strong>Odtwarzacz <em>FLVPlayer</em> nie jest dołączony do tego pluginu "
 #~ "z uwagi na licencję.</strong> Pobierz odtwarzacz ze strony <a href="
-#~ "\"http://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
+#~ "\"https://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
 #~ "a>. Następnie rozpakuj pliki i umieść \"player*.swf\" oraz \"swobjects.js"
 #~ "\" w folderze <code>/%s/flvplayer/</code>. <br />WAŻNE: Tylko jeden "
 #~ "odtwarzacz multimediów może być włączony w danej chwili. Plugin class-"
@@ -13973,13 +13973,13 @@ msgstr "Wyczyść pamięć RSS"
 #~ msgid ""
 #~ "No <em>FLVPlayer</em> player files are included with this plugin due to "
 #~ "licensing considerations. Please download these files from the <a href="
-#~ "\"http://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
+#~ "\"https://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
 #~ "a> site. Extract the files and place the files \"player*.swf\" and "
 #~ "\"swobjects.js\" in a folder named <code>flvplayer</code> in the global "
 #~ "plugins folder."
 #~ msgstr ""
 #~ "Odtwarzacz <em>FLVPlayer</em> nie jest dołączony do tego pluginu z uwagi "
-#~ "na licencję. Pobierz odtwarzacz ze strony <a href=\"http://www."
+#~ "na licencję. Pobierz odtwarzacz ze strony <a href=\"https://www."
 #~ "longtailvideo.com/players/jw-flv-player/\">Longtail Video</a>. Następnie "
 #~ "rozpakuj pliki i umieść \"player*.swf\" oraz \"swobjects.js\" w "
 #~ "podfolderze <code>flvplayer</code> folderu pluginów.<code>flvplayer</"
@@ -14652,13 +14652,13 @@ msgstr "Wyczyść pamięć RSS"
 #~ "Enable <strong>flowplayer</strong> to handle multimedia files. IMPORTANT: "
 #~ "Only one multimedia player plugin can be enabled at the time. <br> "
 #~ "<strong>NOTE:</strong> This plugin currently still uses Flowplayer 2. "
-#~ "Please see <a href='http://flowplayer.org/v2'>flowplayer.org/v2</a> for "
+#~ "Please see <a href='https://flowplayer.org/v2'>flowplayer.org/v2</a> for "
 #~ "more info about the player and its licence."
 #~ msgstr ""
 #~ "Włącz <strong>flowplayer</strong> do obsługi plików multimedialnych. "
 #~ "WAŻNE: Tylko jeden odtwarzacz multimediów może być aktywny w danym "
 #~ "momencie.<br /><strong>UWAGA:</strong> Ten plugin aktualnie wykorzystuje "
-#~ "Flowplayer 2. Wejdź na <a href='http://flowplayer.org/v2'>flowplayer.org/"
+#~ "Flowplayer 2. Wejdź na <a href='https://flowplayer.org/v2'>flowplayer.org/"
 #~ "v2</a>, aby dowiedzieć się więcej o licencji."
 
 #~ msgid "Control area border color"
@@ -14682,7 +14682,7 @@ msgstr "Wyczyść pamięć RSS"
 #~ "strong><br />Currently supports only FLV player version 3.<br /"
 #~ "><strong>You need to buy a licence from the player's developer LongTail "
 #~ "Video if you intend to use this plugin for commercial purposes.</strong> "
-#~ "Please see <a href='http://www.longtailvideo.com/players/jw-flv-"
+#~ "Please see <a href='https://www.longtailvideo.com/players/jw-flv-"
 #~ "player/'>LongTail Video - JW players</a> for more info about the player "
 #~ "and its licence."
 #~ msgstr ""
@@ -14693,7 +14693,7 @@ msgstr "Wyczyść pamięć RSS"
 #~ "pomocą playlisty. <br /><strong>Uwaga:</strong><br />aktualnie działa "
 #~ "tylko pod wersją 3.<br /><strong>Jeśli chcesz używać odtwarzacza do celów "
 #~ "komercyjnych, musisz kupić licencję od firmy LongTail Video.</strong> "
-#~ "Więcej szczegółów o licencji na stronie <a href='http://www.longtailvideo."
+#~ "Więcej szczegółów o licencji na stronie <a href='https://www.longtailvideo."
 #~ "com/players/jw-flv-player/'>LongTail Video - JW players</a>."
 
 #~ msgid "Displayheight"
@@ -14955,12 +14955,12 @@ msgstr "Wyczyść pamięć RSS"
 #~ msgstr "1 kliknięcie na tym obrazie"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><font face=\"Arial Narrow\" size=\"4\">zen</font><span "
 #~ "style=\"font-variant: small-caps; font-weight: 700\"><font face=\"Arial "
 #~ "Black\" size=\"1\">photo</font></span></a>"
 #~ msgstr ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><font face=\"Arial Narrow\" size=\"4\">zen</font><span "
 #~ "style=\"font-variant: small-caps; font-weight: 700\"><font face=\"Arial "
 #~ "Black\" size=\"1\">photo</font></span></a>"

@@ -1,6 +1,6 @@
 /*
-  @author: remy sharp / http://remysharp.com
-  @url: http://remysharp.com/2007/12/28/jquery-tag-suggestion/
+  @author: remy sharp / https://remysharp.com
+  @url: https://remysharp.com/2007/12/28/jquery-tag-suggestion/
   @usage: setGlobalTags(['javascript', 'jquery', 'java', 'json']); // applied tags to be used for all implementations
           $('input.tags').tagSuggest(options);
 
@@ -14,7 +14,7 @@
     tags - optional array of tags specific to this instance of element matches
     delay - optional sets the delay between keyup and the request - can help throttle ajax requests, defaults to zero delay
     separator - optional separator string, defaults to ' ' (Brian J. Cardiff)
-  @license: Creative Commons License - ShareAlike http://creativecommons.org/licenses/by-sa/3.0/
+  @license: Creative Commons License - ShareAlike https://creativecommons.org/licenses/by-sa/3.0/
   @version: 1.4
   @changes: fixed filtering to ajax hits
 */
@@ -151,7 +151,7 @@
                 var v = tagsElm.val();
 
                 // tweak for hintted elements
-                // http://remysharp.com/2007/01/25/jquery-tutorial-text-box-hints/
+                // https://remysharp.com/2007/01/25/jquery-tutorial-text-box-hints/
                 if (v == tagsElm.attr('title') && tagsElm.is('.hint')) v = '';
 
                 currentTags = v.split(settings.separator);

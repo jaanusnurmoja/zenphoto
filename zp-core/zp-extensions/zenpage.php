@@ -22,15 +22,15 @@
  * <li>Comments on news articles and pages incl. subscription via RSS</li>
  * <li>CombiNews feature to show the lastest gallery items like image, videos or audio within the news section as if they were news articles</li>
  * <li>Localization and multi-lingual</li>
- * <li>WSIWYG text editor {@link "http://tinymce.moxiecode.com/index.php TinyMCE} with Ajax File Manager included</li>
+ * <li>WSIWYG text editor {@link "https://tinymce.moxiecode.com/index.php TinyMCE} with Ajax File Manager included</li>
  * <li>TinyMCE plugin <i>tinyZenpage</i> to include Zenphoto and Zenpage items into your articles or pages</li>
  * </ul>
  * <b>Usage</b>
  * <ul>
- * <li>{@link http://www.zenphoto.org/2009/03/theming-tutorial/#part-4 Zenpage theming } (part 4 of the Zenphoto theming tutorial)</li>
- * <li>{@link http://www.zenphoto.org/documentation/li_plugins.html	Zenpage functions guide }guide is now included in the plugins section of the Zenphoto functions guide
+ * <li>{@link https://www.zenphoto.org/2009/03/theming-tutorial/#part-4 Zenpage theming } (part 4 of the Zenphoto theming tutorial)</li>
+ * <li>{@link https://www.zenphoto.org/documentation/li_plugins.html	Zenpage functions guide }guide is now included in the plugins section of the Zenphoto functions guide
  * </li>
- * <li>{@link http://www.zenphoto.org/2009/03/troubleshooting-zenpage/ Zenpage troubleshooting (FAQ) }</li>
+ * <li>{@link https://www.zenphoto.org/2009/03/troubleshooting-zenpage/ Zenpage troubleshooting (FAQ) }</li>
  * </ul>
  *
  *

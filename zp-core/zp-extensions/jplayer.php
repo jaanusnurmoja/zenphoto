@@ -18,14 +18,14 @@
  * Since the flash fallback covers all essential formats this is not much of an issue for visitors though.
  *
  * Otherwise it will not work. It is all or none.
- * See {@link http://jplayer.org/latest/developer-guide/#reference-html5-media the developer guide} for info on that.
+ * See {@link https://jplayer.org/latest/developer-guide/#reference-html5-media the developer guide} for info on that.
  *
  * If you have problems with any format being recognized, you might need to tell your server about the mime types first:
- * See examples on {@link http://jplayer.org/latest/developer-guide/#jPlayer-server-response the jplayer site}.
+ * See examples on {@link https://jplayer.org/latest/developer-guide/#jPlayer-server-response the jplayer site}.
  *
- * NOTE on POPCORN Support (http://popcornjs.org):
+ * NOTE on POPCORN Support (https://popcornjs.org):
  * jPlayer has support for this interactive libary and its plugin is included but currently not loaded or implemented. You need to customize the plugin or your theme to use it.
- * Please refer to http://jplayer.org/latest/developer-guide/ and http://popcornjs.org to learn about this extra functionality.
+ * Please refer to https://jplayer.org/latest/developer-guide/ and https://popcornjs.org to learn about this extra functionality.
  *
  * NOTE ON PLAYER SKINS:<br>
  * The look of the player is determined by a pure HTML/CSS based skin (theme). There may occur display issues with themes.
@@ -69,7 +69,7 @@
  */
 $plugin_is_filter = 5 | CLASS_PLUGIN;
 $plugin_description = gettext("Enable <strong>jPlayer</strong> to handle multimedia files.");
-$plugin_notice = gettext("<strong>IMPORTANT</strong>: Only one multimedia extension plugin can be enabled at the time and the class-video plugin must be enabled, too.") . '<br /><br />' . gettext("Please see <a href='http://jplayer.org'>jplayer.org</a> for more info about the player and its license.");
+$plugin_notice = gettext("<strong>IMPORTANT</strong>: Only one multimedia extension plugin can be enabled at the time and the class-video plugin must be enabled, too.") . '<br /><br />' . gettext("Please see <a href='https://jplayer.org'>jplayer.org</a> for more info about the player and its license.");
 $plugin_author = "Malte Müller (acrylian)";
 $plugin_disable = ((getOption('album_folder_class') === 'external') ? gettext('This player does not support <em>External Albums</em>.') : extensionEnabled('class-video')) ? false : gettext('The class-video plugin must be enabled for video support.');
 $plugin_category = gettext('Media');
@@ -509,7 +509,7 @@ class jPlayer {
 				$htmlpart = '
 			<div class="jp-no-solution">
 				<span>' . gettext('Update Required') . '</span>
-				' . gettext('To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.') . '
+				' . gettext('To play the media you will need to either update your browser to a recent version or update your <a href="https://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.') . '
 			</div>';
 				break;
 		}

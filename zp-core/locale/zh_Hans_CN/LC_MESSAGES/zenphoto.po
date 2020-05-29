@@ -244,8 +244,8 @@ msgid "Select the colors of the theme"
 msgstr "选择布景主题颜色."
 
 #: zenphoto/themes/default/theme_description.php:4
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> 和 <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> 和 <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: zenphoto/themes/default/theme_description.php:7
 msgid "The default theme in 4 distinct flavors. After choosing this theme you can pick the theme color by going to the Admin Options tab and changing the <em>Theme colors</em> option."
@@ -282,8 +282,8 @@ msgid "Google Map"
 msgstr "Google地图"
 
 #: zenphoto/themes/effervescence_plus/album.php:316
-msgid "For the best viewing experience <a href=\"http://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
-msgstr "要有最好的观看效果，<a href=\"http://www.macromedia.com/go/getflashplayer/\">下载Adobe Flash.</a>"
+msgid "For the best viewing experience <a href=\"https://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
+msgstr "要有最好的观看效果，<a href=\"https://www.macromedia.com/go/getflashplayer/\">下载Adobe Flash.</a>"
 
 #: zenphoto/themes/effervescence_plus/album.php:325
 msgid "View Gallery Without Flash"
@@ -713,8 +713,8 @@ msgid "*no logo selected"
 msgstr "* 没有选择标志"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:4
-msgid "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> 由 <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a> 改写"
+msgid "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> 由 <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a> 改写"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:7
 msgid "Based on Effervescence 1.1 with multiple personalities (slimbox, simpleviewer and smoothgallery) added. Select different color schemes and personalities from the Admin Options tab."
@@ -888,8 +888,8 @@ msgstr "联络表格"
 
 #: zenphoto/themes/stopdesign/contact.php:39
 #: zenphoto/themes/stopdesign/gallery.php:116
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> 来自 Stopdesign"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> 来自 Stopdesign"
 
 #: zenphoto/themes/stopdesign/gallery.php:28
 msgid "All galleries"
@@ -959,8 +959,8 @@ msgstr "上一张"
 
 #: zenphoto/themes/stopdesign/image.php:161
 #: zenphoto/themes/stopdesign/index.php:199
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> 来自 Stopdesign."
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> 来自 Stopdesign."
 
 #: zenphoto/themes/stopdesign/index.php:28
 msgid "Recently Updated Galleries"
@@ -1045,8 +1045,8 @@ msgid "Ported to Zenphoto by Mark Galeassi and Stephen Billard"
 msgstr "由 Mark Galeassi 和 Stephen Billard 移稙到 Zenphoto "
 
 #: zenphoto/themes/stopdesign/theme_description.php:7
-msgid "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
-msgstr "建基于<a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>的设计.  本布景主题以<a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>协定授权."
+msgid "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgstr "建基于<a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>的设计.  本布景主题以<a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>协定授权."
 
 #: zenphoto/themes/zenpage/404.php:32
 msgid "Album"
@@ -1078,12 +1078,12 @@ msgid "Search gallery"
 msgstr "搜寻相馆"
 
 #: zenphoto/themes/zenpage/footer.php:1
-msgid "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Muller</a>"
-msgstr "Zenpage布景主题由 <a href=\"http://www.maltem.de\">Malte Muller</a> 提供"
+msgid "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Muller</a>"
+msgstr "Zenpage布景主题由 <a href=\"https://www.maltem.de\">Malte Muller</a> 提供"
 
 #: zenphoto/themes/zenpage/footer.php:1
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
-msgstr "由<a href=\"http://www.zenphoto.org\" title=\"简洁的网上相簿\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>提供"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgstr "由<a href=\"https://www.zenphoto.org\" title=\"简洁的网上相簿\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>提供"
 
 #: zenphoto/themes/zenpage/gallery.php:58
 #: zenphoto/themes/zenpage/news.php:42
@@ -2056,8 +2056,8 @@ msgstr "档案管理员"
 
 #: zenphoto/zp-core/admin-functions.php:27
 #, php-format
-msgid "<a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-msgstr "<a href=\"http://www.zenphoto.org\" title=\"简洁的网上相簿\">Zen<strong>photo</strong></a> 版本 %1$s [%2$s]"
+msgid "<a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgstr "<a href=\"https://www.zenphoto.org\" title=\"简洁的网上相簿\">Zen<strong>photo</strong></a> 版本 %1$s [%2$s]"
 
 #: zenphoto/zp-core/admin-functions.php:32
 msgid "User guide"
@@ -2758,8 +2758,8 @@ msgid "Multi-lingual"
 msgstr "多语言"
 
 #: zenphoto/zp-core/admin-options.php:565
-msgid "Please check the <a href=\"http://www.zenphoto.org/trac/report/9?asc=0&sort=version\">translation tickets</a> for new and updated language translations."
-msgstr "请查阅<a href=\"http://www.zenphoto.org/trac/report/9?asc=0&sort=version\">translation tickets</a> 以得到新的语言翻译."
+msgid "Please check the <a href=\"https://www.zenphoto.org/trac/report/9?asc=0&sort=version\">translation tickets</a> for new and updated language translations."
+msgstr "请查阅<a href=\"https://www.zenphoto.org/trac/report/9?asc=0&sort=version\">translation tickets</a> 以得到新的语言翻译."
 
 #: zenphoto/zp-core/admin-options.php:568
 msgid "The language to display text in. (Set to <em>HTTP Accept Language</em> to use the language preference specified by the viewer's browser.)"
@@ -2934,8 +2934,8 @@ msgid "February 25, 2008"
 msgstr "二月 25, 2008"
 
 #: zenphoto/zp-core/admin-options.php:635
-msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> format string in the text box."
-msgstr "日期格式.  在选单中选取或设为<code>自定</code>及填入 <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a>格式的字串."
+msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> format string in the text box."
+msgstr "日期格式.  在选单中选取或设为<code>自定</code>及填入 <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a>格式的字串."
 
 #: zenphoto/zp-core/admin-options.php:638
 msgid "Charset:"
@@ -4101,8 +4101,8 @@ msgid "Themes allow you to visually change the entire look and feel of your gall
 msgstr "布景主题容许你改变整个相馆的外观,  布景主题的档案位于你的Zenphoto <code>/themes</code> 资料夹."
 
 #: zenphoto/zp-core/admin-themes.php:172
-msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
-msgstr "你可以在 <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto 布景主题版面</a> 下载更多布景主题."
+msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+msgstr "你可以在 <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto 布景主题版面</a> 下载更多布景主题."
 
 #: zenphoto/zp-core/admin-themes.php:173
 msgid "Place the downloaded themes in the <code>/themes</code> folder and they will be available for your use."
@@ -4516,8 +4516,8 @@ msgid "You are running the latest zenphoto version."
 msgstr "你正在使用最新zenphoto版本."
 
 #: zenphoto/zp-core/admin.php:95
-msgid "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-msgstr "不能连到<a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+msgid "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+msgstr "不能连到<a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: zenphoto/zp-core/admin.php:97
 #, php-format
@@ -5531,8 +5531,8 @@ msgid "Image not found or is unreadable."
 msgstr "图片不存在或不能读取."
 
 #: zenphoto/zp-core/functions-image.php:192
-msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-msgstr "不知名错误! 请到<a href=\"http://www.zenphoto.org\">zenphoto.org</a>报告给开发人员."
+msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgstr "不知名错误! 请到<a href=\"https://www.zenphoto.org\">zenphoto.org</a>报告给开发人员."
 
 #: zenphoto/zp-core/functions-rss.php:67
 msgid "Latest Albums"
@@ -9700,8 +9700,8 @@ msgid "<strong>IMPORTANT</strong>: Only one multimedia player plugin can be enab
 msgstr "<strong>重要</strong>: 同一时间只可以启动一个多媒体外挂，而 class-video 外挂一定要启动. "
 
 #: zenphoto/zp-core/zp-extensions/flowplayer3.php:13
-msgid "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
-msgstr "请查阅<a href='http://flowplayer.org'>flowplayer.org</a> 以得到更多关于播放器及版权资料."
+msgid "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
+msgstr "请查阅<a href='https://flowplayer.org'>flowplayer.org</a> 以得到更多关于播放器及版权资料."
 
 #: zenphoto/zp-core/zp-extensions/flowplayer3.php:17
 msgid "Flash players do not support <em>External Albums</em>."
@@ -10003,8 +10003,8 @@ msgid "Google Maps API key"
 msgstr "Google地图API Key"
 
 #: zenphoto/zp-core/zp-extensions/google_maps.php:67
-msgid "If you are going to be using Google Maps, <a href=\"http://www.google.com/apis/maps/signup.html\" target=\"_blank\">get an API key</a> and enter it here."
-msgstr "如果你要使用Google Maps, <a\thref=\"http://www.google.com/apis/maps/signup.html\" target=\"_blank\">拿到 API key</a> 并在此输入."
+msgid "If you are going to be using Google Maps, <a href=\"https://www.google.com/apis/maps/signup.html\" target=\"_blank\">get an API key</a> and enter it here."
+msgstr "如果你要使用Google Maps, <a\thref=\"https://www.google.com/apis/maps/signup.html\" target=\"_blank\">拿到 API key</a> 并在此输入."
 
 #: zenphoto/zp-core/zp-extensions/google_maps.php:68
 msgid "All album points"
@@ -11324,8 +11324,8 @@ msgid "Enables jQuery tag suggestions on the search field. Just activate the plu
 msgstr "使用 jQuery 标签建议到搜寻栏位. 只要启动这外挂, 这功能就可以在布景主题的搜寻栏位上用到."
 
 #: zenphoto/zp-core/zp-extensions/tag_suggest.php:11
-msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
-msgstr "Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>的改写版本"
+msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgstr "Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>的改写版本"
 
 #: zenphoto/zp-core/zp-extensions/tiny_mce.php:10
 msgid "Tiny MCE text editor for backend textareas"
@@ -12193,7 +12193,7 @@ msgid "Custom link"
 msgstr "自定连结"
 
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:140
-msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. http://www.domain.com)."
+msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. https://www.domain.com)."
 msgstr "建立到 Zenphoto 架构以外的连结."
 
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:147
@@ -12313,8 +12313,8 @@ msgid "Patterns to die on"
 msgstr "有问题的式样"
 
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:41
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
-msgstr "垃圾黑名单<a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (由逗号分开)"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgstr "垃圾黑名单<a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (由逗号分开)"
 
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:42
 msgid "Excessive URL count"
@@ -13229,12 +13229,12 @@ msgstr "不能提取连结<em>%s</em>"
 #~ "Enable <strong>flowplayer 3</strong> to handle multimedia files. "
 #~ "IMPORTANT: Only one multimedia player plugin can be enabled at the time "
 #~ "and the class-video plugin must be enabled, too. <br /> Please see <a "
-#~ "href='http://flowplayer.org'>flowplayer.org</a> for more info about the "
+#~ "href='https://flowplayer.org'>flowplayer.org</a> for more info about the "
 #~ "player and its license."
 #~ msgstr ""
 #~ "启动<strong>flowplayer 3</strong>去处理多媒体档案.  重要: 同一时间只可以启"
 #~ "动一个多媒体播放器外挂, 而 class-video 外挂须同时启动. <br>请查阅<a "
-#~ "href='http://flowplayer.org'>flowplayer.org</a>以得到更多有关播放器资料及"
+#~ "href='https://flowplayer.org'>flowplayer.org</a>以得到更多有关播放器资料及"
 #~ "版权问题."
 
 #~ msgid ""
@@ -13282,11 +13282,11 @@ msgstr "不能提取连结<em>%s</em>"
 #~ msgstr "选取以在页面或文章载入轻便或全功能的 TinyMCE 文字编辑器"
 
 #~ msgid ""
-#~ "The tinyZenpage page on the Zenpage project site: <a href='http://zenpage."
+#~ "The tinyZenpage page on the Zenpage project site: <a href='https://zenpage."
 #~ "maltem.de/pages/tinyZenpage' title='Zenpage project site'>zenpage.maltem."
 #~ "de/pages/tinyZenpage</a>"
 #~ msgstr ""
-#~ "在 Zenpage 计划的 tinyZenpage 网页: <a href='http://zenpage.maltem.de/"
+#~ "在 Zenpage 计划的 tinyZenpage 网页: <a href='https://zenpage.maltem.de/"
 #~ "pages/tinyZenpage' title='Zenpage project site'>zenpage.maltem.de/pages/"
 #~ "tinyZenpage</a>"
 
@@ -13305,15 +13305,15 @@ msgstr "不能提取连结<em>%s</em>"
 #~ msgstr "输入验证码"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href="
-#~ "\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
+#~ "\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 #~ msgstr ""
-#~ "由<a href=\"http://www.zenphoto.org\" title=\"简洁的网上相簿\"><span id="
+#~ "由<a href=\"https://www.zenphoto.org\" title=\"简洁的网上相簿\"><span id="
 #~ "\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> <span id="
-#~ "\"IE-clear-part\">及</span> <a href=\"http://www.zenphoto.org/2009/03/"
+#~ "\"IE-clear-part\">及</span> <a href=\"https://www.zenphoto.org/2009/03/"
 #~ "zenpage-a-cms-plugin-for-zenphoto/\"><span id=\"zen-part\">zen</"
 #~ "span><span id=\"photo-part\">PAGE</span></a>提供"
 
@@ -13478,7 +13478,7 @@ msgstr "不能提取连结<em>%s</em>"
 #~ "Attaches \"Effenberger effects\" to images and thumbnails. This plugin is "
 #~ "intended as an example for the use of the <em>image_html</em> filters."
 #~ "<br /><strong>Due to licensing considerations no effects are included "
-#~ "with this plugin.</strong> See <a href=\"http://www.netzgesta.de/cvi/"
+#~ "with this plugin.</strong> See <a href=\"https://www.netzgesta.de/cvi/"
 #~ "\">CVI Astonishing Image Effects</a> by Christian Effenberger to select "
 #~ "and download effects. Unzip the file you download and copy the "
 #~ "<code><em>effect</em></code>.js file to the <code>/%s/"
@@ -13488,7 +13488,7 @@ msgstr "不能提取连结<em>%s</em>"
 #~ msgstr ""
 #~ "加入  \"Effenberger effects\" 到相簿及图片.  这外挂是想作为 "
 #~ "<em>image_html</em> 滤镜的使用例子.<br /><strong> 由于版权问题外挂中没有附"
-#~ "带效果.  </strong> 查阅 <a href=\"http://www.netzgesta.de/cvi/\">CVI "
+#~ "带效果.  </strong> 查阅 <a href=\"https://www.netzgesta.de/cvi/\">CVI "
 #~ "Astonishing Image Effects</a> by Christian Effenberger 去选择下载.  解压下"
 #~ "载的档案后复制<code><em>effect</em></code>.js file 到 <code>/%s/"
 #~ "effenberger_effects</code> 资料夹.  <br />所有测试都在<code>预设</code> 布"
@@ -13505,13 +13505,13 @@ msgstr "不能提取连结<em>%s</em>"
 
 #~ msgid ""
 #~ "Due to licensing considerations no effects are included with this plugin. "
-#~ "See <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image "
+#~ "See <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image "
 #~ "Effects</a> by Christian Effenberger to select and download effects. "
 #~ "Unzip the file you download and copy the <code><em>effect</em></code>.js "
 #~ "file to a folder named <code>effenberger_effects</code> in the global "
 #~ "plugins folder."
 #~ msgstr ""
-#~ "由于版权问题外挂中没有包括任何效果.  查阅 <a href=\"http://www.netzgesta."
+#~ "由于版权问题外挂中没有包括任何效果.  查阅 <a href=\"https://www.netzgesta."
 #~ "de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger 去选"
 #~ "择及下载其他效果.  解压下载后的档案后复制<code><em>effect</em></code>.js "
 #~ "档案到全部外挂的 <code>effenberger_effects</em></code> 资料夹中."
@@ -13657,7 +13657,7 @@ msgstr "不能提取连结<em>%s</em>"
 #~ "Enable <strong>FLV player 4.x</strong> to handle multimedia files. "
 #~ "<strong>No <em>FLVPlayer</em> player files are included with this plugin "
 #~ "due to licensing considerations.</strong> Please download these files "
-#~ "from the <a href=\"http://www.longtailvideo.com/players/jw-flv-player/"
+#~ "from the <a href=\"https://www.longtailvideo.com/players/jw-flv-player/"
 #~ "\">Longtail Video</a> site. Extract the files \"player*.swf\" and "
 #~ "\"swobjects.js\" into <code>/%s/flvplayer/</code>. <br />IMPORTANT: Only "
 #~ "one multimedia player plugin can be enabled at the time. The class-video "
@@ -13665,7 +13665,7 @@ msgstr "不能提取连结<em>%s</em>"
 #~ msgstr ""
 #~ "启动 <strong>FLV player 4.x</strong> 处理多媒体档案. <strong>由于版权问"
 #~ "题, 没有<em>FLVPlayer</em> 播放器档案包括在外挂内.</strong> 请到 <a href="
-#~ "\"http://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
+#~ "\"https://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
 #~ "a> 网站下载相关档案.  解压档案到 \"player*.swf\" 和 \"swobjects.js\" 到"
 #~ "<code>/%s/flvplayer/</code>. <br />重要:  同一时间只可以启动一个播放器外"
 #~ "挂.  class-video 外挂一定要启动."
@@ -13676,13 +13676,13 @@ msgstr "不能提取连结<em>%s</em>"
 #~ msgid ""
 #~ "No <em>FLVPlayer</em> player files are included with this plugin due to "
 #~ "licensing considerations. Please download these files from the <a href="
-#~ "\"http://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
+#~ "\"https://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
 #~ "a> site. Extract the files and place the files \"player*.swf\" and "
 #~ "\"swobjects.js\" in a folder named <code>flvplayer</code> in the global "
 #~ "plugins folder."
 #~ msgstr ""
 #~ "<strong>由于版权问题, 没有<em>FLVPlayer</em> 播放器档案包括在外挂内.</"
-#~ "strong> 请到 <a href=\"http://www.longtailvideo.com/players/jw-flv-player/"
+#~ "strong> 请到 <a href=\"https://www.longtailvideo.com/players/jw-flv-player/"
 #~ "\">Longtail Video</a> 网站下载相关档案.  解压档案到\"player*.swf\"和 "
 #~ "\"swobjects.js\" 到全部外挂的 <code>flvplayer</code> 资料夹中."
 

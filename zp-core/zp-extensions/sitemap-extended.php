@@ -8,7 +8,7 @@
  * Album sitemaps are split into individual sitemaps per album (incl. all albums pages) and image sitemaps
  * into individual sitemaps per album.
  *
- * Based on the plugin by Jeppe Toustrup (Tenzer) http://github.com/Tenzer/zenphoto-sitemap 
+ * Based on the plugin by Jeppe Toustrup (Tenzer) https://github.com/Tenzer/zenphoto-sitemap 
  *
  * The sitemapindex file can be referenced via <var>www.yourdomain.com/zenphoto/index.php?sitemap</var> or
  * with modrewrite <var>www.yourdomain.com/zenphoto/?sitemap</var>.
@@ -193,7 +193,7 @@ class sitemapOptions {
 						'type' => OPTION_TYPE_TEXTBOX,
 						'order' => 12,
 						'multilingual' => true,
-						'desc' => gettext('Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: http://mydomain.com/license.html')),
+						'desc' => gettext('Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: https://mydomain.com/license.html')),
 				gettext('Sitemap processing chunk') => array(
 						'key' => 'sitemap_processing_chunk',
 						'type' => OPTION_TYPE_TEXTBOX,
@@ -299,7 +299,7 @@ class sitemap {
 		$dirs = array_diff(scandir($cachefolder), array('.', '..', '.DS_Store', 'Thumbs.db', '.htaccess', '.svn'));
 		if ($dirs) {
 			$data .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
-			$data .= sitemap::echonl('<sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+			$data .= sitemap::echonl('<sitemapindex xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 			foreach ($dirs as $dir) {
 				$data .= sitemap::echonl("\t<sitemap>");
 				$data .= sitemap::echonl("\t\t<loc>" . FULLWEBPATH . '/' . STATIC_CACHE_FOLDER . '/sitemap/' . $dir . '</loc>');
@@ -406,7 +406,7 @@ class sitemap {
 			}
 			$toplevelpages = getTotalPages();
 			$data .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
-			$data .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+			$data .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 			$sitemap_locales = generateLanguageList();
 			$changefreq = sitemap::getChangefreq(getOption('sitemap_changefreq_index'));
 			// normal index/homepage we need in any case always
@@ -543,7 +543,7 @@ class sitemap {
 		$albums = array_slice($albums, $offset, SITEMAP_CHUNK);
 		if (!empty($albums)) {
 			$data_start .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
-			$data_start .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+			$data_start .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 			foreach ($albums as $album) {
 				$albumobj = newAlbum($album['folder']);
 				set_context(ZP_ALBUM);
@@ -629,9 +629,9 @@ class sitemap {
 		if ($albums) {
 			$data_start .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
 			if (GOOGLE_SITEMAP) {
-				$data_start .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">');
+				$data_start .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="https://www.google.com/schemas/sitemap-image/1.1" xmlns:video="https://www.google.com/schemas/sitemap-video/1.1">');
 			} else {
-				$data_start .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+				$data_start .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 			}
 			foreach ($albums as $album) {
 				@set_time_limit(120); //	Extend script timeout to allow for gathering the images.
@@ -774,7 +774,7 @@ class sitemap {
 			$pages = $_zp_zenpage->getPages(true);
 			if ($pages) {
 				$data_start .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
-				$data_start .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+				$data_start .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 				foreach ($pages as $page) {
 					$pageobj = new ZenpagePage($page['titlelink']);
 					if ($pageobj->isPublic() && !$pageobj->isProtected()) {
@@ -819,7 +819,7 @@ class sitemap {
 		if ($_sitemap_number == 1) {
 			$data = '';
 			$data .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
-			$data .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+			$data .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 			$sitemap_locales = generateLanguageList();
 			$changefreq = getOption('sitemap_changefreq_newsindex');
 			$date = sitemap::getISO8601Date();
@@ -893,7 +893,7 @@ class sitemap {
 			$articles = $_zp_zenpage->getArticles('', 'published', true, "date", "desc");
 			if ($articles) {
 				$data_start .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
-				$data_start .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+				$data_start .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 				foreach ($articles as $article) {
 					$articleobj = new ZenpageNews($article['titlelink']);
 					if ($articleobj->isPublic() && !$articleobj->isProtected()) {
@@ -941,7 +941,7 @@ class sitemap {
 			$newscats = $_zp_zenpage->getAllCategories();
 			if ($newscats) {
 				$data_start .= sitemap::echonl('<?xml version="1.0" encoding="UTF-8"?>');
-				$data_start .= sitemap::echonl('<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+				$data_start .= sitemap::echonl('<urlset xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">');
 				foreach ($newscats as $newscat) {
 					$catobj = new ZenpageCategory($newscat['titlelink']);
 					if ($catobj->isPublic() && !$catobj->isProtected()) {

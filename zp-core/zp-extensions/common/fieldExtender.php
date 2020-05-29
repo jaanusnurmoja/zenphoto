@@ -25,7 +25,7 @@
  * "size" is the byte size of the varchar or int field (it is not needed for other types)
  *
  * Database fields names must conform to
- * {@link http://dev.mysql.com/doc/refman/5.0/en/identifiers.html MySQL field naming rules}.
+ * {@link https://dev.mysql.com/doc/refman/5.0/en/identifiers.html MySQL field naming rules}.
  *
  * The <var>constructor($fields)</var> method establishes the fields in the database.
  * It is recommended that the plugin invoke this method from its class <var>__constructor<var>

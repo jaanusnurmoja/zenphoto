@@ -40,7 +40,7 @@ printAdminHeader('overview', 'statistics');
 <link rel="stylesheet" href="../admin-statistics.css" type="text/css" media="screen" />
 <?php
 /*
- * http://php.net/manual/de/function.filesize.php
+ * https://php.net/manual/de/function.filesize.php
  *
  * @author Jonas Sweden
  */

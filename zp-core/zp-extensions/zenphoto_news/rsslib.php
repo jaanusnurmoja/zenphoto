@@ -23,7 +23,7 @@
 
  <?php
  require_once("rsslib.php");
- echo RSS_Display("http://www.xul.fr/rss.xml", 15);
+ echo RSS_Display("https://www.xul.fr/rss.xml", 15);
  ?>
 
  */

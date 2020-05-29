@@ -8,7 +8,7 @@
  * the filter is called.
  *
  * Any of the syntaxes explained in the PHP documentation for the
- * {@link http://us2.php.net/manual/en/language.pseudo-types.php#language.types.callback 'callback'}
+ * {@link https://us2.php.net/manual/en/language.pseudo-types.php#language.types.callback 'callback'}
  * type are valid.
  *
  * This API is heavily inspired by the plugin API used in WordPress.

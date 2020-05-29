@@ -405,7 +405,7 @@ class securityheadersOptions {
 				"'unsafe-inline'" => $baseoption . "_unsafeinline",
 				"'unsafe-eval'" => $baseoption . "_unsafeeval",
 				"'strict-dynamic'" => $baseoption . "_strictdynamic",
-				"http:" => $baseoption . '_http',
+				"https:" => $baseoption . '_http',
 				"https:" => $baseoption . '_https',
 				'nonce-' => $baseoption . '_nonce'
 		);
@@ -428,7 +428,7 @@ class securityheadersOptions {
 	}
 	
 	static function getCOntentSecurityPolicyHostSourceDoc() {
-		return '<p>' . gettext('Define one or more domains, e.g. http://yourdomain1.com http://yourdomain2.com, to allow content from') . '</p>';
+		return '<p>' . gettext('Define one or more domains, e.g. https://yourdomain1.com https://yourdomain2.com, to allow content from') . '</p>';
 	}
 
 	/**
@@ -440,7 +440,7 @@ class securityheadersOptions {
 				"*" => 'securityheaders_csp_frameancestors_wildcard',
 				"'self'" => 'securityheaders_csp_frameancestors_self',
 				"'none'" => 'securityheaders_csp_frameancestors_none',
-				"http:" => 'securityheaders_csp_frameancestors_http',
+				"https:" => 'securityheaders_csp_frameancestors_http',
 				"https:" => 'securityheaders_csp_frameancestors_https'
 		);
 	}
@@ -585,7 +585,7 @@ class securityHeaders {
 					"*" => 'securityheaders_csp_frameancestors_wildcard',
 					"'self'" => 'securityheaders_csp_frameancestors_self',
 					"'none'" => 'securityheaders_csp_frameancestors_none',
-					"http:" => 'securityheaders_csp_frameancestors_http',
+					"https:" => 'securityheaders_csp_frameancestors_http',
 					"https:" => 'securityheaders_csp_frameancestors_https'
 			);
 			$check_frameancestors = self::getContentSecurityPolicySources('frame-ancestors', $csp_frameancestors);

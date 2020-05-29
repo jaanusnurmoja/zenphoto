@@ -183,7 +183,7 @@ class userDataExport {
 	 * @return string
 	 */
 	static function printLink($value) {
-		if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
+		if (substr($value, 0, 7) == 'https://' || substr($value, 0, 8) == 'https://') {
 			echo '<a href="' . html_encode($value) . '">' . html_encode($value) . '</a>';
 		} else {
 			echo $value;

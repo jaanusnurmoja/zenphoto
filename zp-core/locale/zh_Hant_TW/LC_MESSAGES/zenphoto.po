@@ -216,8 +216,8 @@ msgid "Select the colors of the theme"
 msgstr "選取佈景主題的色彩外觀。"
 
 #: themes/default/theme_description.php:4
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> 與 <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> 與 <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: themes/default/theme_description.php:7
 msgid "The default theme in 4 distinct flavors. After choosing this theme you can pick the theme color by going to the Admin Options tab and changing the <em>Theme colors</em> option."
@@ -240,8 +240,8 @@ msgid "Search within album"
 msgstr "在相本中搜尋"
 
 #: themes/effervescence_plus/album.php:346
-msgid "For the best viewing experience <a href=\"http://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
-msgstr "請安裝 <a href=\"http://www.macromedia.com/go/getflashplayer/\">Adobe Flash</a> 以取得更好的瀏覽體驗。"
+msgid "For the best viewing experience <a href=\"https://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
+msgstr "請安裝 <a href=\"https://www.macromedia.com/go/getflashplayer/\">Adobe Flash</a> 以取得更好的瀏覽體驗。"
 
 #: themes/effervescence_plus/album.php:355
 msgid "View Gallery Without Flash"
@@ -733,8 +733,8 @@ msgid "Effervescence"
 msgstr "Effervescence 預設圖像"
 
 #: themes/effervescence_plus/theme_description.php:7
-msgid "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard (sbillard)</a>"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a>，由 <a href=\"http://stephen.sbillard.org/\">Stephen Billard (sbillard)</a> 修改"
+msgid "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard (sbillard)</a>"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a>，由 <a href=\"https://stephen.sbillard.org/\">Stephen Billard (sbillard)</a> 修改"
 
 #: themes/effervescence_plus/theme_description.php:10
 msgid "Based on Effervescence 1.1 with multiple personalities (slimbox, simpleviewer and smoothgallery) added. Select different color schemes and personalities from the Admin Options tab."
@@ -867,8 +867,8 @@ msgid "Set to enable tag cloud for album page."
 msgstr "勾選後將啟用相本頁的標籤雲。"
 
 #: themes/garland/theme_description.php:10
-msgid "Modded Wordpress theme from, <a href=\"http://garlandtheme.blogspot.com/\">garland</a>"
-msgstr "由 WordPress 主題 <a href=\"http://garlandtheme.blogspot.com/\">Garland</a> 修改移植而來"
+msgid "Modded Wordpress theme from, <a href=\"https://garlandtheme.blogspot.com/\">garland</a>"
+msgstr "由 WordPress 主題 <a href=\"https://garlandtheme.blogspot.com/\">Garland</a> 修改移植而來"
 
 #: themes/garland/contact_form/form.php:13
 msgid "Title<strong>%s</strong>:"
@@ -1033,8 +1033,8 @@ msgstr "聯絡表單"
 #: themes/stopdesign/contact.php:43
 #: themes/stopdesign/gallery.php:120
 #: themes/stopdesign/register.php:42
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
-msgstr "改自 Stopdesign 的 <a href=\"http://stopdesign.com/templates/photos/\">相簿模板</a>"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgstr "改自 Stopdesign 的 <a href=\"https://stopdesign.com/templates/photos/\">相簿模板</a>"
 
 #: themes/stopdesign/gallery.php:32
 msgid "All galleries"
@@ -1098,8 +1098,8 @@ msgstr "下一張"
 
 #: themes/stopdesign/image.php:172
 #: themes/stopdesign/index.php:203
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-msgstr "佈景主題改自 Stopdesign 的 <a href=\"http://stopdesign.com/templates/photos/\">相簿模板</a>。"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgstr "佈景主題改自 Stopdesign 的 <a href=\"https://stopdesign.com/templates/photos/\">相簿模板</a>。"
 
 #: themes/stopdesign/index.php:32
 msgid "Recently Updated Galleries"
@@ -1168,8 +1168,8 @@ msgid "Ported to Zenphoto by Mark Galeassi and Stephen Billard"
 msgstr "由 Mark Galeassi 及 Stephen Billard 移植到 Zenphoto 平臺。"
 
 #: themes/stopdesign/theme_description.php:10
-msgid "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
-msgstr "基於 <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a> 的設計而製作的佈景主題。本佈景以 <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/deed.zh_TW\">創用CC 姓名標示-非商業性-相同方式分享 2.5</a> 授權條款授權。"
+msgid "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgstr "基於 <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a> 的設計而製作的佈景主題。本佈景以 <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/deed.zh_TW\">創用CC 姓名標示-非商業性-相同方式分享 2.5</a> 授權條款授權。"
 
 #: themes/stopdesign/comment_form/comment_form.php:31
 msgid "%sName:"
@@ -1244,12 +1244,12 @@ msgid "Gallery archive"
 msgstr "相館日期存檔"
 
 #: themes/zenpage/footer.php:5
-msgid "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-msgstr "Zenpage 佈景主題由 <a href=\"http://www.maltem.de\">Malte Müller</a> 提供"
+msgid "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+msgstr "Zenpage 佈景主題由 <a href=\"https://www.maltem.de\">Malte Müller</a> 提供"
 
 #: themes/zenpage/footer.php:6
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
-msgstr "使用 <a href=\"http://www.zenphoto.org\" title=\"簡單好用的網路相本程式\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> 建置"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgstr "使用 <a href=\"https://www.zenphoto.org\" title=\"簡單好用的網路相本程式\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a> 建置"
 
 #: themes/zenpage/gallery.php:60
 #: themes/zenpage/news.php:56
@@ -2229,8 +2229,8 @@ msgid "File Manager"
 msgstr "檔案管理員"
 
 #: zp-core/admin-functions.php:26
-msgid "<a href=\"http://www.zenphoto.org\" title=\"A simpler web album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-msgstr "<a href=\"http://www.zenphoto.org\" title=\"簡單好用的網路相本程式\">Zen<strong>photo</strong></a> 版本 %1$s [%2$s]"
+msgid "<a href=\"https://www.zenphoto.org\" title=\"A simpler web album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgstr "<a href=\"https://www.zenphoto.org\" title=\"簡單好用的網路相本程式\">Zen<strong>photo</strong></a> 版本 %1$s [%2$s]"
 
 #: zp-core/admin-functions.php:31
 msgid "GPLv2"
@@ -3171,8 +3171,8 @@ msgid "February 25, 2008"
 msgstr "二月 25, 2008 "
 
 #: zp-core/admin-options.php:808
-msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span class=\"nowrap\"><code>strftime()</code></span></a> format string in the text box."
-msgstr "時間日期的顯示方式。如選擇 <code>自訂</code>，請於文字方塊中以 <a href=\"http://us2.php.net/manual/zh/function.strftime.php\"><span class=\"nowrap\"><code>strftime()</code></span></a> 形式填入格式。"
+msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span class=\"nowrap\"><code>strftime()</code></span></a> format string in the text box."
+msgstr "時間日期的顯示方式。如選擇 <code>自訂</code>，請於文字方塊中以 <a href=\"https://us2.php.net/manual/zh/function.strftime.php\"><span class=\"nowrap\"><code>strftime()</code></span></a> 形式填入格式。"
 
 #: zp-core/admin-options.php:811
 msgid "Charset:"
@@ -4504,8 +4504,8 @@ msgid "Themes allow you to visually change the entire look and feel of your gall
 msgstr "佈景主題可以改變相館的外觀與視覺感受，相關檔案位於 Zenphoto 安裝目錄下的 <code>/themes</code> 資料夾中。"
 
 #: zp-core/admin-themes.php:177
-msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
-msgstr "可以在 <a href=\"http://www.zenphoto.org/zp/theme/\">Zenphoto 佈景主題列表</a> 找到更多佈景主題。"
+msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+msgstr "可以在 <a href=\"https://www.zenphoto.org/zp/theme/\">Zenphoto 佈景主題列表</a> 找到更多佈景主題。"
 
 #: zp-core/admin-themes.php:178
 msgid "Place the downloaded themes in the <code>/themes</code> folder and they will be available for your use."
@@ -4861,8 +4861,8 @@ msgid "You are running the latest zenphoto version."
 msgstr "目前運作的是 Zenphoto 的最新版本。"
 
 #: zp-core/admin.php:97
-msgid "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-msgstr "無法連線到 <a href=\"http://www.zenphoto.org\">Zenphoto.org</a>"
+msgid "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+msgstr "無法連線到 <a href=\"https://www.zenphoto.org\">Zenphoto.org</a>"
 
 #: zp-core/admin.php:99
 msgid "zenphoto version %s is available."
@@ -5812,8 +5812,8 @@ msgid "Image not found or is unreadable."
 msgstr "找不到圖片檔案，或無法讀取。"
 
 #: zp-core/functions-image.php:212
-msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-msgstr "未知的錯誤！請將這個問題回報給 <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a> 上的開發者們"
+msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgstr "未知的錯誤！請將這個問題回報給 <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a> 上的開發者們"
 
 #: zp-core/functions-PDO.php:129
 msgid "%s not connected"
@@ -6748,8 +6748,8 @@ msgid "PHP <code>Register Globals</code> [is set]"
 msgstr "PHP <code>Register Globals</code> [啟用中]"
 
 #: zp-core/setup.php:429
-msgid "PHP Register globals presents a security risk to any PHP application. See <a href=\"http://php.net/manual/en/security.globals.php\"><em>Using Register Globals</em></a>. Zenphoto refuses to operate under these conditions. Change your PHP.ini settings to <code>register_globals = off</code>."
-msgstr "啟用 PHP Register globals 會使所有的 PHP 應用程式產生安全風險，詳情請見 <a href=\"http://php.net/manual/zh/security.globals.php\"><em>使用 Register Globals</em></a>。Zenphoto 拒絕在這種環境下進行操作。請變更 PHP.ini 設定為 <code>register_globals = off</code>。"
+msgid "PHP Register globals presents a security risk to any PHP application. See <a href=\"https://php.net/manual/en/security.globals.php\"><em>Using Register Globals</em></a>. Zenphoto refuses to operate under these conditions. Change your PHP.ini settings to <code>register_globals = off</code>."
+msgstr "啟用 PHP Register globals 會使所有的 PHP 應用程式產生安全風險，詳情請見 <a href=\"https://php.net/manual/zh/security.globals.php\"><em>使用 Register Globals</em></a>。Zenphoto 拒絕在這種環境下進行操作。請變更 PHP.ini 設定為 <code>register_globals = off</code>。"
 
 #: zp-core/setup.php:436
 msgid "PHP <code>Safe Mode</code>"
@@ -6776,7 +6776,7 @@ msgid "PHP <code>magic_quotes_gpc</code> [is enabled]"
 msgstr "PHP <code>magic_quotes_gpc</code> [啟用中]"
 
 #: zp-core/setup.php:444
-msgid "You should consider disabling <code>magic_quotes_gpc</code>. For more information See <em><a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#26\">What is magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto troubleshooting guide."
+msgid "You should consider disabling <code>magic_quotes_gpc</code>. For more information See <em><a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#26\">What is magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto troubleshooting guide."
 msgstr ""
 
 #: zp-core/setup.php:445
@@ -6806,7 +6806,7 @@ msgstr "你的平臺尚未安裝本地化函式，或者缺少指定的本地化
 
 #: zp-core/setup.php:447
 #, fuzzy
-msgid "See the <a  href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
+msgid "See the <a  href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
 msgstr "請至 Zenphoto.org 上的除錯指南取得更多資訊。"
 
 #: zp-core/setup.php:449
@@ -7322,7 +7322,7 @@ msgid "Zenphoto core file permissions [not correct]"
 msgstr "Zenphoto 核心檔案存取權限 [不正確]"
 
 #: zp-core/setup.php:1174
-msgid "Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
+msgid "Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
 msgstr ""
 
 #: zp-core/setup.php:1177
@@ -8720,7 +8720,7 @@ msgstr ""
 #: zp-core/exif/makers/fujifilm.php:105
 #, fuzzy
 msgid "Contrast Low(ORG)"
-msgstr "http://wordpress.org/news/"
+msgstr "https://wordpress.org/news/"
 
 #: zp-core/exif/makers/fujifilm.php:112
 msgid "Red-Eye Reduction"
@@ -9081,8 +9081,8 @@ msgid "<em>%1$s</em> folder%2$s [permissions failure]"
 msgstr "<em>%1$s</em> 資料夾 %2$s [存取權限設定失敗]"
 
 #: zp-core/setup/setup-functions.php:186
-msgid "Setup could not change the folder permissions from <em>%1$s</em> (<code>0%2$o</code>) to <em>%3$s</em> (<code>0%4$o</code>). You will have to set the permissions manually. See the <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
-msgstr "本程式無法自行將資料夾的存取權限由 <em>%1$s</em>（<code>0%2$o</code>）改為 <em>%3$s</em>（<code>0%4$o</code>），必須手動更改。可瀏覽 <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#29\">疑難排解</a> 取得 Zenphoto 檔案存取權限要求的詳細資訊。"
+msgid "Setup could not change the folder permissions from <em>%1$s</em> (<code>0%2$o</code>) to <em>%3$s</em> (<code>0%4$o</code>). You will have to set the permissions manually. See the <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on Zenphoto permissions requirements."
+msgstr "本程式無法自行將資料夾的存取權限由 <em>%1$s</em>（<code>0%2$o</code>）改為 <em>%3$s</em>（<code>0%4$o</code>），必須手動更改。可瀏覽 <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#29\">疑難排解</a> 取得 Zenphoto 檔案存取權限要求的詳細資訊。"
 
 #: zp-core/setup/setup-functions.php:217
 msgid "You must create the folder <em>%1$s</em><br /><code>mkdir(%2$s, 0777)</code>."
@@ -9131,8 +9131,8 @@ msgid "failed to delete %s."
 msgstr "%s 刪除失敗。"
 
 #: zp-core/setup/setup-functions.php:421
-msgid "See the <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
-msgstr "請至 Zenphoto.org 上的 <a href=\"http://www.zenphoto.org/news/troubleshooting-zenphoto#24\">疑難排解</a> 取得更多資訊。"
+msgid "See the <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
+msgstr "請至 Zenphoto.org 上的 <a href=\"https://www.zenphoto.org/news/troubleshooting-zenphoto#24\">疑難排解</a> 取得更多資訊。"
 
 #: zp-core/setup/setup-functions.php:469
 msgid "An attempt at cross site reference forgery has been blocked."
@@ -10260,7 +10260,7 @@ msgid "Choose the WEB service to use for rendering TIFF images."
 msgstr "選擇要用來顯示 TIFF 圖片檔的網路服務。"
 
 #: zp-core/zp-extensions/colorbox.php:10
-msgid "Loads Colorbox JS and CSS scripts for selected theme page scripts. Note that this plugin does not attach Colorbox to any element. You need to do this on your theme yourself. Visit the <a href='http://colorpowered.com/colorbox/'>Colorbox website</a> about that."
+msgid "Loads Colorbox JS and CSS scripts for selected theme page scripts. Note that this plugin does not attach Colorbox to any element. You need to do this on your theme yourself. Visit the <a href='https://colorpowered.com/colorbox/'>Colorbox website</a> about that."
 msgstr ""
 
 #: zp-core/zp-extensions/colorbox.php:67
@@ -11301,7 +11301,7 @@ msgid "<strong>IMPORTANT</strong>: Only one multimedia player plugin can be enab
 msgstr "<strong>重要提醒：</strong> 同時間只能啟用一個多媒體播放器外掛，且必須啟用 class-video 外掛。"
 
 #: zp-core/zp-extensions/flowplayer3.php:14
-msgid "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
+msgid "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
 msgstr ""
 
 #: zp-core/zp-extensions/flowplayer3.php:17
@@ -11850,7 +11850,7 @@ msgid "No acknowledgement"
 msgstr "*不使用浮水印"
 
 #: zp-core/zp-extensions/image_effects.php:182
-msgid "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
+msgid "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
 msgstr ""
 
 #: zp-core/zp-extensions/image_effects.php:187
@@ -13007,7 +13007,7 @@ msgid "Google - URL to image license"
 msgstr "Google - 相片授權說明網址"
 
 #: zp-core/zp-extensions/sitemap-extended.php:143
-msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: http://mydomain.com/license.html"
+msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: https://mydomain.com/license.html"
 msgstr ""
 
 #: zp-core/zp-extensions/sitemap-extended.php:144
@@ -13276,7 +13276,7 @@ msgid "Enables jQuery tag suggestions on the search field. Just activate the plu
 msgstr ""
 
 #: zp-core/zp-extensions/tag_suggest.php:11
-msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
 msgstr ""
 
 #: zp-core/zp-extensions/tiny_mce.php:10
@@ -13372,8 +13372,8 @@ msgid "This <code>tweet_news</code> app for this site needs a <em>consumer key</
 msgstr "本站的 <code>tweet_news</code> 應用程式需要 <em>consumer key</em>, <em>consumer key secret</em>, <em>access token</em>, <em>access token secret</em> 各一個。"
 
 #: zp-core/zp-extensions/tweet_news.php:66
-msgid "Get these from <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
-msgstr "可由 <a href=\"http://dev.twitter.com/\">Twitter 開發者專區</a> 取得這些東西。"
+msgid "Get these from <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
+msgstr "可由 <a href=\"https://dev.twitter.com/\">Twitter 開發者專區</a> 取得這些東西。"
 
 #: zp-core/zp-extensions/tweet_news.php:67
 msgid "Secret"
@@ -14438,8 +14438,8 @@ msgid "Custom link"
 msgstr "自訂連結"
 
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:143
-msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. http://www.domain.com)."
-msgstr "建立前往 Zenphoto 外部網站的超連結，建議使用完整網址（如：http://www.domain.com）。"
+msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. https://www.domain.com)."
+msgstr "建立前往 Zenphoto 外部網站的超連結，建議使用完整網址（如：https://www.domain.com）。"
 
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:150
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:250
@@ -14757,8 +14757,8 @@ msgid "Patterns to die on"
 msgstr "封鎖規則"
 
 #: zp-core/zp-extensions/spamfilters/simple.php:41
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
-msgstr "含有下列規則的留言將被視為垃圾（請以 <a href=\"http://zh.wikipedia.org/zh-tw/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F\">正則表達式</a> 撰寫，並以半形空白分隔每個表達式）"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgstr "含有下列規則的留言將被視為垃圾（請以 <a href=\"https://zh.wikipedia.org/zh-tw/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F\">正則表達式</a> 撰寫，並以半形空白分隔每個表達式）"
 
 #: zp-core/zp-extensions/spamfilters/simple.php:42
 msgid "Excessive URL count"

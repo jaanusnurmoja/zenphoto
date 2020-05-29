@@ -1750,7 +1750,7 @@ function addMissingDefaultRewriteTokens() {
  *		CURLOPT_RETURNTRANSFER => true,
  *		CURLOPT_TIMEOUT => 2000
  * )
- * See http://php.net/manual/en/function.curl-setopt.php for more info
+ * See https://php.net/manual/en/function.curl-setopt.php for more info
  * @return boolean
  */
 function curlRequest($uri, $options = array()) {

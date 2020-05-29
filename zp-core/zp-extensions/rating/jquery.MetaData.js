@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2006 John Resig, Yehuda Katz, Jörn Zaefferer, Paul McLanahan
  *
-	* Licensed under http://en.wikipedia.org/wiki/MIT_License
+	* Licensed under https://en.wikipedia.org/wiki/MIT_License
  *
  *
  */

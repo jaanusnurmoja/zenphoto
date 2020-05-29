@@ -1927,8 +1927,8 @@ msgid "The page you are trying to view is password protected."
 msgstr "הדף שביקשתם מוגן בסיסמא."
 
 #: zenphoto-2010-12-28-trunk/zp-core/template-functions.php:4553
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
-msgstr "פועל על <a href=\"http://www.zenphoto.org\" title=\"גלריית תמונות פשוטה ביותר\"><span id=\"zen-part\">זן</span><span id=\"photo-part\">פוטו</span></a>"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgstr "פועל על <a href=\"https://www.zenphoto.org\" title=\"גלריית תמונות פשוטה ביותר\"><span id=\"zen-part\">זן</span><span id=\"photo-part\">פוטו</span></a>"
 
 #: zenphoto-2010-12-28-trunk/zp-core/functions-PDO.php:30
 #, php-format
@@ -2016,8 +2016,8 @@ msgid "Themes allow you to visually change the entire look and feel of your gall
 msgstr "ערכות עיצוב מאפשרות להגדיר ויזואלית את המראה והתחושה של כל האתר. קבצי ערכת העיצוב ממוקמים תחת זןפוטו בתיקייה <code>/themes</code>"
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-themes.php:176
-msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
-msgstr "ניתן להוריד ערכות עיצוב נוספות מ-<a href=\"http://www.zenphoto.org/zp/theme/\">דף ערכות העיצוב של זןפוטו</a>"
+msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+msgstr "ניתן להוריד ערכות עיצוב נוספות מ-<a href=\"https://www.zenphoto.org/zp/theme/\">דף ערכות העיצוב של זןפוטו</a>"
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-themes.php:177
 msgid "Place the downloaded themes in the <code>/themes</code> folder and they will be available for your use."
@@ -2482,8 +2482,8 @@ msgstr "HTTP Accept Language"
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-options.php:710
 #, php-format
-msgid "Highlighted languages are not current with Zenphoto Version %s. (The version Zenphoto of the out-of-date language is shown in braces.) Please check the <a href=\"http://www.zenphoto.org/trac/report/9?sort=summary\">translation tickets</a> for new and updated language translations."
-msgstr "השפות המודגשות אינן נתמכות כעת על ידי גירסא %s של זןפוטו. (גרסת זןפוטו של השפות שפג תוקפה מופיעה בסוגריים). אנא בדקו את <a href=\"http://www.zenphoto.org/trac/report/9?sort=summary\">כרטיסי התרגום</a> בכדי למצוא תרגומים חדשים או מעודכנים."
+msgid "Highlighted languages are not current with Zenphoto Version %s. (The version Zenphoto of the out-of-date language is shown in braces.) Please check the <a href=\"https://www.zenphoto.org/trac/report/9?sort=summary\">translation tickets</a> for new and updated language translations."
+msgstr "השפות המודגשות אינן נתמכות כעת על ידי גירסא %s של זןפוטו. (גרסת זןפוטו של השפות שפג תוקפה מופיעה בסוגריים). אנא בדקו את <a href=\"https://www.zenphoto.org/trac/report/9?sort=summary\">כרטיסי התרגום</a> בכדי למצוא תרגומים חדשים או מעודכנים."
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-options.php:712
 msgid "Multi-lingual"
@@ -2672,8 +2672,8 @@ msgid "February 25, 2008"
 msgstr "פברואר 25, 2008"
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-options.php:784
-msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> format string in the text box."
-msgstr "תבניות של תאריכים. בחרו תבנית מוגדרת מראש או בחרו את האפשרות \"מותאם אישית\" וספקו תבנית <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> בתיבת הטקסט הריקה. "
+msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> format string in the text box."
+msgstr "תבניות של תאריכים. בחרו תבנית מוגדרת מראש או בחרו את האפשרות \"מותאם אישית\" וספקו תבנית <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> בתיבת הטקסט הריקה. "
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-options.php:787
 msgid "Charset:"
@@ -3645,8 +3645,8 @@ msgid "You are running the latest zenphoto version."
 msgstr "אתם מריצים את הגירסא העדכנית ביותר של זןפוטו."
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin.php:94
-msgid "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-msgstr "לא הצלחתי להתחבר לאתר <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+msgid "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+msgstr "לא הצלחתי להתחבר לאתר <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin.php:96
 #, php-format
@@ -4681,8 +4681,8 @@ msgid "Image not found or is unreadable."
 msgstr "התמונה לא נמצאה או שלא ניתנת לקריאה"
 
 #: zenphoto-2010-12-28-trunk/zp-core/functions-image.php:193
-msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-msgstr "שגיאה לא ידועה! אנא דווחו עליה למפתחים באתר <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgstr "שגיאה לא ידועה! אנא דווחו עליה למפתחים באתר <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 
 #: zenphoto-2010-12-28-trunk/zp-core/functions-db-PDO_SQLite.php:49
 #: zenphoto-2010-12-28-trunk/zp-core/functions-db-MySQL.php:30
@@ -4831,8 +4831,8 @@ msgstr "מעט מדי ארגומנטים! תמונה לא נמצאה."
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-functions.php:27
 #, php-format
-msgid "<a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-msgstr "<a href=\"http://www.zenphoto.org\" title=\"גלריית תמונות פשוטה\"><strong>זןפוטו</strong></a> version %1$s [%2$s]"
+msgid "<a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgstr "<a href=\"https://www.zenphoto.org\" title=\"גלריית תמונות פשוטה\"><strong>זןפוטו</strong></a> version %1$s [%2$s]"
 
 #: zenphoto-2010-12-28-trunk/zp-core/admin-functions.php:32
 msgid "GPLv2"
@@ -8553,7 +8553,7 @@ msgid "No acknowledgement"
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/image_effects.php:183
-msgid "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
+msgid "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/image_effects.php:188
@@ -9055,7 +9055,7 @@ msgid "Enables jQuery tag suggestions on the search field. Just activate the plu
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/tag_suggest.php:11
-msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/seo_locale.php:19
@@ -9221,7 +9221,7 @@ msgid "Google - URL to image license"
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/sitemap-extended.php:153
-msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: http://mydomain.com/license.html"
+msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: https://mydomain.com/license.html"
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/sitemap-extended.php:197
@@ -9898,7 +9898,7 @@ msgid "<strong>IMPORTANT</strong>: Only one multimedia player plugin can be enab
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/flowplayer3.php:13
-msgid "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
+msgid "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/flowplayer3.php:17
@@ -10142,7 +10142,7 @@ msgid "If unchecked only the controlbar is shown for mp3s but if checked the vid
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/colorbox.php:10
-msgid "Loads Colorbox JS and CSS scripts for selected theme page scripts. Note that this plugin does not attach Colorbox to any element. You need to do this on your theme yourself. Visit the <a href='http://colorpowered.com/colorbox/'>Colorbox website</a> about that."
+msgid "Loads Colorbox JS and CSS scripts for selected theme page scripts. Note that this plugin does not attach Colorbox to any element. You need to do this on your theme yourself. Visit the <a href='https://colorpowered.com/colorbox/'>Colorbox website</a> about that."
 msgstr ""
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/colorbox.php:60
@@ -11428,8 +11428,8 @@ msgid "Patterns to die on"
 msgstr "תבניות חביבות במיוחד"
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/spamfilters/simple.php:41
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
-msgstr "רשימה שחורה של <a href=\"http://he.wikipedia.org/wiki/%D7%91%D7%99%D7%98%D7%95%D7%99_%D7%A8%D7%92%D7%95%D7%9C%D7%A8%D7%99\">ביטויים רגילים</a> (הפרידו ברווח)"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgstr "רשימה שחורה של <a href=\"https://he.wikipedia.org/wiki/%D7%91%D7%99%D7%98%D7%95%D7%99_%D7%A8%D7%92%D7%95%D7%9C%D7%A8%D7%99\">ביטויים רגילים</a> (הפרידו ברווח)"
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/spamfilters/simple.php:42
 msgid "Excessive URL count"
@@ -11937,8 +11937,8 @@ msgid "Script page"
 msgstr "דף סקריפט"
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:140
-msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. http://www.domain.com)."
-msgstr "יוצר קישור חיצוני למבנה של זןפוטו. השתמשו בכתובת URL מלאה (כלומר: http://www.domain.com)."
+msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. https://www.domain.com)."
+msgstr "יוצר קישור חיצוני למבנה של זןפוטו. השתמשו בכתובת URL מלאה (כלומר: https://www.domain.com)."
 
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:147
 #: zenphoto-2010-12-28-trunk/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:247
@@ -13718,8 +13718,8 @@ msgid "View Slideshow"
 msgstr "צפו במצגת"
 
 #: zenphoto-2010-12-28-trunk/themes/effervescence_plus/album.php:357
-msgid "For the best viewing experience <a href=\"http://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
-msgstr "לחווית צפייה מלאה <a href=\"http://www.macromedia.com/go/getflashplayer/\">הורידו Adobe Flash.</a>"
+msgid "For the best viewing experience <a href=\"https://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
+msgstr "לחווית צפייה מלאה <a href=\"https://www.macromedia.com/go/getflashplayer/\">הורידו Adobe Flash.</a>"
 
 #: zenphoto-2010-12-28-trunk/themes/effervescence_plus/album.php:366
 msgid "View Gallery Without Flash"
@@ -13744,8 +13744,8 @@ msgid "Archive"
 msgstr "ארכיון"
 
 #: zenphoto-2010-12-28-trunk/themes/effervescence_plus/theme_description.php:7
-msgid "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
+msgid "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
 
 #: zenphoto-2010-12-28-trunk/themes/effervescence_plus/theme_description.php:10
 msgid "Based on Effervescence 1.1 with multiple personalities (slimbox, simpleviewer and smoothgallery) added. Select different color schemes and personalities from the Admin Options tab."
@@ -14286,8 +14286,8 @@ msgid "Comments:"
 msgstr "תגובות:"
 
 #: zenphoto-2010-12-28-trunk/themes/zenpage/footer.php:5
-msgid "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-msgstr "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
+msgid "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+msgstr "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: zenphoto-2010-12-28-trunk/themes/default/404.php:23
 #: zenphoto-2010-12-28-trunk/themes/default/contact.php:24
@@ -14296,8 +14296,8 @@ msgid "Gallery Index"
 msgstr "אינדקס גלרייה"
 
 #: zenphoto-2010-12-28-trunk/themes/default/theme_description.php:4
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: zenphoto-2010-12-28-trunk/themes/default/theme_description.php:7
 msgid "The default theme in 4 distinct flavors. After choosing this theme you can pick the theme color by going to the Admin Options tab and changing the <em>Theme colors</em> option."
@@ -14377,16 +14377,16 @@ msgid "Contact form"
 msgstr "טופס יצירת-קשר"
 
 #: zenphoto-2010-12-28-trunk/themes/stopdesign/contact.php:43
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
 
 #: zenphoto-2010-12-28-trunk/themes/stopdesign/theme_description.php:7
 msgid "Ported to Zenphoto by Mark Galeassi and Stephen Billard"
 msgstr "הותאם לזןפוטו על ידי  Mark Galeassi ו- Stephen Billard"
 
 #: zenphoto-2010-12-28-trunk/themes/stopdesign/theme_description.php:10
-msgid "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
-msgstr "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgid "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgstr "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
 
 #: zenphoto-2010-12-28-trunk/themes/stopdesign/image.php:76
 #, php-format
@@ -14398,8 +14398,8 @@ msgid "Full Size"
 msgstr "גודל מלא"
 
 #: zenphoto-2010-12-28-trunk/themes/stopdesign/image.php:164
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
 
 #: zenphoto-2010-12-28-trunk/themes/stopdesign/search.php:43
 #: zenphoto-2010-12-28-trunk/themes/stopdesign/search.php:44
@@ -14963,16 +14963,16 @@ msgstr "הסיסמא נחוצה"
 #~ msgstr "הזיני Captcha"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href="
-#~ "\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
+#~ "\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 #~ msgstr ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href="
-#~ "\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
+#~ "\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 
 #~ msgid "Clearing and refreshing cache for %s"

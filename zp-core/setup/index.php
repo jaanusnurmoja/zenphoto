@@ -648,7 +648,7 @@ if ($c <= 0) {
 								$register_globals = true;
 								$aux = '';
 							}
-							$good = setup::checkMark($register_globals, gettext('PHP <code>Register Globals</code>'), gettext('PHP <code>Register Globals</code> [is set]'), gettext('PHP Register globals presents a security risk to any PHP application. See <a href="http://php.net/manual/en/security.globals.php"><em>Using Register Globals</em></a>. Change your PHP.ini settings to <code>register_globals = off</code>.') . $aux) && $good;
+							$good = setup::checkMark($register_globals, gettext('PHP <code>Register Globals</code>'), gettext('PHP <code>Register Globals</code> [is set]'), gettext('PHP Register globals presents a security risk to any PHP application. See <a href="https://php.net/manual/en/security.globals.php"><em>Using Register Globals</em></a>. Change your PHP.ini settings to <code>register_globals = off</code>.') . $aux) && $good;
 
 							if (!extension_loaded('suhosin')) {
 								$blacklist = @ini_get("suhosin.executor.func.blacklist");
@@ -699,7 +699,7 @@ if ($c <= 0) {
 							setup::checkmark(class_exists('tidy') ? 1 : -1, gettext('PHP <code>tidy</code> support'), gettext('PHP <code>tidy</code> support [is not present]'), gettext('<code>tidy</code> support is not critical but strongely recommended for properly truncating text containing HTML markup.'));
 							
 							if ($_zp_setupCurrentLocale_result === false) {
-								setup::checkMark(-1, gettext('PHP <code>setlocale()</code>'), ' ' . gettext('PHP <code>setlocale()</code> failed'), gettext("Locale functionality is not implemented on your platform or the specified locale does not exist. Language translation may not work.") . '<br />' . gettext('See the <a  href="http://www.zenphoto.org/news/problems-with-languages">user guide</a> on zenphoto.org for details.'));
+								setup::checkMark(-1, gettext('PHP <code>setlocale()</code>'), ' ' . gettext('PHP <code>setlocale()</code> failed'), gettext("Locale functionality is not implemented on your platform or the specified locale does not exist. Language translation may not work.") . '<br />' . gettext('See the <a  href="https://www.zenphoto.org/news/problems-with-languages">user guide</a> on zenphoto.org for details.'));
 							}
 							setup::primeMark(gettext('mb_strings'));
 							if (function_exists('mb_internal_encoding')) {
@@ -1422,7 +1422,7 @@ if ($c <= 0) {
 															'</code><p class="buttons"><a href="?delete_extra' . ($_zp_setup_debug ? '&amp;debug' : '') . '">' . gettext("Delete extra files") . '</a></p><br class="clearall" /><br class="clearall" />');
 										}
 									}
-									setup::checkMark($permissions, gettext("Zenphoto core file permissions"), gettext("Zenphoto core file permissions [not correct]"), gettext('Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href="http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders">Troubleshooting guide</a> for details on Zenphoto permissions requirements.'));
+									setup::checkMark($permissions, gettext("Zenphoto core file permissions"), gettext("Zenphoto core file permissions [not correct]"), gettext('Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href="https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders">Troubleshooting guide</a> for details on Zenphoto permissions requirements.'));
 								}
 							}
 							$msg = gettext("<em>.htaccess</em> file");
@@ -1446,7 +1446,7 @@ if ($c <= 0) {
 								} else if (setup::getServerSoftware() == 'nginx') {
 									$err = gettext("Server seems to be <em>nginx</em>");
 									$mod = "&amp;mod_rewrite"; //	enable test to see if it works.
-									$desc = gettext('If you wish to create cruft-free URLs, you will need to configuring <a href="http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial"><em>URL rewriting for NGINX servers</em></a>.') . ' ' .
+									$desc = gettext('If you wish to create cruft-free URLs, you will need to configuring <a href="https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial"><em>URL rewriting for NGINX servers</em></a>.') . ' ' .
 													'<br /><br />' . gettext('You can ignore this warning if you do not intend to set the <code>mod_rewrite</code> option.');
 								} else {
 									$mod = "&amp;mod_rewrite"; //	enable test to see if it works.

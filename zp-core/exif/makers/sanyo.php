@@ -4,7 +4,7 @@
  * Extracts EXIF information from digital photos.
  *
  * Copyright © 2003 Jake Olefsky
- * http://www.offsky.com/software/exif/index.php
+ * https://www.offsky.com/software/exif/index.php
  * jake@olefsky.com
  *
  * Please see exif.php for the complete information about this software.
@@ -15,7 +15,7 @@
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. http://www.gnu.org/copyleft/gpl.html
+ * See the GNU General Public License for more details. https://www.gnu.org/copyleft/gpl.html
  */
 
 /**

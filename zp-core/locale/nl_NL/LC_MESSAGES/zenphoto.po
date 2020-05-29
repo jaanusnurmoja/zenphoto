@@ -197,11 +197,11 @@ msgstr "Sorry, geen foto’s gevonden. Probeer de zoekopdracht te herformuleren.
 
 #: themes/basic/theme_description.php:5
 msgid ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
-"<a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
+"<a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 msgstr ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> en <a "
-"href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> en <a "
+"href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: themes/basic/theme_description.php:8
 msgid ""
@@ -532,10 +532,10 @@ msgstr "Pagina’s"
 
 #: themes/garland/theme_description.php:10
 msgid ""
-"Modded Wordpress theme from, <a href=\"http://garlandtheme.blogspot.com/"
+"Modded Wordpress theme from, <a href=\"https://garlandtheme.blogspot.com/"
 "\">garland</a>"
 msgstr ""
-"Aangepast WordPress thema van <a href=\"http://garlandtheme.blogspot.com/"
+"Aangepast WordPress thema van <a href=\"https://garlandtheme.blogspot.com/"
 "\">garland</a>."
 
 #: themes/garland/themeoptions.php:49 themes/zenpage/themeoptions.php:52
@@ -713,9 +713,9 @@ msgstr "Archief"
 
 #: themes/zenpage/footer.php:5
 msgid ""
-"Zenpage theme designed by <a href=\"http://www.maltem.de\">Malte Müller</a>"
+"Zenpage theme designed by <a href=\"https://www.maltem.de\">Malte Müller</a>"
 msgstr ""
-"Zenpage thema ontworpen door <a href=\"http://www.maltem.de\">Malte Müller</"
+"Zenpage thema ontworpen door <a href=\"https://www.maltem.de\">Malte Müller</"
 "a>"
 
 #: themes/zenpage/gallery.php:70 themes/zenpage/news.php:57
@@ -960,11 +960,11 @@ msgstr "Malte Müller (acrylian)"
 
 #: themes/zpmobile/theme_description.php:10
 msgid ""
-"A theme primarily meant for mobile/smartphone browsing using <a href='http://"
+"A theme primarily meant for mobile/smartphone browsing using <a href='https://"
 "jQuerymobile.com'>jQuerymobile framework</a>."
 msgstr ""
 "Een thema, in eerste instantie bedoeld voor smartphones en tablets. "
-"Ontwikkeld met <a href='http://jQuerymobile.com'>jQuerymobile framework</a>."
+"Ontwikkeld met <a href='https://jQuerymobile.com'>jQuerymobile framework</a>."
 
 #: themes/zpmobile/themeoptions.php:44
 msgid "Allow direct link from multimedia"
@@ -1758,10 +1758,10 @@ msgstr "Boven"
 #: zp-core/admin-functions.php:30
 #, php-format
 msgid ""
-"<a href=\"http://www.zenphoto.org\" title=\"The simpler media website CMS"
+"<a href=\"https://www.zenphoto.org\" title=\"The simpler media website CMS"
 "\">Zen<strong>photo</strong></a> version %1$s"
 msgstr ""
-"<a href=\"http://www.zenphoto.org\" title=\"The simpler media website CMS"
+"<a href=\"https://www.zenphoto.org\" title=\"The simpler media website CMS"
 "\">Zen<strong>photo</strong></a> versie %1$s"
 
 #: zp-core/admin-functions.php:35
@@ -3455,12 +3455,12 @@ msgstr "Februari 25, 2008"
 #: zp-core/admin-options.php:890
 msgid ""
 "Format for dates. Select from the list or set to <code>custom</code> and "
-"provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php"
+"provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php"
 "\"><span class=\"nowrap\"><code>strftime()</code></span></a> format string "
 "in the text box."
 msgstr ""
 "Weegave van de datum. Selecteer uit de lijst of kies voor <code>Custom</"
-"code> en voer een <a href=\"http://us2.php.net/manual/en/function.strftime."
+"code> en voer een <a href=\"https://us2.php.net/manual/en/function.strftime."
 "php\"><span class=\"nowrap\"><code>strftime()</code></span></a> formaat in, "
 "in het tekstveld."
 
@@ -3559,11 +3559,11 @@ msgstr ""
 
 #: zp-core/admin-options.php:1028
 msgid ""
-"If this option is selected Zenphoto will use <a href=\"http://www.w3schools."
+"If this option is selected Zenphoto will use <a href=\"https://www.w3schools."
 "com/php/php_sessions.asp\">PHP sessions</a> instead of cookies to make "
 "visitor settings persistent."
 msgstr ""
-"Als deze optie is geactiveerd zal Zenphoto <a href=\"http://www.w3schools."
+"Als deze optie is geactiveerd zal Zenphoto <a href=\"https://www.w3schools."
 "com/php/php_sessions.asp\">PHP sessies</a> gebruiken in plaats van cookies "
 "om gebruikers-instellingen te behouden."
 
@@ -5576,10 +5576,10 @@ msgstr ""
 
 #: zp-core/admin-themes.php:179
 msgid ""
-"You can download more themes from the <a href=\"http://www.zenphoto.org/"
+"You can download more themes from the <a href=\"https://www.zenphoto.org/"
 "theme/\">zenphoto themes page</a>."
 msgstr ""
-"Je kunt meer thema’s downloaden van de <a href=\"http://www.zenphoto.org/zp/"
+"Je kunt meer thema’s downloaden van de <a href=\"https://www.zenphoto.org/zp/"
 "theme/\"> Zenphoto thema pagina</a>."
 
 #: zp-core/admin-themes.php:180
@@ -8365,10 +8365,10 @@ msgstr "Afbeelding %s kan niet geroteerd worden."
 #, php-format
 msgid ""
 "Unknown error processing %s! Please report to the developers at <a href="
-"\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+"\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 msgstr ""
 "Onbekende fout bij het verwerken van %s! Rapporteer a.u.b aan de "
-"ontwikkelaars op <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+"ontwikkelaars op <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 
 #: zp-core/functions-image.php:400 zp-core/functions-image.php:439
 #, php-format
@@ -9885,13 +9885,13 @@ msgstr "<em>%1$s</em> map%2$s [toekennen rechten mislukt]"
 msgid ""
 "Setup could not change the file permissions from <em>%1$s</em> (<code>0%2$o</"
 "code>) to <em>%3$s</em> (<code>0%4$o</code>). You will have to set the "
-"permissions manually. See the <a href=\"http://www.zenphoto.org/news/"
+"permissions manually. See the <a href=\"https://www.zenphoto.org/news/"
 "troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on "
 "Zenphoto permissions requirements."
 msgstr ""
 "Setup kan de bestandsrechten niet veranderenvan <em>%1$s</em> (<code>0%2$o</"
 "code>) naar <em>%3$s</em> (<code>0%4$o</code>). Je zult de rechten handmatig "
-"moeten instellen. Zie de <a href=\"http://www.zenphoto.org/news/"
+"moeten instellen. Zie de <a href=\"https://www.zenphoto.org/news/"
 "troubleshooting-zenphoto#29\">Troubleshooting guide</a> voor uitleg over "
 "Zenphoto-rechten."
 
@@ -9955,10 +9955,10 @@ msgstr "%1$s (0%2$o)"
 
 #: zp-core/setup/class-setup.php:467
 msgid ""
-"See the <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"See the <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
 msgstr ""
-"Raadpleeg de <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"Raadpleeg de <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#24\">Troubleshooting guide</a> op zenphoto.org voor details."
 
 #: zp-core/setup/class-setup.php:521
@@ -10218,12 +10218,12 @@ msgstr "PHP <code>Register Globals</code> is [ingesteld]"
 #: zp-core/setup/index.php:651
 msgid ""
 "PHP Register globals presents a security risk to any PHP application. See <a "
-"href=\"http://php.net/manual/en/security.globals.php\"><em>Using Register "
+"href=\"https://php.net/manual/en/security.globals.php\"><em>Using Register "
 "Globals</em></a>. Change your PHP.ini settings to <code>register_globals = "
 "off</code>."
 msgstr ""
 "PHP Register globals veroorzaakt een beveiligingsrisico voor elke PHP "
-"applicatie. Zie <a href=\"http://php.net/manual/en/security.globals.php"
+"applicatie. Zie <a href=\"https://php.net/manual/en/security.globals.php"
 "\"><em>Using Register Globals</em></a>. Verander de php.ini instelling in "
 "<code>register_globals = off</code>."
 
@@ -10339,10 +10339,10 @@ msgstr ""
 
 #: zp-core/setup/index.php:702
 msgid ""
-"See the <a  href=\"http://www.zenphoto.org/news/problems-with-languages"
+"See the <a  href=\"https://www.zenphoto.org/news/problems-with-languages"
 "\">user guide</a> on zenphoto.org for details."
 msgstr ""
-"Raadpleeg de <a href=\"http://www.zenphoto.org/news/problems-with-languages"
+"Raadpleeg de <a href=\"https://www.zenphoto.org/news/problems-with-languages"
 "\">user guide</a> op zenphoto.org voor details."
 
 #: zp-core/setup/index.php:704
@@ -11010,13 +11010,13 @@ msgstr "Zenphotorechten voor <em>zp-core</em> bestanden [niet correct]"
 msgid ""
 "Setup could not set the one or more components to the selected permissions "
 "level. You will have to set the permissions manually. See the <a href="
-"\"http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
+"\"https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
 "\">Troubleshooting guide</a> for details on Zenphoto permissions "
 "requirements."
 msgstr ""
 "Setup kan de geselecteerde rechten niet toekennen aan één of meer "
 "onderdelen. Je zult de rechten handmatig moeten instellen. Zie de <a href="
-"\"http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
+"\"https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
 "\">Troubleshooting guide</a> voor uitleg over Zenphoto-rechten."
 
 #: zp-core/setup/index.php:1428
@@ -11058,10 +11058,10 @@ msgstr "De server lijkt van het type <em>nginx</em>"
 #: zp-core/setup/index.php:1449
 msgid ""
 "If you wish to create cruft-free URLs, you will need to configuring <a href="
-"\"http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL "
+"\"https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL "
 "rewriting for NGINX servers</em></a>."
 msgstr ""
-"Als je nette URL’s wilt zul je de <a href=\"http://www.zenphoto.org/news/"
+"Als je nette URL’s wilt zul je de <a href=\"https://www.zenphoto.org/news/"
 "nginx-rewrite-rules-tutorial\"><em>URL rewrite voor NGINX servers moeten "
 "configureren</em></a>. "
 
@@ -11797,10 +11797,10 @@ msgstr "login"
 
 #: zp-core/template-functions.php:4458
 msgid ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"The simpler media "
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"The simpler media "
 "website CMS\">Zenphoto</a>"
 msgstr ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"The simpler media "
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"The simpler media "
 "website CMS\">Zenphoto</a>"
 
 #: zp-core/template-functions.php:4623
@@ -12730,11 +12730,11 @@ msgstr ""
 #: zp-core/zp-extensions/GoogleMap/Map.php:105
 msgid ""
 "For information on URL limits visit <a href=\"javascript:parent.window."
-"location='http://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
+"location='https://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
 "maximum length of a URL</a>."
 msgstr ""
 "Ga voor informatie over URL karakterbeperkingen naar <a href=\"javascript:"
-"parent.window.location='http://www.boutell.com/newfaq/misc/urllength.html';"
+"parent.window.location='https://www.boutell.com/newfaq/misc/urllength.html';"
 "\">What is the maximum length of a URL</a>."
 
 #: zp-core/zp-extensions/GoogleMap/Map.php:108
@@ -12907,11 +12907,11 @@ msgstr "Laatste automatische backup is gemaakt op %s."
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:15
 msgid ""
-"Responsive jQuery bxSlider thumb nav plugin based on <a href='http://"
-"bxslider.com'>http://bxslider.com</a>"
+"Responsive jQuery bxSlider thumb nav plugin based on <a href='https://"
+"bxslider.com'>https://bxslider.com</a>"
 msgstr ""
-"Responsive jQuery bxSlider thumb nav plugin gebaseerd op <a href='http://"
-"bxslider.com'>http://bxslider.com</a>"
+"Responsive jQuery bxSlider thumb nav plugin gebaseerd op <a href='https://"
+"bxslider.com'>https://bxslider.com</a>"
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:17
 #, php-format
@@ -16624,11 +16624,11 @@ msgstr ""
 
 #: zp-core/zp-extensions/http_security_headers.php:431
 msgid ""
-"Define one or more domains, e.g. http://yourdomain1.com http://yourdomain2."
+"Define one or more domains, e.g. https://yourdomain1.com https://yourdomain2."
 "com, to allow content from"
 msgstr ""
-"Vul één of meer domeinen in waarvan inhoud toegestaan wordt (v.b. http://"
-"yourdomain1.com http://yourdomain2.com)."
+"Vul één of meer domeinen in waarvan inhoud toegestaan wordt (v.b. https://"
+"yourdomain1.com https://yourdomain2.com)."
 
 #: zp-core/zp-extensions/image_album_statistics.php:14
 msgid ""
@@ -16746,10 +16746,10 @@ msgstr ""
 
 #: zp-core/zp-extensions/jplayer.php:72
 msgid ""
-"Please see <a href='http://jplayer.org'>jplayer.org</a> for more info about "
+"Please see <a href='https://jplayer.org'>jplayer.org</a> for more info about "
 "the player and its license."
 msgstr ""
-"Zie <a href='http://jplayer.org'>jplayer.org</a> voor meer info over de "
+"Zie <a href='https://jplayer.org'>jplayer.org</a> voor meer info over de "
 "player en de licentie. "
 
 #: zp-core/zp-extensions/jplayer.php:74
@@ -16965,11 +16965,11 @@ msgstr "Update vereist"
 #: zp-core/zp-extensions/jplayer.php:512
 msgid ""
 "To play the media you will need to either update your browser to a recent "
-"version or update your <a href=\"http://get.adobe.com/flashplayer/\" target="
+"version or update your <a href=\"https://get.adobe.com/flashplayer/\" target="
 "\"_blank\">Flash plugin</a>."
 msgstr ""
 "Om dit media-bestand af te spelen moet je óf je browser óf je <a href="
-"\"http://get.adobe.com/flashplayer/\" target=\"_blank\">Flash plugin</a> "
+"\"https://get.adobe.com/flashplayer/\" target=\"_blank\">Flash plugin</a> "
 "updaten."
 
 #: zp-core/zp-extensions/macroList.php:67
@@ -17789,10 +17789,10 @@ msgstr "Aangepaste link"
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:149
 msgid ""
 "Creates a link outside the Zenphoto structure. Use of a full URL is "
-"recommended (e.g. http://www.domain.com)."
+"recommended (e.g. https://www.domain.com)."
 msgstr ""
 "Maakt een link buiten de Zenphoto structuur. Gebruik van de volledige URL (b."
-"v. http://www.domain.com) wordt aanbevolen."
+"v. https://www.domain.com) wordt aanbevolen."
 
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:156
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:270
@@ -17883,10 +17883,10 @@ msgstr "RSS feeds om samen te voegen"
 #: zp-core/zp-extensions/mergedRSS.php:67
 msgid ""
 "Enter the full urls of the feeds to merge separated by semicolons (e.g. "
-"\"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
+"\"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
 msgstr ""
 "Vul de volledige URL’s van de feed in , gescheiden door een punt-komma, om "
-"samen te voegen. (b.v. “http://www.domein1.com/rss; http://www.domein2.com/"
+"samen te voegen. (b.v. “https://www.domein1.com/rss; https://www.domein2.com/"
 "rss”)"
 
 #: zp-core/zp-extensions/mergedRSS.php:68
@@ -18478,12 +18478,12 @@ msgstr ""
 #: zp-core/zp-extensions/publishContent/publishContent.php:226
 msgid ""
 "The number of un-published items does <strong>not</strong> include items "
-"that are un-published by <a href=\"http://www.zenphoto.org/news/an-overview-"
+"that are un-published by <a href=\"https://www.zenphoto.org/news/an-overview-"
 "of-zenphoto-users#rules-of-protection-andvisibility-for-zenphoto-obj"
 "\">inheritance</a>."
 msgstr ""
 "Het aantal niet-gepubliceerde items is <strong>exclusief</strong> niet-"
-"gepubliceerde items door <a href=“http://www.zenphoto.org/news/an-overview-"
+"gepubliceerde items door <a href=“https://www.zenphoto.org/news/an-overview-"
 "of-zenphoto-users#rules-of-protection-andvisibility-for-zenphoto-"
 "obj”>overerving</a>."
 
@@ -18944,10 +18944,10 @@ msgstr "Public key"
 #: zp-core/zp-extensions/reCaptcha.php:50
 msgid ""
 "Enter your <em>reCaptcha v2</em> public key. You can obtain this key from "
-"the Google <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site"
+"the Google <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site"
 msgstr ""
 "Vul je <em>reCaptcha v2 public key</em> in. Je kunt deze krijgen via de "
-"Google <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site."
+"Google <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site."
 
 #: zp-core/zp-extensions/reCaptcha.php:51
 msgid "Private key"
@@ -20184,10 +20184,10 @@ msgstr "Patronen waarop af te wijzen"
 
 #: zp-core/zp-extensions/simpleSpam.php:62
 msgid ""
-"SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression"
+"SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression"
 "\">regular expressions</a> (separate with spaces)"
 msgstr ""
-"SPAM blacklist <a href=\"http://nl.wikipedia.org/wiki/Reguliere_expressie"
+"SPAM blacklist <a href=\"https://nl.wikipedia.org/wiki/Reguliere_expressie"
 "\">reguliere expressies</a> (gescheiden door spaties)"
 
 #: zp-core/zp-extensions/simpleSpam.php:63
@@ -20522,11 +20522,11 @@ msgstr "Google - URL naar de afbeeldings-licentie"
 #: zp-core/zp-extensions/sitemap-extended.php:196
 msgid ""
 "Optional. Used only if the Google extension is checked. Must be an absolute "
-"URL address of the form: http://mydomain.com/license.html"
+"URL address of the form: https://mydomain.com/license.html"
 msgstr ""
 "Optioneel. Wordt alleen gebruikt als de <em>Activeer Google afbeeldings- en "
 "video-extensies</em> is aangevinkt. Dit moet een absolute URL zijn in deze "
-"vorm: <em> http://mydomain.com/license.html</em>"
+"vorm: <em> https://mydomain.com/license.html</em>"
 
 #: zp-core/zp-extensions/sitemap-extended.php:197
 msgid "Sitemap processing chunk"
@@ -23353,13 +23353,13 @@ msgstr ""
 
 #~ msgid ""
 #~ "We strongly recommend disabling <code>magic_quotes_gpc</code>. For more "
-#~ "information See <em><a href=\"http://www.zenphoto.org/news/installation-"
+#~ "information See <em><a href=\"https://www.zenphoto.org/news/installation-"
 #~ "problems#about-magicquotes-and-why-they-should-be-disabled\">What is "
 #~ "magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto "
 #~ "troubleshooting guide."
 #~ msgstr ""
 #~ "We raden je zeer sterk aan om <code>magic_quotes_gpc</code> uit te "
-#~ "zetten. Voor meer informatie zie <em><a href=\"http://www.zenphoto.org/"
+#~ "zetten. Voor meer informatie zie <em><a href=\"https://www.zenphoto.org/"
 #~ "news/installation-problems#about-magicquotes-and-why-they-should-be-"
 #~ "disabled\"> Wat is magic_quotes_gpc en waarom zou ik het niet moeten "
 #~ "gebruiken?</a></em> in de Zenphoto troubleshooting guide."
@@ -23686,10 +23686,10 @@ msgstr ""
 #~ msgstr "Hoofdindex"
 
 #~ msgid ""
-#~ "<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> with "
+#~ "<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> with "
 #~ "modifications by Stephen Billard (sbillard)"
 #~ msgstr ""
-#~ "<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> met "
+#~ "<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> met "
 #~ "aanpassingen door Stephen Billard (sbillard)"
 
 #~ msgid ""
@@ -23989,13 +23989,13 @@ msgstr ""
 #~ msgid ""
 #~ "<strong>Note:</strong> Although this plugin supports <em>Effenberger "
 #~ "effects</em>, due to licensing considerations no <em>Effenberger effects</"
-#~ "em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/"
+#~ "em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/"
 #~ "\">CVI Astonishing Image Effects</a> by Christian Effenberger to select "
 #~ "and download effects."
 #~ msgstr ""
 #~ "<strong>Opmerking:</strong> Hoewel deze plugin <em>Effenberger effects</"
 #~ "em> ondersteunt, zijn wegens licentie-overwegingen geen <em>Effenberger "
-#~ "effects</em> scripts bijgevoegd. Ga naar <a href=\"http://www.netzgesta."
+#~ "effects</em> scripts bijgevoegd. Ga naar <a href=\"https://www.netzgesta."
 #~ "de/cvi/\">CVI Astonishing Image Effects</a> door Christian Effenberger om "
 #~ "effecten te downloaden."
 
@@ -24258,9 +24258,9 @@ msgstr ""
 #~ "<em>access token secret</em> nodig."
 
 #~ msgid ""
-#~ "Get these from <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
+#~ "Get these from <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
 #~ msgstr ""
-#~ "Haal deze op bij <a href=\"http://dev.twitter.com/\">Twitter developers</"
+#~ "Haal deze op bij <a href=\"https://dev.twitter.com/\">Twitter developers</"
 #~ "a>"
 
 #~ msgid "Secret"
@@ -24986,11 +24986,11 @@ msgstr ""
 
 #~ msgid ""
 #~ "CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a "
-#~ "href=\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 "
+#~ "href=\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 "
 #~ "release notes</a>."
 #~ msgstr ""
 #~ "CombiNews is verouderd. Verwijder de “$option” parameter. Zie de <a href="
-#~ "\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release "
+#~ "\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release "
 #~ "notes</a>."
 
 #~ msgid "Use the getLink method instead"
@@ -25182,10 +25182,10 @@ msgstr ""
 #~ "$categorylink)</code>."
 
 #~ msgid ""
-#~ "CombiNews is deprecated. See the <a href=\"http://www.zenphoto.org/news/"
+#~ "CombiNews is deprecated. See the <a href=\"https://www.zenphoto.org/news/"
 #~ "zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 #~ msgstr ""
-#~ "CombiNews is verouderd. Zie de <a href=\"http://www.zenphoto.org/news/"
+#~ "CombiNews is verouderd. Zie de <a href=\"https://www.zenphoto.org/news/"
 #~ "zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 
 #~ msgid "Create an object and use the object getLink"
@@ -25214,11 +25214,11 @@ msgstr ""
 #~ msgstr "Anoniem IP-adres"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album"
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></"
 #~ "a>"
 #~ msgstr ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album"
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></"
 #~ "a>"
 
@@ -26106,10 +26106,10 @@ msgstr ""
 #~ msgstr "contactformulier"
 
 #~ msgid ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> "
 #~ "from Stopdesign"
 #~ msgstr ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Foto Templates</a> "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Foto Templates</a> "
 #~ "van  Stopdesign"
 
 #~ msgid "All galleries"
@@ -26141,10 +26141,10 @@ msgstr ""
 #~ msgstr "Volledige grootte"
 
 #~ msgid ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> "
 #~ "from Stopdesign."
 #~ msgstr ""
-#~ "<a href=\"http://stopdesign.com/templates/photos/\">Foto Templates</a> "
+#~ "<a href=\"https://stopdesign.com/templates/photos/\">Foto Templates</a> "
 #~ "van Stopdesign."
 
 #~ msgid "Recently Updated Galleries"
@@ -26178,14 +26178,14 @@ msgstr ""
 #~ msgstr "Gepoort naar Zenphoto door Mark Galeassi en Stephen Billard"
 
 #~ msgid ""
-#~ "A theme based on the design from <a href=\"http://stopdesign.com/"
+#~ "A theme based on the design from <a href=\"https://stopdesign.com/"
 #~ "templates/photos/\">Douglas Bowman</a>. This theme is licensed under the "
-#~ "<a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative "
+#~ "<a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative "
 #~ "Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
 #~ msgstr ""
-#~ "Een thema gebaseerd op het design van <a href=\"http://stopdesign.com/"
+#~ "Een thema gebaseerd op het design van <a href=\"https://stopdesign.com/"
 #~ "templates/photos/\">Douglas Bowman</a>. Dit thema is gelicenseerd onder "
-#~ "de <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative "
+#~ "de <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative "
 #~ "Commons Attribution-NonCommercial-ShareAlike 2.5</a> licentie."
 
 #~ msgid ""
@@ -26542,10 +26542,10 @@ msgstr ""
 #~ "kunnen gebruiken."
 
 #~ msgid ""
-#~ "Please see <a href='http://http://mediaelementjs.com'>mediaelementjs.com</"
+#~ "Please see <a href='https://https://mediaelementjs.com'>mediaelementjs.com</"
 #~ "a> for more info about the player and its license."
 #~ msgstr ""
-#~ "Zie <a href='http://http://mediaelementjs.com'>mediaelementjs.com</a> "
+#~ "Zie <a href='https://https://mediaelementjs.com'>mediaelementjs.com</a> "
 #~ "voor meer info over de player en de licentie. "
 
 #~ msgid "mediaelement.js not enabled, %s is already instantiated."
@@ -26685,10 +26685,10 @@ msgstr ""
 #~ "(op één pagina) met Flowplayer 3 te laten zien. "
 
 #~ msgid ""
-#~ "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more "
+#~ "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more "
 #~ "info about the player and its license."
 #~ msgstr ""
-#~ "Zie <a href='http://flowplayer.org'>flowplayer.org</a> voor meer info "
+#~ "Zie <a href='https://flowplayer.org'>flowplayer.org</a> voor meer info "
 #~ "over de player en de licentie. "
 
 #~ msgid "Flash players do not support <em>External Albums</em>."
@@ -27102,10 +27102,10 @@ msgstr ""
 #~ msgstr "Gallery"
 
 #~ msgid ""
-#~ "For the best viewing experience <a href=\"http://%s\"> Get Adobe Flash.</"
+#~ "For the best viewing experience <a href=\"https://%s\"> Get Adobe Flash.</"
 #~ "a>"
 #~ msgstr ""
-#~ "<a href=\"http://%s\"> Installeer Adobe Flash</a> voor een optimale "
+#~ "<a href=\"https://%s\"> Installeer Adobe Flash</a> voor een optimale "
 #~ "weergave."
 
 #~ msgid "View Gallery Without Flash"
@@ -27292,9 +27292,9 @@ msgstr ""
 #~ msgstr "Je gebruikt de laatste versie van Zenphoto."
 
 #~ msgid ""
-#~ "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+#~ "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 #~ msgstr ""
-#~ "Kon geen verbinding maken met <a href=\"http://www.zenphoto.org"
+#~ "Kon geen verbinding maken met <a href=\"https://www.zenphoto.org"
 #~ "\">zenphoto.org</a>"
 
 #~ msgid "zenphoto version %s is available."

@@ -8,7 +8,7 @@
  * https://blueimp.net
  *
  * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
+ * https://creativecommons.org/licenses/MIT/
  */
 
 define('OFFSET_PATH', 3);

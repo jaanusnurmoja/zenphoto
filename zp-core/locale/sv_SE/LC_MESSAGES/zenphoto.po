@@ -250,8 +250,8 @@ msgid "Select the colors of the theme"
 msgstr "Välj färger för temat"
 
 #: zenphoto/themes/default/theme_description.php:4
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> och <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> och <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: zenphoto/themes/default/theme_description.php:7
 msgid "The default theme in 4 distinct flavors. After choosing this theme you can pick the theme color by going to the Admin Options tab and changing the <em>Theme colors</em> option."
@@ -286,8 +286,8 @@ msgid "Google Map"
 msgstr "Google karta"
 
 #: zenphoto/themes/effervescence_plus/album.php:316
-msgid "For the best viewing experience <a href=\"http://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
-msgstr "För bästa visuella upplevelse <a href=\"http://www.macromedia.com/go/getflashplayer/\">Hämta Adobe Flash.</a>"
+msgid "For the best viewing experience <a href=\"https://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
+msgstr "För bästa visuella upplevelse <a href=\"https://www.macromedia.com/go/getflashplayer/\">Hämta Adobe Flash.</a>"
 
 #: zenphoto/themes/effervescence_plus/album.php:325
 msgid "View Gallery Without Flash"
@@ -713,8 +713,8 @@ msgid "*no logo selected"
 msgstr "*ingen logo vald"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:4
-msgid "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> med ändringar av <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
+msgid "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> med ändringar av <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:7
 msgid "Based on Effervescence 1.1 with multiple personalities (slimbox, simpleviewer and smoothgallery) added. Select different color schemes and personalities from the Admin Options tab."
@@ -888,8 +888,8 @@ msgstr "Kontaktformulär"
 
 #: zenphoto/themes/stopdesign/contact.php:39
 #: zenphoto/themes/stopdesign/gallery.php:116
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Teman</a> från Stopdesign"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Teman</a> från Stopdesign"
 
 #: zenphoto/themes/stopdesign/gallery.php:28
 msgid "All galleries"
@@ -959,8 +959,8 @@ msgstr "Nästa"
 
 #: zenphoto/themes/stopdesign/image.php:161
 #: zenphoto/themes/stopdesign/index.php:199
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Teman</a> av Stopdesign."
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Teman</a> av Stopdesign."
 
 #: zenphoto/themes/stopdesign/index.php:28
 msgid "Recently Updated Galleries"
@@ -1045,8 +1045,8 @@ msgid "Ported to Zenphoto by Mark Galeassi and Stephen Billard"
 msgstr "Anpassat till Zenphoto av Mark Galeassi och Stephen Billard"
 
 #: zenphoto/themes/stopdesign/theme_description.php:7
-msgid "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
-msgstr "Ett tema baserat på design från <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. Detta tema licensierat under <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>-Licens."
+msgid "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgstr "Ett tema baserat på design från <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. Detta tema licensierat under <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>-Licens."
 
 #: zenphoto/themes/zenpage/404.php:32
 msgid "Album"
@@ -1076,12 +1076,12 @@ msgid "Search gallery"
 msgstr "Sök galleriet"
 
 #: zenphoto/themes/zenpage/footer.php:1
-msgid "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-msgstr "Zenpage tema av<a href=\"http://www.maltem.de\">Malte Müller</a>"
+msgid "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+msgstr "Zenpage tema av<a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: zenphoto/themes/zenpage/footer.php:1
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
-msgstr "Skapat med <a href=\"http://www.zenphoto.org\" title=\"Ett enklare webb-album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">photo</span></a>"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgstr "Skapat med <a href=\"https://www.zenphoto.org\" title=\"Ett enklare webb-album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">photo</span></a>"
 
 #: zenphoto/themes/zenpage/gallery.php:58
 #: zenphoto/themes/zenpage/news.php:42
@@ -1939,8 +1939,8 @@ msgstr "Det finns inga album du kan redigera."
 
 #: zenphoto/zp-core/admin-functions.php:30
 #, php-format
-msgid "<a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-msgstr "<a href=\"http://www.zenphoto.org\" title=\"Ett enklare webbalbum\">zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgid "<a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgstr "<a href=\"https://www.zenphoto.org\" title=\"Ett enklare webbalbum\">zen<strong>photo</strong></a> version %1$s [%2$s]"
 
 #: zenphoto/zp-core/admin-functions.php:35
 msgid "User guide"
@@ -2767,8 +2767,8 @@ msgid "February 25, 2008"
 msgstr "Februari 25, 2008"
 
 #: zenphoto/zp-core/admin-options.php:635
-msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> format string in the text box."
-msgstr "Format för datum. Välj från listan eller sätt till <code>anpassad</code> och skriv in <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> formaterad sträng i rutan."
+msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> format string in the text box."
+msgstr "Format för datum. Välj från listan eller sätt till <code>anpassad</code> och skriv in <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><span style=\"white-space:nowrap\"><code>strftime()</code></span></a> formaterad sträng i rutan."
 
 #: zenphoto/zp-core/admin-options.php:638
 msgid "Charset:"
@@ -3929,8 +3929,8 @@ msgid "Themes allow you to visually change the entire look and feel of your gall
 msgstr "Teman möjliggör att visuellt ändra utseendet och känslan av ditt galleri. Temafiler finns i din Zenphoto <code>/themes</code>-mapp."
 
 #: zenphoto/zp-core/admin-themes.php:179
-msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
-msgstr "Du kan ladda ner fler teman från <a href=\"http://www.zenphoto.org/zp/theme/\">Zenphoto temasidor</a>."
+msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+msgstr "Du kan ladda ner fler teman från <a href=\"https://www.zenphoto.org/zp/theme/\">Zenphoto temasidor</a>."
 
 #: zenphoto/zp-core/admin-themes.php:180
 msgid "Place the downloaded themes in the <code>/themes</code> folder and they will be available for your use."
@@ -4330,8 +4330,8 @@ msgid "You are running the latest zenphoto version."
 msgstr "Du har den senaste ZenPhoto versionen."
 
 #: zenphoto/zp-core/admin.php:93
-msgid "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-msgstr "Kunde inte ansluta till <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+msgid "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+msgstr "Kunde inte ansluta till <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: zenphoto/zp-core/admin.php:95
 #, php-format
@@ -5320,8 +5320,8 @@ msgid "Image not found or is unreadable."
 msgstr "Bild hittades inte eller går ej att läsa."
 
 #: zenphoto/zp-core/functions-image.php:192
-msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-msgstr "Okänt fel! Rapportera till utvecklarna på <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgstr "Okänt fel! Rapportera till utvecklarna på <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: zenphoto/zp-core/functions-rss.php:67
 msgid "Latest Albums"
@@ -9416,8 +9416,8 @@ msgid "When set, all characters are converted to lower case."
 msgstr "Om markerad, konverteras alla tecken till gemener (Små boklstäver)."
 
 #: zenphoto/zp-core/zp-extensions/flowplayer3.php:13
-msgid "Enable <strong>flowplayer 3</strong> to handle multimedia files. IMPORTANT: Only one multimedia player plugin can be enabled at the time and the class-video plugin must be enabled, too. <br /> Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
-msgstr "Tillåt <strong>flowplayer 3</strong> att hantera multimediafiler. VIKTIGT: Endast en multimediaspelare kan vara aktiverad åt gången samt att class-video insticksmodulen måste vara aktiverad. <br /> Se <a href='http://flowplayer.org'>flowplayer.org</a> för mer information om spelaren och dess licens."
+msgid "Enable <strong>flowplayer 3</strong> to handle multimedia files. IMPORTANT: Only one multimedia player plugin can be enabled at the time and the class-video plugin must be enabled, too. <br /> Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
+msgstr "Tillåt <strong>flowplayer 3</strong> att hantera multimediafiler. VIKTIGT: Endast en multimediaspelare kan vara aktiverad åt gången samt att class-video insticksmodulen måste vara aktiverad. <br /> Se <a href='https://flowplayer.org'>flowplayer.org</a> för mer information om spelaren och dess licens."
 
 #: zenphoto/zp-core/zp-extensions/flowplayer3.php:17
 #: zenphoto/zp-core/zp-extensions/flowplayer3_playlist.php:21
@@ -9728,8 +9728,8 @@ msgid "Google Maps API key"
 msgstr "Google-Maps-API-nyckel"
 
 #: zenphoto/zp-core/zp-extensions/google_maps.php:67
-msgid "If you are going to be using Google Maps, <a href=\"http://www.google.com/apis/maps/signup.html\" target=\"_blank\">get an API key</a> and enter it here."
-msgstr "Om du ska använda Google Maps, <a href=\"http://www.google.com/apis/maps/signup.html\" target=\"_blank\">hämta en API-nyckel</a> och skriv in den här."
+msgid "If you are going to be using Google Maps, <a href=\"https://www.google.com/apis/maps/signup.html\" target=\"_blank\">get an API key</a> and enter it here."
+msgstr "Om du ska använda Google Maps, <a href=\"https://www.google.com/apis/maps/signup.html\" target=\"_blank\">hämta en API-nyckel</a> och skriv in den här."
 
 #: zenphoto/zp-core/zp-extensions/google_maps.php:68
 msgid "All album points"
@@ -10874,8 +10874,8 @@ msgid "Enables jQuery tag suggestions on the search field. Just activate the plu
 msgstr "Aktiverar jQuery-tag-förslag i sökfältet. Aktivera insticksmodulen och du har tillgång till den på temats sökfält."
 
 #: zenphoto/zp-core/zp-extensions/tag_suggest.php:11
-msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
-msgstr "En anpassning av Remy Sharps <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgstr "En anpassning av Remy Sharps <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
 
 #: zenphoto/zp-core/zp-extensions/user_groups.php:8
 msgid "Provides rudimentary user groups."
@@ -11727,8 +11727,8 @@ msgid "Custom link"
 msgstr "Anpassad länk"
 
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:139
-msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. http://www.domain.com)."
-msgstr "Skapar en länk utanför Zenphoto-strukturen. Rekommenderat att använda full URL (e.g. http://www.domain.com)."
+msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. https://www.domain.com)."
+msgstr "Skapar en länk utanför Zenphoto-strukturen. Rekommenderat att använda full URL (e.g. https://www.domain.com)."
 
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:146
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:246
@@ -11847,8 +11847,8 @@ msgid "Patterns to die on"
 msgstr "Mönster att dö på"
 
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:41
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
-msgstr "SPAM-svartlista <a href=\"http://de.wikipedia.widearea.org/wiki/Regul%E4rer_Ausdruck\">regular expressions</a> (separera med mellanslag)"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgstr "SPAM-svartlista <a href=\"https://de.wikipedia.widearea.org/wiki/Regul%E4rer_Ausdruck\">regular expressions</a> (separera med mellanslag)"
 
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:42
 msgid "Excessive URL count"
@@ -11979,8 +11979,8 @@ msgid "The windows does not close automatically so you can include several image
 msgstr "Fönstret stängs inte automatisk vilket medgör att du kan inkludera flera bilder efter varann."
 
 #: zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage.php:129
-msgid "The tinyZenpage page on the Zenpage project site: <a href='http://zenpage.maltem.de/pages/tinyZenpage' title='Zenpage project site'>zenpage.maltem.de/pages/tinyZenpage</a>"
-msgstr "tinyZenpage sidan på Zenpage projektets hemsida: <a href='http://zenpage.maltem.de/pages/tinyZenpage' title='zenpage project site'>zenpage.maltem.de/pages/tinyZenpage</a>"
+msgid "The tinyZenpage page on the Zenpage project site: <a href='https://zenpage.maltem.de/pages/tinyZenpage' title='Zenpage project site'>zenpage.maltem.de/pages/tinyZenpage</a>"
+msgstr "tinyZenpage sidan på Zenpage projektets hemsida: <a href='https://zenpage.maltem.de/pages/tinyZenpage' title='zenpage project site'>zenpage.maltem.de/pages/tinyZenpage</a>"
 
 #: zenphoto/zp-core/zp-extensions/tiny_mce/plugins/tinyzenpage/tinyzenpage.php:133
 msgid "Select to show a list of Zenpage pages, articles or categories. Click on a title to include a link. Hover of the link to see an excerpt of the page or article. Un-published pages or articles are marked with an '*'. There are no further options."
@@ -12725,16 +12725,16 @@ msgstr "Kunde inte hämta länk <em>%s</em>"
 #~ msgstr "Skriv Captcha"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web "
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web "
 #~ "photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a> <span id=\"IE-clear-part\">with</span> <a href="
-#~ "\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
+#~ "\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 #~ msgstr ""
-#~ "Skapat med <a href=\"http://www.zenphoto.org\" title=\"Ett enklare "
+#~ "Skapat med <a href=\"https://www.zenphoto.org\" title=\"Ett enklare "
 #~ "webbalbum\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a> <span id=\"IE-clear-part\">med</span> <a href="
-#~ "\"http://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
+#~ "\"https://www.zenphoto.org/2009/03/zenpage-a-cms-plugin-for-zenphoto/"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PAGE</span></a>"
 
 #~ msgid "Clearing and refreshing cache for %s"
@@ -12910,7 +12910,7 @@ msgstr "Kunde inte hämta länk <em>%s</em>"
 #~ "Attaches \"Effenberger effects\" to images and thumbnails. This plugin is "
 #~ "intended as an example for the use of the <em>image_html</em> filters."
 #~ "<br /><strong>Due to licensing considerations no effects are included "
-#~ "with this plugin.</strong> See <a href=\"http://www.netzgesta.de/cvi/"
+#~ "with this plugin.</strong> See <a href=\"https://www.netzgesta.de/cvi/"
 #~ "\">CVI Astonishing Image Effects</a> by Christian Effenberger to select "
 #~ "and download effects. Unzip the file you download and copy the "
 #~ "<code><em>effect</em></code>.js file to the <code>/%s/"
@@ -12921,7 +12921,7 @@ msgstr "Kunde inte hämta länk <em>%s</em>"
 #~ "Lägger till \"Effenberger effects\" till bilder och tumnaglar. Denna "
 #~ "insticksmodul är ett exempel på användning av <em>image_html</em> filter."
 #~ "<br /><strong>Eftersom detta är licensierad programvara inkluderas inga "
-#~ "effekter.</strong> Se <a href=\"http://www.netzgesta.de/cvi/\">CVI "
+#~ "effekter.</strong> Se <a href=\"https://www.netzgesta.de/cvi/\">CVI "
 #~ "Astonishing Image Effects</a> av Christian Effenberger för att välja och "
 #~ "ladda ned effekter. Packa upp filen och kopiera <code><em>effect</em></"
 #~ "code>.js filen till <code>/%s/effenberger_effects</code>-mappen.<br /"
@@ -12939,14 +12939,14 @@ msgstr "Kunde inte hämta länk <em>%s</em>"
 
 #~ msgid ""
 #~ "Due to licensing considerations no effects are included with this plugin. "
-#~ "See <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image "
+#~ "See <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image "
 #~ "Effects</a> by Christian Effenberger to select and download effects. "
 #~ "Unzip the file you download and copy the <code><em>effect</em></code>.js "
 #~ "file to a folder named <code>effenberger_effects</code> in the global "
 #~ "plugins folder."
 #~ msgstr ""
 #~ "P.G.A licenskrav levereras inga effekter med insticksmodulen. Se <a href="
-#~ "\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> av "
+#~ "\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> av "
 #~ "Christian Effenberger för att välja och ladda ned effekter.  Packa upp "
 #~ "filen och kopiera <code><em>effect</em></code>.js filen till mappen "
 #~ "<code>/%s/effenberger_effects</code> i global_plugins-mappen."
@@ -13154,7 +13154,7 @@ msgstr "Kunde inte hämta länk <em>%s</em>"
 #~ "Enable <strong>FLV player 4.x</strong> to handle multimedia files. "
 #~ "<strong>No <em>FLVPlayer</em> player files are included with this plugin "
 #~ "due to licensing considerations.</strong> Please download these files "
-#~ "from the <a href=\"http://www.longtailvideo.com/players/jw-flv-player/"
+#~ "from the <a href=\"https://www.longtailvideo.com/players/jw-flv-player/"
 #~ "\">Longtail Video</a> site. Extract the files \"player*.swf\" and "
 #~ "\"swobjects.js\" into <code>/%s/flvplayer/</code>. <br />IMPORTANT: Only "
 #~ "one multimedia player plugin can be enabled at the time. The class-video "
@@ -13163,7 +13163,7 @@ msgstr "Kunde inte hämta länk <em>%s</em>"
 #~ "Aktivera <strong>FLV player 4.x</strong> för hantering av mediafiler. "
 #~ "<strong>Inga <em>FLVPlayer</em> spelarfiler inkluderas med denna "
 #~ "insticksmodul p.g.a licensskäl.</strong> Ladda ned dessa filer från <a "
-#~ "href=\"http://www.longtailvideo.com/players/jw-flv-player/\">Longtail "
+#~ "href=\"https://www.longtailvideo.com/players/jw-flv-player/\">Longtail "
 #~ "Video</a> -sidan. Packa upp filerna \"player*.swf\" och \"swobjects.js\" "
 #~ "till <code>/%s/flvplayer/</code>. <br />VIKTIGT: Endast en "
 #~ "multimediaspelare kan vara aktiverad åt gången. Class-video insticksmodul "
@@ -13175,13 +13175,13 @@ msgstr "Kunde inte hämta länk <em>%s</em>"
 #~ msgid ""
 #~ "No <em>FLVPlayer</em> player files are included with this plugin due to "
 #~ "licensing considerations. Please download these files from the <a href="
-#~ "\"http://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
+#~ "\"https://www.longtailvideo.com/players/jw-flv-player/\">Longtail Video</"
 #~ "a> site. Extract the files and place the files \"player*.swf\" and "
 #~ "\"swobjects.js\" in a folder named <code>flvplayer</code> in the global "
 #~ "plugins folder."
 #~ msgstr ""
 #~ "Inga <em>FLVPlayer</em> spelarfiler inkluderas med denna insticksmodul p."
-#~ "g.a licensskäl. Ladda ned dessa från <a href=\"http://www.longtailvideo."
+#~ "g.a licensskäl. Ladda ned dessa från <a href=\"https://www.longtailvideo."
 #~ "com/players/jw-flv-player/\">Longtail Video</a>-sidan. Packa upp filerna "
 #~ "\"player*.swf\" och \"swobjects.js\" i en mapp som heter <code>flvplayer</"
 #~ "code> i global plugins-mappen."

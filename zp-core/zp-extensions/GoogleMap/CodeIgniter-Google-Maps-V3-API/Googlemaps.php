@@ -9,8 +9,8 @@
  * @subpackage	Libraries
  * @category	Libraries
  * @author		BIOSTALL (Steve Marks)
- * @link		http://biostall.com/codeigniter-google-maps-v3-api-library
- * @docs		http://biostall.com/wp-content/uploads/2010/07/Google_Maps_V3_API_Documentation.pdf
+ * @link		https://biostall.com/codeigniter-google-maps-v3-api-library
+ * @docs		https://biostall.com/wp-content/uploads/2010/07/Google_Maps_V3_API_Documentation.pdf
  */
 
 class Googlemaps {
@@ -138,7 +138,7 @@ class Googlemaps {
 	var $placesRadius				= 0;						// The radius (in meters) if search is based around a central position
 	var $placesLocationSW			= '';						// If preferring to search within bounds the South-West position (latitude/longitude coordinate OR address)
 	var $placesLocationNE			= '';						// If preferring to search within bounds the North-East position (latitude/longitude coordinate OR address)
-	var $placesTypes				= array();					// The types of places to search for. For a list of supported types see http://code.google.com/apis/maps/documentation/places/supported_types.html
+	var $placesTypes				= array();					// The types of places to search for. For a list of supported types see https://code.google.com/apis/maps/documentation/places/supported_types.html
 	var $placesName					= '';						// A term to be matched against when searching for places to display on the map
 	var $placesAutocompleteInputID	= '';						// The ID attribute of the textfield that the autocomplete should effect
 	var $placesAutocompleteTypes	= array();					// The types of places for the autocomplete to return. Options can be seen here https://developers.google.com/maps/documentation/javascript/places#places_autocomplete but include 'establishment' to only return business results, '(cities)', or '(regions)'
@@ -1090,7 +1090,7 @@ class Googlemaps {
 		}
 		else
 		{
-		if ($this->https) { $apiLocation = 'https://maps-api-ssl'; }else{ $apiLocation = 'http://maps'; }
+		if ($this->https) { $apiLocation = 'https://maps-api-ssl'; }else{ $apiLocation = 'https://maps'; }
 			$apiLocation .= '.google.com/maps/api/js?';
 		}
 		$apiLocation .= 'sensor='.$this->sensor;
@@ -1105,7 +1105,7 @@ class Googlemaps {
 		$this->output_js .= '
 		<script type="text/javascript" src="'.$apiLocation.'"></script>';
 		if ($this->center=="auto" || $this->directionsStart=="auto") { $this->output_js .= '
-		<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
+		<script type="text/javascript" src="https://code.google.com/apis/gears/gears_init.js"></script>
 		'; } // Script not hosted on Google anymore !
 		if ($this->cluster) { $this->output_js .= '
 		<script type="text/javascript" src="' . WEBPATH . '/' . USER_PLUGIN_FOLDER . '/GoogleMap-plugins/markerclusterer.js"></script>
@@ -2152,7 +2152,7 @@ class Googlemaps {
 			}
 
 		}
-		if ($this->https) { $data_location = 'https://'; }else{ $data_location = 'http://'; }
+		if ($this->https) { $data_location = 'https://'; }else{ $data_location = 'https://'; }
 		$data_location .= "maps.google.com/maps/api/geocode/json?address=".urlencode(utf8_encode($address))."&sensor=".$this->sensor;
 		if ($this->region!="" && strlen($this->region)==2) { $data_location .= "&region=".$this->region; }
 		$data = file_get_contents($data_location);

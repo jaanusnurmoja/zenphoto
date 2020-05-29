@@ -58,8 +58,8 @@ class WEBdocs_Options {
 														gettext('Browser default') => 'local'
 										),
 										'desc'		 => gettext("Choose the WEB service to use for rendering pdf documents.") .
-										'<p>' . sprintf(gettext('Select <em>google</em> to use the <a href="%s">GoogleDocs viewer</a>'), 'http://docs.google.com/viewer') . '</p>' .
-										'<p>' . sprintf(gettext('Select <em>zoho</em> to use the <a href="%s">Zoho document viewer</a>'), 'http://viewer.zoho.com/home.do') . '</p>' .
+										'<p>' . sprintf(gettext('Select <em>google</em> to use the <a href="%s">GoogleDocs viewer</a>'), 'https://docs.google.com/viewer') . '</p>' .
+										'<p>' . sprintf(gettext('Select <em>zoho</em> to use the <a href="%s">Zoho document viewer</a>'), 'https://viewer.zoho.com/home.do') . '</p>' .
 										'<p>' . gettext('Select <em>Browser default</em> to use the your browser default application') . '</p>'
 						),
 						gettext('PowerPoint')								 => array('key'			 => 'WEBdocs_pps_provider', 'type'		 => OPTION_TYPE_RADIO,
@@ -149,8 +149,8 @@ class WEBdocs extends TextObject {
 		if (is_null($h))
 			$h = $this->getHeight();
 		$providers = array(''			 => '<img src="' . html_encode(pathurlencode($this->getThumb())) . '">',
-						'google' => '<iframe src="http://docs.google.com/viewer?url=%s&amp;embedded=true" width="' . $w . 'px" height="' . $h . 'px" frameborder="0" border="none" scrolling="auto"></iframe>',
-						'zoho'	 => '<iframe src="http://viewer.zoho.com/api/urlview.do?url=%s&amp;embed=true" width="' . $w . 'px" height="' . $h . 'px" frameborder="0" border="none" scrolling="auto"></iframe>',
+						'google' => '<iframe src="https://docs.google.com/viewer?url=%s&amp;embedded=true" width="' . $w . 'px" height="' . $h . 'px" frameborder="0" border="none" scrolling="auto"></iframe>',
+						'zoho'	 => '<iframe src="https://viewer.zoho.com/api/urlview.do?url=%s&amp;embed=true" width="' . $w . 'px" height="' . $h . 'px" frameborder="0" border="none" scrolling="auto"></iframe>',
 						'local'	 => '<iframe src="%s" width="' . $w . 'px" height="' . $h . 'px" frameborder="0" border="none" scrolling="auto"></iframe>'
 		);
 		switch ($suffix = getSuffix($this->filename)) {

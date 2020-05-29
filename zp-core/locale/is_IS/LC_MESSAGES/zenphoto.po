@@ -1626,7 +1626,7 @@ msgid "February 25, 2008"
 msgstr "Febrúar 25, 2008"
 
 #: zenphoto/zp-core/admin-options.php:953
-msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><code>strftime()</code></a> format string in the text box."
+msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><code>strftime()</code></a> format string in the text box."
 msgstr ""
 
 #: zenphoto/zp-core/admin-options.php:956
@@ -2734,8 +2734,8 @@ msgid "Active plugins:"
 msgstr "Virkar íbætur:"
 
 #: zenphoto/zp-core/admin.php:242
-msgid "Could not connect to  <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-msgstr "Gat ekki tengst <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+msgid "Could not connect to  <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+msgstr "Gat ekki tengst <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: zenphoto/zp-core/admin.php:244
 #, php-format
@@ -3357,8 +3357,8 @@ msgid "[is enabled]"
 msgstr "[er virkt]"
 
 #: zenphoto/zp-core/setup.php:504
-msgid "You should consider disabling <code>magic_quotes_gpc</code>. For more information <a href=\"http://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">click here</a>."
-msgstr "Þú ættir að íhuga að slökkva á <code>magic_quotes_gpc</code>. <a href=\"http://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">Smelltu hér</a> fyrir frekari upplýsingar."
+msgid "You should consider disabling <code>magic_quotes_gpc</code>. For more information <a href=\"https://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">click here</a>."
+msgstr "Þú ættir að íhuga að slökkva á <code>magic_quotes_gpc</code>. <a href=\"https://www.zenphoto.org/2008/08/troubleshooting-zenphoto/#25\" target=\"_new\">Smelltu hér</a> fyrir frekari upplýsingar."
 
 #: zenphoto/zp-core/setup.php:508
 msgid "PHP GD support"
@@ -4445,7 +4445,7 @@ msgid "Hint: %s"
 msgstr "Vísbending: %s"
 
 #: zenphoto/zp-core/template-functions.php:3875
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 msgstr ""
 
 #: zenphoto/zp-core/admin-tags.php:100
@@ -4593,7 +4593,7 @@ msgid "Image not found or is unreadable."
 msgstr ""
 
 #: zenphoto/zp-core/functions-image.php:376
-msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 msgstr ""
 
 #: zenphoto/zp-core/js/js-string-constants.js.php:16
@@ -5217,7 +5217,7 @@ msgid "<strong>Flash players do not support <em>External Albums</em>!</strong>"
 msgstr ""
 
 #: zenphoto/zp-core/plugins/flvplayer.php:11
-msgid "Enable <strong>FLV</strong> player to handle multimedia files. IMPORTANT: Only one multimedia player plugin can be enabled at the time.<br> <strong>NOTE: You need to buy a licence from the player's developer LongTail Video if you intend to use this plugin for commercial purposes.</strong> Please see <a href='http://http://http://www.longtailvideo.com/players/jw-flv-player/'>LongTail Video - JW players</a> for more info about the player and its licence."
+msgid "Enable <strong>FLV</strong> player to handle multimedia files. IMPORTANT: Only one multimedia player plugin can be enabled at the time.<br> <strong>NOTE: You need to buy a licence from the player's developer LongTail Video if you intend to use this plugin for commercial purposes.</strong> Please see <a href='https://https://https://www.longtailvideo.com/players/jw-flv-player/'>LongTail Video - JW players</a> for more info about the player and its licence."
 msgstr ""
 
 #: zenphoto/zp-core/plugins/flvplayer.php:48
@@ -5475,7 +5475,7 @@ msgid "Enable <strong>dynamic-locale</strong> to allow viewers of your site to s
 msgstr ""
 
 #: zenphoto/zp-core/plugins/flowplayer.php:15
-msgid "Enable <strong>flowplayer</strong> to handle multimedia files. IMPORTANT: Only one multimedia player plugin can be enabled at the time. <br> <strong>NOTE:</strong> This plugin currently still uses Flowplayer 2. Please see <a href='http://flowplayer.org/v22'>flowplayer.org/v2</a> for more info about the player and its licence."
+msgid "Enable <strong>flowplayer</strong> to handle multimedia files. IMPORTANT: Only one multimedia player plugin can be enabled at the time. <br> <strong>NOTE:</strong> This plugin currently still uses Flowplayer 2. Please see <a href='https://flowplayer.org/v22'>flowplayer.org/v2</a> for more info about the player and its licence."
 msgstr ""
 
 #: zenphoto/zp-core/plugins/flowplayer.php:49
@@ -5645,7 +5645,7 @@ msgid "Enables jQuery tag suggestions on the search field. Just activate the plu
 msgstr ""
 
 #: zenphoto/zp-core/plugins/tag_suggest.php:12
-msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
 msgstr ""
 
 #: zenphoto/zp-core/plugins/image_album_statistics.php:14
@@ -6112,7 +6112,7 @@ msgid "Patterns to die on"
 msgstr ""
 
 #: zenphoto/zp-core/plugins/spamfilters/simple.php:49
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
 msgstr ""
 
 #: zenphoto/zp-core/plugins/spamfilters/simple.php:50
@@ -6128,7 +6128,7 @@ msgid "Akismet key"
 msgstr ""
 
 #: zenphoto/zp-core/plugins/spamfilters/akismet.php:39
-msgid "Proper operation requires an Akismet key obtained by signing up for a <a href=\"http://www.wordpress.com\">Wordpress.com</a> account."
+msgid "Proper operation requires an Akismet key obtained by signing up for a <a href=\"https://www.wordpress.com\">Wordpress.com</a> account."
 msgstr ""
 
 #: zenphoto/zp-core/plugins/spamfilters/mollom.php:45
@@ -7765,7 +7765,7 @@ msgid "Gallery Archive"
 msgstr "Gallerýssafn"
 
 #: zenphoto/themes/stopdesign/gallery.php:111
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
 msgstr ""
 
 #: zenphoto/themes/stopdesign/404.php:9
@@ -7848,7 +7848,7 @@ msgid "Ported to zenPhoto by Mark Galeassi and Stephen Billard"
 msgstr "Yfirfært í zenPhoto af Mark Galeassi og Stephen Billard"
 
 #: zenphoto/themes/stopdesign/theme_description.php:7
-msgid "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgid "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
 msgstr ""
 
 #: zenphoto/themes/stopdesign/index.php:28
@@ -7879,8 +7879,8 @@ msgid "Galleries"
 msgstr "Gallerý"
 
 #: zenphoto/themes/stopdesign/index.php:185
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Ljósmyndasnið</a> frá Stopdesign."
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Ljósmyndasnið</a> frá Stopdesign."
 
 #: zenphoto/themes/stopdesign/themeoptions.php:13
 #: zenphoto/themes/default/themeoptions.php:37
@@ -8176,8 +8176,8 @@ msgid "Sorry, no image matches. Try refining your search."
 msgstr "Því miður fundust engar myndaniðurstöður. Prófaðu að breyta leitarskilyrðunum."
 
 #: zenphoto/themes/default/theme_description.php:4
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> og <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> og <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: zenphoto/themes/default/theme_description.php:7
 msgid "The default theme in 4 distinct flavors. After choosing this theme you can pick the theme color by going to the Admin Options tab and changing the <em>Theme colors</em> option."
@@ -8393,8 +8393,8 @@ msgid "Album:"
 msgstr "Albúm:"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:4
-msgid "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> með breytingum frá <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
+msgid "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> með breytingum frá <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:7
 msgid "Based on Effervescence 1.1 with multiple personalities (slimbox, simpleviewer and smoothgallery) added. Select different color schemes and personalities from the Admin Options tab."

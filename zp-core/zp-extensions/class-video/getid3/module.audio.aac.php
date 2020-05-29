@@ -4,7 +4,7 @@
 /// getID3() by James Heinrich <info@getid3.org>               //
 //  available at https://github.com/JamesHeinrich/getID3       //
 //            or https://www.getid3.org                        //
-//            or http://getid3.sourceforge.net                 //
+//            or https://getid3.sourceforge.net                 //
 //  see readme.txt for more details                            //
 /////////////////////////////////////////////////////////////////
 //                                                             //
@@ -46,9 +46,9 @@ class getid3_aac extends getid3_handler
 
 		if (substr($AACheader, 0, 4) == 'ADIF') {
 
-			// http://faac.sourceforge.net/wiki/index.php?page=ADIF
+			// https://faac.sourceforge.net/wiki/index.php?page=ADIF
 
-			// http://libmpeg.org/mpeg4/doc/w2203tfs.pdf
+			// https://libmpeg.org/mpeg4/doc/w2203tfs.pdf
 			// adif_header() {
 			//     adif_id                                32
 			//     copyright_id_present                    1
@@ -103,7 +103,7 @@ class getid3_aac extends getid3_handler
 			$bitoffset += 4;
 
 			for ($i = 0; $i < $info['aac']['header']['num_program_configs']; $i++) {
-				// http://www.audiocoding.com/wiki/index.php?page=program_config_element
+				// https://www.audiocoding.com/wiki/index.php?page=program_config_element
 
 				// buffer_fullness                       20
 
@@ -271,11 +271,11 @@ class getid3_aac extends getid3_handler
 		$info = &$this->getid3->info;
 
 		// based loosely on code from AACfile by Jurgen Faul  <jfaulØgmx.de>
-		// http://jfaul.de/atl  or  http://j-faul.virtualave.net/atl/atl.html
+		// https://jfaul.de/atl  or  https://j-faul.virtualave.net/atl/atl.html
 
 
-		// http://faac.sourceforge.net/wiki/index.php?page=ADTS // dead link
-		// http://wiki.multimedia.cx/index.php?title=ADTS
+		// https://faac.sourceforge.net/wiki/index.php?page=ADTS // dead link
+		// https://wiki.multimedia.cx/index.php?title=ADTS
 
 		// * ADTS Fixed Header: these don't change from frame to frame
 		// syncword                                       12    always: '111111111111'

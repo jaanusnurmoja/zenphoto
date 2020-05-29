@@ -887,7 +887,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<input type="text" size="<?php echo TEXT_INPUT_SIZE; ?>" name="date_format" value="<?php echo html_encode(DATE_FORMAT); ?>" />
 										</div>
 									</td>
-									<td><?php echo gettext('Format for dates. Select from the list or set to <code>custom</code> and provide a <a href="http://us2.php.net/manual/en/function.strftime.php"><span class="nowrap"><code>strftime()</code></span></a> format string in the text box.'); ?></td>
+									<td><?php echo gettext('Format for dates. Select from the list or set to <code>custom</code> and provide a <a href="https://us2.php.net/manual/en/function.strftime.php"><span class="nowrap"><code>strftime()</code></span></a> format string in the text box.'); ?></td>
 								</tr>
 								<tr>
 									<td width="175"><?php echo gettext("Charset:"); ?></td>
@@ -1025,7 +1025,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<?php
 										}
 										?>
-										<p><?php echo gettext('If this option is selected Zenphoto will use <a href="http://www.w3schools.com/php/php_sessions.asp">PHP sessions</a> instead of cookies to make visitor settings persistent.'); ?></p>
+										<p><?php echo gettext('If this option is selected Zenphoto will use <a href="https://www.w3schools.com/php/php_sessions.asp">PHP sessions</a> instead of cookies to make visitor settings persistent.'); ?></p>
 										<p class="notebox"><?php echo gettext('<strong>NOTE</strong>: Sessions will normally close when the browser closes causing all password and other data to be discarded. They may close more frequently depending on the runtime configuration. Longer <em>lifetime</em> of sessions is generally more conducive to a pleasant user experience. Cookies are the prefered storage option since their duration is determined by the <em>Cookie duration</em> option. ') ?>
 									</td>
 								</tr>
@@ -1224,7 +1224,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<?php
 											// Autofill honeypot hack (hidden password input),
 											// needed to prevent "Are you sure?" from tiggering when autofill is enabled in browsers
-											// http://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
+											// https://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
 											?>
 											<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 											<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
@@ -1560,7 +1560,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<?php
 											// Autofill honeypot hack (hidden password input),
 											// needed to prevent "Are you sure?" from tiggering when autofill is enabled in browsers
-											// http://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
+											// https://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
 											?>
 											<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 											<input type="password" size="<?php echo TEXT_INPUT_SIZE; ?>"
@@ -2423,7 +2423,7 @@ Zenphoto_Authority::printPasswordFormJS();
 														<?php
 														// Autofill honeypot hack (hidden password input),
 														// needed to prevent "Are you sure?" from tiggering when autofill is enabled in browsers
-														// http://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
+														// https://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
 														?>
 														<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 														<input type="password" size="30"

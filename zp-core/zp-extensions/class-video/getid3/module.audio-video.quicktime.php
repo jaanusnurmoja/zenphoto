@@ -4,7 +4,7 @@
 /// getID3() by James Heinrich <info@getid3.org>               //
 //  available at https://github.com/JamesHeinrich/getID3       //
 //            or https://www.getid3.org                        //
-//            or http://getid3.sourceforge.net                 //
+//            or https://getid3.sourceforge.net                 //
 //  see readme.txt for more details                            //
 /////////////////////////////////////////////////////////////////
 //                                                             //
@@ -214,7 +214,7 @@ class getid3_quicktime extends getid3_handler
 	 * @return array|false
 	 */
 	public function QuicktimeParseAtom($atomname, $atomsize, $atom_data, $baseoffset, &$atomHierarchy, $ParseAllPossibleAtoms) {
-		// http://developer.apple.com/techpubs/quicktime/qtdevdocs/APIREF/INDEX/atomalphaindex.htm
+		// https://developer.apple.com/techpubs/quicktime/qtdevdocs/APIREF/INDEX/atomalphaindex.htm
 		// https://code.google.com/p/mp4v2/wiki/iTunesMetadata
 
 		$info = &$this->getid3->info;
@@ -601,7 +601,7 @@ class getid3_quicktime extends getid3_handler
 
 				case 'cmvd': // Compressed MooV Data atom
 					// Code by ubergeekØubergeek*tv based on information from
-					// http://developer.apple.com/quicktime/icefloe/dispatch012.html
+					// https://developer.apple.com/quicktime/icefloe/dispatch012.html
 					$atom_structure['unCompressedSize'] = getid3_lib::BigEndian2Int(substr($atom_data, 0, 4));
 
 					$CompressedFileData = substr($atom_data, 4);
@@ -702,7 +702,7 @@ class getid3_quicktime extends getid3_handler
 
 
 				case 'ptv ': // Print To Video - defines a movie's full screen mode
-					// http://developer.apple.com/documentation/QuickTime/APIREF/SOURCESIV/at_ptv-_pg.htm
+					// https://developer.apple.com/documentation/QuickTime/APIREF/SOURCESIV/at_ptv-_pg.htm
 					$atom_structure['display_size_raw']  = getid3_lib::BigEndian2Int(substr($atom_data, 0, 2));
 					$atom_structure['reserved_1']        = getid3_lib::BigEndian2Int(substr($atom_data, 2, 2)); // hardcoded: 0x0000
 					$atom_structure['reserved_2']        = getid3_lib::BigEndian2Int(substr($atom_data, 4, 2)); // hardcoded: 0x0000
@@ -771,7 +771,7 @@ class getid3_quicktime extends getid3_handler
 								$atom_structure['sample_description_table'][$i]['audio_sample_rate']    = getid3_lib::FixedPoint16_16(substr($atom_structure['sample_description_table'][$i]['data'], 16,  4));
 
 								// video tracks
-								// http://developer.apple.com/library/mac/#documentation/QuickTime/QTFF/QTFFChap3/qtff3.html
+								// https://developer.apple.com/library/mac/#documentation/QuickTime/QTFF/QTFFChap3/qtff3.html
 								$atom_structure['sample_description_table'][$i]['temporal_quality'] =   getid3_lib::BigEndian2Int(substr($atom_structure['sample_description_table'][$i]['data'],  8,  4));
 								$atom_structure['sample_description_table'][$i]['spatial_quality']  =   getid3_lib::BigEndian2Int(substr($atom_structure['sample_description_table'][$i]['data'], 12,  4));
 								$atom_structure['sample_description_table'][$i]['width']            =   getid3_lib::BigEndian2Int(substr($atom_structure['sample_description_table'][$i]['data'], 16,  2));
@@ -1290,8 +1290,8 @@ class getid3_quicktime extends getid3_handler
 					$atom_structure['alternate_group']     =   getid3_lib::BigEndian2Int(substr($atom_data, 34, 2));
 					$atom_structure['volume']              =   getid3_lib::FixedPoint8_8(substr($atom_data, 36, 2));
 					$atom_structure['reserved3']           =   getid3_lib::BigEndian2Int(substr($atom_data, 38, 2));
-					// http://developer.apple.com/library/mac/#documentation/QuickTime/RM/MovieBasics/MTEditing/K-Chapter/11MatrixFunctions.html
-					// http://developer.apple.com/library/mac/#documentation/QuickTime/qtff/QTFFChap4/qtff4.html#//apple_ref/doc/uid/TP40000939-CH206-18737
+					// https://developer.apple.com/library/mac/#documentation/QuickTime/RM/MovieBasics/MTEditing/K-Chapter/11MatrixFunctions.html
+					// https://developer.apple.com/library/mac/#documentation/QuickTime/qtff/QTFFChap4/qtff4.html#//apple_ref/doc/uid/TP40000939-CH206-18737
 					$atom_structure['matrix_a']            = getid3_lib::FixedPoint16_16(substr($atom_data, 40, 4));
 					$atom_structure['matrix_b']            = getid3_lib::FixedPoint16_16(substr($atom_data, 44, 4));
 					$atom_structure['matrix_u']            =  getid3_lib::FixedPoint2_30(substr($atom_data, 48, 4));
@@ -1355,8 +1355,8 @@ class getid3_quicktime extends getid3_handler
 
 
 				case 'iods': // Initial Object DeScriptor atom
-					// http://www.koders.com/c/fid1FAB3E762903DC482D8A246D4A4BF9F28E049594.aspx?s=windows.h
-					// http://libquicktime.sourcearchive.com/documentation/1.0.2plus-pdebian/iods_8c-source.html
+					// https://www.koders.com/c/fid1FAB3E762903DC482D8A246D4A4BF9F28E049594.aspx?s=windows.h
+					// https://libquicktime.sourcearchive.com/documentation/1.0.2plus-pdebian/iods_8c-source.html
 					$offset = 0;
 					$atom_structure['version']                =       getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
 					$offset += 1;
@@ -1499,12 +1499,12 @@ class getid3_quicktime extends getid3_handler
 
 
 				case 'nsav': // NoSAVe atom
-					// http://developer.apple.com/technotes/tn/tn2038.html
+					// https://developer.apple.com/technotes/tn/tn2038.html
 					$atom_structure['data'] = getid3_lib::BigEndian2Int(substr($atom_data,  0, 4));
 					break;
 
 				case 'ctyp': // Controller TYPe atom (seen on QTVR)
-					// http://homepages.slingshot.co.nz/~helmboy/quicktime/formats/qtm-layout.txt
+					// https://homepages.slingshot.co.nz/~helmboy/quicktime/formats/qtm-layout.txt
 					// some controller names are:
 					//   0x00 + 'std' for linear movie
 					//   'none' for no controls
@@ -1539,15 +1539,15 @@ class getid3_quicktime extends getid3_handler
 				case 'FXTC': // Something to do with Adobe After Effects (?)
 				case 'PrmA':
 				case 'code':
-				case 'FIEL': // this is NOT "fiel" (Field Ordering) as describe here: http://developer.apple.com/documentation/QuickTime/QTFF/QTFFChap3/chapter_4_section_2.html
-				case 'tapt': // TrackApertureModeDimensionsAID - http://developer.apple.com/documentation/QuickTime/Reference/QT7-1_Update_Reference/Constants/Constants.html
+				case 'FIEL': // this is NOT "fiel" (Field Ordering) as describe here: https://developer.apple.com/documentation/QuickTime/QTFF/QTFFChap3/chapter_4_section_2.html
+				case 'tapt': // TrackApertureModeDimensionsAID - https://developer.apple.com/documentation/QuickTime/Reference/QT7-1_Update_Reference/Constants/Constants.html
 							// tapt seems to be used to compute the video size [https://www.getid3.org/phpBB3/viewtopic.php?t=838]
-							// * http://lists.apple.com/archives/quicktime-api/2006/Aug/msg00014.html
-							// * http://handbrake.fr/irclogs/handbrake-dev/handbrake-dev20080128_pg2.html
-				case 'ctts'://  STCompositionOffsetAID             - http://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
-				case 'cslg'://  STCompositionShiftLeastGreatestAID - http://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
-				case 'sdtp'://  STSampleDependencyAID              - http://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
-				case 'stps'://  STPartialSyncSampleAID             - http://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
+							// * https://lists.apple.com/archives/quicktime-api/2006/Aug/msg00014.html
+							// * https://handbrake.fr/irclogs/handbrake-dev/handbrake-dev20080128_pg2.html
+				case 'ctts'://  STCompositionOffsetAID             - https://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
+				case 'cslg'://  STCompositionShiftLeastGreatestAID - https://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
+				case 'sdtp'://  STSampleDependencyAID              - https://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
+				case 'stps'://  STPartialSyncSampleAID             - https://developer.apple.com/documentation/QuickTime/Reference/QTRef_Constants/Reference/reference.html
 					//$atom_structure['data'] = $atom_data;
 					break;
 
@@ -1566,13 +1566,13 @@ class getid3_quicktime extends getid3_handler
 					break;
 
 				case 'NCDT':
-					// http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
+					// https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
 					// Nikon-specific QuickTime tags found in the NCDT atom of MOV videos from some Nikon cameras such as the Coolpix S8000 and D5100
 					$atom_structure['subatoms'] = $this->QuicktimeParseContainerAtom($atom_data, $baseoffset + 4, $atomHierarchy, $ParseAllPossibleAtoms);
 					break;
 				case 'NCTH': // Nikon Camera THumbnail image
 				case 'NCVW': // Nikon Camera preVieW image
-					// http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
+					// https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
 					if (preg_match('/^\xFF\xD8\xFF/', $atom_data)) {
 						$atom_structure['data'] = $atom_data;
 						$atom_structure['image_mime'] = 'image/jpeg';
@@ -1580,19 +1580,19 @@ class getid3_quicktime extends getid3_handler
 						$info['quicktime']['comments']['picture'][] = array('image_mime'=>$atom_structure['image_mime'], 'data'=>$atom_data, 'description'=>$atom_structure['description']);
 					}
 					break;
-				case 'NCTG': // Nikon - http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#NCTG
+				case 'NCTG': // Nikon - https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#NCTG
 					$atom_structure['data'] = $this->QuicktimeParseNikonNCTG($atom_data);
 					break;
-				case 'NCHD': // Nikon:MakerNoteVersion  - http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
-				case 'NCDB': // Nikon                   - http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
-				case 'CNCV': // Canon:CompressorVersion - http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Canon.html
+				case 'NCHD': // Nikon:MakerNoteVersion  - https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
+				case 'NCDB': // Nikon                   - https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
+				case 'CNCV': // Canon:CompressorVersion - https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Canon.html
 					$atom_structure['data'] = $atom_data;
 					break;
 
 				case "\x00\x00\x00\x00":
 					// some kind of metacontainer, may contain a big data dump such as:
 					// mdta keys \005 mdtacom.apple.quicktime.make (mdtacom.apple.quicktime.creationdate ,mdtacom.apple.quicktime.location.ISO6709 $mdtacom.apple.quicktime.software !mdtacom.apple.quicktime.model ilst \01D \001 \015data \001DE\010Apple 0 \002 (data \001DE\0102011-05-11T17:54:04+0200 2 \003 *data \001DE\010+52.4936+013.3897+040.247/ \01D \004 \015data \001DE\0104.3.1 \005 \018data \001DE\010iPhone 4
-					// http://www.geocities.com/xhelmboyx/quicktime/formats/qti-layout.txt
+					// https://www.geocities.com/xhelmboyx/quicktime/formats/qti-layout.txt
 
 					$atom_structure['version']   =          getid3_lib::BigEndian2Int(substr($atom_data, 0, 1));
 					$atom_structure['flags_raw'] =          getid3_lib::BigEndian2Int(substr($atom_data, 1, 3));
@@ -2013,7 +2013,7 @@ class getid3_quicktime extends getid3_handler
 	 * @return int
 	 */
 	public function quicktime_read_mp4_descr_length($data, &$offset) {
-		// http://libquicktime.sourcearchive.com/documentation/2:1.0.2plus-pdebian-2build1/esds_8c-source.html
+		// https://libquicktime.sourcearchive.com/documentation/2:1.0.2plus-pdebian-2build1/esds_8c-source.html
 		$num_bytes = 0;
 		$length    = 0;
 		do {
@@ -2029,7 +2029,7 @@ class getid3_quicktime extends getid3_handler
 	 * @return string
 	 */
 	public function QuicktimeLanguageLookup($languageid) {
-		// http://developer.apple.com/library/mac/#documentation/QuickTime/QTFF/QTFFChap4/qtff4.html#//apple_ref/doc/uid/TP40000939-CH206-34353
+		// https://developer.apple.com/library/mac/#documentation/QuickTime/QTFF/QTFFChap4/qtff4.html#//apple_ref/doc/uid/TP40000939-CH206-34353
 		static $QuicktimeLanguageLookup = array();
 		if (empty($QuicktimeLanguageLookup)) {
 			$QuicktimeLanguageLookup[0]     = 'English';
@@ -2146,7 +2146,7 @@ class getid3_quicktime extends getid3_handler
 		}
 		if (($languageid > 138) && ($languageid < 32767)) {
 			/*
-			ISO Language Codes - http://www.loc.gov/standards/iso639-2/php/code_list.php
+			ISO Language Codes - https://www.loc.gov/standards/iso639-2/php/code_list.php
 			Because the language codes specified by ISO 639-2/T are three characters long, they must be packed to fit into a 16-bit field.
 			The packing algorithm must map each of the three characters, which are always lowercase, into a 5-bit integer and then concatenate
 			these integers into the least significant 15 bits of a 16-bit integer, leaving the 16-bit integer's most significant bit set to zero.
@@ -2547,7 +2547,7 @@ class getid3_quicktime extends getid3_handler
 	 * @return array
 	 */
 	public function QuicktimeParseNikonNCTG($atom_data) {
-		// http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#NCTG
+		// https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#NCTG
 		// Nikon-specific QuickTime tags found in the NCDT atom of MOV videos from some Nikon cameras such as the Coolpix S8000 and D5100
 		// Data is stored as records of:
 		// * 4 bytes record type
@@ -2687,7 +2687,7 @@ class getid3_quicktime extends getid3_handler
 					);
 					break;
 				case 0x02000024: // WorldTime
-					// http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#WorldTime
+					// https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#WorldTime
 					// timezone is stored as offset from GMT in minutes
 					$timezone = getid3_lib::BigEndian2Int(substr($data, 0, 2));
 					if ($timezone & 0x8000) {
@@ -2734,9 +2734,9 @@ class getid3_quicktime extends getid3_handler
 	public function CopyToAppropriateCommentsSection($keyname, $data, $boxname='') {
 		static $handyatomtranslatorarray = array();
 		if (empty($handyatomtranslatorarray)) {
-			// http://www.geocities.com/xhelmboyx/quicktime/formats/qtm-layout.txt
-			// http://www.geocities.com/xhelmboyx/quicktime/formats/mp4-layout.txt
-			// http://atomicparsley.sourceforge.net/mpeg-4files.html
+			// https://www.geocities.com/xhelmboyx/quicktime/formats/qtm-layout.txt
+			// https://www.geocities.com/xhelmboyx/quicktime/formats/mp4-layout.txt
+			// https://atomicparsley.sourceforge.net/mpeg-4files.html
 			// https://code.google.com/p/mp4v2/wiki/iTunesMetadata
 			$handyatomtranslatorarray["\xA9".'alb'] = 'album';               // iTunes 4.0
 			$handyatomtranslatorarray["\xA9".'ART'] = 'artist';
@@ -2826,7 +2826,7 @@ class getid3_quicktime extends getid3_handler
 			$handyatomtranslatorarray['MusicBrainz Track Id']        = 'MusicBrainz Track Id';
 			$handyatomtranslatorarray['MusicBrainz Disc Id']         = 'MusicBrainz Disc Id';
 
-			// http://age.hobba.nl/audio/tag_frame_reference.html
+			// https://age.hobba.nl/audio/tag_frame_reference.html
 			$handyatomtranslatorarray['PLAY_COUNTER']                = 'play_counter'; // Foobar2000 - https://www.getid3.org/phpBB3/viewtopic.php?t=1355
 			$handyatomtranslatorarray['MEDIATYPE']                   = 'mediatype';    // Foobar2000 - https://www.getid3.org/phpBB3/viewtopic.php?t=1355
 			*/

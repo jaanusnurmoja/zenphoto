@@ -15,7 +15,7 @@ if (getOption('gmap_sessions')) {
 require_once(dirname(dirname(__FILE__)) . '/GoogleMap.php');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/2002/REC-xhtml1-20020801/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/2002/REC-xhtml1-20020801/DTD/xhtml1-transitional.dtd">
 <html<?php printLangAttribute(); ?>>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=<?php echo getOption('charset'); ?>" />
@@ -102,7 +102,7 @@ header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 				<h2><?php echo gettext('Map display error') ?></h2>
 				<p>
 					<?php echo gettext('The GoogleMap plugin <em>map display</em> script has received a corrupt <em>Map</em> parameter.	This is most likely caused by URL character limitations from your browser.'); ?>
-					<?php echo gettext('For information on URL limits visit <a href="javascript:parent.window.location=\'http://www.boutell.com/newfaq/misc/urllength.html\';">What is the maximum length of a URL</a>.'); ?>
+					<?php echo gettext('For information on URL limits visit <a href="javascript:parent.window.location=\'https://www.boutell.com/newfaq/misc/urllength.html\';">What is the maximum length of a URL</a>.'); ?>
 				</p>
 				<p>
 					<?php echo gettext('You can try a different browser or contact the site manager for assistance.'); ?>

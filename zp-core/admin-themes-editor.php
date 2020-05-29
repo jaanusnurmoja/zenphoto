@@ -68,7 +68,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_file' && $file_to_edit)
 	$file_content = sanitize($_POST['newcontent'], 0);
 	$theme = urlencode($theme);
 	if (is_writeable($file_to_edit)) {
-		//is_writable() not always reliable, check return value. see comments @ http://uk.php.net/is_writable
+		//is_writable() not always reliable, check return value. see comments @ https://uk.php.net/is_writable
 		$f = @fopen($file_to_edit, 'w+');
 		if ($f !== FALSE) {
 			@fwrite($f, $file_content);

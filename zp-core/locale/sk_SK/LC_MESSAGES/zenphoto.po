@@ -194,11 +194,11 @@ msgstr "Zhoda nenájdená. Skúste upresniť vaše vyhľadávanie."
 
 #: themes/basic/theme_description.php:5
 msgid ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
-"<a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
+"<a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 msgstr ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> a <a "
-"href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> a <a "
+"href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: themes/basic/theme_description.php:8
 msgid ""
@@ -530,10 +530,10 @@ msgstr "Stránky"
 
 #: themes/garland/theme_description.php:10
 msgid ""
-"Modded Wordpress theme from, <a href=\"http://garlandtheme.blogspot.com/"
+"Modded Wordpress theme from, <a href=\"https://garlandtheme.blogspot.com/"
 "\">garland</a>"
 msgstr ""
-"Upravená šablóna Wordpress od <a href=\"http://garlandtheme.blogspot.com/"
+"Upravená šablóna Wordpress od <a href=\"https://garlandtheme.blogspot.com/"
 "\">garlanda</a>"
 
 #: themes/garland/themeoptions.php:49 themes/zenpage/themeoptions.php:52
@@ -710,9 +710,9 @@ msgstr "Archív galérie"
 
 #: themes/zenpage/footer.php:5
 msgid ""
-"Zenpage theme designed by <a href=\"http://www.maltem.de\">Malte Müller</a>"
+"Zenpage theme designed by <a href=\"https://www.maltem.de\">Malte Müller</a>"
 msgstr ""
-"Zenpage šablónu designoval <a href=\"http://www.maltem.de\">Malte Müller</a>"
+"Zenpage šablónu designoval <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: themes/zenpage/gallery.php:70 themes/zenpage/news.php:57
 #: themes/zenpage/news.php:85
@@ -959,11 +959,11 @@ msgstr "Malte Müller (acrylian)"
 
 #: themes/zpmobile/theme_description.php:10
 msgid ""
-"A theme primarily meant for mobile/smartphone browsing using <a href='http://"
+"A theme primarily meant for mobile/smartphone browsing using <a href='https://"
 "jQuerymobile.com'>jQuerymobile framework</a>."
 msgstr ""
 "Šablóna primárne vytvorená na prehliadanie mobilom/smartfónom použitím <a "
-"href='http://jQuerymobile.com'>jQuerymobile framework</a>."
+"href='https://jQuerymobile.com'>jQuerymobile framework</a>."
 
 #: themes/zpmobile/themeoptions.php:44
 msgid "Allow direct link from multimedia"
@@ -1751,10 +1751,10 @@ msgstr "Hore"
 #: zp-core/admin-functions.php:30
 #, php-format
 msgid ""
-"<a href=\"http://www.zenphoto.org\" title=\"The simpler media website CMS"
+"<a href=\"https://www.zenphoto.org\" title=\"The simpler media website CMS"
 "\">Zen<strong>photo</strong></a> version %1$s"
 msgstr ""
-"<a href=\"http://www.zenphoto.org\" title=\"Jednoduché CMS pre webové stránky"
+"<a href=\"https://www.zenphoto.org\" title=\"Jednoduché CMS pre webové stránky"
 "\">Zen<strong>photo</strong></a> verzia %1$s"
 
 #: zp-core/admin-functions.php:35
@@ -3273,12 +3273,12 @@ msgstr "Február 25, 2008"
 #: zp-core/admin-options.php:890
 msgid ""
 "Format for dates. Select from the list or set to <code>custom</code> and "
-"provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php"
+"provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php"
 "\"><span class=\"nowrap\"><code>strftime()</code></span></a> format string "
 "in the text box."
 msgstr ""
 "Formát dátumov. Vyberte si z ponuky <code>volitelné</code> do textového pola "
-"<a href=\"http://us2.php.net/manual/de/function.strftime.php"
+"<a href=\"https://us2.php.net/manual/de/function.strftime.php"
 "\"><code>strftime()</code></a> vpíšte vami zvolený formát dátumu."
 
 #: zp-core/admin-options.php:893
@@ -3376,11 +3376,11 @@ msgstr ""
 
 #: zp-core/admin-options.php:1028
 msgid ""
-"If this option is selected Zenphoto will use <a href=\"http://www.w3schools."
+"If this option is selected Zenphoto will use <a href=\"https://www.w3schools."
 "com/php/php_sessions.asp\">PHP sessions</a> instead of cookies to make "
 "visitor settings persistent."
 msgstr ""
-"Ak je táto ponuka vybraná Zenphoto bude používať <a href=\"http://www."
+"Ak je táto ponuka vybraná Zenphoto bude používať <a href=\"https://www."
 "w3schools.com/php/php_sessions.asp\">PHP relácie</a> namiesto cookies, aby "
 "uchovalo nastavenia návštevníkov."
 
@@ -5357,10 +5357,10 @@ msgstr ""
 
 #: zp-core/admin-themes.php:179
 msgid ""
-"You can download more themes from the <a href=\"http://www.zenphoto.org/"
+"You can download more themes from the <a href=\"https://www.zenphoto.org/"
 "theme/\">zenphoto themes page</a>."
 msgstr ""
-"Ďalšie šablóny si môžete stiahnuť zo <a href=\"http://www.zenphoto.org/theme/"
+"Ďalšie šablóny si môžete stiahnuť zo <a href=\"https://www.zenphoto.org/theme/"
 "\">stránky šablón Zenphota</a>."
 
 #: zp-core/admin-themes.php:180
@@ -8145,10 +8145,10 @@ msgstr "Obrázok %s sa nedá otáčať."
 #, php-format
 msgid ""
 "Unknown error processing %s! Please report to the developers at <a href="
-"\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+"\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 msgstr ""
 "Neznáma chyba pri spracovaní %s! Prosíme oznámte ju vývojárom na <a href="
-"\"http://www.zenphoto.org\">zenphoto.org</a>"
+"\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: zp-core/functions-image.php:400 zp-core/functions-image.php:439
 #, php-format
@@ -9668,13 +9668,13 @@ msgstr "<em>%1$s</em> zložka%2$s [problém s právami]"
 msgid ""
 "Setup could not change the file permissions from <em>%1$s</em> (<code>0%2$o</"
 "code>) to <em>%3$s</em> (<code>0%4$o</code>). You will have to set the "
-"permissions manually. See the <a href=\"http://www.zenphoto.org/news/"
+"permissions manually. See the <a href=\"https://www.zenphoto.org/news/"
 "troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on "
 "Zenphoto permissions requirements."
 msgstr ""
 "Inštalácia nemohla zmeniť oprávnenia pre <em>%1$s</em> (<code>0%2$o</code>) "
 "na <em>%3$s</em> (<code>0%4$o</code>). Budete musieť nastaviť práva "
-"manuálne. Prečítajte si <a href=\"http://www.zenphoto.org/news/"
+"manuálne. Prečítajte si <a href=\"https://www.zenphoto.org/news/"
 "troubleshooting-zenphoto#29\">Sprievodca problémami</a> kde sú detaily o "
 "potrebných právach pre Zenphoto."
 
@@ -9737,10 +9737,10 @@ msgstr "%1$s (0%2$o)"
 
 #: zp-core/setup/class-setup.php:467
 msgid ""
-"See the <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"See the <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
 msgstr ""
-"Prečítajte si <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"Prečítajte si <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#29\">Sprievodca problémami</a> na zenphoto.org pre detaily."
 
 #: zp-core/setup/class-setup.php:521
@@ -9993,12 +9993,12 @@ msgstr "PHP <code>Register Globals</code> [aktívne]"
 #: zp-core/setup/index.php:635
 msgid ""
 "PHP Register globals presents a security risk to any PHP application. See <a "
-"href=\"http://php.net/manual/en/security.globals.php\"><em>Using Register "
+"href=\"https://php.net/manual/en/security.globals.php\"><em>Using Register "
 "Globals</em></a>. Change your PHP.ini settings to <code>register_globals = "
 "off</code>."
 msgstr ""
 "PHP Register globals sú bezpečnostným rizikom pre akúkoľvek PHP aplikáciu. "
-"Pozrite si <a href=\"http://php.net/manual/en/security.globals.php"
+"Pozrite si <a href=\"https://php.net/manual/en/security.globals.php"
 "\"><em>Použtívanie Register Globals</em></a>. Zmeňte nastavenia PHP.ini na "
 "<code>register_globals = off</code>."
 
@@ -10046,13 +10046,13 @@ msgstr "PHP <code>magic_quotes_gpc</code> [aktivované]"
 #: zp-core/setup/index.php:670
 msgid ""
 "We strongly recommend disabling <code>magic_quotes_gpc</code>. For more "
-"information See <em><a href=\"http://www.zenphoto.org/news/installation-"
+"information See <em><a href=\"https://www.zenphoto.org/news/installation-"
 "problems#about-magicquotes-and-why-they-should-be-disabled\">What is "
 "magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto "
 "troubleshooting guide."
 msgstr ""
 "Porozmýšľajte o vypnutí <code>magic_quotes_gpc</code>. Viac informácií "
-"<em><a href=\"http://www.zenphoto.org/news/installation-problems#about-"
+"<em><a href=\"https://www.zenphoto.org/news/installation-problems#about-"
 "magicquotes-and-why-they-should-be-disabled\">Čo je magic_quotes_gpc, a "
 "prečo by mali byť vypnuté?</a></em> získate v sprievodcovi problémami na "
 "Zenphote."
@@ -10175,10 +10175,10 @@ msgstr ""
 
 #: zp-core/setup/index.php:708
 msgid ""
-"See the <a  href=\"http://www.zenphoto.org/news/problems-with-languages"
+"See the <a  href=\"https://www.zenphoto.org/news/problems-with-languages"
 "\">user guide</a> on zenphoto.org for details."
 msgstr ""
-"Viac informácií nájdete v <a  href=\"http://www.zenphoto.org/news/problems-"
+"Viac informácií nájdete v <a  href=\"https://www.zenphoto.org/news/problems-"
 "with-languages\">sprievodcovi problémami</a> na zenphoto.org."
 
 #: zp-core/setup/index.php:710
@@ -10830,13 +10830,13 @@ msgstr "Práva zdrojových súborov Zenphota [nie sú správne]"
 msgid ""
 "Setup could not set the one or more components to the selected permissions "
 "level. You will have to set the permissions manually. See the <a href="
-"\"http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
+"\"https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
 "\">Troubleshooting guide</a> for details on Zenphoto permissions "
 "requirements."
 msgstr ""
 "Inštalácii sa nepodarilo nastaviť jednému alebo viacerým komponentom vybranú "
 "úroveň práv. Budete musieť nastaviť práva manuálne. Prečítajte si <a href="
-"\"http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
+"\"https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
 "\">Sprievodca problémami</a> kde sú detaily o potrebných právach pre "
 "Zenphoto."
 
@@ -10880,10 +10880,10 @@ msgstr "Server sa zdá byť <em>nginx</em>"
 #: zp-core/setup/index.php:1452
 msgid ""
 "If you wish to create cruft-free URLs, you will need to configuring <a href="
-"\"http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL "
+"\"https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL "
 "rewriting for NGINX servers</em></a>."
 msgstr ""
-"Ak chcete vytvoriť čisté URLka, musíte nastaviť <a href=\"http://www."
+"Ak chcete vytvoriť čisté URLka, musíte nastaviť <a href=\"https://www."
 "zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>prepisovanie URL pre "
 "NGINX servery</em>."
 
@@ -11610,10 +11610,10 @@ msgstr "prihlásenie"
 
 #: zp-core/template-functions.php:4458
 msgid ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"The simpler media "
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"The simpler media "
 "website CMS\">Zenphoto</a>"
 msgstr ""
-"Beží na <a href=\"http://www.zenphoto.org\" title=\"Jednoduché CMS pre "
+"Beží na <a href=\"https://www.zenphoto.org\" title=\"Jednoduché CMS pre "
 "webové stránky\">Zenphoto</a>"
 
 #: zp-core/template-functions.php:4623
@@ -12538,11 +12538,11 @@ msgstr ""
 #: zp-core/zp-extensions/GoogleMap/Map.php:105
 msgid ""
 "For information on URL limits visit <a href=\"javascript:parent.window."
-"location='http://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
+"location='https://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
 "maximum length of a URL</a>."
 msgstr ""
 "Pre informácie o obmedzeniach URL navštívte <a href=\"javascript:parent."
-"window.location='http://www.boutell.com/newfaq/misc/urllength.html';\">Aká "
+"window.location='https://www.boutell.com/newfaq/misc/urllength.html';\">Aká "
 "je maximálna dĺžka URL</a>."
 
 #: zp-core/zp-extensions/GoogleMap/Map.php:108
@@ -12711,11 +12711,11 @@ msgstr "Čas poslednej automatickej zálohy %s."
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:15
 msgid ""
-"Responsive jQuery bxSlider thumb nav plugin based on <a href='http://"
-"bxslider.com'>http://bxslider.com</a>"
+"Responsive jQuery bxSlider thumb nav plugin based on <a href='https://"
+"bxslider.com'>https://bxslider.com</a>"
 msgstr ""
 "Zodpovedný jQuery bxSlider thumb nav zásuvný modul vychádzajúci z <a "
-"href='http://bxslider.com'>http://bxslider.com</a>"
+"href='https://bxslider.com'>https://bxslider.com</a>"
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:17
 #, php-format
@@ -16324,7 +16324,7 @@ msgstr ""
 
 #: zp-core/zp-extensions/http_security_headers.php:431
 msgid ""
-"Define one or more domains, e.g. http://yourdomain1.com http://yourdomain2."
+"Define one or more domains, e.g. https://yourdomain1.com https://yourdomain2."
 "com, to allow content from"
 msgstr ""
 
@@ -16441,10 +16441,10 @@ msgstr ""
 
 #: zp-core/zp-extensions/jplayer.php:72
 msgid ""
-"Please see <a href='http://jplayer.org'>jplayer.org</a> for more info about "
+"Please see <a href='https://jplayer.org'>jplayer.org</a> for more info about "
 "the player and its license."
 msgstr ""
-"Navštívte <a href='http://jplayer.org'>jplayer.org</a> ak potrebujete viac "
+"Navštívte <a href='https://jplayer.org'>jplayer.org</a> ak potrebujete viac "
 "informácií o prehrávač a jeho licencii."
 
 #: zp-core/zp-extensions/jplayer.php:74
@@ -16657,11 +16657,11 @@ msgstr "Požadovaná aktualizácia"
 #: zp-core/zp-extensions/jplayer.php:512
 msgid ""
 "To play the media you will need to either update your browser to a recent "
-"version or update your <a href=\"http://get.adobe.com/flashplayer/\" target="
+"version or update your <a href=\"https://get.adobe.com/flashplayer/\" target="
 "\"_blank\">Flash plugin</a>."
 msgstr ""
 "Aby ste mohli tieto súbory prehrávať budete potrebovať aktualizovať váš "
-"prehliadač na najnovšiu verziu alebo aktualizujte <a href=\"http://get.adobe."
+"prehliadač na najnovšiu verziu alebo aktualizujte <a href=\"https://get.adobe."
 "com/flashplayer/\" target=\"_blank\">zásuvný modul Flash</a>."
 
 #: zp-core/zp-extensions/macroList.php:67
@@ -17459,10 +17459,10 @@ msgstr "Upravený odkaz"
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:149
 msgid ""
 "Creates a link outside the Zenphoto structure. Use of a full URL is "
-"recommended (e.g. http://www.domain.com)."
+"recommended (e.g. https://www.domain.com)."
 msgstr ""
 "Vytvorí odkaz smerujúci mimo štruktúry Zenphota. Odporúčame použiť úplnú "
-"adresu (napr. http://www.domain.com)."
+"adresu (napr. https://www.domain.com)."
 
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:156
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:270
@@ -17553,10 +17553,10 @@ msgstr "RSS kanálov na zlúčenie"
 #: zp-core/zp-extensions/mergedRSS.php:67
 msgid ""
 "Enter the full urls of the feeds to merge separated by semicolons (e.g. "
-"\"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
+"\"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
 msgstr ""
 "Vložte celé URL adresy kanálov, ktoré chcete spojiť oddelené bodkočiarkou "
-"(napr. \"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
+"(napr. \"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
 
 #: zp-core/zp-extensions/mergedRSS.php:68
 msgid "Feed items:"
@@ -18125,7 +18125,7 @@ msgstr ""
 #: zp-core/zp-extensions/publishContent/publishContent.php:226
 msgid ""
 "The number of un-published items does <strong>not</strong> include items "
-"that are un-published by <a href=\"http://www.zenphoto.org/news/an-overview-"
+"that are un-published by <a href=\"https://www.zenphoto.org/news/an-overview-"
 "of-zenphoto-users#rules-of-protection-andvisibility-for-zenphoto-obj"
 "\">inheritance</a>."
 msgstr ""
@@ -18594,10 +18594,10 @@ msgstr "Verwjný kľúč"
 #: zp-core/zp-extensions/reCaptcha.php:50
 msgid ""
 "Enter your <em>reCaptcha v2</em> public key. You can obtain this key from "
-"the Google <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site"
+"the Google <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site"
 msgstr ""
 "Vložte svoj verejný <em>reCaptcha v2</em> kľúč. Ten dostanete od Googlu na "
-"stránke <a href=\"http://www.google.com/recaptcha\">reCaptcha</a>"
+"stránke <a href=\"https://www.google.com/recaptcha\">reCaptcha</a>"
 
 #: zp-core/zp-extensions/reCaptcha.php:51
 msgid "Private key"
@@ -19819,10 +19819,10 @@ msgstr "Podozrivé vzorce"
 
 #: zp-core/zp-extensions/simpleSpam.php:62
 msgid ""
-"SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression"
+"SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression"
 "\">regular expressions</a> (separate with spaces)"
 msgstr ""
-"Čierna listina SPAM <a href=\"http://en.wikipedia.org/wiki/Regular_expression"
+"Čierna listina SPAM <a href=\"https://en.wikipedia.org/wiki/Regular_expression"
 "\">normálne výrazy</a> (oddelené medzery)"
 
 #: zp-core/zp-extensions/simpleSpam.php:63
@@ -20159,10 +20159,10 @@ msgstr "Google - URL na licenciu obrázku"
 #: zp-core/zp-extensions/sitemap-extended.php:196
 msgid ""
 "Optional. Used only if the Google extension is checked. Must be an absolute "
-"URL address of the form: http://mydomain.com/license.html"
+"URL address of the form: https://mydomain.com/license.html"
 msgstr ""
 "Voliteľné. Používa sa iba ak je zapnuté Google rozšírenie. Musí obsahovať "
-"absolútnu URL adresu vo formáte: http://mydomain.com/license.html"
+"absolútnu URL adresu vo formáte: https://mydomain.com/license.html"
 
 #: zp-core/zp-extensions/sitemap-extended.php:197
 msgid "Sitemap processing chunk"
@@ -23122,10 +23122,10 @@ msgstr ""
 #~ msgstr "Hlavný index"
 
 #~ msgid ""
-#~ "<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> with "
+#~ "<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> with "
 #~ "modifications by Stephen Billard (sbillard)"
 #~ msgstr ""
-#~ "<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> s úpravami od "
+#~ "<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> s úpravami od "
 #~ "Stephena Billarda (sbillard)"
 
 #~ msgid ""
@@ -23229,11 +23229,11 @@ msgstr ""
 #~ msgstr "Nastavenie šablóny:"
 
 #~ msgid ""
-#~ "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album"
+#~ "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album"
 #~ "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></"
 #~ "a>"
 #~ msgstr ""
-#~ "Postavené na <a href=\"http://www.zenphoto.org\" title=\"Jednoduchá "
+#~ "Postavené na <a href=\"https://www.zenphoto.org\" title=\"Jednoduchá "
 #~ "galéria obrázkov\"><span id=\"zen-part\">zen</span><span id=\"photo-part"
 #~ "\">PHOTO</span></a>"
 
@@ -23768,13 +23768,13 @@ msgstr ""
 #~ msgid ""
 #~ "<strong>Note:</strong> Although this plugin supports <em>Effenberger "
 #~ "effects</em>, due to licensing considerations no <em>Effenberger effects</"
-#~ "em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/"
+#~ "em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/"
 #~ "\">CVI Astonishing Image Effects</a> by Christian Effenberger to select "
 #~ "and download effects."
 #~ msgstr ""
 #~ "<strong>Poznámka:</strong> Hoci je zásuvný modul <em>Effenberger effects</"
 #~ "em> podporovaný, z licenčných dôvodov nie sú v inštalácii žiadne "
-#~ "<em>Effenberger effects</em> skripty. Navštívte <a href=\"http://www."
+#~ "<em>Effenberger effects</em> skripty. Navštívte <a href=\"https://www."
 #~ "netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> od Christiana "
 #~ "Effenbergera a stiahnite si efekty."
 
@@ -24090,9 +24090,9 @@ msgstr ""
 #~ "em>."
 
 #~ msgid ""
-#~ "Get these from <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
+#~ "Get these from <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
 #~ msgstr ""
-#~ "Dostanete ich od <a href=\"http://dev.twitter.com/\">vývojárov Twitteru</"
+#~ "Dostanete ich od <a href=\"https://dev.twitter.com/\">vývojárov Twitteru</"
 #~ "a>"
 
 #~ msgid "Secret"
@@ -24439,11 +24439,11 @@ msgstr ""
 
 #~ msgid ""
 #~ "CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a "
-#~ "href=\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 "
+#~ "href=\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 "
 #~ "release notes</a>."
 #~ msgstr ""
 #~ "CombiNews je zastaralé. Odstráňte parameter  \"$option\". Pozrite si <a "
-#~ "href=\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 "
+#~ "href=\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 "
 #~ "release notes</a>."
 
 #~ msgid "Use the getLink method instead"
@@ -24616,10 +24616,10 @@ msgstr ""
 #~ "použiť printRSSHeaderLink($option, $linktext, $lang, $categorylink)."
 
 #~ msgid ""
-#~ "CombiNews is deprecated. See the <a href=\"http://www.zenphoto.org/news/"
+#~ "CombiNews is deprecated. See the <a href=\"https://www.zenphoto.org/news/"
 #~ "zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 #~ msgstr ""
-#~ "CombiNews je zastaraný. Pozrite si <a href=\"http://www.zenphoto.org/news/"
+#~ "CombiNews je zastaraný. Pozrite si <a href=\"https://www.zenphoto.org/news/"
 #~ "zenphoto-1.4.6\">Zenphoto 1.4.6 poznámky k vydaniu</a>."
 
 #~ msgid "Create an object and use the object getLink"

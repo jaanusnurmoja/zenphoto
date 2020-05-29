@@ -13,8 +13,8 @@
 #
 # Zenphotoの日本語訳です。
 # 翻訳の中で誤訳やTypoなどがあれば、適宜修正して以下のチケットで報告してください。
-# 旧: http://www.zenphoto.org/trac/ticket/738
-# 新: http://www.zenphoto.org/trac/ticket/1698
+# 旧: https://www.zenphoto.org/trac/ticket/738
+# 新: https://www.zenphoto.org/trac/ticket/1698
 #
 msgid ""
 msgstr ""
@@ -825,10 +825,10 @@ msgstr "ログイン"
 
 #: zp-core/template-functions.php:4364
 msgid ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album"
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album"
 "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 msgstr ""
-"Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web album"
+"Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web album"
 "\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 
 #: zp-core/template-functions.php:4528
@@ -1295,12 +1295,12 @@ msgstr "February 25, 2008"
 #: zp-core/admin-options.php:847
 msgid ""
 "Format for dates. Select from the list or set to <code>custom</code> and "
-"provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php"
+"provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php"
 "\"><span class=\"nowrap\"><code>strftime()</code></span></a> format string "
 "in the text box."
 msgstr ""
 "日付の形式です。一覧から選択、又は<code>カスタム</code>へ設定してテキストボッ"
-"クスに<a href=\"http://ja.php.net/manual/ja/function.strftime.php\"><span "
+"クスに<a href=\"https://ja.php.net/manual/ja/function.strftime.php\"><span "
 "class=\"nowrap\"><code>strftime()</code></span></a>にある文字形式を入力しま"
 "す。"
 
@@ -1396,12 +1396,12 @@ msgstr ""
 
 #: zp-core/admin-options.php:985
 msgid ""
-"If this option is selected Zenphoto will use <a href=\"http://www.w3schools."
+"If this option is selected Zenphoto will use <a href=\"https://www.w3schools."
 "com/php/php_sessions.asp\">PHP sessions</a> instead of cookies to make "
 "visitor settings persistent."
 msgstr ""
 "このオプションを選択した場合、Zenphotoは訪問者の設定を持続する方法をCookieの"
-"代わりに<a href=\"http://www.w3schools.com/php/php_sessions.asp\">PHP "
+"代わりに<a href=\"https://www.w3schools.com/php/php_sessions.asp\">PHP "
 "sessions</a>を使用します。"
 
 #: zp-core/admin-options.php:986
@@ -4778,10 +4778,10 @@ msgstr ""
 
 #: zp-core/admin-themes.php:181
 msgid ""
-"You can download more themes from the <a href=\"http://www.zenphoto.org/"
+"You can download more themes from the <a href=\"https://www.zenphoto.org/"
 "theme/\">zenphoto themes page</a>."
 msgstr ""
-"<a href=\"http://www.zenphoto.org/zp/theme/\">Zenphotoテーマページ</a>から"
+"<a href=\"https://www.zenphoto.org/zp/theme/\">Zenphotoテーマページ</a>から"
 "もっとテーマをダウンロードすることが出来ます。"
 
 #: zp-core/admin-themes.php:182
@@ -6107,10 +6107,10 @@ msgstr "パスワードのリセット"
 #: zp-core/admin-functions.php:28
 #, php-format
 msgid ""
-"<a href=\"http://www.zenphoto.org\" title=\"The simpler media website CMS"
+"<a href=\"https://www.zenphoto.org\" title=\"The simpler media website CMS"
 "\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
 msgstr ""
-"<a href=\"http://www.zenphoto.org\" title=\"シンプルなメディアウェブサイトCMS"
+"<a href=\"https://www.zenphoto.org\" title=\"シンプルなメディアウェブサイトCMS"
 "\">Zen<strong>photo</strong></a> バージョン %1$s 【%2$s】"
 
 #: zp-core/admin-functions.php:33
@@ -7043,9 +7043,9 @@ msgstr "画像 %s は回転可能ではありません。"
 #, php-format
 msgid ""
 "Unknown error processing %s! Please report to the developers at <a href="
-"\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+"\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 msgstr ""
-"%s を処理中の不明なエラー！<a href=\"http://www.zenphoto.org/\">www.zenphoto."
+"%s を処理中の不明なエラー！<a href=\"https://www.zenphoto.org/\">www.zenphoto."
 "org</a>の開発者に報告してください。"
 
 #: zp-core/functions-image.php:363 zp-core/functions-image.php:388
@@ -7498,7 +7498,7 @@ msgstr "<em>%1$s</em> フォルダ%2$s 【パーミッション失敗】"
 msgid ""
 "Setup could not change the file permissions from <em>%1$s</em> (<code>0%2$o</"
 "code>) to <em>%3$s</em> (<code>0%4$o</code>). You will have to set the "
-"permissions manually. See the <a href=\"http://www.zenphoto.org/news/"
+"permissions manually. See the <a href=\"https://www.zenphoto.org/news/"
 "troubleshooting-zenphoto#29\">Troubleshooting guide</a> for details on "
 "Zenphoto permissions requirements."
 msgstr ""
@@ -7568,10 +7568,10 @@ msgstr "%1$s (0%2$o)"
 
 #: zp-core/setup/setup-functions.php:428
 msgid ""
-"See the <a href=\"http://www.zenphoto.org/news/troubleshooting-"
+"See the <a href=\"https://www.zenphoto.org/news/troubleshooting-"
 "zenphoto#24\">troubleshooting guide</a> on zenphoto.org for details."
 msgstr ""
-"詳細についてはzenphoto.orgの<a href=\"http://www.zenphoto.org/news/"
+"詳細についてはzenphoto.orgの<a href=\"https://www.zenphoto.org/news/"
 "troubleshooting-zenphoto#24\">トラブルシューティングガイド</a>を見てくださ"
 "い。"
 
@@ -7818,12 +7818,12 @@ msgstr "PHP <code>Register Globals</code> 【セット】"
 #: zp-core/setup/index.php:613
 msgid ""
 "PHP Register globals presents a security risk to any PHP application. See <a "
-"href=\"http://php.net/manual/en/security.globals.php\"><em>Using Register "
+"href=\"https://php.net/manual/en/security.globals.php\"><em>Using Register "
 "Globals</em></a>. Change your PHP.ini settings to <code>register_globals = "
 "off</code>."
 msgstr ""
 "PHPのRegister globalsは全てのPHPアプリケーションにセキュリティリスクを与えま"
-"す。<a href=\"http://jp2.php.net/manual/ja/security.globals.php\"><em>グロー"
+"す。<a href=\"https://jp2.php.net/manual/ja/security.globals.php\"><em>グロー"
 "バル変数の登録機能の使用法</em></a>を御覧ください。php.iniの設定を"
 "<code>register_globals = off</code>に変更してください。"
 
@@ -7873,13 +7873,13 @@ msgstr "PHP <code>magic_quotes_gpc</code> 【有効】"
 #: zp-core/setup/index.php:648
 msgid ""
 "We strongly recommend disabling <code>magic_quotes_gpc</code>. For more "
-"information See <em><a href=\"http://www.zenphoto.org/news/installation-"
+"information See <em><a href=\"https://www.zenphoto.org/news/installation-"
 "problems#about-magicquotes-and-why-they-should-be-disabled\">What is "
 "magic_quotes_gpc and why should it be disabled?</a></em> in the Zenphoto "
 "troubleshooting guide."
 msgstr ""
 "<code>magic_quotes_gpc</code>を無効にする必要があります。詳細については"
-"Zenphotoのトラブルシューティングガイドの<em><a href=\"http://www.zenphoto."
+"Zenphotoのトラブルシューティングガイドの<em><a href=\"https://www.zenphoto."
 "org/news/installation-problems#about-magicquotes-and-why-they-should-be-"
 "disabled\">What is magic_quotes_gpc and why should it be disabled?</a></em>を"
 "見てください。"
@@ -7975,10 +7975,10 @@ msgstr ""
 
 #: zp-core/setup/index.php:682
 msgid ""
-"See the <a  href=\"http://www.zenphoto.org/news/problems-with-languages"
+"See the <a  href=\"https://www.zenphoto.org/news/problems-with-languages"
 "\">user guide</a> on zenphoto.org for details."
 msgstr ""
-"詳細についてはzenphoto.orgの<a  href=\"http://www.zenphoto.org/news/problems-"
+"詳細についてはzenphoto.orgの<a  href=\"https://www.zenphoto.org/news/problems-"
 "with-languages\">ユーザーガイド</a>を見てください。"
 
 #: zp-core/setup/index.php:684
@@ -8631,7 +8631,7 @@ msgstr "Zenphotoコアファイルパーミッション 【正しくありませ
 msgid ""
 "Setup could not set the one or more components to the selected permissions "
 "level. You will have to set the permissions manually. See the <a href="
-"\"http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
+"\"https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders"
 "\">Troubleshooting guide</a> for details on Zenphoto permissions "
 "requirements."
 msgstr ""
@@ -8680,10 +8680,10 @@ msgstr "サーバーは<em>nginx</em>に見えます"
 #: zp-core/setup/index.php:1416
 msgid ""
 "If you wish to create cruft-free URLs, you will need to configuring <a href="
-"\"http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL "
+"\"https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial\"><em>URL "
 "rewriting for NGINX servers</em></a>."
 msgstr ""
-"クラフトフリーなURLを作成したい場合、<a href=\"http://www.zenphoto.org/news/"
+"クラフトフリーなURLを作成したい場合、<a href=\"https://www.zenphoto.org/news/"
 "nginx-rewrite-rules-tutorial\"><em>NGINXサーバー用のURL書き換え</em></a>を構"
 "成する必要があります。"
 
@@ -14976,9 +14976,9 @@ msgstr ""
 
 #: zp-core/zp-extensions/tweet_news.php:75
 msgid ""
-"Get these from <a href=\"http://dev.twitter.com/\">Twitter developers</a>"
+"Get these from <a href=\"https://dev.twitter.com/\">Twitter developers</a>"
 msgstr ""
-"<a href=\"http://dev.twitter.com/\">Twitter developers</a>からこれらを取得"
+"<a href=\"https://dev.twitter.com/\">Twitter developers</a>からこれらを取得"
 
 #: zp-core/zp-extensions/tweet_news.php:76
 msgid "Secret"
@@ -15262,10 +15262,10 @@ msgstr "死に続けるパターン"
 
 #: zp-core/zp-extensions/simpleSpam.php:62
 msgid ""
-"SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression"
+"SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression"
 "\">regular expressions</a> (separate with spaces)"
 msgstr ""
-"SPAMブラックリスト<a href=\"http://ja.wikipedia.org/wiki/%E6%AD%A3%E8%A6%8F"
+"SPAMブラックリスト<a href=\"https://ja.wikipedia.org/wiki/%E6%AD%A3%E8%A6%8F"
 "%E8%A1%A8%E7%8F%BE\">正規表現</a>(スペースで区切ります)"
 
 #: zp-core/zp-extensions/simpleSpam.php:63
@@ -15727,9 +15727,9 @@ msgstr "公開鍵"
 #: zp-core/zp-extensions/reCaptcha.php:67
 msgid ""
 "Enter your <em>reCaptcha</em> public key. You can obtain this key from the "
-"Google <a href=\"http://www.google.com/recaptcha\">reCaptcha</a> site"
+"Google <a href=\"https://www.google.com/recaptcha\">reCaptcha</a> site"
 msgstr ""
-"<em>reCaptcha</em>の公開鍵を入力してください。グーグルの<a href=\"http://www."
+"<em>reCaptcha</em>の公開鍵を入力してください。グーグルの<a href=\"https://www."
 "google.com/recaptcha\">reCaptcha</a>のサイトから入手することができます。"
 
 #: zp-core/zp-extensions/reCaptcha.php:68
@@ -16225,10 +16225,10 @@ msgstr "スクリプトページ"
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:141
 msgid ""
 "Creates a link outside the Zenphoto structure. Use of a full URL is "
-"recommended (e.g. http://www.domain.com)."
+"recommended (e.g. https://www.domain.com)."
 msgstr ""
 "Zenphoto構造の外側にリンクを作成します。完全なURLの使用がお勧めです。(例 "
-"http://www.example.com/)"
+"https://www.example.com/)"
 
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:148
 #: zp-core/zp-extensions/menu_manager/menu_tab_edit.php:260
@@ -16539,10 +16539,10 @@ msgstr ""
 #: zp-core/zp-extensions/zenpage/deprecated-functions.php:54
 msgid ""
 "CombiNews is deprecated. Remove the  \"$option\" parameter. See the <a href="
-"\"http://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release "
+"\"https://www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 release "
 "notes</a>."
 msgstr ""
-"CombiNewsは非推奨です。「$option」パラメーターを削除します。<a href=\"http://"
+"CombiNewsは非推奨です。「$option」パラメーターを削除します。<a href=\"https://"
 "www.zenphoto.org/news/zenphoto-1.4.6\">Zenphoto 1.4.6 リリースノート</a>を見"
 "てください。"
 
@@ -16783,10 +16783,10 @@ msgstr ""
 #: zp-core/zp-extensions/zenpage/deprecated-functions.php:806
 #: zp-core/zp-extensions/zenpage/deprecated-functions.php:822
 msgid ""
-"CombiNews is deprecated. See the <a href=\"http://www.zenphoto.org/news/"
+"CombiNews is deprecated. See the <a href=\"https://www.zenphoto.org/news/"
 "zenphoto-1.4.6\">Zenphoto 1.4.6 release notes</a>."
 msgstr ""
-"CombiNewsは非推奨です。<a href=\"http://www.zenphoto.org/news/"
+"CombiNewsは非推奨です。<a href=\"https://www.zenphoto.org/news/"
 "zenphoto-1.4.6\">Zenphoto 1.4.6 リリースノート</a>を見てください。"
 
 #: zp-core/zp-extensions/zenpage/deprecated-functions.php:831
@@ -18275,10 +18275,10 @@ msgstr "まとめるRSSフィード"
 #: zp-core/zp-extensions/mergedRSS.php:66
 msgid ""
 "Enter the full urls of the feeds to merge separated by semicolons (e.g. "
-"\"http://www.domain1.com/rss; http://www.domain2.com/rss\")"
+"\"https://www.domain1.com/rss; https://www.domain2.com/rss\")"
 msgstr ""
-"まとめるフィードの完全なURLをセミコロン(例: \"http://www.domain1.com/rss; "
-"http://www.domain2.com/rss\")で区切って入力します。"
+"まとめるフィードの完全なURLをセミコロン(例: \"https://www.domain1.com/rss; "
+"https://www.domain2.com/rss\")で区切って入力します。"
 
 #: zp-core/zp-extensions/mergedRSS.php:67
 msgid "Feed items:"
@@ -18725,10 +18725,10 @@ msgstr ""
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:15
 msgid ""
-"Responsive jQuery bxSlider thumb nav plugin based on <a href='http://"
-"bxslider.com'>http://bxslider.com</a>"
+"Responsive jQuery bxSlider thumb nav plugin based on <a href='https://"
+"bxslider.com'>https://bxslider.com</a>"
 msgstr ""
-"<a href='http://bxslider.com'>http://bxslider.com</a>を基にしたレスポンシブの"
+"<a href='https://bxslider.com'>https://bxslider.com</a>を基にしたレスポンシブの"
 "jQuery bxSliderサムネイルナビプラグイン"
 
 #: zp-core/zp-extensions/bxslider_thumb_nav.php:47
@@ -19150,13 +19150,13 @@ msgstr "承認無し(No acknowledgement)"
 msgid ""
 "<strong>Note:</strong> Although this plugin supports <em>Effenberger "
 "effects</em>, due to licensing considerations no <em>Effenberger effects</"
-"em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/\">CVI "
+"em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/\">CVI "
 "Astonishing Image Effects</a> by Christian Effenberger to select and "
 "download effects."
 msgstr ""
 "<strong>注:</strong> このプラグインは<em>Effenberger効果</em>をサポートします"
 "が、ライセンスの問題で<em>Effenberger効果</em>スクリプトは含んでいません。効"
-"果をダウンロードして選択するにはChristian Effenbergerで<a href=\"http://www."
+"果をダウンロードして選択するにはChristian Effenbergerで<a href=\"https://www."
 "netzgesta.de/cvi/\">CVI Astonishing Image Effects</a>を見てください。"
 
 #: zp-core/zp-extensions/image_effects.php:113
@@ -20015,10 +20015,10 @@ msgstr "グーグル - 画像へのURLライセンス"
 #: zp-core/zp-extensions/sitemap-extended.php:170
 msgid ""
 "Optional. Used only if the Google extension is checked. Must be an absolute "
-"URL address of the form: http://mydomain.com/license.html"
+"URL address of the form: https://mydomain.com/license.html"
 msgstr ""
 "オプションです。Googleエクステンションがチェックされた場合にのみ使用されま"
-"す。フォームの物理的なURLアドレスにしなければなりません: http://mydomain.com/"
+"す。フォームの物理的なURLアドレスにしなければなりません: https://mydomain.com/"
 "license.html"
 
 #: zp-core/zp-extensions/sitemap-extended.php:171
@@ -20067,10 +20067,10 @@ msgstr ""
 #: zp-core/zp-extensions/GoogleMap/Map.php:105
 msgid ""
 "For information on URL limits visit <a href=\"javascript:parent.window."
-"location='http://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
+"location='https://www.boutell.com/newfaq/misc/urllength.html';\">What is the "
 "maximum length of a URL</a>."
 msgstr ""
-"URL制限の情報については<a href=\"javascript:parent.window.location='http://"
+"URL制限の情報については<a href=\"javascript:parent.window.location='https://"
 "www.boutell.com/newfaq/misc/urllength.html';\">What is the maximum length of "
 "a URL</a>(英文)を御覧ください。"
 
@@ -20974,10 +20974,10 @@ msgstr ""
 
 #: zp-core/zp-extensions/jplayer.php:72
 msgid ""
-"Please see <a href='http://jplayer.org'>jplayer.org</a> for more info about "
+"Please see <a href='https://jplayer.org'>jplayer.org</a> for more info about "
 "the player and its license."
 msgstr ""
-"プレーヤーについての詳細情報やライセンスについては<a href='http://jplayer."
+"プレーヤーについての詳細情報やライセンスについては<a href='https://jplayer."
 "org'>jplayer.org</a>をご覧ください。"
 
 #: zp-core/zp-extensions/jplayer.php:74
@@ -21180,11 +21180,11 @@ msgstr "必須のものを更新"
 #: zp-core/zp-extensions/jplayer.php:497
 msgid ""
 "To play the media you will need to either update your browser to a recent "
-"version or update your <a href=\"http://get.adobe.com/flashplayer/\" target="
+"version or update your <a href=\"https://get.adobe.com/flashplayer/\" target="
 "\"_blank\">Flash plugin</a>."
 msgstr ""
 "メディアを再生したいなら、最新バージョンへブラウザをアップデートするか、<a "
-"href=\"http://get.adobe.com/flashplayer/\" target=\"_blank\">Flashプラグイン"
+"href=\"https://get.adobe.com/flashplayer/\" target=\"_blank\">Flashプラグイン"
 "</a>を更新する必要があります。"
 
 #: zp-core/zp-extensions/crop_image.php:22
@@ -21760,11 +21760,11 @@ msgstr "アルバムの公開と画像の可視性のデフォルト値を設定
 #: zp-core/zp-extensions/publishContent/publishContent.php:217
 msgid ""
 "The number of un-published items does <strong>not</strong> include items "
-"that are un-published by <a href=\"http://www.zenphoto.org/news/an-overview-"
+"that are un-published by <a href=\"https://www.zenphoto.org/news/an-overview-"
 "of-zenphoto-users#rules-of-protection-andvisibility-for-zenphoto-obj"
 "\">inheritance</a>."
 msgstr ""
-"非公開のアイテム数は<a href=\"http://www.zenphoto.org/news/an-overview-of-"
+"非公開のアイテム数は<a href=\"https://www.zenphoto.org/news/an-overview-of-"
 "zenphoto-users#rules-of-protection-andvisibility-for-zenphoto-obj\">継承</a>"
 "による非公開アイテムは<strong>含まれません</strong>。"
 
@@ -22568,9 +22568,9 @@ msgstr "アルバムのRSS"
 
 #: themes/zenpage/footer.php:5
 msgid ""
-"Zenpage theme designed by <a href=\"http://www.maltem.de\">Malte Müller</a>"
+"Zenpage theme designed by <a href=\"https://www.maltem.de\">Malte Müller</a>"
 msgstr ""
-"Zenpage theme designed by <a href=\"http://www.maltem.de\">Malte Müller</a>"
+"Zenpage theme designed by <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: themes/basic/functions.php:69
 msgid "Default theme color scheme."
@@ -22582,11 +22582,11 @@ msgstr "テーマカラー"
 
 #: themes/basic/theme_description.php:5
 msgid ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
-"<a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and "
+"<a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 msgstr ""
-"<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> と <a "
-"href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+"<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> と <a "
+"href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: themes/basic/theme_description.php:8
 msgid ""
@@ -22707,10 +22707,10 @@ msgstr "動画"
 
 #: themes/garland/theme_description.php:10
 msgid ""
-"Modded Wordpress theme from, <a href=\"http://garlandtheme.blogspot.com/"
+"Modded Wordpress theme from, <a href=\"https://garlandtheme.blogspot.com/"
 "\">garland</a>"
 msgstr ""
-"Wordpressのテーマ<a href=\"http://garlandtheme.blogspot.com/\">garland</a>か"
+"Wordpressのテーマ<a href=\"https://garlandtheme.blogspot.com/\">garland</a>か"
 "らのModded"
 
 #: themes/garland/themeoptions.php:48
@@ -22962,10 +22962,10 @@ msgstr "コメントの追加"
 
 #: themes/effervescence_plus/theme_description.php:7
 msgid ""
-"<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> with "
+"<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> with "
 "modifications by Stephen Billard (sbillard)"
 msgstr ""
-"<a href=\"http://angoulvant.net/\">Stephane Angoulvant</a> with "
+"<a href=\"https://angoulvant.net/\">Stephane Angoulvant</a> with "
 "modifications by Stephen Billard (sbillard)"
 
 #: themes/effervescence_plus/theme_description.php:10
@@ -23135,10 +23135,10 @@ msgstr "Malte Müller (acrylian)"
 
 #: themes/zpmobile/theme_description.php:10
 msgid ""
-"A theme primarily meant for mobile/smartphone browsing using <a href='http://"
+"A theme primarily meant for mobile/smartphone browsing using <a href='https://"
 "jQuerymobile.com'>jQuerymobile framework</a>."
 msgstr ""
-"主に<a href='http://jQuerymobile.com'>jQuerymobileフレームワーク</a>を使用し"
+"主に<a href='https://jQuerymobile.com'>jQuerymobileフレームワーク</a>を使用し"
 "たスマートフォン/携帯電話のブラウジングのためのテーマです。"
 
 #: themes/zpmobile/index.php:66

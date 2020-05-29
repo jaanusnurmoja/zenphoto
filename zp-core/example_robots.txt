@@ -2,7 +2,7 @@
 # keep webbots from finding duplicate or invalid content in 
 # your zenphoto gallery.
 #
-# See: http://www.robotstxt.org/ for details on robots.txt.
+# See: https://www.robotstxt.org/ for details on robots.txt.
 #
 # Modify the lines below to change "zenphoto" to the folder 
 # where you have installed your zenphoto gallery.
@@ -24,5 +24,5 @@ Disallow: /zenphoto/backup/
 
 # Link to the sitemap file if using teh sitemap-extended plugin.
 # Change it to your domain and uncomment the line to use it:
-# sitemap: http://www.yourdomain.com/cache_html/sitemap/sitemapindex.xml
+# sitemap: https://www.yourdomain.com/cache_html/sitemap/sitemapindex.xml
 

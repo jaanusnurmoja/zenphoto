@@ -164,7 +164,7 @@
 						});
 					}
 					if (window.location.protocol === 'https:') {
-						url = url.replace(/^http:/, 'https:');
+						url = url.replace(/^https:/, 'https:');
 					}
 					node.on('load error', function() {
 							node.data('loading')(true);
@@ -352,7 +352,7 @@
 				canMakeEmpty: false,
 				integrate: {
 					title: 'TOAST UI Image Editor',
-					link: 'http://ui.toast.com/tui-image-editor/'
+					link: 'https://ui.toast.com/tui-image-editor/'
 				}
 			},
 			// MIME types to accept

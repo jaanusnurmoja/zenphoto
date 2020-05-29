@@ -559,7 +559,7 @@ function getTimezones() {
 			foreach ($zones as $id => $zone) {
 				/**
 				 * Only get timezones explicitely not part of "Others" except UTC
-				 * @see http://www.php.net/manual/en/timezones.others.php
+				 * @see https://www.php.net/manual/en/timezones.others.php
 				 */
 				if ($zone['timezone_id'] == 'UTC' || preg_match('/^(Africa|America|Antarctica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)\//', $zone['timezone_id'])) {
 					$cities[] = $zone['timezone_id'];

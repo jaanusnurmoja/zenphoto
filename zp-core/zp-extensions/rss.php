@@ -736,7 +736,7 @@ class RSS extends feed {
 		$this->startCache();
 		echo '<?xml-stylesheet type="text/css" href="' . WEBPATH . '/' . ZENFOLDER . '/' . PLUGIN_FOLDER . '/rss/rss.css" ?>' . "\n";
 		?>
-		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+		<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom" xmlns:media="https://search.yahoo.com/mrss/">
 			<channel>
 				<title><![CDATA[<?php echo $this->channel_title; ?>]]></title>
 				<link><?php echo PROTOCOL . '://' . $this->host . WEBPATH; ?></link>
@@ -745,7 +745,7 @@ class RSS extends feed {
 				<language><?php echo $this->locale_xml; ?></language>
 				<pubDate><?php echo date("r", time()); ?></pubDate>
 				<lastBuildDate><?php echo date("r", time()); ?></lastBuildDate>
-				<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+				<docs>https://blogs.law.harvard.edu/tech/rss</docs>
 				<generator>Zenphoto RSS Generator</generator>
 				
 				<?php

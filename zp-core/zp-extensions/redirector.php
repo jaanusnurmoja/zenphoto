@@ -11,16 +11,16 @@
  * JSON:
  * 
  *    {
- * 	    "http:\/\/example.com/oldurl1/": "http:\/\/example.com/newurl1/",
- * 	    "http:\/\/example.com/oldurl2/": "http:\/\/example.com/newurl2/",
+ * 	    "https:\/\/example.com/oldurl1/": "https:\/\/example.com/newurl1/",
+ * 	    "https:\/\/example.com/oldurl2/": "https:\/\/example.com/newurl2/",
  *    }
  * 
  * Remember to escape the slashes!
  * 
  * CSV (comma separated):
  * 
- *     http://example.com/oldurl1/,http://example.com/newurl1/
- *     http://example.com/oldurl2/,http://example.com/newurl2/
+ *     https://example.com/oldurl1/,https://example.com/newurl1/
+ *     https://example.com/oldurl2/,https://example.com/newurl2/
  *     (…)
  * 
  * To use such a catalogue file create a folder `redirector` within the root `plugins` folder of your install and place the file within.

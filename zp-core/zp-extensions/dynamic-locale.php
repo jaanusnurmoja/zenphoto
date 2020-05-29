@@ -204,7 +204,7 @@ class dynamic_locale {
 		if (SERVER_PROTOCOL == 'https') {
 			$host = 'https://' . $host;
 		} else {
-			$host = 'http://' . $host;
+			$host = 'https://' . $host;
 		}
 		return $host;
 	}

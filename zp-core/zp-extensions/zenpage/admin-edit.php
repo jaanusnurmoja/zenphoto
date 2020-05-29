@@ -500,7 +500,7 @@ if (!isset($_GET['add'])) { // prevent showing the message when adding page or a
 																<?php
 																// Autofill honeypot hack (hidden password input),
 																// needed to prevent "Are you sure?" from tiggering when autofill is enabled in browsers
-																// http://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
+																// https://benjaminjshore.info/2014/05/chrome-auto-fill-honey-pot-hack.html
 																?>
 																<input class="dirtyignore" type="password" name="pass" style="display:none;" />
 																<input type="password" size="27"

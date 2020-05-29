@@ -1456,7 +1456,7 @@ function sortByKey($results, $sortkey, $order) {
  * @param bool $case_sensitive If the sort should be case sensitive
  * @return array
  *
- * @author redoc (http://codingforums.com/showthread.php?t=71904)
+ * @author redoc (https://codingforums.com/showthread.php?t=71904)
  */
 function sortMultiArray($array, $index, $descending = false, $natsort = true, $case_sensitive = false, $preservekeys = false, $remove_criteria = array()) {
 	if (is_array($array) && count($array) > 0) {

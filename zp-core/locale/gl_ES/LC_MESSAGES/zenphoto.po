@@ -152,8 +152,8 @@ msgstr "Arquivo da Galería"
 #: zenphoto/themes/stopdesign/gallery.php:120
 #: zenphoto/themes/stopdesign/register.php:42
 #: zenphoto/themes/stopdesign/contact.php:43
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Modelos para Fotos</a> de Stopdesign"
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign"
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Modelos para Fotos</a> de Stopdesign"
 
 #: zenphoto/themes/stopdesign/search.php:12
 #: zenphoto/themes/stopdesign/search.php:27
@@ -292,8 +292,8 @@ msgstr "Rexístrate neste sitio"
 
 #: zenphoto/themes/stopdesign/index.php:203
 #: zenphoto/themes/stopdesign/image.php:164
-msgid "<a href=\"http://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
-msgstr "<a href=\"http://stopdesign.com/templates/photos/\">Modelos para Fotos</a> de Stopdesign."
+msgid "<a href=\"https://stopdesign.com/templates/photos/\">Photo Templates</a> from Stopdesign."
+msgstr "<a href=\"https://stopdesign.com/templates/photos/\">Modelos para Fotos</a> de Stopdesign."
 
 #: zenphoto/themes/stopdesign/404.php:9
 #: zenphoto/themes/stopdesign/404.php:22
@@ -443,8 +443,8 @@ msgid "Ported to Zenphoto by Mark Galeassi and Stephen Billard"
 msgstr "Adaptado a Zenphoto por Mark Galeassi e Stephen Billard"
 
 #: zenphoto/themes/stopdesign/theme_description.php:10
-msgid "A theme based on the design from <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
-msgstr "Un tema baseado no deseño de <a href=\"http://stopdesign.com/templates/photos/\">Douglas Bowman</a>. Este tema está baixo a licenza <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>."
+msgid "A theme based on the design from <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. This theme is licensed under the <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a> License."
+msgstr "Un tema baseado no deseño de <a href=\"https://stopdesign.com/templates/photos/\">Douglas Bowman</a>. Este tema está baixo a licenza <a href=\"https://creativecommons.org/licenses/by-nc-sa/2.5/\">Creative Commons Attribution-NonCommercial-ShareAlike 2.5</a>."
 
 #: zenphoto/themes/stopdesign/register.php:26
 #: zenphoto/themes/stopdesign/register.php:37
@@ -596,8 +596,8 @@ msgid "Gallery Index"
 msgstr "Índice Galería"
 
 #: zenphoto/themes/default/theme_description.php:4
-msgid "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
-msgstr "<a href=\"http://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> e <a href=\"http://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgid "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> and <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
+msgstr "<a href=\"https://www.noscope.com\" target=\"_blank\">Joen Asmussen</a> e <a href=\"https://www.levibuzolic.com\" target=\"_blank\">Levi Buzolic</a>"
 
 #: zenphoto/themes/default/theme_description.php:7
 msgid "The default theme in 4 distinct flavors. After choosing this theme you can pick the theme color by going to the Admin Options tab and changing the <em>Theme colors</em> option."
@@ -748,12 +748,12 @@ msgid "Search news"
 msgstr "Busca Nova"
 
 #: zenphoto/themes/zenpage/footer.php:5
-msgid "Zenpage theme by <a href=\"http://www.maltem.de\">Malte Müller</a>"
-msgstr "Tema de Zenpage por <a href=\"http://www.maltem.de\">Malte Müller</a>"
+msgid "Zenpage theme by <a href=\"https://www.maltem.de\">Malte Müller</a>"
+msgstr "Tema de Zenpage por <a href=\"https://www.maltem.de\">Malte Müller</a>"
 
 #: zenphoto/themes/zenpage/footer.php:6
-msgid "Powered by <a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
-msgstr "Funciona con <a href=\"http://www.zenphoto.org\" title=\"Un álbum de fotos máis sinxelo\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgid "Powered by <a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
+msgstr "Funciona con <a href=\"https://www.zenphoto.org\" title=\"Un álbum de fotos máis sinxelo\"><span id=\"zen-part\">zen</span><span id=\"photo-part\">PHOTO</span></a>"
 
 #: zenphoto/themes/zenpage/404.php:37
 msgid "Album"
@@ -921,8 +921,8 @@ msgid "Simpleviewer requires <em>mod_rewrite</em> to be set. Simpleviewer is dis
 msgstr "O Simpleviewer precisa de <em>mod_rewrite</em>. O Simpleviewer está inhabilitado."
 
 #: zenphoto/themes/effervescence_plus/album.php:357
-msgid "For the best viewing experience <a href=\"http://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
-msgstr "Para unha mellor experiencia de visualización <a href=\"http://www.macromedia.com/go/getflashplayer/\">Faite co Adobe Flash.</a>"
+msgid "For the best viewing experience <a href=\"https://www.macromedia.com/go/getflashplayer/\">Get Adobe Flash.</a>"
+msgstr "Para unha mellor experiencia de visualización <a href=\"https://www.macromedia.com/go/getflashplayer/\">Faite co Adobe Flash.</a>"
 
 #: zenphoto/themes/effervescence_plus/album.php:366
 msgid "View Gallery Without Flash"
@@ -946,8 +946,8 @@ msgid "Comments: %d"
 msgstr "Comentarios: %d"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:7
-msgid "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
-msgstr "<a href=\"http://sblog.angoulvant.net/\">Stephane Angoulvant</a> con modificacións de <a href=\"http://stephen.sbillard.org/\">Stephen Billard</a>"
+msgid "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> with modifications by <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
+msgstr "<a href=\"https://sblog.angoulvant.net/\">Stephane Angoulvant</a> con modificacións de <a href=\"https://stephen.sbillard.org/\">Stephen Billard</a>"
 
 #: zenphoto/themes/effervescence_plus/theme_description.php:10
 msgid "Based on Effervescence 1.1 with multiple personalities (slimbox, simpleviewer and smoothgallery) added. Select different color schemes and personalities from the Admin Options tab."
@@ -2288,8 +2288,8 @@ msgstr "Mandar un e-mail ó autor do comentario"
 
 #: zenphoto/zp-core/admin-functions.php:27
 #, php-format
-msgid "<a href=\"http://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
-msgstr "<a href=\"http://www.zenphoto.org\" title=\"Un álbum de fotos máis sinxelo\">zen<strong>photo</strong></a> versión %1$s [%2$s]"
+msgid "<a href=\"https://www.zenphoto.org\" title=\"A simpler web photo album\">Zen<strong>photo</strong></a> version %1$s [%2$s]"
+msgstr "<a href=\"https://www.zenphoto.org\" title=\"Un álbum de fotos máis sinxelo\">zen<strong>photo</strong></a> versión %1$s [%2$s]"
 
 #: zenphoto/zp-core/admin-functions.php:32
 msgid "GPLv2"
@@ -4318,8 +4318,8 @@ msgid "Themes allow you to visually change the entire look and feel of your gall
 msgstr "Os Temas permítenche cambiar totalmente o deseño visual da túa galería. Os arquivos do Tema atópanse na túa carpeta de Zenphoto <code>/themes</code>."
 
 #: zenphoto/zp-core/admin-themes.php:176
-msgid "You can download more themes from the <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
-msgstr "Podes baixarte máis Temas de <a href=\"http://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+msgid "You can download more themes from the <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
+msgstr "Podes baixarte máis Temas de <a href=\"https://www.zenphoto.org/zp/theme/\">zenphoto themes page</a>."
 
 #: zenphoto/zp-core/admin-themes.php:177
 msgid "Place the downloaded themes in the <code>/themes</code> folder and they will be available for your use."
@@ -4404,8 +4404,8 @@ msgid "You are running the latest zenphoto version."
 msgstr "A túa versión de Zenphoto é a última actualización."
 
 #: zenphoto/zp-core/admin.php:94
-msgid "Could not connect to <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
-msgstr "Non se puido establecer a conexión con <a href=\"http://www.zenphoto.org\">zenphoto.org</a>"
+msgid "Could not connect to <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
+msgstr "Non se puido establecer a conexión con <a href=\"https://www.zenphoto.org\">zenphoto.org</a>"
 
 #: zenphoto/zp-core/admin.php:96
 #, php-format
@@ -5274,8 +5274,8 @@ msgid "Image not found or is unreadable."
 msgstr "A imaxe non foi atopada ou non é lexible."
 
 #: zenphoto/zp-core/functions-image.php:193
-msgid "Unknown error! Please report to the developers at <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
-msgstr "Erro Descoñecido! Por favor, informa ós desenvolvedores en <a href=\"http://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgid "Unknown error! Please report to the developers at <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
+msgstr "Erro Descoñecido! Por favor, informa ós desenvolvedores en <a href=\"https://www.zenphoto.org/\">www.zenphoto.org</a>"
 
 #: zenphoto/zp-core/admin-options.php:484
 #, php-format
@@ -5369,8 +5369,8 @@ msgstr "HTTP Accept Language"
 
 #: zenphoto/zp-core/admin-options.php:698
 #, php-format
-msgid "Highlighted languages are not current with Zenphoto Version %s. (The version Zenphoto of the out-of-date language is shown in braces.) Please check the <a href=\"http://www.zenphoto.org/trac/report/9?sort=summary\">translation tickets</a> for new and updated language translations."
-msgstr "Idiomas remarcados non están actualizadas ca versión de Zenphoto %s. (A versión de Zenphoto do idioma non actualizado é amosado entre corchetes.) Por favor comproba o <a href=\"http://www.zenphoto.org/trac/report/9?sort=summary\">tickets de tradución</a> por unha tradución actualizada."
+msgid "Highlighted languages are not current with Zenphoto Version %s. (The version Zenphoto of the out-of-date language is shown in braces.) Please check the <a href=\"https://www.zenphoto.org/trac/report/9?sort=summary\">translation tickets</a> for new and updated language translations."
+msgstr "Idiomas remarcados non están actualizadas ca versión de Zenphoto %s. (A versión de Zenphoto do idioma non actualizado é amosado entre corchetes.) Por favor comproba o <a href=\"https://www.zenphoto.org/trac/report/9?sort=summary\">tickets de tradución</a> por unha tradución actualizada."
 
 #: zenphoto/zp-core/admin-options.php:700
 msgid "Multi-lingual"
@@ -5553,8 +5553,8 @@ msgid "February 25, 2008"
 msgstr "Febreiro 25, 2008"
 
 #: zenphoto/zp-core/admin-options.php:772
-msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> format string in the text box."
-msgstr "Formato das datas. Escolle da lista ou fixa o teu <code>personalizado</code> e proporciona unha cadea co formato de <a href=\"http://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> no campo de texto."
+msgid "Format for dates. Select from the list or set to <code>custom</code> and provide a <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> format string in the text box."
+msgstr "Formato das datas. Escolle da lista ou fixa o teu <code>personalizado</code> e proporciona unha cadea co formato de <a href=\"https://us2.php.net/manual/en/function.strftime.php\"><nobr><code>strftime()</code></nobr></a> no campo de texto."
 
 #: zenphoto/zp-core/admin-options.php:775
 msgid "Charset:"
@@ -7934,8 +7934,8 @@ msgid "Which of the HTML meta tags should be used. For info about these in detai
 msgstr "Cal das meta etiquetas HTML deben ser usadas. Para obter información sobre estes detalles, consulta na rede."
 
 #: zenphoto/zp-core/zp-extensions/colorbox.php:10
-msgid "Loads Colorbox JS and CSS scripts for selected theme page scripts. Note that this plugin does not attach Colorbox to any element. You need to do this on your theme yourself. Visit the <a href='http://colorpowered.com/colorbox/'>Colorbox website</a> about that."
-msgstr "Carga Colorbox JS e scripts de CSS para os scripts das páxinas seleccionadas do tema. Notar que este plugin non adxunta Colorbox a ningún elemento. Precisas de facelo ti mesmo no teu tema. Visita o <a href='http://colorpowered.com/colorbox/'>sitio web de Colorbox</a> para iso."
+msgid "Loads Colorbox JS and CSS scripts for selected theme page scripts. Note that this plugin does not attach Colorbox to any element. You need to do this on your theme yourself. Visit the <a href='https://colorpowered.com/colorbox/'>Colorbox website</a> about that."
+msgstr "Carga Colorbox JS e scripts de CSS para os scripts das páxinas seleccionadas do tema. Notar que este plugin non adxunta Colorbox a ningún elemento. Precisas de facelo ti mesmo no teu tema. Visita o <a href='https://colorpowered.com/colorbox/'>sitio web de Colorbox</a> para iso."
 
 #: zenphoto/zp-core/zp-extensions/colorbox.php:60
 msgid "The scripts for which Colorbox is enabled. {Should have been set by the themes!}"
@@ -8557,8 +8557,8 @@ msgid "<strong>IMPORTANT</strong>: Only one multimedia player plugin can be enab
 msgstr "<strong>IMPORTANTE</strong>: Só un plugin de reprodución multimedia pode estar activo á vez e o plugin class-video debe estar activo tamén."
 
 #: zenphoto/zp-core/zp-extensions/flowplayer3.php:13
-msgid "Please see <a href='http://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
-msgstr "Por favor, mira <a href='http://flowplayer.org'>flowplayer.org</a> para máis información sobre o reprodutor e a súa licenza."
+msgid "Please see <a href='https://flowplayer.org'>flowplayer.org</a> for more info about the player and its license."
+msgstr "Por favor, mira <a href='https://flowplayer.org'>flowplayer.org</a> para máis información sobre o reprodutor e a súa licenza."
 
 #: zenphoto/zp-core/zp-extensions/flowplayer3.php:17
 msgid "Flash players do not support <em>External Albums</em>."
@@ -9081,8 +9081,8 @@ msgid "Enables jQuery tag suggestions on the search field. Just activate the plu
 msgstr "Activar suxestións de etiquetas de jQuery no campo de busca. Tan só activa o plugin e a característica estará activada no teu campo de busca do teu tema."
 
 #: zenphoto/zp-core/zp-extensions/tag_suggest.php:11
-msgid "an adaption of Remy Sharp's <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
-msgstr "unha adaptación da <a href='http://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a> de Remy Sharp"
+msgid "an adaption of Remy Sharp's <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a>"
+msgstr "unha adaptación da <a href='https://remysharp.com/2007/12/28/jquery-tag-suggestion/ '>jQuery Tag Suggestion</a> de Remy Sharp"
 
 #: zenphoto/zp-core/zp-extensions/zenpage.php:8
 msgid "A CMS plugin that adds the capability to run an entire gallery focused website with zenphoto."
@@ -10866,8 +10866,8 @@ msgid "Google - URL to image license"
 msgstr "Google - URL á imaxe da licencia"
 
 #: zenphoto/zp-core/zp-extensions/sitemap-extended.php:153
-msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: http://mydomain.com/license.html"
-msgstr "Opcional. Usado só se a extensión de Goolge está marcada. Debe ser un enderezo URL absoluto, na forma: http://mydomain.com/license.html"
+msgid "Optional. Used only if the Google extension is checked. Must be an absolute URL address of the form: https://mydomain.com/license.html"
+msgstr "Opcional. Usado só se a extensión de Goolge está marcada. Debe ser un enderezo URL absoluto, na forma: https://mydomain.com/license.html"
 
 #: zenphoto/zp-core/zp-extensions/sitemap-extended.php:197
 msgid "Purge sitemap cache"
@@ -11016,8 +11016,8 @@ msgid "No acknowledgement"
 msgstr "Sen recoñecemento"
 
 #: zenphoto/zp-core/zp-extensions/image_effects.php:183
-msgid "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
-msgstr "<strong>Nota:</strong> Aínda que este plugin soporta <em>efectos Effenberger</em>, por causa da licenza  non son incluídos scripts de <em>efectos Effenberger</em>. Mirar <a href=\"http://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> por Christian Effenberger para escoller e descargar efectos."
+msgid "<strong>Note:</strong> Although this plugin supports <em>Effenberger effects</em>, due to licensing considerations no <em>Effenberger effects</em> scripts are included. See <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> by Christian Effenberger to select and download effects."
+msgstr "<strong>Nota:</strong> Aínda que este plugin soporta <em>efectos Effenberger</em>, por causa da licenza  non son incluídos scripts de <em>efectos Effenberger</em>. Mirar <a href=\"https://www.netzgesta.de/cvi/\">CVI Astonishing Image Effects</a> por Christian Effenberger para escoller e descargar efectos."
 
 #: zenphoto/zp-core/zp-extensions/image_effects.php:188
 msgid "No effects"
@@ -11246,8 +11246,8 @@ msgid "Patterns to die on"
 msgstr "Patróns de corte"
 
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:41
-msgid "SPAM blacklist <a href=\"http://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
-msgstr "Lista negra do SPAM <a href=\"http://gl.wikipedia.org/wiki/Expresi%C3%B3n_regular\">Expresión Regular</a> (separado con espazos)"
+msgid "SPAM blacklist <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">regular expressions</a> (separate with spaces)"
+msgstr "Lista negra do SPAM <a href=\"https://gl.wikipedia.org/wiki/Expresi%C3%B3n_regular\">Expresión Regular</a> (separado con espazos)"
 
 #: zenphoto/zp-core/zp-extensions/spamfilters/simple.php:42
 msgid "Excessive URL count"
@@ -11672,8 +11672,8 @@ msgid "Custom link"
 msgstr "Ligazón personalizado"
 
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:140
-msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. http://www.domain.com)."
-msgstr "Xera unha ligazón fora da estructura de Zenphoto. Usar a URL completa é recomendado (por exemplo: http://www.domain.com)"
+msgid "Creates a link outside the Zenphoto structure. Use of a full URL is recommended (e.g. https://www.domain.com)."
+msgstr "Xera unha ligazón fora da estructura de Zenphoto. Usar a URL completa é recomendado (por exemplo: https://www.domain.com)"
 
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:147
 #: zenphoto/zp-core/zp-extensions/menu_manager/menu_tab_edit.php:247

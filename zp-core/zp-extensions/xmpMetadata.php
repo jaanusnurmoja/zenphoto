@@ -5,7 +5,7 @@
  * Enable this filter to scan images (or <i>xmp sidecar</i> files) for metadata.
  *
  * Relevant metadata found will be incorporated into the image (or album object).
- * See <i>{@link http://www.adobe.com/devnet/xmp.html  Adobe XMP Specification}</i>
+ * See <i>{@link https://www.adobe.com/devnet/xmp.html  Adobe XMP Specification}</i>
  * for xmp metadata description. This plugin attempts to map the <i>xmp metadata</i> to Zenphoto or IPTC fields.
  *
  * If a sidecar file exists, it will take precedence (the image file will not be
@@ -1037,14 +1037,14 @@ class xmpMetadata {
 		@chmod($file, 0777);
 		$f = fopen($file, 'w');
 		fwrite($f, '<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 4.2-c020 1.124078, Tue Sep 11 2007 23:21:40 ">' . "\n");
-		fwrite($f, ' <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">' . "\n");
+		fwrite($f, ' <rdf:RDF xmlns:rdf="https://www.w3.org/1999/02/22-rdf-syntax-ns#">' . "\n");
 		$last_element = $special = $output = false;
 		foreach ($desiredtags as $field => $elementXML) {
 			$elementXML = substr($elementXML, 1, -1);
 			if ($last_element != $elementXML) {
 				if ($output) {
 					fwrite($f, '  </rdf:Description>' . "\n");
-					fwrite($f, '  <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">' . "\n");
+					fwrite($f, '  <rdf:Description rdf:about="" xmlns:dc="https://purl.org/dc/elements/1.1/">' . "\n");
 				}
 				$last_element = $elementXML;
 				$output = false;

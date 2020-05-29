@@ -11,8 +11,8 @@ header('Content-Type: text/html; charset=' . LOCAL_CHARSET);
 <!-- tinyZenpage - A TinyMCE plugin for Zenphoto with Zenpage
 		 Version: 1.4.6
 		 Author: Malte Müller (acrylian), Stephen Billard (sbillard)
-		 inspired by Alessandro "Simbul" Morandi's  ZenphotoPress (http://simbul.bzaar.net/zenphotopress)
-		 License: GPL v2 or later http://www.gnu.org/licenses/gpl.html -->
+		 inspired by Alessandro "Simbul" Morandi's  ZenphotoPress (https://simbul.bzaar.net/zenphotopress)
+		 License: GPL v2 or later https://www.gnu.org/licenses/gpl.html -->
 <!DOCTYPE html>
 <html<?php printLangAttribute(); ?>>
 	<head>

@@ -18,7 +18,7 @@
  *
  * <hr>
  *
- * Quoted from [matomo.org](http://matomo.org).
+ * Quoted from [matomo.org](https://matomo.org).
  *
  *  Matomo is a downloadable, open source (GPL licensed) real time web analytics software program.
  *  It provides you with detailed reports on your website visitors:
@@ -192,7 +192,7 @@ class matomoStats {
 				}
 				?>
 				(function () {
-					var u = "//<?php echo str_replace(array('http://', 'https://'), '', $url); ?>/";
+					var u = "//<?php echo str_replace(array('https://', 'https://'), '', $url); ?>/";
 					_paq.push(['setTrackerUrl', u + 'piwik.php']);
 					_paq.push(['setSiteId', <?php echo $id; ?>]);
 					var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];

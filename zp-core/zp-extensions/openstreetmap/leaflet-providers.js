@@ -72,7 +72,7 @@
 
 	/**
 	 * Definition of providers.
-	 * see http://leafletjs.com/reference.html#tilelayer for options in the options map.
+	 * see https://leafletjs.com/reference.html#tilelayer for options in the options map.
 	 */
 
 	L.TileLayer.Provider.providers = {
@@ -117,7 +117,7 @@
 				BZH: {
 					url: 'https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png',
 					options: {
-						attribution: '{attribution.OpenStreetMap}, Tiles courtesy of <a href="http://www.openstreetmap.bzh/" target="_blank">Breton OpenStreetMap Team</a>',
+						attribution: '{attribution.OpenStreetMap}, Tiles courtesy of <a href="https://www.openstreetmap.bzh/" target="_blank">Breton OpenStreetMap Team</a>',
 						bounds: [[46.2, -5.5], [50, 0.7]]
 					}
 				}
@@ -126,21 +126,21 @@
 		OpenSeaMap: {
 			url: 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
 			options: {
-				attribution: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
+				attribution: 'Map data: &copy; <a href="https://www.openseamap.org">OpenSeaMap</a> contributors'
 			}
 		},
 		OpenPtMap: {
-			url: 'http://openptmap.org/tiles/{z}/{x}/{y}.png',
+			url: 'https://openptmap.org/tiles/{z}/{x}/{y}.png',
 			options: {
 				maxZoom: 17,
-				attribution: 'Map data: &copy; <a href="http://www.openptmap.org">OpenPtMap</a> contributors'
+				attribution: 'Map data: &copy; <a href="https://www.openptmap.org">OpenPtMap</a> contributors'
 			}
 		},
 		OpenTopoMap: {
 			url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
 			options: {
 				maxZoom: 17,
-				attribution: 'Map data: {attribution.OpenStreetMap}, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+				attribution: 'Map data: {attribution.OpenStreetMap}, <a href="https://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 			}
 		},
 		OpenRailwayMap: {
@@ -151,10 +151,10 @@
 			}
 		},
 		OpenFireMap: {
-			url: 'http://openfiremap.org/hytiles/{z}/{x}/{y}.png',
+			url: 'https://openfiremap.org/hytiles/{z}/{x}/{y}.png',
 			options: {
 				maxZoom: 19,
-				attribution: 'Map data: {attribution.OpenStreetMap} | Map style: &copy; <a href="http://www.openfiremap.org">OpenFireMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+				attribution: 'Map data: {attribution.OpenStreetMap} | Map style: &copy; <a href="https://www.openfiremap.org">OpenFireMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 			}
 		},
 		SafeCast: {
@@ -168,7 +168,7 @@
 			url: 'https://{s}.tile.thunderforest.com/{variant}/{z}/{x}/{y}.png?apikey={apikey}',
 			options: {
 				attribution:
-					'&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, {attribution.OpenStreetMap}',
+					'&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, {attribution.OpenStreetMap}',
 				variant: 'cycle',
 				apikey: '<insert your api key here>',
 				maxZoom: 22
@@ -209,7 +209,7 @@
 			options: {
 				maxZoom: 19,
 				variant: 'roads',
-				attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data '
+				attribution: 'Imagery from <a href="https://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data '
 			},
 			variants: {
 				Roads: {
@@ -243,7 +243,7 @@
 					options: {
 						variant: 'asterh',
 						maxZoom: 18,
-						attribution: '{attribution.OpenMapSurfer} <a href="https://lpdaac.usgs.gov/products/aster_policies">ASTER GDEM</a>, <a href="http://srtm.csi.cgiar.org/">SRTM</a>'
+						attribution: '{attribution.OpenMapSurfer} <a href="https://lpdaac.usgs.gov/products/aster_policies">ASTER GDEM</a>, <a href="https://srtm.csi.cgiar.org/">SRTM</a>'
 					}
 				},
 				ElementsAtRisk: {
@@ -259,7 +259,7 @@
 			options: {
 				maxZoom: 18,
 				variant: 'full',
-				attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data {attribution.OpenStreetMap}'
+				attribution: 'Tiles courtesy of <a href="https://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data {attribution.OpenStreetMap}'
 			},
 			variants: {
 				Full: 'full',
@@ -283,8 +283,8 @@
 			url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/{variant}/{z}/{x}/{y}{r}.{ext}',
 			options: {
 				attribution:
-					'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
-					'<a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; ' +
+					'Map tiles by <a href="https://stamen.com">Stamen Design</a>, ' +
+					'<a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; ' +
 					'Map data {attribution.OpenStreetMap}',
 				subdomains: 'abcd',
 				minZoom: 0,
@@ -449,10 +449,10 @@
 			}
 		},
 		OpenWeatherMap: {
-			url: 'http://{s}.tile.openweathermap.org/map/{variant}/{z}/{x}/{y}.png?appid={apiKey}',
+			url: 'https://{s}.tile.openweathermap.org/map/{variant}/{z}/{x}/{y}.png?appid={apiKey}',
 			options: {
 				maxZoom: 19,
-				attribution: 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
+				attribution: 'Map data &copy; <a href="https://openweathermap.org">OpenWeatherMap</a>',
 				apiKey:'<insert your api key here>',
 				opacity: 0.5
 			},
@@ -482,7 +482,7 @@
 				'app_id={app_id}&app_code={app_code}&lg={language}',
 			options: {
 				attribution:
-					'Map &copy; 1987-' + new Date().getFullYear() + ' <a href="http://developer.here.com">HERE</a>',
+					'Map &copy; 1987-' + new Date().getFullYear() + ' <a href="https://developer.here.com">HERE</a>',
 				subdomains: '1234',
 				mapID: 'newest',
 				'app_id': '<insert your app_id here>',
@@ -590,18 +590,18 @@
 			}
 		},
 		FreeMapSK: {
-			url: 'http://t{s}.freemap.sk/T/{z}/{x}/{y}.jpeg',
+			url: 'https://t{s}.freemap.sk/T/{z}/{x}/{y}.jpeg',
 			options: {
 				minZoom: 8,
 				maxZoom: 16,
 				subdomains: '1234',
 				bounds: [[47.204642, 15.996093], [49.830896, 22.576904]],
 				attribution:
-					'{attribution.OpenStreetMap}, vizualization CC-By-SA 2.0 <a href="http://freemap.sk">Freemap.sk</a>'
+					'{attribution.OpenStreetMap}, vizualization CC-By-SA 2.0 <a href="https://freemap.sk">Freemap.sk</a>'
 			}
 		},
 		MtbMap: {
-			url: 'http://tile.mtbmap.cz/mtbmap_tiles/{z}/{x}/{y}.png',
+			url: 'https://tile.mtbmap.cz/mtbmap_tiles/{z}/{x}/{y}.png',
 			options: {
 				attribution:
 					'{attribution.OpenStreetMap} &amp; USGS'
@@ -769,7 +769,7 @@
 		},
 		NLS: {
 			// NLS maps are copyright National library of Scotland.
-			// http://maps.nls.uk/projects/api/index.html
+			// https://maps.nls.uk/projects/api/index.html
 			// Please contact NLS for anything other than non-commercial low volume usage
 			//
 			// Map sources: Ordnance Survey 1:1m to 1:63K, 1920s-1940s
@@ -778,7 +778,7 @@
 			//  z12-18 - one inch (1:63360)
 			url: 'https://nls-{s}.tileserver.com/nls/{z}/{x}/{y}.jpg',
 			options: {
-				attribution: '<a href="http://geo.nls.uk/maps/">National Library of Scotland Historic Maps</a>',
+				attribution: '<a href="https://geo.nls.uk/maps/">National Library of Scotland Historic Maps</a>',
 				bounds: [[49.6, -12], [61.7, 3]],
 				minZoom: 1,
 				maxZoom: 18,
@@ -786,12 +786,12 @@
 			}
 		},
 		JusticeMap: {
-			// Justice Map (http://www.justicemap.org/)
+			// Justice Map (https://www.justicemap.org/)
 			// Visualize race and income data for your community, county and country.
 			// Includes tools for data journalists, bloggers and community activists.
-			url: 'http://www.justicemap.org/tile/{size}/{variant}/{z}/{x}/{y}.png',
+			url: 'https://www.justicemap.org/tile/{size}/{variant}/{z}/{x}/{y}.png',
 			options: {
-				attribution: '<a href="http://www.justicemap.org/terms.php">Justice Map</a>',
+				attribution: '<a href="https://www.justicemap.org/terms.php">Justice Map</a>',
 				// one of 'county', 'tract', 'block'
 				size: 'county',
 				// Bounds for USA, including Alaska and Hawaii
@@ -824,7 +824,7 @@
 				bounds: [[-75, -180], [81, 180]],
 				minZoom: 2,
 				maxZoom: 18,
-				// Get your own geoportail apikey here : http://professionnels.ign.fr/ign/contrats/
+				// Get your own geoportail apikey here : https://professionnels.ign.fr/ign/contrats/
 				// NB : 'choisirgeoportail' is a demonstration key that comes with no guarantee
 				apikey: 'choisirgeoportail',
 				format: 'image/jpeg',
@@ -857,7 +857,7 @@
 				minZoom: 11,
 				maxZoom: 18,
 				bounds: [[1.56073, 104.11475], [1.16, 103.502]],
-				attribution: '<img src="https://docs.onemap.sg/maps/images/oneMap64-01.png" style="height:20px;width:20px;"/> New OneMap | Map data &copy; contributors, <a href="http://SLA.gov.sg">Singapore Land Authority</a>'
+				attribution: '<img src="https://docs.onemap.sg/maps/images/oneMap64-01.png" style="height:20px;width:20px;"/> New OneMap | Map data &copy; contributors, <a href="https://SLA.gov.sg">Singapore Land Authority</a>'
 			},
 			variants: {
 				Default: 'Default',

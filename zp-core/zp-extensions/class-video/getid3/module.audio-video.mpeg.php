@@ -4,7 +4,7 @@
 /// getID3() by James Heinrich <info@getid3.org>               //
 //  available at https://github.com/JamesHeinrich/getID3       //
 //            or https://www.getid3.org                        //
-//            or http://getid3.sourceforge.net                 //
+//            or https://getid3.sourceforge.net                 //
 //  see readme.txt for more details                            //
 /////////////////////////////////////////////////////////////////
 //                                                             //
@@ -344,8 +344,8 @@ class getid3_mpeg extends getid3_handler
 						break;
 					}
 					$ParsedAVchannels[$StartCodeValue] = $StartCodeValue;
-					// http://en.wikipedia.org/wiki/Packetized_elementary_stream
-					// http://dvd.sourceforge.net/dvdinfo/pes-hdr.html
+					// https://en.wikipedia.org/wiki/Packetized_elementary_stream
+					// https://dvd.sourceforge.net/dvdinfo/pes-hdr.html
 /*
 					$PackedElementaryStream = array();
 					if ($StartCodeValue >= 0xE0) {
@@ -627,7 +627,7 @@ echo 'average_File_bitrate = '.number_format(array_sum($vbr_bitrates) / count($v
 	public static function videoAspectRatioTextLookup($rawaspectratio, $mpeg_version=1) {
 		$lookup = array(
 			1 => array('forbidden', 'square pixels', '0.6735', '16:9, 625 line, PAL', '0.7615', '0.8055', '16:9, 525 line, NTSC', '0.8935', '4:3, 625 line, PAL, CCIR601', '0.9815', '1.0255', '1.0695', '4:3, 525 line, NTSC, CCIR601', '1.1575', '1.2015', 'reserved'),
-			2 => array('forbidden', 'square pixels', '4:3', '16:9', '2.21:1', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved'), // http://dvd.sourceforge.net/dvdinfo/mpeghdrs.html
+			2 => array('forbidden', 'square pixels', '4:3', '16:9', '2.21:1', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved', 'reserved'), // https://dvd.sourceforge.net/dvdinfo/mpeghdrs.html
 		);
 		return (isset($lookup[$mpeg_version][$rawaspectratio]) ? $lookup[$mpeg_version][$rawaspectratio] : '');
 	}
