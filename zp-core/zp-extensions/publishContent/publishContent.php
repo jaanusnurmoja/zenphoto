@@ -159,7 +159,7 @@ echo '</head>';
 				if (isset($_GET['propagate_unpublished'])) {
 					foreach ($albumlist as $albumname) {
 						$album = newAlbum($albumname);
-						if (!$album->getShow()) {
+						if (!$album->isPublished()) {
 							unpublishSubalbums($album);
 						}
 					}
@@ -266,13 +266,14 @@ echo '</head>';
 									<?php
 									foreach ($publish_albums_list as $analbum => $albumid) {
 										$album = newAlbum($analbum);
-										$thumbimage = $album->getAlbumThumbImage();
-										$thumb = getAdminThumb($thumbimage, 'large');
 										?>
 										<li>
 											<label>
 												<input type="checkbox" class="checkAuto" name="<?php echo postIndexEncode($analbum); ?>" value="<?php echo $albumid; ?>" class="albumcheck" />
-												<img src="<?php echo html_encode(pathurlencode($thumb)); ?>" width="60" height="60" alt="" title="album thumb" />
+												<?php
+												$thumbimage = $album->getAlbumThumbImage();
+												printAdminThumb($thumbimage, 'large', '', '', gettext('Album thumb'));
+												?>
 												<?php echo $album->name; ?>
 											</label>
 											<a href="<?php echo $album->getLink(); ?>" title="<?php echo gettext('view'); ?>"> (<?php echo gettext('view'); ?>)</a>
@@ -390,7 +391,7 @@ echo '</head>';
 										$album = newAlbum($key);
 										$albumid = $album->getID();
 										$imagelist = array_flip($imagelist);
-										natcasesort($imagelist);
+										sortArray($imagelist);
 										$imagelist = array_flip($imagelist);
 										?>
 										<li>
@@ -431,8 +432,10 @@ echo '</head>';
 																	</label>
 																</td>
 																<td>
-																	<?php $image = newImage($album, $display); ?>
-																	<img src="<?php echo html_encode(pathurlencode(getAdminThumb($image, 'large'))); ?>" alt="<?php echo $image->filename; ?>"/>
+																	<?php 
+																	$image = newImage($album, $display); 
+																	printAdminThumb($image, 'large', '', '', '', $image->filename);
+																	?>
 																</td>
 																<td>
 																	<?php printf(gettext('%s'), $display); ?><a href="<?php echo html_encode($image->getLink()); ?>" title="<?php echo html_encode($image->getTitle()); ?>"> (<?php echo gettext('View'); ?>)</a>
@@ -487,7 +490,7 @@ echo '</head>';
 					$c = 0;
 					foreach ($items as $key => $item) {
 						$itemobj = new ZenpageCategory($item['titlelink']);
-						if (!$itemobj->getShow()) {
+						if (!$itemobj->isPublished()) {
 							$c++;
 							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="catcheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
 						}
@@ -546,7 +549,7 @@ echo '</head>';
 					$c = 0;
 					foreach ($items as $key => $item) {
 						$itemobj = new ZenpageNews($item['titlelink']);
-						if (!$itemobj->getShow()) {
+						if (!$itemobj->isPublished()) {
 							$c++;
 							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="artcheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
 						}
@@ -602,7 +605,7 @@ echo '</head>';
 					$c = 0;
 					foreach ($items as $key => $item) {
 						$itemobj = new ZenpagePage($item['titlelink']);
-						if (!$itemobj->getShow()) {
+						if (!$itemobj->isPublished()) {
 							$c++;
 							$output .= '<li><label><input type="checkbox" name="' . $item['titlelink'] . '" value="' . $item['titlelink'] . '" class="pagecheck" />' . $itemobj->getTitle() . '</label><a href="' . html_encode($itemobj->getLink()) . '" title="' . html_encode($itemobj->getTitle()) . '"> (' . gettext('View') . ')</a></li>';
 						}

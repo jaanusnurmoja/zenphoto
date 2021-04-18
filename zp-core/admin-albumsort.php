@@ -98,10 +98,12 @@ echo "\n</head>";
 					gettext('Set to unpublished')	 => 'hideall',
 					gettext('Add tags')						 => 'addtags',
 					gettext('Clear tags')					 => 'cleartags',
-					gettext('Disable comments')		 => 'commentsoff',
-					gettext('Enable comments')		 => 'commentson',
 					gettext('Change owner')				 => 'changeowner'
 	);
+	if(extensionEnabled('comment_form')) { 
+		$checkarray[gettext('Disable comments')] = 'commentsoff';
+		$checkarray[gettext('Enable comments')] = 'commentson';
+	}
 	if (extensionEnabled('hitcounter')) {
 		$checkarray_images[gettext('Reset hitcounter')] = 'resethitcounter';
 	}
@@ -185,11 +187,12 @@ echo "\n</head>";
 								$image = newImage($album, $imagename);
 								?>
 								<li id="id_<?php echo $image->getID(); ?>">
-									<img class="imagethumb"
-											 src="<?php echo getAdminThumb($image, 'large'); ?>"
-											 alt="<?php echo html_encode($image->getTitle()); ?>"
-											 title="<?php echo html_encode($image->getTitle()) . ' (' . html_encode($image->getFileName()) . ')'; ?>"
-											 width="80" height="80"  />
+									<div class="imagethumb_wrapper">
+										<?php 
+										$title_attr = $image->getTitle(). ' (' . html_encode($image->getFileName()) . ')';
+										printAdminThumb($image, 'small-uncropped', 'imagethumb','', $title_attr, $image->getTitle());
+										?>
+									</div>
 									<p>
 										<?php printPublishIconLinkGallery($image, true) ?>
 										<a href="<?php echo WEBPATH . "/" . ZENFOLDER; ?>/admin-edit.php?page=edit&amp;album=<?php echo pathurlencode($album->name); ?>&amp;image=<?php echo urlencode($image->filename); ?>&amp;tab=imageinfo#IT" title="<?php echo gettext('edit'); ?>"><img src="<?php echo WEBPATH . '/' . ZENFOLDER; ?>/images/pencil.png" alt=""></a>
@@ -202,10 +205,10 @@ echo "\n</head>";
 										?>
 										<input type="checkbox" name="ids[]" value="<?php echo $image->filename; ?>">	
 									</p>
-									<?php
-								}
-								?>
-							</li>
+								</li>
+								<?php
+							}
+							?>
 						</ul>
 						<br class="clearall" />
 

@@ -182,16 +182,21 @@ if(file_exists(SERVERPATH . '/' . DATA_FOLDER . '/setup.log')) {
 }
 if (!defined('DATABASE_SOFTWARE') && extension_loaded(strtolower(@$_zp_conf_vars['db_software']))) {
 	require_once(dirname(__FILE__) . '/functions-db-' . $_zp_conf_vars['db_software'] . '.php');
-	$dbarray = array(
-			'db_software' => '',
-			'mysql_user' => '',
-			'mysql_pass' => '',
-			'mysql_host' => '',
-			'mysql_database' => '',
-			'mysql_port' => '',
+	$dbconfig_defaults = array(
+			'db_software' => $_zp_conf_vars['db_software'],
+			'mysql_user' => null,
+			'mysql_pass' => null,
+			'mysql_host' => 'localhost',
+			'mysql_database' => null,
+			'mysql_port' => 3306,
 			'mysql_prefix' => '',
-			'UTF-8' => '');
-	$data = db_connect(array_intersect_key($_zp_conf_vars, $dbarray), false);
+			'UTF-8' => true);
+	foreach($dbconfig_defaults as $key => $value) {
+		if (!isset($_zp_conf_vars[$key]) || ($key != 'mysql_prefix' && isset($_zp_conf_vars[$key]) && empty($_zp_conf_vars[$key]))) {
+			$_zp_conf_vars[$key] = $value;
+		}
+	}
+	$data = db_connect($_zp_conf_vars, false);
 } else {
 	$data = false;
 }
@@ -480,12 +485,13 @@ function loadLocalOptions($albumid, $theme) {
  * Replaces/renames an option. If the old option exits, it creates the new option with the old option's value as the default 
  * unless the new option has already been set otherwise. Independently it always deletes the old option.
  * 
+ * @since Zenphoto 1.5.1
+ * @since ZenphotoCMS 1.5.8 - renamed from replaceOption() to renameOption()
+ * 
  * @param string $oldkey Old option name
  * @param string $newkey New option name
- * 
- * @since Zenphoto 1.5.1
  */
-function replaceOption($oldkey, $newkey) {
+function renameOption($oldkey, $newkey) {
 	$oldoption = getOption($oldkey);
 	if ($oldoption) {
 		setOptionDefault($newkey, $oldoption);
@@ -1683,9 +1689,16 @@ function installSignature() {
 function zp_session_start() {
 	if (session_id() == '') {
 		// force session cookie to be secure when in https
-		$CookieInfo = session_get_cookie_params();
+		$cookieinfo = session_get_cookie_params();
 		// force session cookie to be secure when in https
-		session_set_cookie_params($CookieInfo['lifetime'], $CookieInfo['path'], $CookieInfo['domain'], secureServer(), true);
+		if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+			$cookieinfo['secure'] = secureServer();
+			$cookieinfo['httponly'] = true;
+			$cookieinfo['samesite'] = 'Lax';
+			session_set_cookie_params($cookieinfo);
+		} else {
+			session_set_cookie_params($cookieinfo['lifetime'], $cookieinfo['path'], $cookieinfo['domain'], secureServer(), true);
+		}
 		session_start();
 	}
 }

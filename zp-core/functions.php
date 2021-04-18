@@ -36,10 +36,10 @@ require_once(dirname(__FILE__) . '/load_objectClasses.php');
 $_zp_current_context_stack = array();
 
 $_zp_albumthumb_selector = array(array('field' => '', 'direction' => '', 'desc' => 'random'),
-				array('field' => 'id', 'direction' => 'DESC', 'desc' => gettext('most recent')),
-				array('field' => 'mtime', 'direction' => '', 'desc' => gettext('oldest')),
-				array('field' => 'title', 'direction' => '', 'desc' => gettext('first alphabetically')),
-				array('field' => 'hitcounter', 'direction' => 'DESC', 'desc' => gettext('most viewed'))
+		array('field' => 'id', 'direction' => 'DESC', 'desc' => gettext('most recent')),
+		array('field' => 'mtime', 'direction' => '', 'desc' => gettext('oldest')),
+		array('field' => 'title', 'direction' => '', 'desc' => gettext('first alphabetically')),
+		array('field' => 'hitcounter', 'direction' => 'DESC', 'desc' => gettext('most viewed'))
 );
 
 $_zp_missing_album = new AlbumBase(gettext('missing'), false);
@@ -60,6 +60,8 @@ if (extensionEnabled('zenpage')) {
 	define('ZP_NEWS_ENABLED', false);
 	define('ZP_PAGES_ENABLED', false);
 }
+
+zp_register_filter('content_macro', 'getCookieInfoMacro');
 
 /**
  * parses the allowed HTML tags for use by htmLawed
@@ -183,7 +185,7 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 		$articlecontent = html_decode($articlecontent);
 		//remove script to be replaced later
 		$articlecontent = preg_replace('~<script.*?/script>~is', '', $articlecontent);
-		
+
 		//remove HTML comments
 		$articlecontent = preg_replace('~<!--.*?-->~is', '', $articlecontent);
 		$short = mb_substr($articlecontent, 0, $shorten);
@@ -218,7 +220,7 @@ function shortenContent($articlecontent, $shorten, $shortenindicator, $forceindi
 				$short = mb_substr($short, 0, $open);
 			}
 			$short = tidyHTML($short . $shortenindicator);
-		} 
+		}
 		$articlecontent = $short;
 	}
 	if (isset($matches)) {
@@ -346,23 +348,6 @@ function myts_date($format, $mytimestamp) {
 }
 
 /**
- * Determines if the input is an e-mail address. Adapted from WordPress.
- * Name changed to avoid conflicts in WP integrations.
- *
- * @param string $input_email email address?
- * @return bool
- */
-function is_valid_email_zp($input_email) {
-	$chars = "/^([a-z0-9+_]|\\-|\\.)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}\$/i";
-	if (strstr($input_email, '@') && strstr($input_email, '.')) {
-		if (preg_match($chars, $input_email)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-/**
  * Send an mail to the mailing list. We also attempt to intercept any form injection
  * attacks by slime ball spammers. Returns error message if send failure.
  *
@@ -383,7 +368,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 	$result = '';
 	if ($replyTo) {
 		$t = $replyTo;
-		if (!is_valid_email_zp($m = array_shift($t))) {
+		if (!isValidEmail($m = array_shift($t))) {
 			if (empty($result)) {
 				$result = gettext('Mail send failed.');
 			}
@@ -394,7 +379,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 		$email_list = $_zp_authority->getAdminEmail();
 	} else {
 		foreach ($email_list as $key => $email) {
-			if (!is_valid_email_zp($email)) {
+			if (!isValidEmail($email)) {
 				unset($email_list[$key]);
 				if (empty($result)) {
 					$result = gettext('Mail send failed.');
@@ -414,7 +399,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 			return $result;
 		}
 		foreach ($cc_addresses as $key => $email) {
-			if (!is_valid_email_zp($email)) {
+			if (!isValidEmail($email)) {
 				unset($cc_addresses[$key]);
 				if (empty($result)) {
 					$result = gettext('Mail send failed.');
@@ -427,7 +412,7 @@ function zp_mail($subject, $message, $email_list = NULL, $cc_addresses = NULL, $
 		$bcc_addresses = array();
 	} else {
 		foreach ($bcc_addresses as $key => $email) {
-			if (!is_valid_email_zp($email)) {
+			if (!isValidEmail($email)) {
 				unset($bcc_addresses[$key]);
 				if (empty($result)) {
 					$result = gettext('Mail send failed.');
@@ -495,7 +480,7 @@ function sortByMultilingual($dbresult, $field, $descending) {
 	foreach ($dbresult as $key => $row) {
 		$temp[$key] = get_language_string($row[$field]);
 	}
-	natcasesort($temp);
+	sortArray($temp);
 	if ($descending) {
 		$temp = array_reverse($temp, true);
 	}
@@ -530,7 +515,7 @@ function checkAlbumPassword($album, &$hint = NULL) {
 		$album = $album->getParent();
 		while (!is_null($album)) {
 			$hash = $album->getPassword();
-			$authType = "zp_album_auth_" . $album->getID();
+			$authType = "zpcms_auth_album_" . $album->getID();
 			$saved_auth = zp_getCookie($authType);
 
 			if (!empty($hash)) {
@@ -546,7 +531,7 @@ function checkAlbumPassword($album, &$hint = NULL) {
 		}
 		// revert all tlhe way to the gallery
 		$hash = $_zp_gallery->getPassword();
-		$authType = 'zp_gallery_auth';
+		$authType = 'zpcms_auth_gallery';
 		$saved_auth = zp_getCookie($authType);
 		if (empty($hash)) {
 			$authType = 'zp_public_access';
@@ -557,7 +542,7 @@ function checkAlbumPassword($album, &$hint = NULL) {
 			}
 		}
 	} else {
-		$authType = "zp_album_auth_" . $album->getID();
+		$authType = "zpcms_auth_album_" . $album->getID();
 		$saved_auth = zp_getCookie($authType);
 		if ($saved_auth != $hash) {
 			$hint = $album->getPasswordHint();
@@ -629,7 +614,7 @@ function getPluginFiles($pattern, $folder = '', $stripsuffix = true) {
  */
 function getPlugin($plugin, $inTheme = false, $webpath = false) {
 	global $_zp_gallery;
-	$plugin = ltrim($plugin,'./\\');
+	$plugin = ltrim($plugin, './\\');
 	$pluginFile = NULL;
 	if ($inTheme === true) {
 		$inTheme = $_zp_gallery->getCurrentTheme();
@@ -924,14 +909,14 @@ function getAllSubAlbumIDs($albumfolder = '') {
 function handleSearchParms($what, $album = NULL, $image = NULL) {
 	global $_zp_current_search, $zp_request, $_zp_last_album, $_zp_current_album,
 	$_zp_current_zenpage_news, $_zp_current_zenpage_page, $_zp_gallery, $_zp_loggedin, $_zp_gallery_page;
-	$_zp_last_album = zp_getCookie('zenphoto_last_album');
+	$_zp_last_album = zp_getCookie('zpcms_search_lastalbum');
 	if (is_object($zp_request) && get_class($zp_request) == 'SearchEngine') { //	we are are on a search
-		zp_setCookie('zenphoto_searchparent', 'searchresults');
+		zp_setCookie('zpcms_search_parent', 'searchresults');
 		return $zp_request->getAlbumList();
 	}
-	$params = zp_getCookie('zenphoto_search_params');
+	$params = zp_getCookie('zpcms_search_params');
 	if (!empty($params)) {
-		$searchparent = zp_getCookie('zenphoto_searchparent');
+		$searchparent = zp_getCookie('zpcms_search_parent');
 		$context = get_context();
 		$_zp_current_search = new SearchEngine();
 		$_zp_current_search->setSearchParams($params);
@@ -947,7 +932,7 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 		}
 		if (!is_null($album)) {
 			$albumname = $album->name;
-			zp_setCookie('zenphoto_last_album', $albumname);
+			zp_setCookie('zpcms_search_lastalbum', $albumname);
 			if ($_zp_gallery_page == 'album.php') {
 				$searchparent = 'searchresults_album'; // so we know we are in an album search result so any of its images that are also results don't throw us out of context
 			}
@@ -961,7 +946,7 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 			$_zp_loggedin = $save_logon;
 			foreach ($search_album_list as $searchalbum) {
 				if (strpos($albumname, $searchalbum) !== false) {
-					if($searchparent == 'searchresults_album') {
+					if ($searchparent == 'searchresults_album') {
 						$context = $context | ZP_SEARCH_LINKED | ZP_ALBUM_LINKED;
 					} else {
 						$context = $context | ZP_SEARCH_LINKED | ZP_IMAGE_LINKED;
@@ -969,10 +954,10 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 					break;
 				}
 			}
-			zp_setCookie('zenphoto_searchparent', $searchparent);
+			zp_setCookie('zpcms_search_parent', $searchparent);
 		} else {
-			zp_clearCookie('zenphoto_searchparent');
-			zp_clearCookie('zenphoto_last_album');
+			zp_clearCookie('zpcms_search_parent');
+			zp_clearCookie('zpcms_search_lastalbum');
 		}
 		if (!is_null($_zp_current_zenpage_page)) {
 			$pages = $_zp_current_search->getPages();
@@ -1004,7 +989,7 @@ function handleSearchParms($what, $album = NULL, $image = NULL) {
 			$_zp_current_search = null;
 			rem_context(ZP_SEARCH);
 			if (!isset($_REQUEST['preserve_search_params'])) {
-				zp_clearCookie("zenphoto_search_params");
+				zp_clearCookie("zpcms_search_params");
 			}
 		}
 	}
@@ -1081,42 +1066,42 @@ function setupTheme($album = NULL) {
  * @return array
  */
 function getAllTagsUnique($checkaccess = false) {
-  global $_zp_unique_tags, $_zp_unique_tags_excluded;
-  if(zp_loggedin(VIEW_ALL_RIGHTS)) {
-    $checkaccess = false;
-  }
-  //need to cache all and filtered tags indiviually
-  if ($checkaccess) {
-    if (!is_null($_zp_unique_tags_excluded)) {
-      return $_zp_unique_tags_excluded; // cache them.
-    }
-  } else {
-    if (!is_null($_zp_unique_tags)) {
-      return $_zp_unique_tags; // cache them.
-    }
-  }
-  $all_unique_tags = array();
-  $sql = "SELECT DISTINCT `name`, `id` FROM " . prefix('tags') . ' ORDER BY `name`';
-  $unique_tags = query($sql);
-  if ($unique_tags) {
-    while ($tagrow = db_fetch_assoc($unique_tags)) {
-      if ($checkaccess) {
-        if (getTagCountByAccess($tagrow) != 0) {
-          $all_unique_tags[] = $tagrow['name'];
-        }
-      } else {
-        $all_unique_tags[] = $tagrow['name'];
-      }
-    }
-    db_free_result($unique_tags);
-  }
-  if ($checkaccess) {
-    $_zp_unique_tags_excluded = $all_unique_tags;
-    return $_zp_unique_tags_excluded;
-  } else {
-    $_zp_unique_tags = $all_unique_tags;
-    return $_zp_unique_tags;
-  }
+	global $_zp_unique_tags, $_zp_unique_tags_excluded;
+	if (zp_loggedin(VIEW_ALL_RIGHTS)) {
+		$checkaccess = false;
+	}
+	//need to cache all and filtered tags indiviually
+	if ($checkaccess) {
+		if (!is_null($_zp_unique_tags_excluded)) {
+			return $_zp_unique_tags_excluded; // cache them.
+		}
+	} else {
+		if (!is_null($_zp_unique_tags)) {
+			return $_zp_unique_tags; // cache them.
+		}
+	}
+	$all_unique_tags = array();
+	$sql = "SELECT DISTINCT `name`, `id` FROM " . prefix('tags') . ' ORDER BY `name`';
+	$unique_tags = query($sql);
+	if ($unique_tags) {
+		while ($tagrow = db_fetch_assoc($unique_tags)) {
+			if ($checkaccess) {
+				if (getTagCountByAccess($tagrow) != 0) {
+					$all_unique_tags[] = $tagrow['name'];
+				}
+			} else {
+				$all_unique_tags[] = $tagrow['name'];
+			}
+		}
+		db_free_result($unique_tags);
+	}
+	if ($checkaccess) {
+		$_zp_unique_tags_excluded = $all_unique_tags;
+		return $_zp_unique_tags_excluded;
+	} else {
+		$_zp_unique_tags = $all_unique_tags;
+		return $_zp_unique_tags;
+	}
 }
 
 /**
@@ -1129,37 +1114,37 @@ function getAllTagsUnique($checkaccess = false) {
  * @return array
  */
 function getAllTagsCount($exclude_unassigned = false, $checkaccess = false) {
-  global $_zp_count_tags;
-  if (!is_null($_zp_count_tags)) {
-    return $_zp_count_tags;
-  }
-  if(zp_loggedin(VIEW_ALL_RIGHTS)) {
-    $exclude_unassigned = false;
-    $checkaccess = false;
-  }
-  $_zp_count_tags = array();
-  $sql = "SELECT DISTINCT tags.name, tags.id, (SELECT COUNT(*) FROM " . prefix('obj_to_tag') . " as object WHERE object.tagid = tags.id) AS count FROM " . prefix('tags') . " as tags ORDER BY `name`";
-  $tagresult = query($sql);
-  if ($tagresult) {
-    while ($tag = db_fetch_assoc($tagresult)) {
-      if($checkaccess) {
-        $count = getTagCountByAccess($tag);
-        if($count != 0) {
-          $_zp_count_tags[$tag['name']] = $count;
-        }
-      } else {
-        if($exclude_unassigned) {
-          if($tag['count'] != 0) {
-            $_zp_count_tags[$tag['name']] = $tag['count'];
-          }
-        } else {
-          $_zp_count_tags[$tag['name']] = $tag['count'];
-        }
-      }
-    }
-    db_free_result($tagresult);
-  }
-  return $_zp_count_tags;
+	global $_zp_count_tags;
+	if (!is_null($_zp_count_tags)) {
+		return $_zp_count_tags;
+	}
+	if (zp_loggedin(VIEW_ALL_RIGHTS)) {
+		$exclude_unassigned = false;
+		$checkaccess = false;
+	}
+	$_zp_count_tags = array();
+	$sql = "SELECT DISTINCT tags.name, tags.id, (SELECT COUNT(*) FROM " . prefix('obj_to_tag') . " as object WHERE object.tagid = tags.id) AS count FROM " . prefix('tags') . " as tags ORDER BY `name`";
+	$tagresult = query($sql);
+	if ($tagresult) {
+		while ($tag = db_fetch_assoc($tagresult)) {
+			if ($checkaccess) {
+				$count = getTagCountByAccess($tag);
+				if ($count != 0) {
+					$_zp_count_tags[$tag['name']] = $count;
+				}
+			} else {
+				if ($exclude_unassigned) {
+					if ($tag['count'] != 0) {
+						$_zp_count_tags[$tag['name']] = $tag['count'];
+					}
+				} else {
+					$_zp_count_tags[$tag['name']] = $tag['count'];
+				}
+			}
+		}
+		db_free_result($tagresult);
+	}
+	return $_zp_count_tags;
 }
 
 /**
@@ -1171,66 +1156,66 @@ function getAllTagsCount($exclude_unassigned = false, $checkaccess = false) {
  * @return int
  */
 function getTagCountByAccess($tag) {
-  global $_zp_zenpage, $_zp_object_to_tags;
-  if (array_key_exists('count', $tag) && $tag['count'] == 0) {
-    return $tag['count'];
-  }
-  $hidealbums = getNotViewableAlbums();
-  $hideimages = getNotViewableImages();
-  $hidenews = array();
-  $hidepages = array();
-  if (extensionEnabled('Zenpage')) {
-    $hidenews = $_zp_zenpage->getNotViewableNews();
-    $hidepages = $_zp_zenpage->getNotViewablePages();
-  }
-  //skip checks if there are no unviewable items at all
-  if (empty($hidealbums) && empty($hideimages) && empty($hidenews) && empty($hidepages)) {
-    if (array_key_exists('count', $tag)) {
-      return $tag['count'];
-    }
-    return 0;
-  }
-  if (is_null($_zp_object_to_tags)) {
-    $sql = "SELECT tagid, type, objectid FROM " . prefix('obj_to_tag') . " ORDER BY tagid";
-    $_zp_object_to_tags = query_full_array($sql);
-  }
-  $count = '';
-  if ($_zp_object_to_tags) {
-    foreach($_zp_object_to_tags as $tagcheck) {
-      if ($tagcheck['tagid'] == $tag['id']) {
-        switch ($tagcheck['type']) {
-          case 'albums':
-            if (!in_array($tagcheck['objectid'], $hidealbums)) {
-              $count++;
-            }
-            break;
-          case 'images':
-            if (!in_array($tagcheck['objectid'], $hideimages)) {
-              $count++;
-            }
-            break;
-          case 'news':
-            if (ZP_NEWS_ENABLED) {
-              if (!in_array($tagcheck['objectid'], $hidenews)) {
-                $count++;
-              }
-            }
-            break;
-          case 'pages':
-            if (ZP_PAGES_ENABLED) {
-              if (!in_array($tagcheck['objectid'], $hidepages)) {
-                $count++;
-              }
-            }
-            break;
-        }
-      }
-    }
-  }
-  if (empty($count)) {
-    $count = 0;
-  }
-  return $count;
+	global $_zp_zenpage, $_zp_object_to_tags;
+	if (array_key_exists('count', $tag) && $tag['count'] == 0) {
+		return $tag['count'];
+	}
+	$hidealbums = getNotViewableAlbums();
+	$hideimages = getNotViewableImages();
+	$hidenews = array();
+	$hidepages = array();
+	if (extensionEnabled('Zenpage')) {
+		$hidenews = $_zp_zenpage->getNotViewableNews();
+		$hidepages = $_zp_zenpage->getNotViewablePages();
+	}
+	//skip checks if there are no unviewable items at all
+	if (empty($hidealbums) && empty($hideimages) && empty($hidenews) && empty($hidepages)) {
+		if (array_key_exists('count', $tag)) {
+			return $tag['count'];
+		}
+		return 0;
+	}
+	if (is_null($_zp_object_to_tags)) {
+		$sql = "SELECT tagid, type, objectid FROM " . prefix('obj_to_tag') . " ORDER BY tagid";
+		$_zp_object_to_tags = query_full_array($sql);
+	}
+	$count = '';
+	if ($_zp_object_to_tags) {
+		foreach ($_zp_object_to_tags as $tagcheck) {
+			if ($tagcheck['tagid'] == $tag['id']) {
+				switch ($tagcheck['type']) {
+					case 'albums':
+						if (!in_array($tagcheck['objectid'], $hidealbums)) {
+							$count++;
+						}
+						break;
+					case 'images':
+						if (!in_array($tagcheck['objectid'], $hideimages)) {
+							$count++;
+						}
+						break;
+					case 'news':
+						if (ZP_NEWS_ENABLED) {
+							if (!in_array($tagcheck['objectid'], $hidenews)) {
+								$count++;
+							}
+						}
+						break;
+					case 'pages':
+						if (ZP_PAGES_ENABLED) {
+							if (!in_array($tagcheck['objectid'], $hidepages)) {
+								$count++;
+							}
+						}
+						break;
+				}
+			}
+		}
+	}
+	if (empty($count)) {
+		$count = 0;
+	}
+	return $count;
 }
 
 /**
@@ -1299,7 +1284,7 @@ function readTags($id, $tbl) {
 		}
 		db_free_result($result);
 	}
-	natcasesort($tags);
+	sortArray($tags);
 	return $tags;
 }
 
@@ -1314,33 +1299,34 @@ function readTags($id, $tbl) {
 function generateListFromArray($currentValue, $list, $descending, $localize) {
 	if ($localize) {
 		$list = array_flip($list);
-		if(!is_null($descending)) {
+		if (!is_null($descending)) {
 			if ($descending) {
-				arsort($list);
+				sortArray($list, true); 
 			} else {
-				natcasesort($list);
+				sortArray($list); 
 			}
 		}
 		$list = array_flip($list);
 	} else {
-		if(!is_null($descending)) {
+		if (!is_null($descending)) {
 			if ($descending) {
-				rsort($list);
+				sortArray($list, true); 
 			} else {
-				natcasesort($list);
+				sortArray($list); 
 			}
 		}
 	}
-	
+
 	foreach ($list as $key => $item) {
 		echo '<option value="' . html_encode($item) . '"';
 		if (in_array($item, $currentValue)) {
 			echo ' selected="selected"';
 		}
-		if ($localize)
+		if ($localize) {
 			$display = $key;
-		else
+		} else {
 			$display = $item;
+		}
 		echo '>' . $display . "</option>" . "\n";
 	}
 }
@@ -1369,18 +1355,86 @@ function generateListFromFiles($currentValue, $root, $suffix, $descending = fals
 }
 
 /**
+ * Helper to generate attributename="attributevalue" for HTML elements based on an array 
+ * consisting of key => value pairs
+ * 
+ * Returns a string with with prependend space to directly use with an HTML element.
+ * 
+ * Note: 
+ * There is no check if these attributes are valid. Also values are not html_encoded  as that could 
+ * break for example JS event handlers. Do this in your attribute definition array as needed.
+ * Attributes with an empty value are skipped except the alt attribute or known boolean attributes (see in function definition)
+ * 
+ * @since ZenphotoCMS 1.5.8
+ * @param array $attributes key => value pairs of element attribute name and value. e.g. array('class' => 'someclass', 'id' => 'someid');
+ * @param array $exclude Names of attributes to exclude (in case already set otherwise)
+ * @return string
+ */
+function generateAttributesFromArray($attributes = array(), $exclude = array()) {
+	$boolean_attr = array(
+			'allowfullscreen',
+			'allowpaymentrequest',
+			'async',
+			'autofocus',
+			'autoplay',
+			'checked',
+			'controls',
+			'default',
+			'disabled',
+			'formnovalidate',
+			'hidden',
+			'ismap',
+			'itemscope',
+			'loop',
+			'multiple',
+			'muted',
+			'nomodule',
+			'novalidate',
+			'open',
+			'playsinline',
+			'readonly',
+			'required',
+			'reversed',
+			'selected',
+			'truespeed'
+	);
+	$attr = '';
+	if (!empty($attributes) && is_array($attributes)) {
+		foreach ($attributes as $key => $val) {
+			if (!in_array($key, $exclude)) {
+				if (empty($val)) {
+					if (in_array($key, $boolean_attr)) {
+						$attr .= ' ' . $key;
+					} else if ($key == 'alt') {
+						$attr .= ' ' . $key . '=""';
+					}
+				} else {
+					$attr .= ' ' . $key . '="' . $val . '"';
+				}
+			}
+		}
+	}
+	return $attr;
+}
+
+/**
  * @param string $url The link URL
  * @param string $text The text to go with the link
  * @param string $title Text for the title tag
  * @param string $class optional class
  * @param string $id optional id
+ * @param array  $extra_attr Additional attributes as array of key => value pairs
  */
-function getLinkHTML($url, $text, $title = NULL, $class = NULL, $id = NULL) {
-	return "<a href=\"" . html_encode($url) . "\"" .
-					(($title) ? " title=\"" . html_encode(getBare($title)) . "\"" : "") .
-					(($class) ? " class=\"$class\"" : "") .
-					(($id) ? " id=\"$id\"" : "") . ">" .
-					html_encode($text) . "</a>";
+function getLinkHTML($url, $text, $title = NULL, $class = NULL, $id = NULL, $extra_attr = array()) {
+	$attr = array(
+			'href' => html_encode($url),
+			'title' => html_encode(getBare($title)),
+			'class' => $class,
+			'id' => $id
+	);
+	$attr_final = array_merge($attr, $extra_attr);
+	$attributes = generateAttributesFromArray($attr_final);
+	return '<a' . $attributes . '>' . html_encode($text) . '</a>';
 }
 
 /**
@@ -1448,12 +1502,17 @@ function sortByKey($results, $sortkey, $order) {
 
 /**
  * multidimensional array column sort
+ * 
+ * If the system's PHP has the native intl extension and its Collator class available
+ * the sorting is locale aware (true natural order) and always case sensitive if $natsort is set to true
  *
  * @param array $array The multidimensional array to be sorted
  * @param mixed $index Which key(s) should be sorted by
- * @param string $order true for descending sorts
- * @param bool $natsort If natural order should be used
- * @param bool $case_sensitive If the sort should be case sensitive
+ * @param string $descending true for descending sortorder
+ * @param bool $natsort If natural order should be used. If available sorting will be locale aware.
+ * @param bool $case_sensitive If the sort should be case sensitive. Note if $natsort is true and locale aware sorting is available sorting is always case sensitive
+ * @param bool $preservekeys Default false,
+ * @param array $remove_criteria Array of indices to remove.
  * @return array
  *
  * @author redoc (https://codingforums.com/showthread.php?t=71904)
@@ -1482,22 +1541,7 @@ function sortMultiArray($array, $index, $descending = false, $natsort = true, $c
 			}
 			$temp[$key] .= $key;
 		}
-		if ($natsort) {
-			if ($case_sensitive) {
-				natsort($temp);
-			} else {
-				natcasesort($temp);
-			}
-			if ($descending) {
-				$temp = array_reverse($temp, TRUE);
-			}
-		} else {
-			if ($descending) {
-				arsort($temp);
-			} else {
-				asort($temp);
-			}
-		}
+		sortArray($temp, $descending, $natsort, $case_sensitive);
 		foreach (array_keys($temp) as $key) {
 			if (!$preservekeys && is_numeric($key)) {
 				$sorted[] = $array[$key];
@@ -1508,6 +1552,54 @@ function sortMultiArray($array, $index, $descending = false, $natsort = true, $c
 		return $sorted;
 	}
 	return $array;
+}
+
+/**
+ * General one dimensional array sorting function. Key/value associations are preserved.
+ * 
+ * If the system's PHP has the native intl extension and its Collator class available and $natsort is set to true
+ * the sorting is locale sensitive (true natural order).
+ * 
+ * The function follows native PHP array sorting functions (natcasesort() etc.) and uses the array by reference and returns true or false on success or failure.
+ * 
+ * @since ZenphotoCMS 1.5.8
+ * 
+ * @param array $array The array to sort. The array is passed by reference
+ * @param string  $descending true for descending sorts (default false)
+ * @param bool $natsort If natural order should be used (default true). If available sorting will be locale sensitive. 
+ * @param bool $case_sensitive If the sort should be case sensitive (default false). Note if $natsort is true and locale aware sorting is available sorting is always case sensitive
+ * @return boolean
+ */
+function sortArray(&$array, $descending = false, $natsort = true, $case_sensitive = false) {
+	if (is_array($array) && count($array) > 0) {
+		if ($natsort) {
+			if (class_exists('collator')) {
+				$locale = getUserLocale();
+				$collator = new Collator($locale);
+				if ($case_sensitive) {
+					$collator->setAttribute(Collator::CASE_FIRST, Collator::UPPER_FIRST);
+				}
+				$collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
+				$success = $collator->asort($array);
+			} else {
+				if ($case_sensitive) {
+					$success = natsort($array);
+				} else {
+					$success = natcasesort($array);
+				}
+			}
+			if ($descending) {
+				$array = array_reverse($array, true);
+			}
+		} else {
+			if ($descending) {
+				$success = arsort($array);
+			} else {
+				$success = asort($array);
+			}
+		}
+	}
+	return $success;
 }
 
 /**
@@ -1546,36 +1638,46 @@ function getNotViewableAlbums() {
  * @return array
  */
 function getNotViewableImages() {
-  global $_zp_not_viewable_image_list;
-  if (zp_loggedin(ADMIN_RIGHTS | MANAGE_ALL_ALBUM_RIGHTS)) {
-    return array(); //admins can see all
-  }
-  $hidealbums = getNotViewableAlbums();
-  $where = '';
-  if (!is_null($hidealbums)) {
+	global $_zp_not_viewable_image_list;
+	if (zp_loggedin(ADMIN_RIGHTS | MANAGE_ALL_ALBUM_RIGHTS)) {
+		return array(); //admins can see all
+	}
+	$hidealbums = getNotViewableAlbums();
+	$where = '';
+	if (!is_null($hidealbums)) {
 		$where = ' OR `albumid` in (' . implode(',', $hidealbums) . ')';
-  }
-  if (is_null($_zp_not_viewable_image_list)) {
-    $sql = 'SELECT DISTINCT `id` FROM ' . prefix('images') . ' WHERE `show` = 0' . $where;
-    $result = query($sql);
-    if ($result) {
-      $_zp_not_viewable_image_list = array();
-      while ($row = db_fetch_assoc($result)) {
-        $_zp_not_viewable_image_list[] = $row['id'];
-      }
-    }
-  }
-  return $_zp_not_viewable_image_list;
+	}
+	if (is_null($_zp_not_viewable_image_list)) {
+		$sql = 'SELECT DISTINCT `id` FROM ' . prefix('images') . ' WHERE `show` = 0' . $where;
+		$result = query($sql);
+		if ($result) {
+			$_zp_not_viewable_image_list = array();
+			while ($row = db_fetch_assoc($result)) {
+				$_zp_not_viewable_image_list[] = $row['id'];
+			}
+		}
+	}
+	return $_zp_not_viewable_image_list;
 }
 
-  /**
+/**
  * Checks to see if a URL is valid
  *
  * @param string $url the URL being checked
  * @return bool
  */
 function isValidURL($url) {
-	return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
+	if (filter_var($url, FILTER_VALIDATE_URL)) {
+		return true;
+	}
+	/*
+	 * Above does not allow the newer UTF8 internation domain names.
+	 * @see Alexander Terehov https://github.com/terales/php-url-validation-example
+	 */
+	if (parse_url($url, PHP_URL_SCHEME) && parse_url($url, PHP_URL_HOST)) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -1599,7 +1701,7 @@ function safe_fnmatch($pattern, $string) {
  * @return boolean
  */
 function isValidEmail($email) {
-	if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		return true;
 	}
 	return false;
@@ -1775,15 +1877,15 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 	if (empty($authType)) { // not supplied by caller
 		$check_auth = '';
 		if (isset($_GET['z']) && @$_GET['p'] == 'full-image' || isset($_GET['p']) && $_GET['p'] == '*full-image') {
-			$authType = 'zp_image_auth';
+			$authType = 'zpcms_auth_image';
 			$check_auth = getOption('protected_image_password');
 			$check_user = getOption('protected_image_user');
 		} else if (in_context(ZP_SEARCH)) { // search page
-			$authType = 'zp_search_auth';
+			$authType = 'zpcms_auth_search';
 			$check_auth = getOption('search_password');
 			$check_user = getOption('search_user');
 		} else if (in_context(ZP_ALBUM)) { // album page
-			$authType = "zp_album_auth_" . $_zp_current_album->getID();
+			$authType = "zpcms_auth_album_" . $_zp_current_album->getID();
 			$check_auth = $_zp_current_album->getPassword();
 			$check_user = $_zp_current_album->getUser();
 			if (empty($check_auth)) {
@@ -1791,7 +1893,7 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 				while (!is_null($parent)) {
 					$check_auth = $parent->getPassword();
 					$check_user = $parent->getUser();
-					$authType = "zp_album_auth_" . $parent->getID();
+					$authType = "zpcms_auth_album_" . $parent->getID();
 					if (!empty($check_auth)) {
 						break;
 					}
@@ -1799,7 +1901,7 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 				}
 			}
 		} else if (in_context(ZP_ZENPAGE_PAGE)) {
-			$authType = "zp_page_auth_" . $_zp_current_zenpage_page->getID();
+			$authType = "zpcms_auth_page_" . $_zp_current_zenpage_page->getID();
 			$check_auth = $_zp_current_zenpage_page->getPassword();
 			$check_user = $_zp_current_zenpage_page->getUser();
 			if (empty($check_auth)) {
@@ -1811,7 +1913,7 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 					$sql = 'SELECT `titlelink` FROM ' . prefix('pages') . ' WHERE `id`=' . $parentID;
 					$result = query_single_row($sql);
 					$pageobj = new ZenpagePage($result['titlelink']);
-					$authType = "zp_page_auth_" . $pageobj->getID();
+					$authType = "zpcms_auth_page_" . $pageobj->getID();
 					$check_auth = $pageobj->getPassword();
 					$check_user = $pageobj->getUser();
 				}
@@ -1829,11 +1931,11 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 			}
 			if (!empty($checkcats)) {
 				foreach ($checkcats as $obj) {
-					$authType = "zp_category_auth_" .  $obj->getID();
-					$check_auth =  $obj->getPassword();
-					$check_user =  $obj->getUser();
+					$authType = "zpcms_auth_category_" . $obj->getID();
+					$check_auth = $obj->getPassword();
+					$check_user = $obj->getUser();
 					if (empty($check_auth)) {
-						$catobj =  $obj;
+						$catobj = $obj;
 						while (empty($check_auth)) {
 							$parentID = $catobj->getParentID();
 							if ($parentID == 0)
@@ -1841,37 +1943,38 @@ function zp_handle_password($authType = NULL, $check_auth = NULL, $check_user = 
 							$sql = 'SELECT `titlelink` FROM ' . prefix('news_categories') . ' WHERE `id`=' . $parentID;
 							$result = query_single_row($sql);
 							$catobj = new ZenpageCategory($result['titlelink']);
-							$authType = "zp_category_auth_" . $catobj->getID();
+							$authType = "zpcms_auth_category_" . $catobj->getID();
 							$check_auth = $catobj->getPassword();
 							$check_user = $catobj->getUser();
 						}
 					}
-					if(!empty($check_auth)) {
+					if (!empty($check_auth)) {
 						//collect passwords from all categories
 						$check_auth_user[] = array(
-							'authtype' => $authType,
-							'check_auth' => $check_auth, 
-							'check_user' => $check_user
+								'authtype' => $authType,
+								'check_auth' => $check_auth,
+								'check_user' => $check_user
 						);
 					}
 				}
 			}
 		}
 		if (empty($check_auth)) { // anything else is controlled by the gallery credentials
-			$authType = 'zp_gallery_auth';
+			$authType = 'zpcms_auth_gallery';
 			$check_auth = $_zp_gallery->getPassword();
 			$check_user = $_zp_gallery->getUser();
 		}
 	}
 	if (in_context(ZP_ZENPAGE_NEWS_ARTICLE)) {
 		//check every category with password individually
-		foreach($check_auth_user as $check) {
+		foreach ($check_auth_user as $check) {
 			zp_handle_password_single($check['authtype'], $check['check_auth'], $check['check_user']);
 		}
 	} else {
 		zp_handle_password_single($authType, $check_auth, $check_user);
 	}
 }
+
 /**
  * Handles a passwort 
  * 
@@ -2044,8 +2147,6 @@ function setThemeOptionDefault($key, $value) {
 	$theme = basename(dirname($b['file']));
 	setThemeOption($key, $value, NULL, $theme, true);
 }
-
-
 
 /**
  * Returns the value of a theme option
@@ -2295,7 +2396,12 @@ function XSRFdefender($action) {
  */
 function getXSRFToken($action) {
 	global $_zp_current_admin_obj;
-	return sha1($action . prefix(ZENPHOTO_VERSION) . serialize($_zp_current_admin_obj) . session_id());
+	$admindata = '';
+	if (!is_null($_zp_current_admin_obj)) {
+		$admindata = $_zp_current_admin_obj->getData();
+		unset($admindata['lastvisit']);
+	}
+	return sha1($action . prefix(ZENPHOTO_VERSION) . serialize($admindata) . session_id());
 }
 
 /**
@@ -2362,8 +2468,12 @@ function cron_starter($script, $params, $offsetPath, $inline = false) {
  * @return bool
  */
 function zp_loggedin($rights = ALL_RIGHTS) {
-	global $_zp_loggedin;
-	return $_zp_loggedin & ($rights | ADMIN_RIGHTS);
+	global $_zp_loggedin, $_zp_current_admin_obj;
+	$loggedin = $_zp_loggedin & ($rights | ADMIN_RIGHTS);
+	if ($loggedin && $_zp_current_admin_obj) {
+		$_zp_current_admin_obj->updateLastVisit();
+	}
+	return $loggedin;
 }
 
 /**
@@ -2652,10 +2762,10 @@ function getNestedAlbumList($subalbum, $levels, $checkalbumrights = true, $level
 	$list = array();
 	foreach ($albums as $analbum) {
 		$albumobj = newAlbum($analbum);
-  $accessallowed = true;
-  if($checkalbumrights) {
-    $accessallowed = $albumobj->isMyItem(ALBUM_RIGHTS);
-  }
+		$accessallowed = true;
+		if ($checkalbumrights) {
+			$accessallowed = $albumobj->isMyItem(ALBUM_RIGHTS);
+		}
 		if (!is_null($subalbum) || $accessallowed) {
 			$level[$cur] = sprintf('%03u', $albumobj->getSortOrder());
 			$list[] = array('name' => $analbum, 'sort_order' => $level);
@@ -2955,9 +3065,9 @@ function removeTrailingSlash($string) {
 /**
  * Returns an array the data privacy policy page and the data usage confirmation text as defined on Options > Security
  * array(
- *	'notice' => '<The defined text>',
- *	'url' => '<url to the define page either custom page url or Zenpage page>',
- *	'linktext' => '<The defined text>'
+ * 	'notice' => '<The defined text>',
+ * 	'url' => '<url to the define page either custom page url or Zenpage page>',
+ * 	'linktext' => '<The defined text>'
  * )
  * 
  * @since Zenphoto 1.5
@@ -2969,25 +3079,25 @@ function getDataUsageNotice() {
 	$array['linktext'] = get_language_string(getOption('dataprivacy_policy_customlinktext'));
 	$array['notice'] = get_language_string(getOption('dataprivacy_policy_notice'));
 	$custompage = trim(getOption('dataprivacy_policy_custompage'));
-	$zenpage_page =  '';
-	if(empty($array['notice'])) {
+	$zenpage_page = '';
+	if (empty($array['notice'])) {
 		$array['notice'] = gettext('By using this form you agree with the storage and handling of your data by this website.');
-	} 
+	}
 	if (extensionEnabled('zenpage') && ZP_PAGES_ENABLED) {
 		$zenpage_page = getOption('dataprivacy_policy_zenpage');
-		if($zenpage_page == 'none') {
+		if ($zenpage_page == 'none') {
 			$zenpage_page = '';
 		}
 	}
-	if(!empty($custompage)) {
+	if (!empty($custompage)) {
 		$array['url'] = $custompage;
-	} else if(!empty($zenpage_page)) {
+	} else if (!empty($zenpage_page)) {
 		$obj = new ZenpagePage($zenpage_page);
 		$array['url'] = $obj->getLink();
 	}
-	if(empty($array['linktext'])) {
+	if (empty($array['linktext'])) {
 		$array['linktext'] = gettext('More info on our data privacy policy.');
-	} 
+	}
 	return $array;
 }
 
@@ -3000,9 +3110,140 @@ function getDataUsageNotice() {
 function printDataUsageNotice() {
 	$data = getDataUsageNotice();
 	echo $data['notice'];
-	if(!empty($data['url'])) {
+	if (!empty($data['url'])) {
 		printLinkHTML($data['url'], ' ' . $data['linktext'], $data['linktext'], null, null);
 	}
+}
+
+/**
+ * Returns an array with predefined info about general cookies set by the system and/or plugins
+ * 
+ * @since ZenphotoCMS 1.5.8
+ * 
+ * @param string $section Name of the section to get: 'authenticaion', 'search', 'admin', 'cookie', 'various' or null (default) for the full array
+ * @return array
+ */
+function getCookieInfoData($section = null) {
+	$info = array(
+			'authentication' => array(
+					'sectiontitle' => gettext('Authentication'),
+					'sectiondesc' => gettext('Cookies set if logging in as an admin or as one of the various guest user types.'),
+					'cookies' => array(
+							'zpcms_auth_user' => gettext('Stores the zenphoto user login credentials.'),
+							'zpcms_auth_gallery' => gettext('Stores guest user gallery access credentias.'),
+							'zpcms_auth_search' => gettext('Stores guest user search access credentials'),
+							'zpcms_auth_image_itemid' => gettext('Stores guest user <em>image item</em> access credentials. <em>itemid</em> refers to the ID of the image.'),
+							'zpcms_auth_album_itemid' => gettext('Stores guest user <em>album item</em> access credentials. <em>itemid</em> refers to the ID of the album.'),
+							'zpcms_auth_category_itemid' => gettext('Stores guest user <em>category item</em> access credentials. <em>itemid</em> refers to the ID of the category.'),
+							'zpcms_auth_page_itemid' => gettext('Stores guest user <em>page item</em> access credentials. <em>itemid</em> refers to the ID of the zenpage page.'),
+							'zpcms_auth_download' => gettext('Stores guest user access used by the <em>downloadlist</em> plugin.')
+					),
+			),
+			'search' => array(
+					'sectiontitle' => gettext('Search context (frontend)'),
+					'sectiondesc' => gettext('These cookies help keep the search result context while browsing results'),
+					'cookies' => array(
+							'zpcms_search_params' => gettext('Stores search parameters of the most recent search.'),
+							'zpcms_search_lastalbum' => gettext('Stores the last album in search context.'),
+							'zpcms_search_parent' => gettext('Stores the previous page within search context (either the main search results or an album result).')
+					),
+			),
+			'admin' => array(
+					'sectiontitle' => gettext('Administration'),
+					'sectiondesc' => gettext('These are set on the backend to help editing.'),
+					'cookies' => array(
+							'zpcms_admin_gallery_nesting' => gettext('Stores the setting for the nested album list display on the backend.'),
+							'zpcms_admin_subalbum_nesting' => gettext('Stores the setting for the nested subalbum list display on the backend.'),
+							'zpcms_admin_imagestab_imagecount' => gettext('Stores the image count on the backend images pages.'),
+							'zpcms_admin_uploadtype' => gettext('Stores the upload method on the backend.')
+					),
+			),
+			'cookie' => array(
+					'sectiontitle' => gettext('Cookie related'),
+					'sectiondesc' => '',
+					'cookies' => array(
+							'zpcms_setup_testcookie' => gettext('Used by setup to test if cookies are operational on the installation. May store the Zenphoto version number of the last unsuccessful run.'),
+							'zpcms_cookie_path' => gettext('Stores the path for cookies.')
+					),
+			),
+			'various' => array(
+					'sectiontitle' => gettext('Various'),
+					'sectiondesc' => gettext('Various cookies set by plugins, themes or otherwise'),
+					'cookies' => array(
+							'zcms_ssl' => gettext('Stores the HTTPS/SSL setting.'),
+							'zpcms_locale' => gettext('Stores the language selection set by the <em>dynamic_locale</em> plugin.'),
+							'zpcms_mobiletheme' => gettext('Stores if the mobile theme is defined - used by the <em>mobileTheme</em> plugin.'),
+							'zpcms_themeswitcher_theme' => gettext('Stores the current theme selected by the <em>themeSwitcher</em> plugin.'),
+							'zpcms_comment' => gettext('Stores information from the comment form POST for re-populaton of the form in the <em>comment_form</em> plugin.')
+					)
+			)
+	);
+	if (is_null($section) && array_key_exists($section, $info)) {
+		return $info[$section];
+	} else {
+		return $info;
+	}
+}
+
+/**
+ * Returns a definition list with predefined info about general cookies set by the system and/or plugins as a string
+ * 
+ * @since ZenphotoCMS 1.5.8
+ * 
+ * @param string $section Name of the section to get: 'authenticaion', 'search', 'admin', 'cookie', 'various' or null (default) for the full array
+ * @param string $sectionheadline Add h2 to h6 to print as the section headline, h2 default.
+ * @return string
+ */
+function getCookieInfoHTML($section = null, $sectionheadline = 'h2') {
+	$cookies = getCookieInfoData($section);
+	$html = '';
+	if ($cookies) {
+		foreach ($cookies as $section) {
+			if (!in_array($sectionheadline, array('h2', 'h3', 'h4', 'h5', 'h6'))) {
+				$sectionheadline = 'h2';
+			}
+			$html .= '<' . $sectionheadline . '>' . $section['sectiontitle'] . '</' . $sectionheadline . '>';
+			$html .= '<p>' . $section['sectiondesc'] . '</p>';
+			if ($section['cookies']) {
+				$html .= '<dl>';
+				foreach ($section['cookies'] as $key => $val) {
+					$html .= '<dt>' . $key . '</dt>';
+					$html .= '<dd>' . $val . '</dd>';
+				}
+				$html .= '</dl>';
+			}
+		}
+	}
+	return $html;
+}
+
+/**
+ * Prints a definition list with predefined info about general cookies set by the system and/or plugins
+ * 
+ * @since ZenphotoCMS 1.5.8
+ * 
+ * @param string $section Name of the section to get: 'authenticaion', 'search', 'admin', 'cookie', 'various' or null (default) for the full array
+ * @param string $sectionheadline Add h2 to h6 to print as the section headline, h2 default.
+ */
+function printCookieInfo($section = null, $sectionheadline = 'h2') {
+	echo getCookieInfoHTML($section, $sectionheadline);
+}
+
+/**
+ * Registers the content macro(s)
+ * 
+ * @param array $macros Passes through the array of already registered 
+ * @return array
+ */
+function getCookieInfoMacro($macros) {
+	$macros['COOKIEINFO'] = array(
+			'class' => 'function',
+			'params' => array('string*', 'string*'),
+			'value' => 'getCookieInfoHTML',
+			'owner' => 'core',
+			'desc' => gettext('Set %1 to the section to get, set %2 to the h2-h6 for the headline element to use.')
+	);
+	return $macros;
 }
 
 /**
@@ -3028,26 +3269,27 @@ class _zp_captcha {
 class _zp_HTML_cache {
 
 	function disable() {
-
+		
 	}
 
 	function startHTMLCache() {
-
+		
 	}
 
 	function abortHTMLCache() {
-
+		
 	}
 
 	function endHTMLCache() {
-
+		
 	}
 
 	function clearHtmlCache() {
-
+		
 	}
 
 }
+
 setexifvars();
 
 /**
@@ -3058,5 +3300,5 @@ setexifvars();
  * @param string $locale Default null so the current locale is used. Or a locale like "en_US" which will get the underscores replaced by hyphens to be valid
  */
 function printLangAttribute($locale = null) {
-	echo ' lang="' .  getLangAttributeLocale($locale) .'"';
+	echo ' lang="' . getLangAttributeLocale($locale) . '"';
 }

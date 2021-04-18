@@ -30,10 +30,10 @@ define('OBJECT_CACHE_DEPTH', 150); //	how many objects to hold for each object c
  */
 class PersistentObject {
 
-	var $loaded = false;
-	var $exists = false;
-	var $table;
-	var $transient;
+	public $loaded = false;
+	public $exists = false;
+	public $table;
+	public $transient;
 	protected $id = 0;
 	private $unique_set = NULL;
 	private $cache_by;
@@ -44,7 +44,7 @@ class PersistentObject {
 
 	/**
 	 *
-	 * @deprecated 1.6
+	 * @deprecated Zenphoto 1.6 - Unser instantiate() instead
 	 * @since 1.4.6
 	 */
 	function __construct($tablename, $unique_set, $cache_by = NULL, $use_cache = true, $is_transient = false, $allowCreate = true) {
@@ -111,6 +111,26 @@ class PersistentObject {
 				array_shift($_zp_object_cache[$classname]); //	discard the oldest
 			}
 			$_zp_object_cache[$classname][$this->cache_by] = $entry;
+		}
+	}
+	
+	/**
+	 * Clears the object cache by setting it to an empty array completely or a specific object (class name) cache.
+	 * 
+	 * Note: You normally never need to use this. But on certain occasions it may be necessary
+	 * to avoid memory issues if you loop through a lot of object creations.
+	 * 
+	 * @since ZenphotoCMS 1.5.8
+	 * 
+	 * @global array $_zp_object_cache
+	 * @param string $classname A classname to clear the cache specifially (optional, default null)
+	 */
+	function clearCache($classname = null) {
+		global $_zp_object_cache;
+		if (!is_null($classname) && array_key_exists($classname, $_zp_object_cache)) {
+			unset($_zp_object_cache[$classname]);
+		} else {
+			$_zp_object_cache = array();
 		}
 	}
 

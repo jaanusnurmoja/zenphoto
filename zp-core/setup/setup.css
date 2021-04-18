@@ -324,3 +324,13 @@ li {
 	text-align: right;
 }
 
+.setup_filelist {
+	height: 250px;
+	display: block;
+	overflow: auto;
+	resize: vertical;
+}
+
+.setup_filelist li {
+	list-style: decimal;
+}

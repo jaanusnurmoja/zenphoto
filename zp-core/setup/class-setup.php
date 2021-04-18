@@ -153,18 +153,12 @@ class setup {
 							<?php
 							if ($check == -3) {
 								?>
-								<a href="javascript:toggle_visibility('more<?php echo $_zp_setup_moreid; ?>');">
-									<?php echo gettext('<strong>Warning!</strong> click for details'); ?>
-								</a>
-								<div class="warning" id="more<?php echo $_zp_setup_moreid; ?>" style="display: none">
+								<div class="warning" id="more<?php echo $_zp_setup_moreid; ?>">
 									<h1><?php echo gettext('Warning!'); ?></h1>
 									<?php
 								} else {
 									?>
-									<a href="javascript:toggle_visibility('more<?php echo $_zp_setup_moreid; ?>');">
-										<?php echo gettext('<strong>Notice!</strong> click for details'); ?>
-									</a>
-									<div class="notice" id="more<?php echo $_zp_setup_moreid; ?>" style="display: none">
+									<div class="notice" id="more<?php echo $_zp_setup_moreid; ?>">
 										<h1><?php echo gettext('Notice!'); ?></h1>
 										<?php
 									}
@@ -180,10 +174,8 @@ class setup {
 			</li>
 			<?php
 		} else {
+			$anyway = 1; // we want to log success as well
 			$dsp = $text;
-			?>
-			<li class="<?php echo $cls; ?>"><?php echo $text; ?></li>
-			<?php
 		}
 		if ($anyway == 2) {
 			$stopped = '(' . gettext('Autorun aborted') . ') ';
@@ -833,6 +825,47 @@ class setup {
 		} else {
 			return $_SERVER['SERVER_SOFTWARE'];
 		}
+	}
+	
+	/**
+	 * Returns a <ul> list with list entry containing <code> enclosed text
+	 * @param array $array One dimensional array
+	 */
+	static function getFileList($array) {
+		$list = '';
+		if ($array) {
+			$list .= '<ul class="setup_filelist">';
+			foreach ($array as $entry) {
+				$list .= '<li><code>' . $entry . '</code></li>';
+			}
+			$list .= '</ul>';
+		}
+		return $list;
+	}
+	
+	/**
+	 * Checks to see if access was through a secure protocol
+	 * 
+	 * @since Zenphoto 1.5.8 Doubles the function of the same name in functions-basic.php as not available on fresh installs
+	 * 
+	 * @return bool
+	 */
+	static function secureServer() {
+		if (isset($_SERVER['HTTPS'])) {
+			if ('on' == strtolower($_SERVER['HTTPS'])) {
+				return true;
+			}
+			if ('1' == $_SERVER['HTTPS']) {
+				return true;
+			}
+		} elseif (isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] )) {
+			return true;
+		} elseif (isset($_SERVER['HTTP_FORWARDED']) && preg_match("/^(.+[,;])?\s*proto=https\s*([,;].*)$/", strtolower($_SERVER['HTTP_FORWARDED']))) {
+			return true;
+		} elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && ('https' == strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']))) {
+			return true;
+		}
+		return false;
 	}
 
 }

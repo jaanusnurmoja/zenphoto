@@ -579,7 +579,7 @@ class cacheManager {
 		foreach ($subalbums as $folder) {
 			$subalbum = newAlbum($folder);
 			if (!$subalbum->isDynamic()) {
-				cachemanager::loadAlbum($subalbum);
+				cachemanager::loadAlbums($subalbum);
 			}
 		}
 	}
@@ -679,7 +679,12 @@ class cacheManager {
 							}
 							$args = array($size, $width, $height, $cw, $ch, $cx, $cy, NULL, $thumbstandin, NULL, $thumbstandin, $passedWM, NULL, $effects);
 							$args = getImageParameters($args, $albumobj->name);
-							$uri = getImageURI($args, $albumobj->name, $imageobj->filename, $imageobj->filemtime);
+							if ($albumobj->isDynamic()) {
+								$folder = $imageobj->album->name;
+							} else {
+								$folder = $albumobj->name;
+							}
+							$uri = getImageURI($args, $folder, $imageobj->filename, $imageobj->filemtime);
 							if (strpos($uri, 'i.php?') !== false) {
 								$sizes_count++;
 								$sizeuris[] = $uri;

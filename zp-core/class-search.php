@@ -1,29 +1,24 @@
 <?php
 
+define('EXACT_TAG_MATCH', getOption('exact_tag_match'));
+define('SEARCH_DURATION', 3000);
+define('SEARCH_CACHE_DURATION', getOption('search_cache_duration'));
+
 /**
  * search class
  * @package core
  * @subpackage classes\objects
  */
-// force UTF-8 Ø
-//*************************************************************
-//*ZENPHOTO SEARCH ENGINE CLASS *******************************
-//*************************************************************
-
-define('EXACT_TAG_MATCH', getOption('exact_tag_match'));
-define('SEARCH_DURATION', 3000);
-define('SEARCH_CACHE_DURATION', getOption('search_cache_duration'));
-
 class SearchEngine {
 
-	var $fieldList = NULL;
-	var $page = 1;
-	var $images = NULL;
-	var $albums = NULL;
-	var $articles = NULL;
-	var $pages = NULL;
-	var $pattern;
-	var $tagPattern;
+	public $fieldList = NULL;
+	public $page = 1;
+	public $images = NULL;
+	public $albums = NULL;
+	public $articles = NULL;
+	public $pages = NULL;
+	public $pattern;
+	public $tagPattern;
 	private $exact = false;
 	protected $dynalbumname = NULL;
 	protected $album = NULL;
@@ -39,13 +34,14 @@ class SearchEngine {
 	protected $iteration = 0; // used by apply_filter('search_statistics') to indicate sequential searches of different objects
 	protected $processed_search = NULL;
 	protected $album_list = NULL; // list of albums to search
+	protected $album_list_exclude = null; // list of albums to exclude from search
 	protected $category_list = NULL; // list of categories for a news search
 	protected $searches = NULL; // remember the criteria for past searches
 	protected $extraparams = array(); // allow plugins to add to search parameters
 //	mimic album object
-	var $loaded = false;
-	var $table = 'albums';
-	var $transient = true;
+	public $loaded = false;
+	public $table = 'albums';
+	public $transient = true;
 
 	/**
 	 * Constuctor
@@ -157,6 +153,14 @@ class SearchEngine {
 				}
 			}
 		}
+		
+		if (isset($_REQUEST['excludealbums'])) {
+			$list = trim(sanitize($_REQUEST['excludealbums'], 3));
+			if (!empty($list)) {
+				$this->album_list_exclude = explode(',', $list);
+			}
+		}
+		
 		if (isset($_REQUEST['inimages'])) {
 			$list = trim(sanitize($_REQUEST['inimages'], 3));
 			if (strlen($list) > 0) {
@@ -304,6 +308,15 @@ class SearchEngine {
 			} else {
 				$r .= '&inalbums=' . implode(',', $this->album_list);
 			}
+			
+			if (empty($this->album_list_exclude)) {
+				if ($this->search_no_albums) {
+					$r .= '&inalbums=0';
+				}
+			} else {
+				$r .= '&excludealbums=' . implode(',', $this->album_list_exclude);
+			}
+			
 			if ($this->search_no_images) {
 				$r .= '&inimages=0';
 			}
@@ -468,6 +481,11 @@ class SearchEngine {
 								$this->album_list = explode(',', $v);
 								break;
 						}
+					}
+					break;
+				case 'excludealbums':
+					if (strlen($v) > 0) {
+						$this->album_list_exclude = explode(',', $v);
 					}
 					break;
 				case 'unpublished':
@@ -1407,7 +1425,7 @@ class SearchEngine {
 										$row['show'] = 0;
 								}
 								if ($mine || (is_null($mine) && $album->isMyItem(LIST_RIGHTS)) || (checkAlbumPassword($albumname) && (($album->checkAccess() && $album->isPublic()) || $viewUnpublished))) {
-									if (empty($this->album_list) || in_array($albumname, $this->album_list)) {
+									if ((empty($this->album_list) || in_array($albumname, $this->album_list)) && !$this->excludeAlbum($albumname)) {
 										$result[] = array('title' => $row['title'], 'name' => $albumname, 'weight' => $weights[$row['id']]);
 									}
 								}
@@ -1415,11 +1433,12 @@ class SearchEngine {
 						}
 					}
 					db_free_result($search_result);
+					$sortdir = self::getSortdirBool($sortdirection);
 					if (is_null($sorttype)) {
-						$result = sortMultiArray($result, 'weight', true, true, false, false, array('weight'));
+						$result = sortMultiArray($result, 'weight', $sortdir, true, false, false, array('weight'));
 					}
 					if ($sorttype == '`title`') {
-						$result = sortByMultilingual($result, 'title', $sortdirection);
+						$result = sortByMultilingual($result, 'title', $sortdir);
 					}
 					foreach ($result as $album) {
 						$albums[] = $album['name'];
@@ -1454,6 +1473,31 @@ class SearchEngine {
 			$albums_per_page = max(1, getOption('albums_per_page'));
 			return array_slice($this->albums, $albums_per_page * ($page - 1), $albums_per_page);
 		}
+	}
+	
+	/**
+	 * Checks if the album should be excluded from results
+	 * Subalbums and their contents inherit the exclusion.
+	 * 
+	 * @since ZenphotoCMS 1.5.8
+	 * 
+	 * @param string $albumname
+	 * @return boolean
+	 */
+	function excludeAlbum($albumname) {
+		$exclude = false;
+		if (!is_null($this->album_list_exclude)) {
+			if (in_array($albumname, $this->album_list_exclude)) {
+				return true;
+			} else {
+				foreach ($this->album_list_exclude as $excludealbum) {
+					if (strpos($albumname, $excludealbum) === 0) {
+						return true;
+					}
+				}
+			}
+		}
+		return $exclude;
 	}
 
 	/**
@@ -1532,13 +1576,11 @@ class SearchEngine {
 		if (empty($searchstring) && empty($searchdate)) {
 			return array();
 		} // nothing to find
-		
 		$criteria = $this->getCacheTag('images', serialize($searchstring) . ' ' . $searchdate, $sorttype . ' ' . $sortdirection . ' '.$mine);
 		if ($criteria == $this->searches['images']) {
 			return $this->images;
 		}
 		$images = $this->getCachedSearch($criteria);
-		
 		if (is_null($images)) {
 			if (empty($searchdate)) {
 				list ($search_query, $weights) = $this->searchFieldsAndTags($searchstring, 'images', $sorttype, $sortdirection);
@@ -1576,7 +1618,7 @@ class SearchEngine {
 							}
 							$viewUnpublished = ($mine || is_null($mine)) && ($album->isMyItem(LIST_RIGHTS) || checkAlbumPassword($albumname) && ($album->isPublic() || $viewUnpublished));
 							if ($viewUnpublished) {
-								$allow = empty($this->album_list) || in_array($albumname, $this->album_list);
+								$allow = (empty($this->album_list) || in_array($albumname, $this->album_list)) && !$this->excludeAlbum($albumname);
 							} 
 							$albums_seen[$albumid] = $albumrow = array('allow' => $allow, 'viewUnpublished' => $viewUnpublished, 'folder' => $albumname, 'localpath' => ALBUM_FOLDER_SERVERPATH . internalToFilesystem($albumname) . '/');
 						} else {
@@ -1594,11 +1636,12 @@ class SearchEngine {
 					}
 				}
 				db_free_result($search_result);
+				$sortdir = self::getSortdirBool($sortdirection);
 				if (is_null($sorttype) && isset($weights)) {
-					$images = sortMultiArray($images, 'weight', true, true, false, false, array('weight'));
+					$images = sortMultiArray($images, 'weight', $sortdir, true, false, false, array('weight'));
 				}
-				if ($sorttype == 'title') {
-					$images = sortByMultilingual($images, 'title', $sortdirection);
+				if ($sorttype == '`title`') {
+					$images = sortByMultilingual($images, 'title', $sortdir);
 				}
 			}
 			if (empty($searchdate)) {
@@ -1737,7 +1780,7 @@ class SearchEngine {
 		if (empty($searchstring) && empty($searchdate)) {
 			return array();
 		} // nothing to find
-		$criteria = $this->getCacheTag('news', serialize($searchstring), $sorttype . ' ' . $sortdirection);
+		$criteria = $this->getCacheTag('pages', serialize($searchstring) . ' ' . $searchdate, $sorttype . ' ' . $sortdirection);
 		if ($this->pages && $criteria == $this->searches['pages']) {
 			return $this->pages;
 		}
@@ -1769,11 +1812,12 @@ class SearchEngine {
 				}
 				db_free_result($search_result);
 			}
+			$sortdir = self::getSortdirBool($sortdirection);
 			if (is_null($sorttype) && isset($weights)) {
-				$result = sortMultiArray($result, 'weight', true, true, false, false, array('weight'));
+				$result = sortMultiArray($result, 'weight', $sortdir, true, false, false, array('weight'));
 			}
 			if ($sorttype == '`title`') {
-				$result = sortByMultilingual($result, 'title', $sortdirection);
+				$result = sortByMultilingual($result, 'title', $sortdir);
 			}
 			foreach ($result as $page) {
 				$pages[] = $page['titlelink'];
@@ -1826,7 +1870,7 @@ class SearchEngine {
 		if (empty($searchstring) && empty($searchdate)) {
 			return array();
 		} // nothing to find
-		$criteria = $this->getCacheTag('news', serialize($searchstring), $sorttype . ' ' . $sortdirection);
+		$criteria = $this->getCacheTag('news', serialize($searchstring) . ' ' . $searchdate, $sorttype . ' ' . $sortdirection);
 		if ($this->articles && $criteria == $this->searches['news']) {
 			return $this->articles;
 		}
@@ -1857,11 +1901,12 @@ class SearchEngine {
 				}
 				db_free_result($search_result);
 			}
+			$sortdir = self::getSortdirBool($sortdirection);
 			if (is_null($sorttype) && isset($weights)) {
-				$result = sortMultiArray($result, 'weight', true, true, false, false, array('weight'));
+				$result = sortMultiArray($result, 'weight', $sortdir, true, false, false, array('weight'));
 			}
 			if ($sorttype == '`title`') {
-				$images = sortByMultilingual($result, 'title', $sortdirection);
+				$result = sortByMultilingual($result, 'title', $sortdir);
 			}
 			$this->cacheSearch($criteria, $result);
 		}
@@ -1947,6 +1992,22 @@ class SearchEngine {
 		if($check) {
 			query('TRUNCATE TABLE ' . prefix('search_cache'));
 		}
+	}
+	
+	/**
+	 * Returns true if $sortdir is set to "DESC", otherwise false, for use with sorting functions
+	 * @param string $sortdirection Traditional speaking values "ASC" or "DESC"
+	 * 
+	 * @since ZenphotoCMS 1.5.8
+	 * 
+	 * @return boolean
+	 */
+	static function getSortdirBool($sortdirection = 'asc') {
+		$dir = false; // ascending default
+		if (strtolower($sortdirection) == 'desc') {
+			$dir = true;
+		}
+		return $dir;
 	}
 
 }

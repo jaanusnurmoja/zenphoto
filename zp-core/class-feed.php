@@ -1,4 +1,5 @@
 <?php
+require_once(SERVERPATH . '/' . ZENFOLDER . '/template-functions.php');
 
 /**
  *
@@ -60,8 +61,6 @@
  * @package core
  * @subpackage classes\objects
  */
-require_once(SERVERPATH . '/' . ZENFOLDER . '/template-functions.php');
-
 class feed {
 
 	protected $feed = 'feed'; //	feed type
@@ -289,7 +288,7 @@ class feed {
 	protected function getCommentFeedType() {
 		$valid = false;
 		if (isset($this->options['type'])) {
-			$valid = array('albums', 'images', 'pages', 'news', 'all');
+			$valid = array( 'all', 'album' , 'image', 'news', 'page');
 			if (in_array($this->options['type'], $valid)) {
 				return $this->options['type'];
 			}
@@ -305,11 +304,28 @@ class feed {
 	protected function getID() {
 		if (isset($this->options['id'])) {
 			$type = $this->getCommentFeedType();
+			$table = '';
 			if ($type != 'all') {
-				$id = (int) $this->options['id'];
-				$result = query_single_row('SELECT `id` FROM ' . prefix($type) . ' WHERE id =' . $id);
-				if ($result) {
-					return $id;
+				switch ($this->commentfeedtype) {
+					case 'album':
+						$table = 'albums';
+						break;
+					case 'image':
+						$table = 'images';
+						break;
+					case 'news':
+						$table = 'news';
+						break;
+					case 'page':
+						$table = 'pages';
+						break;
+				}
+				if ($table) {
+					$id = (int) $this->options['id'];
+					$result = query_single_row('SELECT `id` FROM ' . prefix($table) . ' WHERE id =' . $id);
+					if ($result) {
+						return $id;
+					}
 				}
 			}
 		}
@@ -468,25 +484,22 @@ class feed {
 				}
 				break;
 			case 'comments':
-				switch ($type = $this->commentfeedtype) {
-					case 'gallery':
-						$items = getLatestComments($this->itemnumber, 'all');
-						break;
+				switch ($this->commentfeedtype) {
 					case 'album':
 						$items = getLatestComments($this->itemnumber, 'album', $this->id);
 						break;
 					case 'image':
 						$items = getLatestComments($this->itemnumber, 'image', $this->id);
 						break;
-					case 'zenpage':
-						$type = 'all';
 					case 'news':
-					case 'pages':
+					case 'page':
 						if (function_exists('getLatestZenpageComments')) {
-							$items = getLatestZenpageComments($this->itemnumber, $type, $this->id);
+							$items = getLatestZenpageComments($this->itemnumber, $this->commentfeedtype, $this->id);
 						}
 						break;
+					case 'gallery':
 					case 'allcomments':
+					case 'all':
 						$items = getLatestComments($this->itemnumber, 'all');
 						$items_zenpage = array();
 						if (function_exists('getLatestZenpageComments')) {
@@ -552,7 +565,7 @@ class feed {
 				$category = get_language_string($item['albumtitle']);
 				$website = $item['website'];
 				$title = $category . ": " . $title;
-				$commentpath = PROTOCOL . '://' . $this->host . $link . "#" . $item['id'];
+				$commentpath = PROTOCOL . '://' . $this->host . $link . "#zp_comment_id_" . $item['id'];
 				break;
 			case 'albums':
 				$obj = newAlbum($item['folder']);
@@ -560,7 +573,7 @@ class feed {
 				$feeditem['pubdate'] = date("r", strtotime($item['date']));
 				$title = get_language_string($item['albumtitle']);
 				$website = $item['website'];
-				$commentpath = PROTOCOL . '://' . $this->host . $link . "#" . $item['id'];
+				$commentpath = PROTOCOL . '://' . $this->host . $link . "#zp_comment_id_" . $item['id'];
 				break;
 			case 'news':
 			case 'pages':
@@ -576,7 +589,7 @@ class feed {
 					} else {
 						$obj = new ZenpagePage($titlelink);
 					}
-					$commentpath = PROTOCOL . '://' . $this->host . html_encode($obj->getLink()) . "#" . $item['id'];
+					$commentpath = PROTOCOL . '://' . $this->host . html_encode($obj->getLink()) . "#zp_comment_id_" . $item['id'];
 				} else {
 					$commentpath = '';
 				}

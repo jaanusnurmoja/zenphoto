@@ -71,7 +71,7 @@ if (isset($_GET['action'])) {
 				if (!empty($newloc) && getOption('disallow_' . $newloc)) {
 					$notify = '?local_failed=' . $newloc;
 				} else {
-					zp_clearCookie('dynamic_locale'); // clear the language cookie
+					zp_clearCookie('zpcms_locale'); // clear the language cookie
 					$result = i18nSetLocale($newloc);
 					if (!empty($newloc) && ($result === false)) {
 						$notify = '?local_failed=' . $newloc;
@@ -97,7 +97,7 @@ if (isset($_GET['action'])) {
 			if (isset($_POST['zenphoto_cookie_path'])) {
 				$p = sanitize($_POST['zenphoto_cookie_path']);
 				if (empty($p)) {
-					zp_clearCookie('zenphoto_cookie_path');
+					zp_clearCookie('zpcms_cookie_path');
 				} else {
 					$p = '/' . trim($p, '/') . '/';
 					if ($p == '//') {
@@ -105,7 +105,7 @@ if (isset($_GET['action'])) {
 					}
 					//	save a cookie to see if change works
 					$returntab .= '&cookiepath';
-					zp_setCookie('zenphoto_cookie_path', $p, NULL, $p);
+					zp_setCookie('zpcms_cookie_path', $p, NULL, $p);
 				}
 				setOption('zenphoto_cookie_path', $p);
 				if (isset($_POST['cookie_persistence'])) {
@@ -144,6 +144,12 @@ if (isset($_GET['action'])) {
 			$_zp_gallery->setSecondLevelThumbs((int) isset($_POST['multilevel_thumb_select_images']));
 			$_zp_gallery->setTitle(process_language_string_save('gallery_title', 2));
 			$_zp_gallery->setDesc(process_language_string_save('Gallery_description', EDITOR_SANITIZE_LEVEL));
+			
+			$_zp_gallery->setCopyrightNotice(process_language_string_save('copyright_site_notice', EDITOR_SANITIZE_LEVEL));
+			$_zp_gallery->set('copyright_site_rightsholder', sanitize($_POST['copyright_site_rightsholder'], 3));
+			$_zp_gallery->set('copyright_site_rightsholder_custom', sanitize($_POST['copyright_site_rightsholder_custom'], 3));
+			$_zp_gallery->setCopyrightURL(sanitize($_POST['copyright_site_url'], 3));
+			
 			$_zp_gallery->setWebsiteTitle(process_language_string_save('website_title', 2));
 			$web = sanitize($_POST['website_url'], 3);
 			$_zp_gallery->setWebsiteURL($web);
@@ -261,8 +267,14 @@ if (isset($_GET['action'])) {
 			setOption('thumb_sharpen', (int) isset($_POST['thumb_sharpen']));
 			setOption('image_sharpen', (int) isset($_POST['image_sharpen']));
 			setOption('image_interlace', (int) isset($_POST['image_interlace']));
-			setOption('ImbedIPTC', (int) isset($_POST['ImbedIPTC']));
-			setOption('default_copyright', sanitize($_POST['default_copyright']));
+			setOption('EmbedIPTC', (int) isset($_POST['EmbedIPTC']));
+			
+			setOption('copyright_image_notice', process_language_string_save('copyright_image_notice', 3));
+			setOption('copyright_image_rightsholder', sanitize($_POST['copyright_image_rightsholder']));
+			setOption('copyright_image_rightsholder_custom', sanitize($_POST['copyright_image_rightsholder_custom']));
+			setOption('copyright_image_url', sanitize($_POST['copyright_image_url']));
+			setOption('copyright_image_url_custom', sanitize($_POST['copyright_image_url_custom']));
+			
 			setOption('sharpen_amount', sanitize_numeric($_POST['sharpen_amount']));
 			setOption('image_max_size', sanitize_numeric($_POST['image_max_size']));
 			$num = str_replace(',', '.', sanitize($_POST['sharpen_radius']));
@@ -373,10 +385,12 @@ if (isset($_GET['action'])) {
 				} else {
 					$ncw = $cw = getThemeOption('thumb_crop_width', $table, $themename);
 					$nch = $ch = getThemeOption('thumb_crop_height', $table, $themename);
-					if (isset($_POST['image_size']))
+					if (isset($_POST['image_size'])) 
 						setThemeOption('image_size', sanitize_numeric($_POST['image_size']), $table, $themename);
 					if (isset($_POST['image_use_side']))
 						setThemeOption('image_use_side', sanitize($_POST['image_use_side']), $table, $themename);
+					if (isset($_POST['thumb_use_side']))
+						setThemeOption('thumb_use_side', sanitize($_POST['thumb_use_side']), $table, $themename);
 					setThemeOption('thumb_crop', (int) isset($_POST['thumb_crop']), $table, $themename);
 					if (isset($_POST['thumb_size'])) {
 						$ts = sanitize_numeric($_POST['thumb_size']);
@@ -410,11 +424,11 @@ if (isset($_GET['action'])) {
 						setThemeOption('images_per_page', $images_per_page, $table, $themename);
 						setThemeOption('images_per_row', $images_per_row, $table, $themename);
 					}
-
 					if (isset($_POST['thumb_transition']))
 						setThemeOption('thumb_transition', (int) ((sanitize_numeric($_POST['thumb_transition']) - 1) && true), $table, $themename);
 					if (isset($_POST['custom_index_page']))
 						setThemeOption('custom_index_page', sanitize($_POST['custom_index_page'], 3), $table, $themename);
+					setThemeOption('display_copyright_notice',isset($_POST['display_copyright_notice']), $table, $themename);
 					$otg = getThemeOption('thumb_gray', $table, $themename);
 					setThemeOption('thumb_gray', (int) isset($_POST['thumb_gray']), $table, $themename);
 					if ($otg = getThemeOption('thumb_gray', $table, $themename))
@@ -462,7 +476,7 @@ if (isset($_GET['action'])) {
 
 			$_zp_gallery->setUserLogonField(isset($_POST['login_user_field']));
 			if ($protocol == 'http') {
-				zp_clearCookie("zenphoto_ssl");
+				zp_clearCookie("zpcms_ssl");
 			}
 			setOption('IP_tied_cookies', (int) isset($_POST['IP_tied_cookies']));
 			setOption('obfuscate_cache', (int) isset($_POST['obfuscate_cache']));
@@ -585,7 +599,7 @@ Zenphoto_Authority::printPasswordFormJS();
 					echo '</div>';
 				}
 
-				if (isset($_GET['cookiepath']) && @$_COOKIE['zenphoto_cookie_path'] != getOption('zenphoto_cookie_path')) {
+				if (isset($_GET['cookiepath']) && @$_COOKIE['zpcms_cookie_path'] != getOption('zpcms_cookie_path')) {
 					setOption('zenphoto_cookie_path', NULL);
 					?>
 					<div class="errorbox">
@@ -1025,7 +1039,7 @@ Zenphoto_Authority::printPasswordFormJS();
 											<?php
 										}
 										?>
-										<p><?php echo gettext('If this option is selected Zenphoto will use <a href="https://www.w3schools.com/php/php_sessions.asp">PHP sessions</a> instead of cookies to make visitor settings persistent.'); ?></p>
+										<p><?php echo gettext('If this option is selected Zenphoto will use <a href="https://www.php.net/manual/en/intro.session.php">PHP sessions</a> instead of cookies to make visitor settings persistent.'); ?></p>
 										<p class="notebox"><?php echo gettext('<strong>NOTE</strong>: Sessions will normally close when the browser closes causing all password and other data to be discarded. They may close more frequently depending on the runtime configuration. Longer <em>lifetime</em> of sessions is generally more conducive to a pleasant user experience. Cookies are the prefered storage option since their duration is determined by the <em>Cookie duration</em> option. ') ?>
 									</td>
 								</tr>
@@ -1144,6 +1158,38 @@ Zenphoto_Authority::printPasswordFormJS();
 									</td>
 									<td><?php echo gettext("A brief description of your gallery. Some themes may display this text."); ?></td>
 								</tr>
+								
+								<tr>
+									<td><?php echo gettext('Site copyright notice'); ?></td>
+									<td>
+										<p><?php print_language_string_list($_zp_gallery->getCopyrightNotice('all'), 'copyright_site_notice'); ?> <?php echo gettext('Notice'); ?></p>
+										
+									</td>
+									<td>
+										<p><?php echo gettext('The notice will be used by the html_meta_tags plugin. If not set the image meta data is tried instead.'); ?></p>
+									</td>
+								</tr>
+								
+								<tr>
+									<td><?php echo gettext('Site copyright rightsholder'); ?></td>
+									<td>
+										<?php printUserSelector('copyright_site_rightsholder','copyright_site_rightsholder_custom', 'users', true); ?>
+									</td>
+									<td>
+										<p><?php echo gettext('The rights holder will be used by the html_meta_tags plugin. If set to <em>none</em> the image metadata fields "copyright" or "owner" are used as fallbacks, if available.'); ?></p>
+									</td>
+								</tr>
+								
+								<tr>
+									<td><?php echo gettext('Site copyright URL'); ?></td>
+									<td>
+									<?php printZenpagePageSelector('copyright_site_url', 'copyright_site_url_custom', false, true); ?>
+									</td>
+									<td>
+										<p><?php echo gettext('Choose a Zenpage page or define a custom URL. The URL maybe used to point to some specific copyright info source. Must be an absolute URL address of the form: http://mydomain.com/license.html.'); ?></p>
+									</td>
+								</tr>
+								
 								<tr>
 									<td><?php echo gettext('Gallery type'); ?></td>
 									<td>
@@ -2119,7 +2165,7 @@ Zenphoto_Authority::printPasswordFormJS();
 									?>
 									<td><input type="checkbox" name="use_embedded_thumb" value="1" <?php checked('1', getOption('use_embedded_thumb')); ?><?php echo $disabled; ?> /></td>
 									<td>
-										<p><?php echo gettext('If set, Zenphoto will use the thumbnail imbedded in the image when creating a cached image that is equal or smaller in size. Note: the quality of this image varies by camera and its orientation may not match the master image.'); ?></p>
+										<p><?php echo gettext('If set, Zenphoto will use the thumbnail embedded in the image when creating a cached image that is equal or smaller in size. Note: the quality of this image varies by camera and its orientation may not match the master image.'); ?></p>
 										<?php
 										if ($disabled) {
 											?>
@@ -2461,9 +2507,9 @@ Zenphoto_Authority::printPasswordFormJS();
 											<?php
 											echo "<select id=\"protect_full_image\" name=\"protect_full_image\">\n";
 											$protection = getOption('protect_full_image');
-											$list = array(gettext('Protected view') => 'Protected view', gettext('Download') => 'Download', gettext('No access') => 'No access');
+											$list = array(gettext('Protected view') => 'protected', gettext('Download') => 'download', gettext('No access') => 'no-access');
 											if ($_zp_conf_vars['album_folder_class'] != 'external') {
-												$list[gettext('Unprotected')] = 'Unprotected';
+												$list[gettext('Unprotected')] = 'unprotected';
 											}
 											generateListFromArray(array($protection), $list, false, true);
 											echo "</select>\n";
@@ -2567,23 +2613,54 @@ Zenphoto_Authority::printPasswordFormJS();
 										</td>
 										<td><?php echo gettext("If checked line breaks embeded in the IPTCcaption field will be converted to <code>&lt;br&gt;</code> on image importing."); ?></td>
 									</tr>
-        <?php
-								if (GRAPHICS_LIBRARY == 'Imagick') {
-									$optionText = gettext('Imbed IPTC copyright');
-									$desc = gettext('If checked and an image has no IPTC data a copyright notice will be imbedded cached copies.');
-								} else {
-									$optionText = gettext('Replicate IPTC metadata');
-									$desc = gettext('If checked IPTC data from the original image will be imbedded in cached copies. If the image has no IPTC data a copyright notice will be imbedded. (The text supplied will be used if the orginal image has no copyright.)');
-								}
-								?>
+        
 								<tr>
-									<td><?php echo gettext("IPTC Imbedding:"); ?></td>
+									<td><?php echo gettext('Image copyright notice'); ?></td>
 									<td>
-										<label><input type="checkbox" name="ImbedIPTC" value="1"	<?php checked('1', getOption('ImbedIPTC')); ?> /> <?php echo $optionText; ?></label>
-										<p><input type="textbox" name="default_copyright" value="<?php echo getOption('default_copyright'); ?>" size="50" /></p>
+										<p><?php print_language_string_list(getOption('copyright_image_notice'), 'copyright_image_notice'); ?> <?php echo gettext('Notice'); ?></p>
+										
 									</td>
 									<td>
-										<?php echo $desc; ?>
+										<p><?php echo gettext('The notice will be used by the html_meta_tags plugin. If not set the image meta data is tried instead.'); ?></p>
+									</td>
+								</tr>
+								
+								<tr>
+									<td><?php echo gettext('Image copyright rightsholder'); ?></td>
+									<td>
+										<?php printUserSelector('copyright_image_rightsholder','copyright_image_rightsholder_custom', 'users'); ?>
+									</td>
+									<td>
+										<p><?php echo gettext('The rights holder will be used by the html_meta_tags plugin. If set to <em>none</em> the image metadata fields "copyright" or "owner" are used as fallbacks, if available.'); ?></p>
+									</td>
+								</tr>
+								
+								<tr>
+									<td><?php echo gettext('Image Copyright URL'); ?></td>
+									<td>
+									<?php printZenpagePageSelector('copyright_image_url', 'copyright_image_url_custom', false); ?>
+									</td>
+									<td>
+										<p><?php echo gettext('Choose a Zenpage page or define a custom URL. The URL maybe used to point to some specific copyright info source. Must be an absolute URL address of the form: http://mydomain.com/license.html.'); ?></p>
+									</td>
+								</tr>
+								
+								<tr>
+									<?php
+											if (GRAPHICS_LIBRARY == 'Imagick') {
+												$optionText = gettext('Embed IPTC copyright');
+												$desc = gettext('If checked and an image has no IPTC data a copyright notice will be embedded in cached copies.');
+											} else {
+												$optionText = gettext('Replicate IPTC metadata');
+												$desc = gettext('If checked IPTC data from the original image will be embedded in cached copies. If the image has no IPTC data a copyright notice will be embedded. (The text supplied will be used if the orginal image has no copyright.)');
+											}
+										?>
+									<td><?php echo gettext('IPTC copyright embedding'); ?></td>
+									<td>
+										<p><label><input type="checkbox" name="EmbedIPTC" value="1"	<?php checked('1', getOption('EmbedIPTC')); ?> /> <?php echo $optionText; ?></label></p>
+									</td>
+									<td>
+										<p><?php echo $desc; ?></p>
 										<p class="notebox">
 											<?php echo gettext('<strong>NOTE:</strong> This option applies only to JPEG format cached images.'); ?>
 										</p>
@@ -2846,15 +2923,44 @@ Zenphoto_Authority::printPasswordFormJS();
 									$ts = max(1, getThemeOption('thumb_size', $album, $themename));
 									$iw = getThemeOption('thumb_crop_width', $album, $themename);
 									$ih = getThemeOption('thumb_crop_height', $album, $themename);
+									$thumb_use_side = getThemeOption('thumb_use_side', $album, $themename);
 									$cl = round(($ts - $iw) / $ts * 50, 1);
 									$ct = round(($ts - $ih) / $ts * 50, 1);
 									?>
 									<tr>
 										<td><?php echo gettext("Thumb size:"); ?></td>
-										<td>
-											<input type="text" size="3" name="thumb_size" value="<?php echo $ts; ?>"<?php echo $disable; ?> />
+										<td><?php $side = getThemeOption('image_use_side', $album, $themename); ?>
+											<table>
+												<tr>
+													<td rowspan="2" style="margin: 0; padding: 0">
+														<input type="text" size="3" name="thumb_size" value="<?php echo $ts; ?>"<?php echo $disable; ?> />
+													</td>
+													<td style="margin: 0; padding: 0">
+														<label> <input type="radio" id="image_use_side1" name="thumb_use_side" value="height"
+																																					 <?php if ($thumb_use_side == 'height') echo ' checked="checked"'; ?>
+																																					 <?php echo $disable; ?> /> <?php echo gettext('height') ?> </label>
+														<label> <input type="radio" id="image_use_side2"
+																					 name="thumb_use_side" value="width"
+																					 <?php if ($thumb_use_side == 'width') echo ' checked="checked"'; ?>
+																					 <?php echo $disable; ?> /> <?php echo gettext('width') ?> </label>
+													</td>
+												</tr>
+												<tr>
+													<td style="margin: 0; padding: 0"><label> <input type="radio"
+																																					 id="image_use_side3" name="thumb_use_side" value="shortest"
+																																					 <?php if ($thumb_use_side == 'shortest') echo ' checked="checked"'; ?>
+																																					 <?php echo $disable; ?> /> <?php echo gettext('shortest side') ?>
+														</label> <label> <input type="radio" id="image_use_side4"
+																										name="thumb_use_side" value="longest"
+																										<?php if ($thumb_use_side == 'longest') echo ' checked="checked"'; ?>
+																										<?php echo $disable; ?> /> <?php echo gettext('longest side') ?> </label>
+													</td>
+												</tr>
+											</table>
 										</td>
-										<td><?php printf(gettext("Standard thumbnails will be scaled to %u pixels."), $ts); ?></td>
+										<td><?php printf(gettext("Standard thumbnails will be scaled to %u pixels."), $ts); ?> <br />
+											<?php echo gettext("If cropping is disabled the thumbs will be sized so that the <em>height</em>, <em>width</em>, <em>shortest side</em>, or the <em>longest side</em> will be equal to <em>thumb size</em>."); ?>
+										</td>
 									</tr>
 									<?php
 									if (in_array('thumb_crop', $unsupportedOptions)) {
@@ -2971,6 +3077,14 @@ Zenphoto_Authority::printPasswordFormJS();
 											</td>
 											<td><?php echo gettext("If this option is not empty, the Gallery Index URL that would normally link to the theme <code>index.php</code> script will instead link to this script. This frees up the <code>index.php</code> script so that you can create a customized <em>Home page</em> script. This option applies only to the main theme for the <em>Gallery</em>."); ?></td>
 										</tr>
+										
+										<tr>
+											<td><?php echo gettext("Coypright notice"); ?></td>
+											<td>
+												<label><input type="checkbox" name="display_copyright_notice" id="display_copyright_notice" value="1" <?php checked('1', getThemeOption('display_copyright_notice', $album, $themename)); ?> /> <?php echo gettext('Enable'); ?></label>
+											</td>
+											<td><?php echo gettext("Enable to display the copyright notice defined on Options > Gallery. This may usually be in the theme footer but is up to the theme."); ?></td>
+										</tr>
 										<?php
 									}
 									if (count($supportedOptions) > 0) {
@@ -3027,7 +3141,7 @@ Zenphoto_Authority::printPasswordFormJS();
 								$plugins[] = $extension;
 							}
 						}
-						natcasesort($plugins);
+						sortArray($plugins);
 					}
 					$rangeset = getPageSelector($plugins, PLUGINS_PER_PAGE);
 					$plugins = array_slice($plugins, $subpage * PLUGINS_PER_PAGE, PLUGINS_PER_PAGE);
@@ -3069,14 +3183,43 @@ Zenphoto_Authority::printPasswordFormJS();
 									$option_interface = NULL;
 									$path = getPlugin($extension . '.php');
 									$pluginStream = file_get_contents($path);
+									$plugin_name = '';
+									if ($str = isolate('$plugin_name', $pluginStream)) {
+										if (false === eval($str)) {
+											$plugin_name = '';
+										}
+									} 
+									if(empty($plugin_name)) {
+										$plugin_name = $extension;
+									}
+									$plugin_description = '';
 									if ($str = isolate('$plugin_description', $pluginStream)) {
 										if (false === eval($str)) {
 											$plugin_description = '';
+										} else {
+											$plugin_description = processExtensionVariable($plugin_description);
 										}
-									} else {
-										$plugin_description = '';
-									}
-
+									} 
+									$plugin_version = '';
+									if ($str = isolate('$plugin_version', $pluginStream)) {
+										if (false === eval($str)) {
+											$plugin_version = '';
+										}
+									} 
+									$plugin_deprecated = '';
+									if ($str = isolate('$plugin_deprecated', $pluginStream)) {
+										if (false === eval($str)) {
+											$plugin_deprecated = '';
+										} else {
+											$plugin_deprecated = processExtensionVariable($plugin_deprecated);
+										}
+									} 
+									$plugin_date = '';
+									if ($str = isolate('$plugin_date', $pluginStream)) {
+										if (false === eval($str)) {
+											$plugin_date = '';
+										}
+									} 
 									$str = isolate('$option_interface', $pluginStream);
 									if (false !== $str) {
 										require_once($path);
@@ -3113,7 +3256,13 @@ Zenphoto_Authority::printPasswordFormJS();
 																<span class="icons"><a href="<?php echo $optionlink; ?>" title="<?php printf(gettext("Change %s options"), html_encode($extension)); ?>"><img class="icon-position-top3" src="images/options.png" alt="" />
 																		<?php
 																	}
-																	echo $extension;
+																	echo html_encode($plugin_name);
+																	if(!empty($plugin_version)) {
+																		echo ' v'. html_encode($plugin_version);
+																	}
+																	if(!empty($plugin_date)) {
+																		echo ' <small>('. html_encode($plugin_date).')</small>';
+																	}
 																	if (!$showExtension) {
 																		?>
 																	</a></span>
@@ -3127,7 +3276,12 @@ Zenphoto_Authority::printPasswordFormJS();
 															?>
 														</th>
 														<th style="text-align:left; font-weight: normal;" colspan="2">
-															<?php echo $plugin_description; ?>
+															<?php 
+															echo $plugin_description;  
+															if($plugin_deprecated) {
+																echo '<p class="notebox">' . $plugin_deprecated . '</p>';
+															}
+															?>
 														</th>
 													</tr>
 													<?php
@@ -3237,17 +3391,21 @@ Zenphoto_Authority::printPasswordFormJS();
 									</td>
 									<td>
 										<?php echo gettext('Tie cookies to the IP address of the browser.'); ?>
-										<p class="notebox">
-											<?php
-											if (!getOption('IP_tied_cookies')) {
-												echo ' ' . gettext('<strong>Note</strong>: If your browser does not present a consistant IP address during a session you may not be able to log into your site when this option is enabled.') . ' ';
-											}
-											echo gettext('You <strong>WILL</strong> have to login after changing this option.');
-											if (!getOption('IP_tied_cookies')) {
-												echo ' ' . gettext('If you set the option and cannot login, you will have to restore your database to a point when the option was not set, so you might want to backup your database first.');
-											}
-											?>
-										</p>
+										<?php if (!getOption('IP_tied_cookies')) { ?>
+										<div class="warningbox">
+											<p>
+												<?php echo gettext('<strong>Warning</strong>: If your browser does not present a consistant IP address during a session you may not be able to log into your site when this option is enabled.');?>
+											</p>
+											<p>
+												<?php echo gettext('You <strong>WILL</strong> have to login after changing this option.'); ?>
+											</p>
+											<p>
+												<?php gettext('If you set the option and cannot login, you will have to restore your database to a point when the option was not set, so you might want to backup your database first.'); ?>
+											</p>
+											<p><?php echo gettext('This will not work properly if Zenphoto is set to anonymize the IP address which is strongly advised for privacy concerns in many jurisdictions.'); ?>
+											</p>
+										</div>
+										<?php } ?>
 									</td>
 								</tr>
 								<tr>
@@ -3360,50 +3518,11 @@ Zenphoto_Authority::printPasswordFormJS();
 										<p><?php echo gettext('Data privacy policy page'); ?></p>
 									</td>
 									<td width="350">
-										<p><label><input type="text" name="dataprivacy_policy_custompage" id="dataprivacy_policy_custompage" value="<?php echo html_encode(getOption('dataprivacy_policy_custompage')); ?>"> <?php echo gettext('Custom page url'); ?></label></p>
-										<?php
-										if(extensionEnabled('zenpage') && ZP_PAGES_ENABLED) {
-											$datapolicy_zenpage = getOption('dataprivacy_policy_zenpage');
-											$zenpageobj = new Zenpage();
-											$zenpagepages = $zenpageobj->getPages(false, false, null, 'sortorder', false);
-											$privacypages = array();
-											$privacypages[gettext('None')] = 'none'; 
-											foreach($zenpagepages as $zenpagepage) {
-												$pageobj = new Zenpagepage($zenpagepage['titlelink']);
-												if(!$pageobj->isProtected()) {
-													$unpublished_note = '';
-													if(!$pageobj->getShow()) {
-														$unpublished_note = '*';
-													}
-													$sublevel = '';
-													$level = count(explode('-', $pageobj->getSortorder()));
-													if($level != 1) {
-														for($l = 1; $l < $level; $l++) {
-															$sublevel .= '-'; 
-														}
-													}
-													$privacypages[$sublevel . get_language_string($zenpagepage['title']) . $unpublished_note] = $zenpagepage['titlelink'];
-												}
-											}
-											if($privacypages) {
-												unset($zenpagepages);
-												?>
-												<label>
-													<select id="dataprivacy_policy_zenpage" name="dataprivacy_policy_zenpage">
-													<?php	generateListFromArray(array($datapolicy_zenpage), $privacypages, null, true); ?>
-													</select>
-													<br><?php echo gettext('Select a Zenpage page. * denotes unpublished page.'); ?>
-												</label>
-												<?php 
-											} else {
-												echo '<p><em>' . gettext('No suitable Zenpage pages available') . '</em></p>';
-											}
-										} 
-									  ?>	
+										<?php printZenpagePageSelector('dataprivacy_policy_zenpage', 'dataprivacy_policy_custompage', false); ?>
 										<p>
 											<label>
 											<?php print_language_string_list(getOption('dataprivacy_policy_customlinktext'), 'dataprivacy_policy_customlinktext'); ?>
-											<?php echo gettext('Custom link text'); ?>
+											<br><?php echo gettext('Custom link text'); ?>
 										</label>
 										</p>
 									</td>

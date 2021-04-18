@@ -13,7 +13,7 @@ require_once(dirname(__FILE__) . "/functions-image.php");
 $returnmode = isset($_GET['returnmode']);
 
 $disposal = getOption('protect_full_image');
-if ($disposal == 'No access') { // illegal use of the script!
+if ($disposal == 'no-access') { // illegal use of the script!
 	imageError('403 Forbidden', gettext("Forbidden"));
 } else {
 	if (isset($_GET['dsp'])) {
@@ -51,7 +51,7 @@ $adminrequest = $args[12];
 if ($forbidden = getOption('image_processor_flooding_protection') && (!isset($_GET['check']) || $_GET['check'] != sha1(HASH_SEED . serialize($args)))) {
 	// maybe it was from the tinyZenpage javascript which does not know better!
 	zp_session_start();
-	$forbidden = !isset($_SESSION['adminRequest']) || $_SESSION['adminRequest'] != @$_COOKIE['zp_user_auth'];
+	$forbidden = !isset($_SESSION['adminRequest']) || $_SESSION['adminRequest'] != @$_COOKIE['zpcms_auth_user'];
 }
 
 $args[0] = 'FULL';
@@ -59,21 +59,21 @@ $args[0] = 'FULL';
 $hash = getOption('protected_image_password');
 if (($hash || !$albumobj->checkAccess()) && !zp_loggedin(VIEW_FULLIMAGE_RIGHTS)) {
 	//	handle password form if posted
-	zp_handle_password('zp_image_auth', getOption('protected_image_password'), getOption('protected_image_user'));
+	zp_handle_password('zpcms_auth_image', getOption('protected_image_password'), getOption('protected_image_user'));
 	//check for passwords
-	$authType = 'zp_image_auth';
+	$authType = 'zpcms_auth_image';
 	$hint = get_language_string(getOption('protected_image_hint'));
 	$show = getOption('protected_image_user');
 	if (empty($hash)) { // check for album password
 		$hash = $albumobj->getPassword();
-		$authType = "zp_album_auth_" . $albumobj->getID();
+		$authType = "zpcms_auth_album_" . $albumobj->getID();
 		$hint = $albumobj->getPasswordHint();
 		$show = $albumobj->getUser();
 		if (empty($hash)) {
 			$albumobj = $albumobj->getParent();
 			while (!is_null($albumobj)) {
 				$hash = $albumobj->getPassword();
-				$authType = "zp_album_auth_" . $albumobj->getID();
+				$authType = "zpcms_auth_album_" . $albumobj->getID();
 				$hint = $albumobj->getPasswordHint();
 				$show = $albumobj->getUser();
 				if (!empty($hash)) {
@@ -85,7 +85,7 @@ if (($hash || !$albumobj->checkAccess()) && !zp_loggedin(VIEW_FULLIMAGE_RIGHTS))
 	}
 	if (empty($hash)) { // check for gallery password
 		$hash = $_zp_gallery->getPassword();
-		$authType = 'zp_gallery_auth';
+		$authType = 'zpcms_auth_gallery';
 		$hint = $_zp_gallery->getPasswordHint();
 		$show = $_zp_gallery->getUser();
 	}
@@ -129,7 +129,7 @@ switch ($suffix) {
 	case 'jpeg':
 		break;
 	default:
-		if ($disposal == 'Download') {
+		if ($disposal == 'download') {
 			require_once(dirname(__FILE__) . '/lib-MimeTypes.php');
 			$mimetype = getMimeString($suffix);
 			header('Content-Disposition: attachment; filename="' . $image . '"'); // enable this to make the image a download
@@ -174,7 +174,7 @@ if (isset($_GET['q'])) {
 }
 
 if (!($process || $force_cache)) { // no processing needed
-	if (getOption('album_folder_class') != 'external' && $disposal != 'Download') { // local album system, return the image directly
+	if (getOption('album_folder_class') != 'external' && $disposal != 'download') { // local album system, return the image directly
 		header('Content-Type: image/' . $suffix);
 		if (UTF8_IMAGE_URI) {
 			$utf9_image_uri = getAlbumFolder(FULLWEBPATH) . pathurlencode($album8) . "/" . rawurlencode($image8);
@@ -187,7 +187,7 @@ if (!($process || $force_cache)) { // no processing needed
 		// send the right headers
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header("Content-Type: image/$suffix");
-		if ($disposal == 'Download') {
+		if ($disposal == 'download') {
 			header('Content-Disposition: attachment; filename="' . $image . '"'); // enable this to make the image a download
 		}
 		header("Content-Length: " . filesize($image_path));
@@ -200,7 +200,7 @@ if (!($process || $force_cache)) { // no processing needed
 
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 header("Content-Type: image/$suffix");
-if ($disposal == 'Download') {
+if ($disposal == 'download') {
 	header('Content-Disposition: attachment; filename="' . $image . '"'); // enable this to make the image a download
 }
 
@@ -245,7 +245,7 @@ if (!is_null($cache_path)) {
 	if ($returnmode) {
 		echo FULLWEBPATH . '/' . CACHEFOLDER . pathurlencode(imgSrcURI($cache_file));
 	} else {
-		if ($disposal == 'Download' || !OPEN_IMAGE_CACHE) {
+		if ($disposal == 'download' || !OPEN_IMAGE_CACHE) {
 			require_once(dirname(__FILE__) . '/lib-MimeTypes.php');
 			$mimetype = getMimeString($suffix);
 			$fp = fopen($cache_path, 'rb');
@@ -262,5 +262,4 @@ if (!is_null($cache_path)) {
 		exitZP();
 	}
 }
-?>
 

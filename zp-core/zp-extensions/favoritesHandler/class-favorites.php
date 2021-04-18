@@ -46,8 +46,12 @@ class favorites extends AlbumBase {
 		return $this->list;
 	}
 
-	function getOwner() {
-		return $this->owner;
+	function getOwner($fullname = false) {
+		$owner = $this->owner;
+		if ($fullname) {
+			return Zenphoto_Administrator::getNameByUser($owner);
+		}
+		return $owner;
 	}
 
 	function addImage($img) {
@@ -105,7 +109,7 @@ class favorites extends AlbumBase {
 	static function showWatchers($html, $obj, $prefix) {
 		$watchers = self::getWatchers($obj);
 		if (!empty($watchers)) {
-			natcasesort($watchers);
+			sortArray($watchers);
 			?>
 			<tr>
 				<td>

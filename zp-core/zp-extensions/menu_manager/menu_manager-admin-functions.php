@@ -271,7 +271,7 @@ function getMenuSetSelector($active) {
 		foreach ($result as $set) {
 			$menusets[$set['menuset']] = $set['menuset'];
 		}
-		natcasesort($menusets);
+		sortArray($menusets);
 	} else {
 		return NULL;
 	}
@@ -314,7 +314,7 @@ function publishItem($id, $show, $menuset) {
  */
 function addSubalbumMenus($menuset, $id, $link, $sort) {
 	$album = newAlbum($link);
-	$show = $album->getShow();
+	$show = $album->isPublished();
 	$title = $album->getTitle();
 	$sql = "INSERT INTO " . prefix('menu') . " (`link`,`type`,`title`,`show`,`menuset`,`sort_order`, `parentid`) " .
 					'VALUES (' . db_quote($link) . ', "album",' . db_quote($album->name) . ', ' . $show . ',' . db_quote($menuset) . ',' . db_quote($sort) . ',' . $id . ')';
@@ -796,8 +796,7 @@ function deleteItem(&$reports) {
  */
 function printAlbumsSelector($current) {
 	global $_zp_gallery;
-	$albumlist = array();
-	genAlbumList($albumlist, NULL, ALL_ALBUMS_RIGHTS);
+	$albumlist = $_zp_gallery->getAllAlbumsFromDB(false, null, ALL_ALBUMS_RIGHTS);
 	?>
 	<select id="albumselector" name="albumselect">
 		<?php
@@ -812,7 +811,7 @@ function printAlbumsSelector($current) {
 			$level = substr_count($albumname, "/");
 			$arrow = "";
 			for ($count = 1; $count <= $level; $count++) {
-				$arrow .= "» ";
+				$arrow .= "–&nbsp;";
 			}
 			echo "<option value = '" . html_encode($albumobj->name) . "'" . $selected . '>';
 			echo $arrow . $albumobj->getTitle() . unpublishedZenphotoItemCheck($albumobj) . "</option>";
@@ -950,10 +949,10 @@ function printCustomPageSelector($current) {
  * @return string
  */
 function unpublishedZenphotoItemCheck($obj, $dropdown = true) {
-	if ($obj->getShow() != "1") {
-		$show = "*";
-	} else {
+	if ($obj->isPublished()) {
 		$show = "";
+	} else {
+		$show = "*";
 	}
 	return $show;
 }

@@ -261,20 +261,20 @@ class register_user {
 		$user = trim(sanitize($_POST['user']));
 		if (getOption('register_user_email_is_id')) {
 			$mail_duplicate = $_zp_authority->checkUniqueMailaddress($user, $user);
-			if ($mail_duplicate) {
+			if (!$mail_duplicate) {
 				$_notify = 'exists';
 			}
 		} 
 		if (isset($_POST['admin_email'])) {
 			$admin_e = trim(sanitize($_POST['admin_email']));
 			$mail_duplicate = $_zp_authority->checkUniqueMailaddress($admin_e, $user);
-			if($mail_duplicate) {
+			if(!$mail_duplicate) {
 				$_notify = 'duplicateemail';
 			}
 		} else {
 			$admin_e = $user;
 		}
-		if (!is_valid_email_zp($admin_e)) {
+		if (!isValidEmail($admin_e)) {
 			$_notify = 'invalidemail';
 		}
 		if(getOption('register_user_dataconfirmation') && !isset($_POST['admin_dataconfirmation'])) {

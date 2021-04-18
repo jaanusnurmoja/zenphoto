@@ -64,7 +64,7 @@ $saved = isset($_GET['saved']);
 printAdminHeader('plugins');
 zp_apply_filter('texteditor_config', 'zenphoto');
 
-natcasesort($pluginlist);
+sortArray($pluginlist);
 $rangeset = getPageSelector($pluginlist, PLUGINS_PER_PAGE);
 $filelist = array_slice($pluginlist, $subpage * PLUGINS_PER_PAGE, PLUGINS_PER_PAGE);
 ?>
@@ -158,58 +158,81 @@ $subtab = printSubtabs();
 				$third_party_plugin = strpos($paths[$extension], ZENFOLDER) === false;
 				$pluginStream = file_get_contents($paths[$extension]);
 				$parserr = 0;
+				$plugin_name = '';
+				if ($str = isolate('$plugin_name', $pluginStream)) {
+					if (false === eval($str)) {
+						$plugin_name = ''; // silent fallback on failure
+					}
+				} 
+				if(empty($plugin_name)) {
+					$plugin_name = $extension;
+				}
+				$plugin_description = '';
 				if ($str = isolate('$plugin_description', $pluginStream)) {
 					if (false === eval($str)) {
 						$parserr = $parserr | 1;
 						$plugin_description = gettext('<strong>Error parsing <em>plugin_description</em> string!</strong>');
+					} else {
+						$plugin_description  = processExtensionVariable($plugin_description);
 					}
-				} else {
-					$plugin_description = '';
-				}
+				} 
+				$plugin_deprecated = '';
 				if ($str = isolate('$plugin_deprecated', $pluginStream)) {
 					if (false === eval($str)) {
-						$parserr = $parserr | 1;
+						$parserr = $parserr | 2;
 						$plugin_deprecated = gettext('<strong>Error parsing <em>plugin_deprecated</em> string!</strong>');
+					} else {
+						$plugin_deprecated  = processExtensionVariable($plugin_deprecated);
 					}
-				} else {
-					$plugin_deprecated = '';
-				}
+				} 
+				$plugin_notice = '';
 				if ($str = isolate('$plugin_notice', $pluginStream)) {
 					if (false === eval($str)) {
-						$parserr = $parserr | 1;
+						$parserr = $parserr | 3;
 						$plugin_notice = gettext('<strong>Error parsing <em>plugin_notice</em> string!</strong>');
+					} else {
+						$plugin_notice = processExtensionVariable($plugin_notice);
 					}
-				} else {
-					$plugin_notice = '';
-				}
+				} 
+				$plugin_author = '';
 				if ($str = isolate('$plugin_author', $pluginStream)) {
 					if (false === eval($str)) {
-						$parserr = $parserr | 2;
+						$parserr = $parserr | 4;
 						$plugin_author = gettext('<strong>Error parsing <em>plugin_author</em> string!</strong>');
 					}
-				} else {
-					$plugin_author = '';
-				}
+				} 
+				$plugin_version = '';
 				if ($str = isolate('$plugin_version', $pluginStream)) {
 					if (false === eval($str)) {
-						$parserr = $parserr | 4;
+						$parserr = $parserr | 5;
 						$plugin_version = ' ' . gettext('<strong>Error parsing <em>plugin_version</em> string!</strong>');
 					}
-				} else {
-					$plugin_version = '';
-				}
+				} 
+				$plugin_disable = false;
 				if ($str = isolate('$plugin_disable', $pluginStream)) {
 					if (false === eval($str)) {
-						$parserr = $parserr | 8;
-						$plugin_URL = gettext('<strong>Error parsing <em>plugin_disable</em> string!</strong>');
-					} else {
-						if ($plugin_disable) {
-							setOption($opt, 0);
-						}
-					}
-				} else {
-					$plugin_disable = false;
+						$parserr = $parserr | 6;
+						$plugin_disable = gettext('<strong>Error parsing <em>plugin_disable</em> string!</strong>');
+					} 
+				} 
+				$plugin_disable = isIncompatibleExtension($plugin_disable);
+				if ($plugin_disable) {
+					disableExtension($extension);
 				}
+				$plugin_siteurl = '';
+				if ($str = isolate('$plugin_siteurl', $pluginStream)) {
+					if (false === eval($str)) {
+						$parserr = $parserr | 7;
+						$plugin_siteurl = gettext('<strong>Error parsing <em>plugin_siteurl</em> string!</strong>');
+					}
+				} 
+				$plugin_date = '';
+				if ($str = isolate('$plugin_date', $pluginStream)) {
+					if (false === eval($str)) {
+						$parserr = $parserr | 8;
+						$plugin_date = gettext('<strong>Error parsing <em>plugin_date</em> string!</strong>');
+					}
+				} 
 				$plugin_URL = FULLWEBPATH . '/' . ZENFOLDER . '/pluginDoc.php?extension=' . $extension;
 				if ($third_party_plugin) {
 					$plugin_URL .= '&amp;thirdparty';
@@ -245,6 +268,8 @@ $subtab = printSubtabs();
 						}
 					}
 				}
+				
+				
 				$selected_style = '';
 				if ($currentsetting > THEME_PLUGIN) {
 					$selected_style = ' class="currentselection"';
@@ -308,9 +333,7 @@ $subtab = printSubtabs();
 							if ($plugin_disable) {
 								?>
 								<span class="icons" id="<?php echo $extension; ?>_checkbox">
-									<a href="javascript:toggle('showdisable_<?php echo $extension; ?>');" title="<?php echo gettext('This plugin is disabled. Click for details.'); ?>">
-										<img src="images/action.png" alt="" class="zp_logoicon" />
-									</a>
+									<img src="images/action.png" alt="" class="zp_logoicon" />
 									<input type="hidden" name="<?php echo $opt; ?>" id="<?php echo $opt; ?>" value="0" />
 								</span>
 								<?php
@@ -319,9 +342,12 @@ $subtab = printSubtabs();
 								<input type="checkbox" name="<?php echo $opt; ?>" id="<?php echo $opt; ?>" value="<?php echo $plugin_is_filter; ?>"<?php echo $attributes; ?> />
 								<?php
 							}
-							echo $extension;
+							echo '<strong>' . html_encode($plugin_name) . '</strong>';
 							if (!empty($plugin_version)) {
 								echo ' v' . $plugin_version;
+							}
+							if(!empty($plugin_date)) {
+								echo ' <small>(' . html_encode($plugin_date) .')</small>';
 							}
 							?>
 						</label>
@@ -340,46 +366,38 @@ $subtab = printSubtabs();
 							<span class="icons"><a href="<?php echo $optionlink; ?>" title="<?php printf(gettext("Change %s options"), $extension); ?>"><img class="icon-position-top3" src="images/options.png" alt="" /></a></span>
 							<?php
 						}
-						if ($plugin_notice) {
-							?>
-							<span class="icons"><a href="javascript:toggle('show_<?php echo $extension; ?>');" title ="<?php echo gettext('Plugin warnings'); ?>" ><img class="icon-position-top3" src="images/warn.png" alt="" /></a></span>
-							<?php
-						}
 						?>
 					</td>
 					<td colspan="2">
 						<?php
 						echo $plugin_description;
+						
 						if($plugin_deprecated) {
 							echo '<p class="notebox">' . $plugin_deprecated . '</p>';
 						}
 						if ($plugin_disable) {
 							?>
-							<div id="showdisable_<?php echo $extension; ?>" style="display: none" class="warningbox">
+							<div id="showdisable_<?php echo $extension; ?>" class="warningbox">
 								<?php
 								if ($plugin_disable) {
-									preg_match('/\<a href="#(.*)">/', $plugin_disable, $matches);
-									if ($matches) {
-										$plugin_disable = str_replace($matches[0], '<a href="javascript:gotoPlugin(\'' . $matches[1] . '\');">', $plugin_disable);
-									}
 									echo $plugin_disable;
 								}
 								?>
 							</div>
-
 							<?php
 						}
 						if ($plugin_notice) {
 							?>
-							<div id="show_<?php echo $extension; ?>" style="display:none" class="notebox">
-								<?php
-								if ($plugin_notice) {
-									echo $plugin_notice;
-								}
-								?>
+							<div class="notebox">
+								<?php echo $plugin_notice;?>
 							</div>
 							<?php
 						}
+						echo '<p><small><strong>' . sprintf(gettext('by %s'), $plugin_author);
+						if(!empty($plugin_siteurl)) {
+							echo ' | <a href="' . html_encode($plugin_siteurl) . '" rel="noopener" target="_blank" title="'. html_encode($plugin_siteurl).'">' . gettext('Visit plugin site') . '</a>';
+						}
+						echo '</strong></small></p>';
 						?>
 					</td>
 				</tr>

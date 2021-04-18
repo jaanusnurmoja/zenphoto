@@ -5,7 +5,7 @@
  */
 // force UTF-8 Ø
 Define('PHP_MIN_VERSION', '5.3.0');
-Define('PHP_DESIRED_VERSION', '7.1.0');
+Define('PHP_DESIRED_VERSION', '7.4.0');
 
 // leave this as the first executable statement to avoid problems with PHP not having gettext support.
 if (!function_exists("gettext")) {
@@ -174,7 +174,6 @@ if (isset($_POST['db'])) { //try to update the zp-config file
 	}
 }
 
-define('ACK_REGISTER_GLOBALS', 1);
 define('ACK_DISPLAY_ERRORS', 2);
 
 if (isset($_GET['security_ack'])) {
@@ -390,14 +389,14 @@ if ($newconfig || isset($_GET['copyhtaccess'])) {
 if ($setup_checked) {
 	if (!isset($_GET['protect_files'])) {
 		setup::log(gettext("Completed system check"), true);
-		if (isset($_COOKIE['setup_test_cookie'])) {
-			$setup_cookie = $_COOKIE['setup_test_cookie'];
+		if (isset($_COOKIE['zpcms_setup_testcookie'])) {
+			$setup_cookie = $_COOKIE['zpcms_setup_testcookie'];
 		} else {
 			$setup_cookie = '';
 		}
 		if ($setup_cookie == ZENPHOTO_VERSION) {
 			setup::log(gettext('Setup cookie test successful'));
-			setcookie('setup_test_cookie', '', time() - 368000, '/');
+			setcookie('zpcms_setup_testcookie', '', time() - 368000, '/');
 		} else {
 			setup::log(gettext('Setup cookie test unsuccessful'), true);
 		}
@@ -427,7 +426,7 @@ if ($setup_checked) {
 			setup::log(sprintf(gettext("Query error: %s"), $connectDBErr), true);
 		}
 	}
-	setcookie('setup_test_cookie', ZENPHOTO_VERSION, time() + 3600, '/');
+	setcookie('zpcms_setup_testcookie', ZENPHOTO_VERSION, time() + 3600, '/');
 }
 
 if (!isset($_zp_setupCurrentLocale_result) || empty($_zp_setupCurrentLocale_result)) {
@@ -620,6 +619,13 @@ if ($c <= 0) {
 								}
 							}
 							setup::checkMark($p, sprintf(gettext('<em>%s</em> security'), DATA_FOLDER), sprintf(gettext('<em>%s</em> security [is compromised]'), DATA_FOLDER), sprintf(gettext('Zenphoto suggests you make the sensitive files in the %1$s folder accessable by <em>owner</em> only (permissions = 0600). The file permissions for <em>%2$s</em> are %3$04o which may allow unauthorized access.'), DATA_FOLDER, $file, $permission));
+						
+							if(setup::secureServer()) {
+								$sslconection = 1;
+							} else {
+								$sslconection = -1;
+							}
+							setup::checkMark($sslconection, gettext('<em>SSL</em> connection'), gettext('<em>SSL</em> connection [is not enabled]'), gettext("It is strongely recommended to use a secure https connection on your site."));
 							
 							if(setup::checkServerSoftware()) {
 								setup::checkMark(true, $_SERVER['SERVER_SOFTWARE'], '', '');
@@ -629,26 +635,12 @@ if ($c <= 0) {
 							
 							$err = setup::versionCheck('5.6.0', PHP_DESIRED_VERSION, PHP_VERSION);
 							$good = setup::checkMark($err, sprintf(gettext("PHP version %s"), PHP_VERSION), "", sprintf(gettext('PHP Version %1$s or greater is required. Version %2$s or greater is strongly recommended. Use earlier versions at your own risk. Zenphoto is developed on PHP 7.1+ and in any case not tested below 5.6. There will be no fixes if you encounter any issues below 5.6. Please contact your webhost about a PHP upgrade on your server.'), '5.6.0', PHP_DESIRED_VERSION), false) && $good;
-
+							
 							if ($session && session_id()) {
 								setup::checkmark(true, gettext('PHP <code>Sessions</code>.'), gettext('PHP <code>Sessions</code> [appear to not be working].'), '', true);
 							} else {
 								setup::checkmark(0, '', gettext('PHP <code>Sessions</code> [appear to not be working].'), gettext('PHP Sessions are required for Zenphoto administrative functions.'), true);
 							}
-
-							if (preg_match('#(1|ON)#i', @ini_get('register_globals'))) {
-								if ((isset($_zp_conf_vars['security_ack']) ? $_zp_conf_vars['security_ack'] : NULL) & ACK_REGISTER_GLOBALS) {
-									$register_globals = -1;
-									$aux = '';
-								} else {
-									$register_globals = false;
-									$aux = ' ' . setup::acknowledge(ACK_REGISTER_GLOBALS);
-								}
-							} else {
-								$register_globals = true;
-								$aux = '';
-							}
-							$good = setup::checkMark($register_globals, gettext('PHP <code>Register Globals</code>'), gettext('PHP <code>Register Globals</code> [is set]'), gettext('PHP Register globals presents a security risk to any PHP application. See <a href="https://php.net/manual/en/security.globals.php"><em>Using Register Globals</em></a>. Change your PHP.ini settings to <code>register_globals = off</code>.') . $aux) && $good;
 
 							if (!extension_loaded('suhosin')) {
 								$blacklist = @ini_get("suhosin.executor.func.blacklist");
@@ -691,18 +683,24 @@ if ($c <= 0) {
 									break;
 							}
 							setup::checkmark($display, gettext('PHP <code>display_errors</code>'), sprintf(gettext('PHP <code>display_errors</code> [is enabled]'), $display), gettext('This setting may result in PHP error messages being displayed on WEB pages. These displays may contain sensitive information about your site.') . $aux, $display && !TEST_RELEASE);
-
-							setup::checkMark($noxlate, gettext('PHP <code>gettext()</code> support'), gettext('PHP <code>gettext()</code> support [is not present]'), gettext("Localization of Zenphoto requires native PHP <code>gettext()</code> support"));
-							setup::checkmark(function_exists('flock') ? 1 : -1, gettext('PHP <code>flock</code> support'), gettext('PHP <code>flock</code> support [is not present]'), gettext('Zenphoto uses <code>flock</code> for serializing critical regions of code. Without <code>flock</code> active sites may experience <em>race conditions</em> which may be causing inconsistent data.'));
-							
-							setup::checkmark(function_exists('curl_init') ? 1 : -1, gettext('PHP <code>cURL</code> support'), gettext('PHP <code>cURL</code> support [is not present]'), gettext('<code>cURL</code> support is not critical but strongely recommended.'), false);
-							setup::checkmark(class_exists('tidy') ? 1 : -1, gettext('PHP <code>tidy</code> support'), gettext('PHP <code>tidy</code> support [is not present]'), gettext('<code>tidy</code> support is not critical but strongely recommended for properly truncating text containing HTML markup.'));
+							setup::checkMark($noxlate, gettext('PHP <code>gettext()</code> support'), gettext('PHP <code>gettext()</code> support [is not present]'), gettext("Localization of Zenphoto requires native PHP <code>gettext()</code> support"));						
+							setup::checkmark(extension_loaded('curl') ? 1 : -1, gettext('PHP <code>cURL</code> support'), gettext('PHP <code>cURL</code> support [is not present]'), gettext('<code>cURL</code> support is not critical but strongely recommended.'), false);
+							setup::checkmark(extension_loaded('tidy') ? 1 : -1, gettext('PHP <code>tidy</code> support'), gettext('PHP <code>tidy</code> support [is not present]'), gettext('<code>tidy</code> support is not critical but strongely recommended for properly truncating text containing HTML markup.'));		
+							setup::checkmark(extension_loaded('zip') ? 1 : -1, gettext('PHP <code>ZipArchive</code> support'), gettext('PHP <code>ZipArchive</code> support [is not present]'), gettext('<code>ZipArchive</code> support is not critical and only required if you intend to upload zip archives with supported file types to the gallery.'));		
+							setup::checkmark(extension_loaded('json') ? 1 : -1, gettext('PHP <code>JSON</code> support'), gettext('PHP <code>JSON</code> support [is not present]'), gettext('<code>JSON</code> support is not yet critical but may become so in the future.'));
+							setup::checkmark(extension_loaded('exif') ? 1 : -1, gettext('PHP <code>exif</code> support'), gettext('PHP <code>exif</code> support [is not present]'), gettext('<code>exif</code> support is not critical but strongely recommended for properly handling exif data of images'));
+							setup::checkmark(extension_loaded('bz2') ? 1 : -1, gettext('PHP <code>bz2</code> support'), gettext('PHP <code>bz2</code> support [is not present]'), gettext('<code>bz2</code> support is not critical but recommended for some optional bzcompression functionalty'));
+							setup::checkmark(extension_loaded('fileinfo') ? 1 : -1, gettext('PHP <code>fileinfo</code> support'), gettext('PHP <code>fileinfo</code> support [is not present]'), gettext('<code>fileinfo</code> support is not critical but strongely recommended for file system functionality'));
+							setup::checkmark(extension_loaded('intl') ? 1 : -1, gettext('PHP <code>intl</code> support'), gettext('PHP <code>intl</code> support [is not present]'), gettext('<code>intl</code> support is strongely recommended for using locale-aware functionality.'));
+							setup::checkmark(extension_loaded('xml') ? 1 : -1, gettext('PHP <code>xml</code> support'), gettext('PHP <code>xml</code> support [is not present]'), gettext('<code>xml</code> support is not criticaly but strongely recommended for some functionality for parsing XML contents like RSS feeds.'));
+							setup::checkmark(extension_loaded('dom') ? 1 : -1, gettext('PHP <code>dom</code> support'), gettext('PHP <code>dom</code> support [is not present]'), gettext('<code>dom</code> support is not criticaly but recommended for some functionality processing and modifying HTML contents.'));
+							setup::checkmark(extension_loaded('simplexml') ? 1 : -1, gettext('PHP <code>simplexml</code> support'), gettext('PHP <code>simplexml</code> support [is not present]'), gettext('<code>simplexml</code> support is not criticaly but strongely recommended for some functionality processing XML contents like RSS feeds.'));
 							
 							if ($_zp_setupCurrentLocale_result === false) {
-								setup::checkMark(-1, gettext('PHP <code>setlocale()</code>'), ' ' . gettext('PHP <code>setlocale()</code> failed'), gettext("Locale functionality is not implemented on your platform or the specified locale does not exist. Language translation may not work.") . '<br />' . gettext('See the <a  href="https://www.zenphoto.org/news/problems-with-languages">user guide</a> on zenphoto.org for details.'));
+								setup::checkMark(-1, gettext('PHP <code>setlocale()</code>'), ' ' . gettext('PHP <code>setlocale()</code> failed'), gettext("Locale functionality is not implemented on your platform or the specified locale does not exist. Language translation may not work.") . '<br />' . gettext('See the <a  href="http://www.zenphoto.org/news/problems-with-languages">user guide</a> on zenphoto.org for details.'));
 							}
 							setup::primeMark(gettext('mb_strings'));
-							if (function_exists('mb_internal_encoding')) {
+							if (extension_loaded('mbstring') && extension_loaded('iconv')) {
 								@mb_internal_encoding('UTF-8');
 								if (($charset = mb_internal_encoding()) == 'UTF-8') {
 									$mb = 1;
@@ -710,15 +708,16 @@ if ($c <= 0) {
 									$mb = -1;
 								}
 								$m2 = gettext('Setting <em>mbstring.internal_encoding</em> to <strong>UTF-8</strong> in your <em>php.ini</em> file is recommended to insure accented and multi-byte characters function properly.');
-								setup::checkMark($mb, gettext("PHP <code>mbstring</code> package"), sprintf(gettext('PHP <code>mbstring</code> package [Your internal character set is <strong>%s</strong>]'), $charset), $m2);
+								setup::checkMark($mb, gettext("PHP <code>mbstring</code> and <code>iconv</code> packages"), sprintf(gettext('PHP <code>mbstring</code> and <code>iconv</code> packages [Your internal character set is <strong>%s</strong>]'), $charset), $m2);
 							} else {
 								$test = $_zp_UTF8->convert('test', 'ISO-8859-1', 'UTF-8');
 								if (empty($test)) {
-									$m2 = gettext("You need to install the <code>mbstring</code> package or correct the issue with <code>iconv()</code>");
-									setup::checkMark(0, '', gettext("PHP <code>mbstring</code> package [is not present and <code>iconv()</code> is not working]"), $m2);
+									$m2 = gettext("You need to install the <code>mbstring</code> and <code>iconv</code> packages");
+									setup::checkMark(0, '', gettext("PHP <code>mbstring</code> and <code>iconv</code> packages [are not present]"), $m2);
 								} else {
 									$m2 = gettext("Strings generated internally by PHP may not display correctly. (e.g. dates)");
-									setup::checkMark(-1, '', gettext("PHP <code>mbstring</code> package [is not present]"), $m2);
+									setup::checkMark(-1, '', gettext("PHP <code>mbstring</code> and <code>iconv</code> packages [are not present]"), $m2);
+									
 								}
 							}
 
@@ -989,18 +988,15 @@ if ($c <= 0) {
 									if ($engine['enabled']) {
 										if (isset($enabled['experimental'])) {
 											?>
-											<li class="note_warn"><?php echo sprintf(gettext(' <code>%1$s</code> support (<a onclick="$(\'#%1$s\').toggle(\'show\')" >experimental</a>)'), $handler); ?>
-											</li>
-											<p class="warning" id="<?php echo $handler; ?>"
-												 style="display: none;">
+											<li class="note_warn"><?php echo sprintf(gettext('<code>%1$s</code> support (experimental)'), $handler); ?>
+												<p class="warning" id="<?php echo $handler; ?>">
 													 <?php echo $enabled['experimental'] ?>
-											</p>
+												</p>
+											</li>
+											
 											<?php
 										} else {
-											?>
-											<li class="note_ok"><?php echo sprintf(gettext('PHP <code>%s</code> support'), $handler); ?>
-											</li>
-											<?php
+											setup::log(gettext('Pass: ') . sprintf(gettext('PHP <code>%s</code> support'), $handler), true, false); 
 										}
 									} else {
 										?>
@@ -1349,17 +1345,18 @@ if ($c <= 0) {
 										break;
 								}
 							}
-							$filelist = '';
+							$filelist = array();
 							foreach ($installed_files as $extra) {
-								$filelist .= filesystemToInternal(str_replace($base, '', $extra) . '<br />');
+								$filelist[] = filesystemToInternal(str_replace($base, '', $extra));
 							}
+							$htmllist_missing = setup::getFilelist($filelist);
 							if (hasPrimaryScripts() && count($installed_files) > 0) {
 								if (defined('TEST_RELEASE') && TEST_RELEASE) {
 									$msg1 = gettext("Zenphoto core files [This is a <em>debug</em> build. Some files are missing or seem wrong]");
 								} else {
 									$msg1 = gettext("Zenphoto core files [Some files are missing or seem wrong]");
 								}
-								$msg2 = gettext('Perhaps there was a problem with the upload. You should check the following files:') . '<br /><code>' . substr($filelist, 0, -6) . '</code>';
+								$msg2 = gettext('Perhaps there was a problem with the upload. This may not be critical at all as perhaps just the file times may be off compared to other files. You should check the following files:') . $htmllist_missing;
 								$mark = -1;
 							} else {
 								if (defined('TEST_RELEASE') && TEST_RELEASE) {
@@ -1389,10 +1386,10 @@ if ($c <= 0) {
 									}
 								}
 								if ($svncount) {
-									$filelist[] = '<br />' . sprintf(ngettext('.svn [%s instance]', '.svn [%s instances]', $svncount), $svncount);
+									$filelist[] = sprintf(ngettext('.svn [%s instance]', '.svn [%s instances]', $svncount), $svncount);
 								}
 								if ($phi_ini_count && TEST_RELEASE) {
-									$filelist[] = '<br />' . sprintf(ngettext('php.ini [%s instance]', 'php.ini [%s instances]', $phi_ini_count), $phi_ini_count);
+									$filelist[] = sprintf(ngettext('php.ini [%s instance]', 'php.ini [%s instances]', $phi_ini_count), $phi_ini_count);
 								}
 								if ($package_file_count) { //	no point in this if the package list was damaged!
 									if (!empty($filelist)) {
@@ -1413,16 +1410,18 @@ if ($c <= 0) {
 													unset($filelist[$key]);
 												}
 											}
-
+											
 											if (!empty($filelist)) {
-												setup::checkmark(-1, '', gettext('Zenphoto core folders [Some unknown files were found]'), gettext('The following files could not be deleted.') . '<br /><code>' . implode('<br />', $filelist) . '<code>');
+												$htmllist = setup::getFilelist($filelist);
+												setup::checkmark(-1, '', gettext('Zenphoto core folders [Some unknown files were found]'), gettext('The following files could not be deleted.') . $htmllist);
 											}
 										} else {
-											setup::checkMark(-1, '', gettext('Zenphoto core folders [Some unknown files were found]'), gettext('You should remove the following files: ') . '<br /><code>' . implode('<br />', $filelist) .
-															'</code><p class="buttons"><a href="?delete_extra' . ($_zp_setup_debug ? '&amp;debug' : '') . '">' . gettext("Delete extra files") . '</a></p><br class="clearall" /><br class="clearall" />');
+											$htmllist = setup::getFilelist($filelist);
+											setup::checkMark(-1, '', gettext('Zenphoto core folders [Some unknown files were found]'), gettext('You should remove the following files: ') . $htmllist .
+															'<p class="buttons"><a href="?delete_extra' . ($_zp_setup_debug ? '&amp;debug' : '') . '">' . gettext("Delete extra files") . '</a></p><br class="clearall" /><br class="clearall" />');
 										}
 									}
-									setup::checkMark($permissions, gettext("Zenphoto core file permissions"), gettext("Zenphoto core file permissions [not correct]"), gettext('Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href="https://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders">Troubleshooting guide</a> for details on Zenphoto permissions requirements.'));
+									setup::checkMark($permissions, gettext("Zenphoto core file permissions"), gettext("Zenphoto core file permissions [not correct]"), gettext('Setup could not set the one or more components to the selected permissions level. You will have to set the permissions manually. See the <a href="http://www.zenphoto.org/news/permissions-for-zenphoto-files-and-folders">Troubleshooting guide</a> for details on Zenphoto permissions requirements.'));
 								}
 							}
 							$msg = gettext("<em>.htaccess</em> file");
@@ -1446,7 +1445,7 @@ if ($c <= 0) {
 								} else if (setup::getServerSoftware() == 'nginx') {
 									$err = gettext("Server seems to be <em>nginx</em>");
 									$mod = "&amp;mod_rewrite"; //	enable test to see if it works.
-									$desc = gettext('If you wish to create cruft-free URLs, you will need to configuring <a href="https://www.zenphoto.org/news/nginx-rewrite-rules-tutorial"><em>URL rewriting for NGINX servers</em></a>.') . ' ' .
+									$desc = gettext('If you wish to create cruft-free URLs, you will need to configuring <a href="http://www.zenphoto.org/news/nginx-rewrite-rules-tutorial"><em>URL rewriting for NGINX servers</em></a>.') . ' ' .
 													'<br /><br />' . gettext('You can ignore this warning if you do not intend to set the <code>mod_rewrite</code> option.');
 								} else {
 									$mod = "&amp;mod_rewrite"; //	enable test to see if it works.
@@ -1573,7 +1572,7 @@ if ($c <= 0) {
 								setup::checkmark(-1, gettext('<em>robots.txt</em> file'), gettext('<em>robots.txt</em> file [Not created]'), gettext('Setup could not find the  <em>example_robots.txt</em> file.'));
 							} else {
 								if (file_exists($_zp_setup_serverpath . '/robots.txt')) {
-									setup::checkmark(-2, gettext('<em>robots.txt</em> file'), gettext('<em>robots.txt</em> file [Not created]'), gettext('Setup did not create a <em>robots.txt</em> file because one already exists.'));
+									setup::checkmark(-2, gettext('<em>robots.txt</em> file'), gettext('<em>robots.txt</em> file [Not created]'), gettext('Setup did not create a <em>robots.txt</em> file because one already exists. If you just moved your site you may need to review it.'));
 								} else {
 									$text = explode('# Place it in the root folder of your web pages.', $robots);
 									$d = dirname(dirname(dirname($_SERVER['SCRIPT_NAME'])));
@@ -2429,6 +2428,9 @@ if ($c <= 0) {
 						//1.5.5
 						$sql_statements[] = "ALTER TABLE $tbl_albums CHANGE `sort_type` `sort_type` varchar(128)";
 						$sql_statements[] = "ALTER TABLE $tbl_albums CHANGE `subalbum_sort_type` `subalbum_sort_type` varchar(128)";
+						
+						//1.5.8
+						$sql_statements[] = "ALTER TABLE $tbl_administrators ADD COLUMN `lastvisit` datetime default NULL";
 
 						// do this last incase there are any field changes of like names!
 						foreach ($_zp_exifvars as $key => $exifvar) {

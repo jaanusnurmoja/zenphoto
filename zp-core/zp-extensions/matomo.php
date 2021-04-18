@@ -37,7 +37,7 @@ $plugin_category = gettext('Statistics');
 
 $option_interface = 'matomoStats';
 
-if (!getOption('matomo_admintracking') || !zp_loggedin(ADMIN_RIGHTS)) {
+if (getOption('matomo_admintracking') || !zp_loggedin(ADMIN_RIGHTS)) {
 	zp_register_filter('theme_body_close', 'matomoStats::script');
 }
 if (getOption('matomo_widgets_code')) {
@@ -154,12 +154,18 @@ class matomoStats {
 			$id = getOption('matomo_id');
 			$sitedomain = trim(getOption('matomo_sitedomain'));
 			$requireconsent = getOption('matomo_requireconsent');
-			$requireconsent_js = "_paq.push(['requireConsent']);";
 			switch($requireconsent) {
 				case 'no-consent':
 					$requireconsent_js = '';
 					break;
+				default:
+				case 'consent-required':
+					$requireconsent_js = "_paq.push(['requireCookieConsent']);";
+					$requireconsent_js .= "_paq.push(['requireConsent']);";
+					break;
+				
 				case 'consent-required-remembered':
+					$requireconsent_js = "_paq.push(['requireCookieConsent']);";
 					$requireconsent_js .= "\n_paq.push(['rememberConsentGiven']);";
 					break;
 			}
@@ -193,17 +199,17 @@ class matomoStats {
 				?>
 				(function () {
 					var u = "//<?php echo str_replace(array('https://', 'https://'), '', $url); ?>/";
-					_paq.push(['setTrackerUrl', u + 'piwik.php']);
+					_paq.push(['setTrackerUrl', u + 'matomo.php']);
 					_paq.push(['setSiteId', <?php echo $id; ?>]);
 					var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
 					g.type = 'text/javascript';
 					g.defer = true;
 					g.async = true;
-					g.src = u + 'piwik.js';
+					g.src = u + 'matomo.js';
 					s.parentNode.insertBefore(g, s);
 				})();
 			</script>
-			<noscript><p><img src="<?php echo $url ?>/piwik.php?idsite=<?php echo $id ?>&rec=1" style="border:0" alt="" /></p></noscript>
+			<noscript><p><img src="<?php echo $url ?>/matomo.php?idsite=<?php echo $id ?>&rec=1" style="border:0" alt="" /></p></noscript>
 			<!-- End Matomo Tag -->
 			<?php
 		}

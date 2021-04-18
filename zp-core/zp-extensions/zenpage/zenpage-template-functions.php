@@ -363,9 +363,9 @@ function getNewsContent($shorten = false, $shortenindicator = NULL, $readmore = 
  * @param string $readmore The text for the "read more" link. If empty the term set in Zenpage option is used.
  */
 function printNewsContent($shorten = false, $shortenindicator = NULL, $readmore = NULL) {
-	global $_zp_current_zenpage_news, $_zp_page;
-	$newscontent = getNewsContent($shorten, $shortenindicator, $readmore);
-	echo html_encodeTagged($newscontent);
+	global $_zp_current_zenpage_news;
+	$content = zp_apply_filter('articlecontent_html', getNewsContent($shorten, $shortenindicator, $readmore), $_zp_current_zenpage_news);
+	echo html_encodeTagged($content);
 }
 
 /**
@@ -508,7 +508,9 @@ function getNewsCategoryDesc() {
  *
  */
 function printNewsCategoryDesc() {
-	echo html_encodeTagged(getNewsCategoryDesc());
+	global $_zp_current_category;
+	$desc = zp_apply_filter('categorydesc_html', getNewsCategoryDesc(), $_zp_current_category);
+	echo html_encodeTagged($desc);
 }
 
 /**
@@ -713,21 +715,21 @@ function printCurrentNewsArchive($before = '', $mode = 'formatted', $format = '%
  * @param string $newsindex How you want to call the link the main news page without a category, leave empty if you don't want to print it at all.
  * @param bool $counter TRUE or FALSE (default TRUE). If you want to show the number of articles behind the category name within brackets,
  * @param string $css_id The CSS id for the list
- * @param string $css_class_active The css class for the active menu item
+ * @param string $css_class_topactive The css class for the active menu item
  * @param bool $startlist set to true to output the UL tab
- * @param int $showsubs Set to depth of sublevels that should be shown always. 0 by default. To show all, set to a true! Only valid if option=="list".
  * @param string $css_class CSS class of the sub level list(s)
- * @param string $$css_class_active CSS class of the sub level list(s)
+ * @param string $css_class_active CSS class of the sub level list(s)
  * @param string $option The mode for the menu:
  * 												"list" context sensitive toplevel plus sublevel pages,
  * 												"list-top" only top level pages,
  * 												"omit-top" only sub level pages
  * 												"list-sub" lists only the current pages direct offspring
+ * @param int $showsubs Set to depth of sublevels that should be shown always. 0 by default. To show all, set to a true! Only valid if option=="list".
  * @param int $limit truncation of display text
  * @return string
  */
 function printAllNewsCategories($newsindex = 'All news', $counter = TRUE, $css_id = '', $css_class_topactive = '', $startlist = true, $css_class = '', $css_class_active = '', $option = 'list', $showsubs = false, $limit = NULL) {
-	printNestedMenu($option, 'allcategories', $counter, $css_id, $css_class_topactive, $css_class, $css_class_active, $newsindex, $showsubs, $startlist, $limit);
+	printNestedMenu($option, 'categories', $counter, $css_id, $css_class_topactive, $css_class, $css_class_active, $newsindex, $showsubs, $startlist, $limit);
 }
 
 /* * ********************************************* */
@@ -1363,13 +1365,15 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 	if (is_null($limit)) {
 		$limit = MENU_TRUNCATE_STRING;
 	}
+	if($mode == 'allcategories') {
+		$mode = 'categories';
+	}
 	if (is_null($css_id)) {
 		switch ($mode) {
 			case 'pages':
 				$css_id = 'menu_pages';
 				break;
 			case 'categories':
-			case 'allcategories':
 				$css_id = 'menu_categories';
 				break;
 		}
@@ -1397,7 +1401,6 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 			$currentitem_sortorder = getPageSortorder();
 			break;
 		case 'categories':
-		case 'allcategories':
 			$items = $_zp_zenpage->getAllCategories();
 			if (is_object($_zp_current_category) && $mode == 'categories') {
 				$currentitem_sortorder = $_zp_current_category->getSortOrder();
@@ -1417,7 +1420,7 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 		$css_class_active = "";
 		rem_context(ZP_ZENPAGE_PAGE);
 	}
-	if (0 == count($items) + (int) ($mode == 'allcategories'))
+	if (0 == count($items) + (int) ($mode == 'categories'))
 		return; // nothing to do
 	$startlist = $startlist && !($option == 'omit-top' || $option == 'list-sub');
 	if ($startlist)
@@ -1438,7 +1441,6 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 				}
 				break;
 			case 'categories':
-			case 'allcategories':
 				if (($_zp_gallery_page == "news.php") && !is_NewsCategory() && !is_NewsArchive() && !is_NewsArticle()) {
 					echo '<li class="' . $css_class_topactive . '">' . html_encode($display);
 				} else {
@@ -1487,7 +1489,6 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 				}
 				break;
 			case 'categories':
-			case 'allcategories':
 				$catobj = new ZenpageCategory($item['titlelink']);
 				$itemtitle = $catobj->getTitle();
 				$itemsortorder = $catobj->getSortOrder();
@@ -1574,7 +1575,6 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 							}
 							break;
 						case 'categories':
-						case 'allcategories':
 							if ($_zp_gallery_page == 'news.php') {
 								$current = $class;
 							}
@@ -1587,7 +1587,7 @@ function printNestedMenu($option = 'list', $mode = NULL, $counter = TRUE, $css_i
 				if ($limit) {
 					$itemtitle = shortenContent($itemtitle, $limit, MENU_TRUNCATE_INDICATOR);
 				}
-				echo '<li><a class="' . $current. '" href="' . html_encode($itemurl) . '" title="' . html_encode(getBare($itemtitle)) . '">' . html_encode($itemtitle) . '</a>' . $count;
+				echo '<li class="' . $current. '"><a href="' . html_encode($itemurl) . '" title="' . html_encode(getBare($itemtitle)) . '">' . html_encode($itemtitle) . '</a>' . $count;
 			}
 		}
 	}
@@ -1887,13 +1887,13 @@ function printPageLastChangeDate($before) {
  */
 function getPageContent($titlelink = NULL, $published = true) {
 	global $_zp_current_zenpage_page;
-	if (is_Pages() AND empty($titlelink)) {
+	if (is_Pages() && empty($titlelink)) {
 		return $_zp_current_zenpage_page->getContent();
 	}
 	// print content of a page directly on a normal zenphoto theme page or any other page for example
 	if (!empty($titlelink)) {
 		$page = new ZenpagePage($titlelink);
-		if ($page->getShow() OR ( !$page->getShow() AND ! $published)) {
+		if ($page->isPublished() || ( !$page->isPublished() && ! $published)) {
 			return $page->getContent();
 		}
 	}
@@ -1909,7 +1909,9 @@ function getPageContent($titlelink = NULL, $published = true) {
  * @return mixed
  */
 function printPageContent($titlelink = NULL, $published = true) {
-	echo html_encodeTagged(getPageContent($titlelink, $published));
+	global $_zp_current_zenpage_page;
+	$content = zp_apply_filter('pagecontent_html', getPageContent($titlelink, $published), $_zp_current_zenpage_page);
+	echo html_encodeTagged($content);
 }
 
 /**
@@ -1922,13 +1924,13 @@ function printPageContent($titlelink = NULL, $published = true) {
  */
 function getPageExtraContent($titlelink = '', $published = true) {
 	global $_zp_current_zenpage_page;
-	if (is_Pages() AND empty($titlelink)) {
+	if (is_Pages() && empty($titlelink)) {
 		return $_zp_current_zenpage_page->getExtracontent();
 	}
 	// print content of a page directly on a normal zenphoto theme page for example
 	if (!empty($titlelink)) {
 		$page = new ZenpagePage($titlelink);
-		if ($page->getShow() OR ( !$page->getShow() AND ! $published)) {
+		if ($page->isPublished() || ( !$page->isPublished() && ! $published)) {
 			return $page->getExtracontent();
 		}
 	}

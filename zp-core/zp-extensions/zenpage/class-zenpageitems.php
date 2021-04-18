@@ -17,10 +17,15 @@ class ZenpageItems extends ZenpageRoot {
 	/**
 	 * Returns the author
 	 *
+	 * @param bool $fullname Set to true to get the full name (if the author is a vaild user of the site and has the full name defined)
 	 * @return string
 	 */
-	function getAuthor() {
-		return $this->get("author");
+	function getAuthor($fullname = false) {
+		$author = $this->get("author");
+		if ($fullname) {
+			return Zenphoto_Administrator::getNameByUser($author);
+		}
+		return $author;
 	}
 
 	/**
@@ -59,7 +64,7 @@ class ZenpageItems extends ZenpageRoot {
 	/**
 	 * Returns the last change author
 	 * 
-	 * @deprecated 1.6 - Use getLastChangeUser() instead
+	 * @deprecated Zenphoto 1.6 - Use getLastChangeUser() instead
 	 *
 	 * @return string
 	 */
@@ -71,7 +76,7 @@ class ZenpageItems extends ZenpageRoot {
 	 *
 	 * stores the last change author
 	 * 
-	 * @deprecated 1.6 - Use setLastChangeUser() instead
+	 * @deprecated Zenphoto 1.6 - Use setLastChangeUser() instead
 	 */
 	function setLastchangeAuthor($a) {
 		$this->setLastchangeUser($a);

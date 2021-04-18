@@ -231,7 +231,7 @@ class DownloadList {
 	 * @return array
 	 */
 	static function printListArray($array, $listtype = 'ol') {
-		if ($listtype != 'ol' || $listtype != 'ul') {
+		if ($listtype != 'ol' && $listtype != 'ul') {
 			$listtype = 'ol';
 		}
 		$filesize = '';
@@ -440,7 +440,7 @@ class AlbumZip {
  * @param string $sort 'asc" or "desc" (default) for alphabetical ascending or descending list
  */
 function printdownloadList($dir = '', $listtype = 'ol', $filters = array(), $excludesuffixes = '', $sort = 'desc') {
-	if ($listtype != 'ol' || $listtype != 'ul') {
+	if ($listtype != 'ol' && $listtype != 'ul') {
 		$listtype = 'ol';
 	}
 	$files = getdownloadList($dir, $filters, $excludesuffixes, $sort);
@@ -491,7 +491,7 @@ function getdownloadList($dir8, $filters8, $excludesuffixes, $sort) {
 	$dirs = array_diff(scandir($dir, $direction), $filters);
 	$dir_array = Array();
 	if ($sort == 'asc') {
-		natsort($dirs);
+		sortArray($dirs, false, true, true);
 	}
 	foreach ($dirs as $file) {
 		if (@$file[0] != '.') { //	exclude "hidden" files
@@ -647,8 +647,8 @@ if (isset($_GET['download'])) {
 		//	credentials required to download
 		if (!zp_loggedin((getOption('downloadList_rights')) ? FILES_RIGHTS : ALL_RIGHTS)) {
 			$user = getOption('downloadList_user');
-			zp_handle_password('download_auth', $hash, $user);
-			if ((!empty($hash) && zp_getCookie('download_auth') != $hash)) {
+			zp_handle_password('zpcms_auth_download', $hash, $user);
+			if ((!empty($hash) && zp_getCookie('zpcms_auth_download') != $hash)) {
 				$show = ($user) ? true : NULL;
 				$hint = '';
 				if (!empty($hash)) {

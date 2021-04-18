@@ -112,7 +112,7 @@ function propSizes($size, $width, $height, $w, $h, $thumb, $image_use_side, $dim
 	$hprop = round(($h / $w) * $dim);
 	$wprop = round(($w / $h) * $dim);
 	if ($size) {
-		if ((($thumb || ($image_use_side == 'longest')) && $h > $w) || ($image_use_side == 'height') || ($image_use_side == 'shortest' && $h < $w)) {
+		if (((($image_use_side == 'longest')) && $h > $w) || ($image_use_side == 'height') || ($image_use_side == 'shortest' && $h < $w)) {
 			$newh = $dim; // height is the size and width is proportional
 			$neww = $wprop;
 		} else {
@@ -168,7 +168,11 @@ function cacheImage($newfilename, $imgfile, $args, $allow_watermark = false, $th
 	try {
 		@list($size, $width, $height, $cw, $ch, $cx, $cy, $quality, $thumb, $crop, $thumbstandin, $passedWM, $adminrequest, $effects) = $args;
 		// Set the config variables for convenience.
-		$image_use_side = getOption('image_use_side');
+		if($thumb) {
+			$image_use_side = getOption('thumb_use_side');
+		} else {
+			$image_use_side = getOption('image_use_side');
+		}
 		$upscale = getOption('image_allow_upscale');
 		$allowscale = true;
 		$sharpenthumbs = getOption('thumb_sharpen');
@@ -454,7 +458,7 @@ function cacheImage($newfilename, $imgfile, $args, $allow_watermark = false, $th
 		// Create the cached file (with lots of compatibility)...
 		@chmod($newfile, 0777);
 		if (zp_imageOutput($newim, getSuffix($newfile), $newfile, $quality)) { //	successful save of cached image
-			if (getOption('ImbedIPTC') && getSuffix($newfilename) == 'jpg' && GRAPHICS_LIBRARY != 'Imagick') { // the imbed function works only with JPEG images
+			if (getOption('EmbedIPTC') && getSuffix($newfilename) == 'jpg' && GRAPHICS_LIBRARY != 'Imagick') { // the embed function works only with JPEG images
 				global $_zp_extra_filetypes; //	because we are doing the require in a function!
 				if (!$_zp_extra_filetypes)
 					$_zp_extra_filetypes = array();
@@ -475,7 +479,7 @@ function cacheImage($newfilename, $imgfile, $args, $allow_watermark = false, $th
 				$image = newImage(newAlbum($albumname), $imagename);
 				$copyright = $image->getCopyright();
 				if (empty($copyright)) {
-					$copyright = getOption('default_copyright');
+					$copyright = getOption('copyright_image_notice');
 				}
 				if (!empty($copyright)) {
 					$iptc['2#116'] = $copyright;

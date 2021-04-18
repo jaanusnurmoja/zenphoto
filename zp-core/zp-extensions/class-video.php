@@ -198,6 +198,27 @@ class Video extends Image {
 		$args = getImageParameters(array($ts, $sw, $sh, $cw, $ch, $cx, $cy, null, true, $crop, true, $wmt, NULL, NULL), $this->album->name);
 		return getImageURI($args, $this->album->name, $filename, $mtime);
 	}
+	
+	/**
+	 * Returns an array with widht and height the sidecar thumb image
+	 * 
+	 * @since ZephotoCMS 1.5.8
+	 * 
+	 * @return array
+	 */
+	function getThumbDimensions() {
+		if (!is_null($this->thumbdimensions)) {
+			return $this->thumbdimensions;
+		}
+		$imgfile = $this->getThumbImageFile();
+		$image = zp_imageGet($imgfile);
+		$width = zp_imageWidth($image);
+		$height = zp_imageHeight($image);
+		return $this->thumbdimensions = array(
+				'width' => $width,
+				'height' => $height
+		);
+	}
 
 	/**
 	 *  Get a custom sized version of this image based on the parameters.
@@ -384,6 +405,7 @@ class Video extends Image {
 		}
 	}
 
+
 }
 
 class pseudoPlayer {
@@ -408,14 +430,14 @@ class pseudoPlayer {
 		switch ($suffix) {
 			case 'mp4':
 			case 'm4v':
-				$content = '<video poster="' . html_encode($poster) . '" src="' . html_encode($movie) . '" controls width="' . $this->width . '" height="' . $this->height . '">';
-				$content .= '<p>' . gettext('Your browser sadly does not support this video format.') . '</p>';
+				$content = '<video poster="' . html_encode($poster) . '" src="' . html_encode($movie) . '" controls width="100%">';
+				$content .= gettext('Your browser sadly does not support this video format.');
 				$content .= '</video>';
 				break;
 			case 'm4a':
 			case 'mp3':
 				$content = '<audio src="' . html_encode($movie) . '" controls>';
-				$content .= '<p>' . gettext('Your browser sadly does not support this audio format.') . '</p>';
+				$content .= gettext('Your browser sadly does not support this audio format.');
 				$content .= '</audio>';
 				break;
 		}

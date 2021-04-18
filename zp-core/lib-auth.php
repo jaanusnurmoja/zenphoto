@@ -53,11 +53,11 @@ require_once(dirname(__FILE__) . '/classes.php');
  */
 class Zenphoto_Authority {
 
-	var $admin_users = NULL;
-	var $admin_groups = NULL;
-	var $admin_other = NULL;
-	var $admin_all = NULL;
-	var $rightsset = NULL;
+	public $admin_users = NULL;
+	public $admin_groups = NULL;
+	public $admin_other = NULL;
+	public $admin_all = NULL;
+	public $rightsset = NULL;
 	protected $master_user = NULL;
 	static $preferred_version = 4;
 	static $supports_version = 4;
@@ -69,6 +69,8 @@ class Zenphoto_Authority {
 	 * @return lib_auth_options
 	 */
 	function __construct() {
+		setOptionDefault('admin_lastvisit_timeframe', 600);
+		setOptionDefault('admin_lastvisit', true);
 		$this->admin_all = $this->admin_groups = $this->admin_users = $this->admin_other = array();
 		$sql = 'SELECT * FROM ' . prefix('administrators') . ' ORDER BY `rights` DESC, `id`';
 		$admins = query($sql, false);
@@ -112,13 +114,27 @@ class Zenphoto_Authority {
 		if (!function_exists('hash')) {
 			unset($encodings['pbkdf2']);
 		}
-		return array(gettext('Primary album edit')				 => array('key'	 => 'user_album_edit_default', 'type' => OPTION_TYPE_CHECKBOX,
-										'desc' => gettext('Check if you want <em>edit rights</em> automatically assigned when a user <em>primary album</em> is created.')),
-						gettext('Minimum password strength') => array('key'	 => 'password_strength', 'type' => OPTION_TYPE_CUSTOM,
-										'desc' => sprintf(gettext('Users must provide passwords a strength of at least %s. The repeat password field will be disabled until this floor is met.'), '<span id="password_strength_display">' . getOption('password_strength') . '</span>')),
-						gettext('Password hash algorithm')	 => array('key'				 => 'strong_hash', 'type'			 => OPTION_TYPE_SELECTOR,
-										'selections' => $encodings,
-										'desc'			 => sprintf(gettext('The hashing algorithm used by Zenphoto. In order of robustness the choices are %s'), '<code>' . implode('</code> > <code>', array_flip($encodings)) . '</code>'))
+		return array(gettext('Primary album edit') =>
+				array('key' => 'user_album_edit_default',
+						'type' => OPTION_TYPE_CHECKBOX,
+						'desc' => gettext('Check if you want <em>edit rights</em> automatically assigned when a user <em>primary album</em> is created.')),
+				gettext('Minimum password strength') => array(
+						'key' => 'password_strength',
+						'type' => OPTION_TYPE_CUSTOM,
+						'desc' => sprintf(gettext('Users must provide passwords a strength of at least %s. The repeat password field will be disabled until this floor is met.'), '<span id="password_strength_display">' . getOption('password_strength') . '</span>')),
+				gettext('Password hash algorithm') => array(
+						'key' => 'strong_hash',
+						'type' => OPTION_TYPE_SELECTOR,
+						'selections' => $encodings,
+						'desc' => sprintf(gettext('The hashing algorithm used by Zenphoto. In order of robustness the choices are %s'), '<code>' . implode('</code> > <code>', array_flip($encodings)) . '</code>')),
+				gettext('User last visit - store') => array(
+						'key' => 'admin_lastvisit',
+						'type' => OPTION_TYPE_CHECKBOX,
+						'desc' => gettext('Enable if you like to store visits of logged-in users in the database.')),
+				gettext('User last visit - time frame') => array(
+						'key' => 'admin_lastvisit_timeframe',
+						'type' => OPTION_TYPE_TEXTBOX,
+						'desc' => gettext('Time in seconds before the last visit of logged-in users is updated in the database. Default is 600 seconds (10 minutes)'))
 		);
 	}
 
@@ -364,7 +380,7 @@ class Zenphoto_Authority {
 		$emails = array();
 		$admins = $this->getAdministrators();
 		foreach ($admins as $user) {
-			if (($user['rights'] & $rights) && is_valid_email_zp($user['email'])) {
+			if (($user['rights'] & $rights) && isValidEmail($user['email'])) {
 				$name = $user['name'];
 				if (empty($name)) {
 					$name = $user['user'];
@@ -521,7 +537,7 @@ class Zenphoto_Authority {
 								'ZENPAGE_RIGHTS'					 => array('value' => 2049, 'name' => gettext('Zenpage'), 'set' => '', 'display' => true, 'hint' => ''),
 								'TAGS_RIGHTS'							 => array('value' => 4096, 'name' => gettext('Tags'), 'set' => '', 'display' => true, 'hint' => ''),
 								'OPTIONS_RIGHTS'					 => array('value' => 8192, 'name' => gettext('Options'), 'set' => '', 'display' => true, 'hint' => ''),
-								'ADMIN_RIGHTS'						 => array('value' => 65536, 'name' => gettext('Admin'), 'set' => '', 'display' => true, 'hint' => ''));
+								'ADMIN_RIGHTS'						 => array('value' => 65536, 'name' => gettext('Full admin rights'), 'set' => '', 'display' => true, 'hint' => ''));
 				break;
 			case 2:
 				$rightsset = array('NO_RIGHTS'								 => array('value' => 1, 'name' => gettext('No rights'), 'set' => '', 'display' => false, 'hint' => ''),
@@ -540,7 +556,7 @@ class Zenphoto_Authority {
 								'THEMES_RIGHTS'						 => array('value' => pow(2, 26), 'name' => gettext('Themes'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make themes related changes. These are limited to the themes associated with albums checked in their managed albums list.')),
 								'TAGS_RIGHTS'							 => array('value' => pow(2, 28), 'name' => gettext('Tags'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make additions and changes to the set of tags.')),
 								'OPTIONS_RIGHTS'					 => array('value' => pow(2, 29), 'name' => gettext('Options'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make changes on the options tabs.')),
-								'ADMIN_RIGHTS'						 => array('value' => pow(2, 30), 'name' => gettext('Admin'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('The master privilege. A user with "Admin" can do anything. (No matter what his other rights might indicate!)')));
+								'ADMIN_RIGHTS'						 => array('value' => pow(2, 30), 'name' => gettext('Full admin rights'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('The master privilege. A user with "Admin" can do anything. (No matter what his other rights might indicate!)')));
 				break;
 			case 3:
 				$rightsset = array('NO_RIGHTS'								 => array('value' => 1, 'name' => gettext('No rights'), 'set' => '', 'display' => false, 'hint' => ''),
@@ -565,7 +581,7 @@ class Zenphoto_Authority {
 								'THEMES_RIGHTS'						 => array('value' => pow(2, 26), 'name' => gettext('Themes'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make themes related changes. These are limited to the themes associated with albums checked in their managed albums list.')),
 								'TAGS_RIGHTS'							 => array('value' => pow(2, 28), 'name' => gettext('Tags'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make additions and changes to the set of tags.')),
 								'OPTIONS_RIGHTS'					 => array('value' => pow(2, 29), 'name' => gettext('Options'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make changes on the options tabs.')),
-								'ADMIN_RIGHTS'						 => array('value' => pow(2, 30), 'name' => gettext('Admin'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('The master privilege. A user with "Admin" can do anything. (No matter what his other rights might indicate!)')));
+								'ADMIN_RIGHTS'						 => array('value' => pow(2, 30), 'name' => gettext('Full admin rights'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('The master privilege. A user with "Admin" can do anything. (No matter what his other rights might indicate!)')));
 				break;
 			case 4:
 				$rightsset = array('NO_RIGHTS'								 => array('value' => 1, 'name' => gettext('No rights'), 'set' => '', 'display' => false, 'hint' => ''),
@@ -592,22 +608,24 @@ class Zenphoto_Authority {
 								'THEMES_RIGHTS'						 => array('value' => pow(2, 26), 'name' => gettext('Themes'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make themes related changes. These are limited to the themes associated with albums checked in their managed albums list.')),
 								'TAGS_RIGHTS'							 => array('value' => pow(2, 28), 'name' => gettext('Tags'), 'set' => gettext('Gallery'), 'display' => true, 'hint' => gettext('Users with this right may make additions and changes to the set of tags.')),
 								'OPTIONS_RIGHTS'					 => array('value' => pow(2, 29), 'name' => gettext('Options'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('Users with this right may make changes on the options tabs.')),
-								'ADMIN_RIGHTS'						 => array('value' => pow(2, 30), 'name' => gettext('Admin'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('The master privilege. A user with "Admin" can do anything. (No matter what his other rights might indicate!)')));
+								'ADMIN_RIGHTS'						 => array('value' => pow(2, 30), 'name' => gettext('Full admin rights'), 'set' => gettext('General'), 'display' => true, 'hint' => gettext('The master privilege. A user with "Admin" can do anything. (No matter what his other rights might indicate!)')));
 				break;
 		}
+		
 		$allrights = 0;
 		foreach ($rightsset as $key => $right) {
 			$allrights = $allrights | $right['value'];
 		}
 		$rightsset['ALL_RIGHTS'] = array('value' => $allrights, 'name' => gettext('All rights'), 'display' => false);
 		$rightsset['DEFAULT_RIGHTS'] = array('value' => $rightsset['OVERVIEW_RIGHTS']['value'] + $rightsset['POST_COMMENT_RIGHTS']['value'], 'name' => gettext('Default rights'), 'display' => false);
-		if (isset($rightsset['VIEW_ALL_RIGHTS']['value'])) {
+		if (isset($rightsset['VIEW_ALL_RIGHTS']['value'])) {		
 			$rightsset['DEFAULT_RIGHTS']['value'] = $rightsset['DEFAULT_RIGHTS']['value'] | $rightsset['VIEW_ALL_RIGHTS']['value'];
 		} else {
-			$rightsset['DEFAULT_RIGHTS']['value'] = $rightsset['DEFAULT_RIGHTS'] | $rightsset['ALL_ALBUMS_RIGHTS']['value'] |
+			$rightsset['DEFAULT_RIGHTS']['value'] = $rightsset['DEFAULT_RIGHTS']['value'] | $rightsset['ALL_ALBUMS_RIGHTS']['value'] |
 							$rightsset['ALL_PAGES_RIGHTS']['value'] | $rightsset['ALL_NEWS_RIGHTS']['value'] |
 							$rightsset['VIEW_SEARCH_RIGHTS']['value'] | $rightsset['VIEW_GALLERY_RIGHTS']['value'];
 		}
+		
 		$rightsset = sortMultiArray($rightsset, 'value', true, false, false);
 		return $rightsset;
 	}
@@ -649,7 +667,7 @@ class Zenphoto_Authority {
 		$user->set('lastloggedin', $user->get('loggedin'));
 		$user->set('loggedin', date('Y-m-d H:i:s'));
 		$user->save();
-		zp_setCookie('zp_user_auth', $user->getPass() . '.' . $user->getID(), NULL, NULL, secureServer(), true);
+		zp_setCookie('zpcms_auth_user', $user->getPass() . '.' . $user->getID(), NULL, NULL, secureServer(), true);
 	}
 
 	/**
@@ -673,7 +691,7 @@ class Zenphoto_Authority {
 						self::logUser($user);
 						$_zp_current_admin_obj = $user;
 					} else {
-						zp_clearCookie('zp_user_auth', null, secureServer(), true ); // Clear the cookie, just in case
+						zp_clearCookie('zpcms_auth_user', null, secureServer(), true ); // Clear the cookie, just in case
 						$_zp_login_error = 1;
 					}
 					break;
@@ -802,13 +820,13 @@ class Zenphoto_Authority {
 	 * Checks saved cookies to see if a user is logged in
 	 */
 	function checkCookieCredentials() {
-		list($auth, $id) = explode('.', zp_getCookie('zp_user_auth') . '.');
+		list($auth, $id) = explode('.', zp_getCookie('zpcms_auth_user') . '.');
 		$loggedin = $this->checkAuthorization($auth, $id);
 		$loggedin = zp_apply_filter('authorization_cookie', $loggedin, $auth, $id);
 		if ($loggedin) {
 			return $loggedin;
 		} else {
-			zp_clearCookie('zp_user_auth', null, secureServer(), true);
+			zp_clearCookie('zpcms_auth_user', null, secureServer(), true);
 			return NULL;
 		}
 	}
@@ -1319,35 +1337,32 @@ class Zenphoto_Authority {
 			$all_users = $this->getAdministrators('users');
 			foreach ($all_users as $user) {
 				if ($user['user'] != $current_user && !empty($user['email']) && $user['email'] == $email_to_check) {
-					return true;
+					return false;
 				}
 			}
+			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 }
 /**
- * Supports the basic Zenphoto needs for object manipulation of administrators.
+ * This is a simple class so that we have a convienient "handle" for manipulating Administrators.
  *
+ * NOTE: one should use the Zenphoto_Authority newAdministrator() method rather than directly instantiating
+ * an administrator object
  * @package core
  * @subpackage classes\authorization
  */
 class Zenphoto_Administrator extends PersistentObject {
 
-	/**
-	 * This is a simple class so that we have a convienient "handle" for manipulating Administrators.
-	 *
-	 * NOTE: one should use the Zenphoto_Authority newAdministrator() method rather than directly instantiating
-	 * an administrator object
-	 *
-	 */
-	var $objects = NULL;
-	var $master = false; //	will be set to true if this is the inherited master user
-	var $msg = NULL; //	a means of storing error messages from filter processing
-	var $logout_link = true; // for a Zenphoto logout
-	var $reset = false; // if true the user was setup by a "reset password" event
-	var $passhash; // the hash algorithm used in creating the password
+	public $objects = NULL;
+	public $master = false; //	will be set to true if this is the inherited master user
+	public $msg = NULL; //	a means of storing error messages from filter processing
+	public $logout_link = true; // for a Zenphoto logout
+	public $reset = false; // if true the user was setup by a "reset password" event
+	public $passhash; // the hash algorithm used in creating the password
 
 	/**
 	 * Constructor for an Administrator
@@ -1356,7 +1371,6 @@ class Zenphoto_Administrator extends PersistentObject {
 	 * @param int $valid used to signal kind of admin object
 	 * @return Administrator
 	 */
-
 	function __construct($user, $valid) {
 		global $_zp_authority;
 		$this->passhash = (int) getOption('strong_hash');
@@ -1461,6 +1475,22 @@ class Zenphoto_Administrator extends PersistentObject {
 	 */
 	function getName() {
 		return $this->get('name');
+	}
+	
+	/**
+	 * Gets the full name if set 
+	 * 
+	 * @since ZenphotoCNS 1.5.8
+	 * 
+	 * @param string $user User id 
+	 * @return string
+	 */
+	static function getNameByUser($user) {
+		$admin = Zenphoto_Authority::getAnAdmin(array('`user`=' => $user, '`valid`=' => 1));
+		if (is_object($admin) && $admin->getName()) {
+			return $admin->getName();
+		}
+		return $user;
 	}
 
 	/**
@@ -1781,6 +1811,46 @@ class Zenphoto_Administrator extends PersistentObject {
 	 */
 	function getLastLogon() {
 		return $this->get('lastloggedin');
+	}
+	
+	/**
+	 * Returns the last time the user visited the site being loggedin
+	 * 
+	 * @since ZenphotoCMS 1.5.8
+	 * @return strig
+	 */
+	function getLastVisit() {
+		return $this->get('lastvisit');
+	}
+	
+	/**
+	 * Sets the last time the user visited the site being loggedin
+	 * 
+	 * @since ZenphotoCMS 1.5.8
+	 */
+	function setLastVisit($datetime = '') {
+		if(empty($datetime)) {
+			$datetime = date('Y-m-d H:i:s');
+		}
+		$this->set('lastvisit', $datetime);
+	}
+	
+	/**
+	 * Updates the last visit date if enabled on the options and the time frame defined has passed.
+	 * @since ZenphotoCMS 1.5.8
+	 */
+	function updateLastVisit() {
+		if (getOption('admin_lastvisit')) {
+			$lastvisit = strtotime($this->getLastVisit());
+			$lastvisit_timeframe = getOption('admin_lastvisit_timeframe');
+			if (empty($lastvisit_timeframe)) {
+				$lastvisit_timeframe = 600;
+			}
+			if (empty($lastvisit) || (time() - $lastvisit) > $lastvisit_timeframe) {
+				$this->setLastVisit();
+				$this->save();
+			}
+		}
 	}
 
 	/**

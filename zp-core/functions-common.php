@@ -357,6 +357,19 @@ function html_encodeTagged($original, $allowScript = true) {
 }
 
 /**
+ * Convenience wrapper of html_encode(pathurlencode($url))
+ * Primarily intended for use with img src URLs
+ * 
+ * @since ZenphotoCMS 1.5.8
+ * 
+ * @param string $url
+ * @return string
+ */
+function html_pathurlencode($url) {
+	return html_encode(pathurlencode($url));
+}
+
+/**
  * Makes directory recursively, returns TRUE if exists or was created sucessfuly.
  * Note: PHP5 includes a recursive parameter to mkdir, but it apparently does not
  * 				does not traverse symlinks!
@@ -498,9 +511,20 @@ function zp_setCookie($name, $value, $time = NULL, $path = NULL, $secure = false
     debugLog("zp_setCookie($name, $value, $time, $path)::album_session=" . GALLERY_SESSION . "; SESSION=" . session_id());
   }
   if (($time < 0) || !GALLERY_SESSION) {
-    setcookie($name, $cookiev, time() + $time, $path, '', $secure, $httponly);
-  }
-  if ($time < 0) {
+		if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+			$options = array(
+					'expires' => (time() + $time),
+					'path' => $path,
+					'secure' => $secure,
+					'httponly' => $httponly,
+					'samesite' => 'Lax'
+			);
+			setcookie($name, $cookiev, $options);
+		} else {
+			setcookie($name, $cookiev, time() + $time, $path, '', $secure, $httponly);
+		}
+	}
+	if ($time < 0) {
     if (isset($_SESSION))
       unset($_SESSION[$name]);
     if (isset($_COOKIE))

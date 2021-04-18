@@ -571,10 +571,12 @@ echo "\n</head>";
 							gettext('Set to unpublished')	 => 'hideall',
 							gettext('Add tags')						 => 'addtags',
 							gettext('Clear tags')					 => 'cleartags',
-							gettext('Disable comments')		 => 'commentsoff',
-							gettext('Enable comments')		 => 'commentson',
 							gettext('Change owner')				 => 'changeowner'
 			);
+			if (extensionEnabled('comment_form')) {
+				$checkarray[gettext('Disable comments')] = 'commentsoff';
+				$checkarray[gettext('Enable comments')] = 'commentson';
+			}
 			if (extensionEnabled('hitcounter')) {
 				$checkarray[gettext('Reset hitcounter')] = 'resethitcounter';
 			}
@@ -597,9 +599,7 @@ echo "\n</head>";
 			if (isset($_GET['album']) && !isset($_GET['massedit'])) {
 				/** SINGLE ALBUM ******************************************************************* */
 				// one time generation of this list.
-				$mcr_albumlist = array();
-				genAlbumList($mcr_albumlist);
-
+				$mcr_albumlist = $_zp_gallery->getAllAlbumsFromDB();
 				$oldalbumimagesort = getOption('albumimagesort');
 				$oldalbumimagesort_status = getOption('albumimagesort_status');
 				$direction = getOption('albumimagedirection');
@@ -613,10 +613,10 @@ echo "\n</head>";
 						$allimages_edit = array();
 						foreach($allimages as $filename) {
 							$imgobj = newImage($album, $filename);
-							if($oldalbumimagesort_status == 'published' && $imgobj->getShow()) {
+							if($oldalbumimagesort_status == 'published' && $imgobj->isPublished()) {
 								$allimages_edit[] = $filename;
 							} 
-							if($oldalbumimagesort_status == 'unpublished' && !$imgobj->getShow()) {
+							if($oldalbumimagesort_status == 'unpublished' && !$imgobj->isPublished()) {
 								$allimages_edit[] = $filename;
 							}
 						}
@@ -984,8 +984,6 @@ echo "\n</head>";
 										</td>
 									</tr>
 									<?php
-									$bglevels = array('#fff', '#f8f8f8', '#efefef', '#e8e8e8', '#dfdfdf', '#d8d8d8', '#cfcfcf', '#c8c8c8');
-
 									$currentimage = 0;
 									if (zp_imageCanRotate()) {
 										$disablerotate = '';
@@ -1017,30 +1015,25 @@ echo "\n</head>";
 													<?php } ?>
 													<tr>
 														<td valign="top" rowspan="17" style="border-bottom:none;">
-															<div style="width: 135px;">
-																<a <?php echo $placemark; ?>
+															<div style="width: 135px;" <?php echo $placemark; ?>>
 																<?php
-																if (isImagePhoto($image) || !is_null($image->objectsThumb)) {
+																if (isImagePhoto($image)) {
 																	?>
-																		href="admin-thumbcrop.php?a=<?php echo html_encode(pathurlencode($album->name)); ?>&amp;i=<?php echo urlencode($image->filename); ?>&amp;subpage=<?php echo $pagenum; ?>&amp;tagsort=<?php echo html_encode($tagsort); ?>"
-																		title="<?php html_encode(printf(gettext('crop %s'), $image->filename)); ?>"
-																		<?php
-																	}
+																	<a href="<?php echo html_encode(pathurlencode($image->getFullImageURL())); ?>" class="colorbox adminedit_fullimagelink">
+																		<img src="images/magnify.png" alt="" class="adminedit_fullimage-icon" />
+																	<?php
+																}
+																printAdminThumb($image, 'large-uncropped', '', 'thumb_img-'.$currentimage, '', $image->filename);
+																if (isImagePhoto($image)) {
 																	?>
-																	>
-																	<img id="thumb_img-<?php echo $currentimage; ?>" src="<?php echo html_encode(pathurlencode(getAdminThumb($image, 'large'))); ?>" alt="<?php echo html_encode($image->filename); ?>"																	/>
-																</a>
-															</div>
-															<?php
-															if (isImagePhoto($image)) {
+																	</a>
+																	<?php
+																}
 																?>
-																<p class="buttons"><a href="<?php echo html_encode(pathurlencode($image->getFullImageURL())); ?>" class="colorbox"><img src="images/magnify.png" alt="" /><strong><?php echo gettext('Zoom'); ?></strong></a></p><br style="clear: both" />
-																<?php
-															}
-															?>
-															<p class="buttons">
-																<a href="<?php echo $image->getLink(); ?>"><img src="images/view.png" alt="" /><strong><?php echo gettext('View'); ?></strong></a>
-															</p><br style="clear: both" />
+																<p class="buttons clearfix">
+																	<a href="<?php echo $image->getLink(); ?>"><img src="images/view.png" alt=""/><strong><?php echo gettext('View image'); ?></strong></a>
+																<p>
+															</div>
 															<p>
 																<?php echo gettext('<strong>Filename:</strong>'); ?>
 																<br />
@@ -1080,15 +1073,17 @@ echo "\n</head>";
 																	<input type="checkbox" id="Visible-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-Visible" value="1" <?php if ($image->get('show', false)) echo ' checked="checked"'; ?> />
 																	<?php echo $publishlabel; ?>
 																</label>
-																<label class="checkboxlabel">
-																	<input type="checkbox" id="allowcomments-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-allowcomments" value="1" <?php
-																	if ($image->getCommentsAllowed()) {
-																		echo ' checked="checked"';
-																	}
-																	?> />
-																				 <?php echo gettext("Allow Comments"); ?>
-																</label>
+																<?php if(extensionEnabled('comment_form')) { ?>
+																	<label class="checkboxlabel">
+																		<input type="checkbox" id="allowcomments-<?php echo $currentimage; ?>" name="<?php echo $currentimage; ?>-allowcomments" value="1" <?php
+																		if ($image->getCommentsAllowed()) {
+																			echo ' checked="checked"';
+																		}
+																		?> />
+																					 <?php echo gettext("Comments enabled"); ?>
+																	</label>
 																<?php
+																}
 																if (extensionEnabled('hitcounter')) {
 																	$hc = $image->get('hitcounter');
 																	if (empty($hc)) {
@@ -1217,7 +1212,6 @@ echo "\n</head>";
 																						foreach ($mcr_albumlist as $fullfolder => $albumtitle) {
 																							$singlefolder = $fullfolder;
 																							$saprefix = "";
-																							$salevel = 0;
 																							$selected = "";
 																							if ($album->name == $fullfolder) {
 																								$selected = " selected=\"selected\" ";
@@ -1225,11 +1219,9 @@ echo "\n</head>";
 																							// Get rid of the slashes in the subalbum, while also making a subalbum prefix for the menu.
 																							while (strstr($singlefolder, '/') !== false) {
 																								$singlefolder = substr(strstr($singlefolder, '/'), 1);
-																								$saprefix = "&nbsp; &nbsp;&nbsp;" . $saprefix;
-																								$salevel++;
+																								$saprefix = "–&nbsp;" . $saprefix;
 																							}
-																							echo '<option value="' . $fullfolder . '"' . ($salevel > 0 ? ' style="background-color: ' . $bglevels[$salevel] . ';"' : '')
-																							. "$selected>" . $saprefix . $singlefolder . "</option>\n";
+																							echo '<option value="' . $fullfolder . '"' . "$selected>" . $saprefix . $singlefolder . "</option>\n";
 																						}
 																						?>
 																	</select>
@@ -1303,7 +1295,7 @@ echo "\n</head>";
 																	<br class="clearall" />
 																</div>
 																<?php
-																if (isImagePhoto($image) || !is_null($image->objectsThumb)) {
+																if ((isImagePhoto($image) || !is_null($image->objectsThumb)) && getOption('thumb_crop')) {
 																	?>
 																	<div class="button buttons tooltip" title="<?php printf(gettext('crop %s'), $image->filename); ?>">
 																		<a href="admin-thumbcrop.php?a=<?php echo html_encode(pathurlencode($album->name)); ?>&amp;i=<?php echo urlencode($image->filename); ?>&amp;subpage=<?php echo $pagenum; ?>&amp;tagsort=<?php echo html_encode($tagsort); ?>" >
@@ -1609,8 +1601,7 @@ echo "\n</head>";
 				/*				 * * MULTI-ALBUM ************************************************************************** */
 			} else if (isset($_GET['massedit'])) {
 				// one time generation of this list.
-				$mcr_albumlist = array();
-				genAlbumList($mcr_albumlist);
+				$mcr_albumlist = $_zp_gallery->getAllAlbumsFromDB();
 				$albumdir = "";
 				if (isset($_GET['album'])) {
 					$folder = sanitize_path($_GET['album']);
@@ -1683,8 +1674,7 @@ echo "\n</head>";
 						<button type="submit">
 							<img	src="images/pass.png" alt="" /><strong><?php echo gettext("Apply"); ?></strong>
 						</button>
-						<button type="reset" onclick="javascript:$('.deletemsg
-																																').hide();" >
+						<button type="reset" onclick="javascript:$('.deletemsg').hide();" >
 							<img	src="images/fail.png" alt="" /><strong><?php echo gettext("Reset"); ?></strong>
 						</button>
 					</span>
@@ -1767,8 +1757,7 @@ echo "\n</head>";
 									</a>
 								</label>
 								<label style="float: right">
-									<?php echo gettext("Check All"); ?> <input type="checkbox" name="allbox" id="allbox" onclick="checkAll(this.form, 'ids[]', this
-																																								.checked);" />
+									<?php echo gettext("Check All"); ?> <input type="checkbox" name="allbox" id="allbox" onclick="checkAll(this.form, 'ids[]', this.checked);" />
 								</label>
 							</div>
 

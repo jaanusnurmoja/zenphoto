@@ -221,7 +221,7 @@ function printPagesListTable($page, $flag) {
 				echo "</a>" . checkHitcounterDisplay($page->getHitcounter());
 			} else {
 				checkForEmptyTitle($page->getTitle(), "page");
-				checkHitcounterDisplay($page->getShow());
+				checkHitcounterDisplay($page->isPublished());
 			}
 			?>
 		</div>
@@ -249,23 +249,25 @@ function printPagesListTable($page, $flag) {
 				<div class="page-list_icon">
 					<?php printPublishIconLink($page, "page"); ?>
 				</div>
-				<div class="page-list_icon">
-					<?php
-					if ($page->getCommentsAllowed()) {
-						?>
-						<a href="?commentson=0&amp;titlelink=<?php echo html_encode($page->getTitlelink()); ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo gettext('Disable comments'); ?>">
-							<img src="../../images/comments-on.png" alt="" title="<?php echo gettext("Comments on"); ?>" style="border: 0px;"/>
-						</a>
+				<?php if(extensionEnabled('comment_form')) { ?>
+					<div class="page-list_icon">
 						<?php
-					} else {
+							if ($page->getCommentsAllowed()) {
+								?>
+								<a href="?commentson=0&amp;titlelink=<?php echo html_encode($page->getTitlelink()); ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo gettext('Disable comments'); ?>">
+									<img src="../../images/comments-on.png" alt="" title="<?php echo gettext("Comments on"); ?>" style="border: 0px;"/>
+								</a>
+								<?php
+							} else {
+								?>
+								<a href="?commentson=1&amp;titlelink=<?php echo html_encode($page->getTitlelink()); ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo gettext('Enable comments'); ?>">
+									<img src="../../images/comments-off.png" alt="" title="<?php echo gettext("Comments off"); ?>" style="border: 0px;"/>
+								</a>
+								<?php
+							}
 						?>
-						<a href="?commentson=1&amp;titlelink=<?php echo html_encode($page->getTitlelink()); ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo gettext('Enable comments'); ?>">
-							<img src="../../images/comments-off.png" alt="" title="<?php echo gettext("Comments off"); ?>" style="border: 0px;"/>
-						</a>
-						<?php
-					}
-					?>
-				</div>
+					</div>
+				<?php } ?>
 			<?php } else { ?>
 				<div class="page-list_icon">
 					<img src="../../images/icon_inactive.png" alt="" title="<?php gettext('locked'); ?>" />
@@ -1006,7 +1008,7 @@ function printCategoryListSortableTable($cat, $flag) {
 			</div>
 			<div class="page-list_icon">
 				<?php
-				if ($cat->getShow()) {
+				if ($cat->isPublished()) {
 					$title = gettext("Un-publish");
 					?>
 					<a href="?publish=0&amp;titlelink=<?php echo html_encode($cat->getTitlelink()); ?>&amp;XSRFToken=<?php echo getXSRFToken('update') ?>" title="<?php echo $title; ?>">
@@ -1354,7 +1356,7 @@ function getNewsPagesStatistic($option) {
 				$itemobj = new ZenpageCategory($item['titlelink']);
 				break;
 		}
-		if ($itemobj->getShow() == 1) {
+		if ($itemobj->isPublished()) {
 			$pub++;
 		}
 	}
@@ -1502,12 +1504,12 @@ function printPublishIconLink($object, $type, $linkback = '') {
 		$alt = gettext("Scheduled for expiration");
 		$action = '?skipexpiration=1';
 		$icon = '../../images/clock_expiredate.png';
-	} else if ($object->getShow()) {
+	} else if ($object->isPublished()) {
 		$title = gettext("Un-publish");
 		$alt = gettext("Published");
 		$action = '?publish=0';
 		$icon = '../../images/pass.png';
-	} else if (!$object->getShow()) {
+	} else if (!$object->isPublished()) {
 		if ($object->hasExpired()) {
 			$title = gettext("Publish immediately (skip expiration)");
 			$alt = gettext("Un-published because expired");

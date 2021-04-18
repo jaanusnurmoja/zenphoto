@@ -18,6 +18,7 @@
 $plugin_is_filter = 5 | THEME_PLUGIN;
 $plugin_description = gettext("A Zenphoto plugin for displaying OpenStreetMap based maps using LeafletJS for images or images from albums with embeded geodata.");
 $plugin_author = "Malte Müller (acrylian), Fred Sondaar (fretzl), gjr, Vincent Bourganel (vincent3569)";
+$plugin_notice = gettext('Privacy note: This plugin uses external third party sources');
 $option_interface = 'openStreetMapOptions';
 $plugin_category = gettext('Misc');
 
@@ -26,8 +27,8 @@ zp_register_filter('theme_head', 'openStreetMap::scripts');
 class openStreetMapOptions {
 
 	function __construct() {
-		replaceOption('osmap_controlpos', 'osmap_zoomcontrolpos');
-		replaceOption('osmap_maptiles', 'osmap_defaultlayer');
+		renameOption('osmap_controlpos', 'osmap_zoomcontrolpos');
+		renameOption('osmap_maptiles', 'osmap_defaultlayer');
 		
 		setOptionDefault('osmap_width', '100%'); //responsive by default!
 		setOptionDefault('osmap_height', '300px');
@@ -545,38 +546,22 @@ class openStreetMap {
 	 */
 	function getImageGeodata($image) {
 		global $_zp_current_image;
-
 		$result = array();
-		if (isImageClass($image)) {
-			$exif = $image->getMetaData();
-			if ((!empty($exif['EXIFGPSLatitude'])) && (!empty($exif['EXIFGPSLongitude']))) {
-				$lat_c = explode('.', str_replace(',', '.', $exif['EXIFGPSLatitude']) . '.0');
-				$lat_f = round((float) abs($lat_c[0]) + ($lat_c[1] / pow(10, strlen($lat_c[1]))), 12);
-				if (strtoupper(@$exif['EXIFGPSLatitudeRef'][0]) == 'S') {
-					$lat_f = -$lat_f;
-				}
-				$long_c = explode('.', str_replace(',', '.', $exif['EXIFGPSLongitude']) . '.0');
-				$long_f = round((float) abs($long_c[0]) + ($long_c[1] / pow(10, strlen($long_c[1]))), 12);
-				if (strtoupper(@$exif['EXIFGPSLongitudeRef'][0]) == 'W') {
-					$long_f = -$long_f;
-				}
-				$thumb = "<a href='" . $image->getLink() . "'><img src='" . $image->getCustomImage(150, NULL, NULL, NULL, NULL, NULL, NULL, true) . "' alt='' /></a>";
-				$current = 0;
-				if ($this->mode == 'single-cluster' && isset($_zp_current_image) && ($image->filename == $_zp_current_image->filename && $image->getAlbumname() == $_zp_current_image->getAlbumname())) {
-					$current = 1;
-				}
-				//in case European comma decimals sneaked in
-				$lat_f = str_replace(',', '.', $lat_f);
-				$long_f = str_replace(',', '.', $long_f);
-				$result = array(
-						'lat' => $lat_f,
-						'long' => $long_f,
-						'title' => shortenContent($image->getTitle(), 50, '...') . '<br />',
-						'desc' => shortenContent($image->getDesc(), 100, '...'),
-						'thumb' => $thumb,
-						'current' => $current
-				);
+		$gps = $image->getGeodata();
+		if ($gps) {
+			$thumb = "<a href='" . $image->getLink() . "'><img src='" . $image->getCustomImage(150, NULL, NULL, NULL, NULL, NULL, NULL, true) . "' alt='' /></a>";
+			$current = 0;
+			if ($this->mode == 'single-cluster' && isset($_zp_current_image) && ($image->filename == $_zp_current_image->filename && $image->getAlbumname() == $_zp_current_image->getAlbumname())) {
+				$current = 1;
 			}
+			$result = array(
+					'lat' => $gps['lat'],
+					'long' => $gps['long'],
+					'title' => shortenContent($image->getTitle(), 50, '...') . '<br />',
+					'desc' => shortenContent($image->getDesc(), 100, '...'),
+					'thumb' => $thumb,
+					'current' => $current
+			);
 		}
 		return $result;
 	}
@@ -716,7 +701,14 @@ class openStreetMap {
 					$this->center = array($geodata[0]['lat'], $geodata[0]['long']);
 					break;
 			}
+		} else {
+			//fallback if no geodata at all
+			$this->center = ''; // not null as we don't need to re-do if there is nothing
 		}
+		// fallback if geodata was somehow wrong
+		if(empty($this->center[0]) || empty($this->center[1])) {
+			$this->center = '';
+		} 
 		return $this->center;
 	}
 
@@ -762,7 +754,7 @@ class openStreetMap {
 			$class = ' class="' . $this->class . '"';
 		}
 		$geodataJS = $this->getGeoDataJS();
-		if (!empty($geodataJS)) {
+		if (!empty($geodataJS) && !empty($this->center)) {
 			?>
 			<div id="osm_map<?php echo $this->mapnumber; ?>"<?php echo $class; ?> style="width:<?php echo $this->width; ?>; height:<?php echo $this->height; ?>;"></div>
 			<script>
