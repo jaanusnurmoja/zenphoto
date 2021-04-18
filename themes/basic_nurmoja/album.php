@@ -5,11 +5,11 @@ if (!defined('WEBPATH'))
 	die();
 ?>
 <!DOCTYPE html>
-<html>
+<html<?php printLangAttribute(); ?>>
 	<head>
+		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<?php zp_apply_filter('theme_head'); ?>
 		<?php printHeadTitle(); ?>
-		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 		<link rel="stylesheet" href="<?php echo pathurlencode(dirname(dirname($zenCSS))); ?>/common.css" type="text/css" />
 		<?php if (class_exists('RSS')) printRSSHeaderLink('Album', getAlbumTitle()); ?>
@@ -21,8 +21,7 @@ if (!defined('WEBPATH'))
 			<div id="gallerytitle">
 				<?php
 				if (getOption('Allow_search')) {
-					$album_list = array('albums' => array($_zp_current_album->name), 'pages' => '0', 'news' => '0');
-					printSearchForm('', 'search', gettext('Search within album'), gettext('Search'), NULL, NULL, $album_list);
+					printSearchForm();
 				}
 				?>
 				<h2>
@@ -65,14 +64,15 @@ if (!defined('WEBPATH'))
 				</div>
 				<br class="clearfloat">
 				<?php
-    printPageListWithNav("« " . gettext("prev"), gettext("next") . " »");
-    if (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_album);
-    printTags('links', gettext('<strong>Tags:</strong>') . ' ', 'taglist', '');
-    @call_user_func('printGoogleMap');
-    @call_user_func('printSlideShowLink');
-    @call_user_func('printRating');
-    @call_user_func('printCommentForm');
-    ?>
+					printPageListWithNav("« " . gettext("prev"), gettext("next") . " »");
+					if (function_exists('printAddToFavorites')) printAddToFavorites($_zp_current_album);
+					printTags('links', gettext('<strong>Tags:</strong>') . ' ', 'taglist', '');
+					@call_user_func('printOpenStreetMap');
+					@call_user_func('printGoogleMap');
+					@call_user_func('printSlideShowLink');
+					@call_user_func('printRating');
+					@call_user_func('printCommentForm');
+				?>
 			</div>
 	    <?php if (function_exists('zenFBComments')) { zenFBComments(); } ?>
 		</div>
@@ -108,5 +108,6 @@ if (!defined('WEBPATH'))
 		<?php
 		zp_apply_filter('theme_body_close');
 		?>
+		<?php include 'inc-footer.php'; ?>
 	</body>
 </html>

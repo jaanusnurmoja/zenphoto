@@ -6,11 +6,11 @@ if (!defined('WEBPATH'))
 if (function_exists('printRegistrationForm')) {
 	?>
 	<!DOCTYPE html>
-	<html>
+	<html<?php printLangAttribute(); ?>>
 		<head>
+			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<?php zp_apply_filter('theme_head'); ?>
 			<?php printHeadTitle(); ?>
-			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 			<link rel="stylesheet" href="<?php echo pathurlencode(dirname(dirname($zenCSS))); ?>/common.css" type="text/css" />
 		</head>
@@ -18,6 +18,11 @@ if (function_exists('printRegistrationForm')) {
 			<?php zp_apply_filter('theme_body_open'); ?>
 			<div id="main">
 				<div id="gallerytitle">
+					<?php
+					if (getOption('Allow_search')) {
+						printSearchForm();
+					}
+					?>
 					<h2>
 						<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle()); ?>
 						<em><?php echo gettext('Register') ?></em>
@@ -26,16 +31,7 @@ if (function_exists('printRegistrationForm')) {
 				<h2><?php echo gettext('User Registration') ?></h2>
 				<?php printRegistrationForm(); ?>
 			</div>
-			<?php 
-   @call_user_func('printUserLogin_out', "");
-   @call_user_func('printLanguageSelector'); 
-   ?>
-			<div id="credit">
-				<?php printZenphotoLink(); ?>
-			</div>
-			<?php
-			zp_apply_filter('theme_body_close');
-			?>
+			<?php include 'inc-footer.php'; ?>
 		</body>
 	</html>
 	<?php

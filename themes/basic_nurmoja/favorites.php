@@ -5,11 +5,11 @@ if (!defined('WEBPATH'))
 if (class_exists('favorites')) {
 	?>
 	<!DOCTYPE html>
-	<html>
+	<html<?php printLangAttribute(); ?>>
 		<head>
+			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<?php zp_apply_filter('theme_head'); ?>
 			<?php printHeadTitle(); ?>
-			<meta charset="<?php echo LOCAL_CHARSET; ?>">
 			<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 			<link rel="stylesheet" href="<?php echo pathurlencode(dirname(dirname($zenCSS))); ?>/common.css" type="text/css" />
 		</head>
@@ -17,17 +17,24 @@ if (class_exists('favorites')) {
 			<?php zp_apply_filter('theme_body_open'); ?>
 			<div id="main">
 				<div id="gallerytitle">
+					<?php
+					if (getOption('Allow_search')) {
+						printSearchForm();
+					}
+					?>
 					<h2>
 						<span>
-							<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle()); printParentBreadcrumb(); ?>
+							<?php printHomeLink('', ' | ');
+							printGalleryIndexURL(' | ', getGalleryTitle());
+							printParentBreadcrumb(); ?>
 						</span>
-						<?php printAlbumTitle(); ?>
+	<?php printAlbumTitle(); ?>
 					</h2>
 				</div>
 				<div id="padbox">
-					<?php printAlbumDesc(); ?>
+						<?php printAlbumDesc(); ?>
 					<div id="albums">
-						<?php while (next_album()): ?>
+	<?php while (next_album()): ?>
 							<div class="album">
 								<div class="thumb">
 									<a href="<?php echo html_encode(getAlbumURL()); ?>" title="<?php echo gettext('View album:'); ?> <?php printAnnotatedAlbumTitle(); ?>"><?php printAlbumThumbImage(getAnnotatedAlbumTitle()); ?></a>
@@ -36,10 +43,10 @@ if (class_exists('favorites')) {
 									<h3><a href="<?php echo html_encode(getAlbumURL()); ?>" title="<?php echo gettext('View album:'); ?> <?php printAnnotatedAlbumTitle(); ?>"><?php printAlbumTitle(); ?></a></h3>
 									<small><?php printAlbumDate(""); ?></small>
 									<div><?php printAlbumDesc(); ?></div>
-									<?php printAddToFavorites($_zp_current_album, '', gettext('Remove')); ?>
+							<?php printAddToFavorites($_zp_current_album, '', gettext('Remove')); ?>
 								</div>
 							</div>
-						<?php endwhile; ?>
+	<?php endwhile; ?>
 					</div>
 					<br class="clearall">
 					<div id="images">
@@ -49,9 +56,9 @@ if (class_exists('favorites')) {
 							<div class="image">
 								<div class="imagethumb">
 									<a href="<?php echo html_encode(getImageURL()); ?>" title="<?php printBareImageTitle(); ?>">
-										<?php printImageThumb(getAnnotatedImageTitle()); ?>
+									<?php printImageThumb(getAnnotatedImageTitle()); ?>
 									</a>
-									<?php printAddToFavorites($_zp_current_image, '', gettext('Remove')); ?>
+							<?php printAddToFavorites($_zp_current_image, '', gettext('Remove')); ?>
 								</div>
 							</div>
 							<?php
@@ -60,20 +67,12 @@ if (class_exists('favorites')) {
 					</div>
 					<br class="clearall">
 					<?php
-     @call_user_func('printSlideShowLink');
-     printPageListWithNav("« " . gettext("prev"), gettext("next") . " »");
-     ?>
+					@call_user_func('printSlideShowLink');
+					printPageListWithNav("« " . gettext("prev"), gettext("next") . " »");
+					?>
 				</div>
 			</div>
-			<div id="credit">
-				<?php
-    printZenphotoLink();
-    @call_user_func('printUserLogin_out', " | ");
-    ?>
-			</div>
-			<?php
-			zp_apply_filter('theme_body_close');
-			?>
+	<?php include 'inc-footer.php'; ?>
 		</body>
 	</html>
 	<?php

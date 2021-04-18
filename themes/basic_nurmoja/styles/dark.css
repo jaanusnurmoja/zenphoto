@@ -37,11 +37,10 @@ body {
 	width: 640px;
 	font-size: 85%;
 	color: #294550;
-	text-align: right;
+	text-align: center;
 	clear: both;
 }
 #credit a, #sort a {
-	text-decoration: none;
 	color: #294550;
 	border-bottom: 1px dotted #294550;
 }
@@ -50,6 +49,17 @@ body {
 	border-bottom: 1px solid #294550;
 	text-decoration: none;
 }
+
+/* OpenStreetMap  */
+div#osm_map {
+	margin: 20px 0;
+}
+
+/* Scriptless Social Sharing */
+ul.scriptless_socialsharing li {
+	display: inline-block !important;
+}
+
 #gallerytitle {
 	border-bottom: 1px solid #E6E6DF;
 	padding-bottom: 14px;
@@ -66,8 +76,13 @@ body {
 
 /* Link Styles
 ------------------------------ */
-a:link, a:active, a:visited { text-decoration: underline; color: #86a1b6; }
-a:hover, a:focus { text-decoration: underline; color: #94c2e5; }
+a:link, a:active, a:visited { 
+	text-decoration: underline; color: #86a1b6; 
+}
+
+a:hover, a:focus { 
+	color: #94c2e5; 
+}
 
 /* Text Styles
 ------------------------------ */
@@ -355,6 +370,11 @@ cursor: pointer !important;
 	width: 440px;
 }
 
+/* Clear floats
+------------------------------ */
+.clearfloat {
+	clear: both;
+}
 
 /* Comments
 ------------------------------ */
@@ -458,9 +478,7 @@ label:hover {
 	padding: 1px;
 	font-size: 80%;
 }
-#search a {
-text-decoration: none;
-}
+
 #search ul {
 border: 1px solid #444; position:absolute; text-align:left; list-style: none;
 height: 8em; width: 20em; overflow: auto;
@@ -650,6 +668,12 @@ width: 30% !important;
 float: left;
 display: block;
 }
+#registration_form label[for=admin_dataconfirmation],
+#commentform label[for=comment_dataconfirmation],
+#mailform label[for=dataconfirmation] {
+	width: 100% !important;
+	float: none;
+}
 #registration_form input[type="text"],
 #registration_form input[type="password"],
 #mailform input[type="text"],
@@ -682,7 +706,6 @@ a.slideshowlink {
 color: black;
 padding: 5px 6px 3px 6px;
 margin-top: 10px !important;
-text-decoration: none;
 clear: both;
 margin-top: 10px;
 display: inline-block;
@@ -697,4 +720,10 @@ clear: left !important;
 }
 .clearright {
 clear: right !important;
+}
+
+/* reCaptcha
+------------------------------ */
+.g-recaptcha {
+	display: inline-block;
 }

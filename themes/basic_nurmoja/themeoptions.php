@@ -32,16 +32,22 @@ class ThemeOptions {
 		setOptionDefault('colorbox_' . $me . '_image', 1);
 		setOptionDefault('colorbox_' . $me . '_search', 1);
 		if (class_exists('cacheManager')) {
-			$me = basename(dirname(__FILE__));
-			cacheManager::deleteThemeCacheSizes($me);
-			cacheManager::addThemeCacheSize($me, getThemeOption('image_size'), NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
-			cacheManager::addThemeCacheSize($me, getThemeOption('thumb_size'), NULL, NULL, getThemeOption('thumb_crop_width'), getThemeOption('thumb_crop_height'), NULL, NULL, true, NULL, NULL, NULL);
+			cacheManager::deleteCacheSizes($me);
+			cacheManager::addDefaultThumbSize();
+			cacheManager::addDefaultSizedImageSize();
+			cacheManager::addCacheSize($me, 200, 80, 160, 80, 160, null, null, true, false);
 		}
 	}
 
 	function getOptionsSupported() {
-		return array(gettext('Allow search')	 => array('key' => 'Allow_search', 'type' => OPTION_TYPE_CHECKBOX, 'desc' => gettext('Check to enable search form.')),
-						gettext('Theme colors')	 => array('key' => 'Theme_colors', 'type' => OPTION_TYPE_CUSTOM, 'desc' => gettext('Select the colors of the theme'))
+		return array(gettext('Allow search') => array(
+						'key' => 'Allow_search',
+						'type' => OPTION_TYPE_CHECKBOX,
+						'desc' => gettext('Check to enable search form.')),
+				gettext('Theme colors') => array(
+						'key' => 'Theme_colors',
+						'type' => OPTION_TYPE_CUSTOM,
+						'desc' => gettext('Select the colors of the theme'))
 		);
 	}
 

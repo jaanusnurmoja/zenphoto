@@ -5,11 +5,11 @@ if (!defined('WEBPATH'))
 	die();
 ?>
 <!DOCTYPE html>
-<html>
+<html<?php printLangAttribute(); ?>>
 	<head>
+		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<?php zp_apply_filter('theme_head'); ?>
 		<?php printHeadTitle(); ?>
-		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 		<link rel="stylesheet" href="<?php echo pathurlencode(dirname(dirname($zenCSS))); ?>/common.css" type="text/css" />
 	</head>
@@ -17,6 +17,11 @@ if (!defined('WEBPATH'))
 		<?php zp_apply_filter('theme_body_open'); ?>
 		<div id="main">
 			<div id="gallerytitle">
+				<?php
+				if (getOption('Allow_search')) {
+					printSearchForm();
+				}
+				?>
 				<h2>
 					<span>
 						<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle()); echo gettext("Object not found"); ?>
@@ -26,11 +31,6 @@ if (!defined('WEBPATH'))
 				<?php print404status(isset($album) ? $album : NULL, isset($image) ? $image : NULL, $obj); ?>
 			</div>
 		</div>
-		<div id="credit">
-			<?php printZenphotoLink(); ?>
-		</div>
-		<?php
-		zp_apply_filter('theme_body_close');
-		?>
+		<?php include 'inc-footer.php'; ?>
 	</body>
 </html>

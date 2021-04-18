@@ -5,17 +5,17 @@ if (!defined('WEBPATH'))
 	die();
 ?>
 <!DOCTYPE html>
-<html>
+<html<?php printLangAttribute(); ?>>
 	<head>
+		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<?php zp_apply_filter('theme_head'); ?>
 		<?php printHeadTitle(); ?>
-		<meta charset="<?php echo LOCAL_CHARSET; ?>">
 		<link rel="stylesheet" href="<?php echo pathurlencode($zenCSS); ?>" type="text/css" />
 		<link rel="stylesheet" href="<?php echo pathurlencode(dirname(dirname($zenCSS))); ?>/common.css" type="text/css" />
 		<?php if (zp_has_filter('theme_head', 'colorbox::css')) { ?>
 			<script type="text/javascript">
 				// <!-- <![CDATA[
-				$(document).ready(function() {
+				$(document).ready(function () {
 					$(".colorbox").colorbox({
 						inline: true,
 						href: "#imagemetadata",
@@ -26,10 +26,13 @@ if (!defined('WEBPATH'))
 							maxWidth: "98%",
 							maxHeight: "98%",
 							photo: true,
-							close: '<?php echo gettext("close"); ?>'
+							close: '<?php echo gettext("close"); ?>',
+							onComplete: function () {
+								$(window).resize(resizeColorBoxImage);
+							}
 						});
 					<?php } ?>
-					});
+				});
 				// ]]> -->
 			</script>
 		<?php } ?>
@@ -55,12 +58,14 @@ if (!defined('WEBPATH'))
 				</div>
 				<h2>
 					<span>
-						<?php printHomeLink('', ' | '); printGalleryIndexURL(' | ', getGalleryTitle()); 
+						<?php
+						printHomeLink('', ' | ');
+						printGalleryIndexURL(' | ', getGalleryTitle());
 						printParentBreadcrumb("", " | ", " | ");
 						printAlbumBreadcrumb("", " | ");
 						?>
 					</span>
-					<?php printImageTitle(); ?>
+<?php printImageTitle(); ?>
 				</h2>
 			</div>
 			<!-- The Image -->
@@ -113,11 +118,12 @@ if (!defined('WEBPATH'))
 				<?php if (function_exists('zenFBComments')) { zenFBComments(); } ?>
 				<br class="clearall" />
 
-				<?php 
-    @call_user_func('printGoogleMap'); 
-    @call_user_func('printRating'); 
-    @call_user_func('printCommentForm'); 
-    ?>
+				<?php
+				@call_user_func('printOpenStreetMap');
+				@call_user_func('printGoogleMap');
+				@call_user_func('printRating');
+				@call_user_func('printCommentForm');
+				?>
 			</div>
 		</div>
 		<div id="credit">
@@ -147,5 +153,6 @@ if (!defined('WEBPATH'))
 		<?php
 		zp_apply_filter('theme_body_close');
 		?>
+<?php include 'inc-footer.php'; ?>
 	</body>
 </html>
